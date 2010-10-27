@@ -112,7 +112,7 @@ public class JMeterMojo extends AbstractMojo {
             String line;
             while ((line = in.readLine()) != null) {
                 if (PAT_ERROR.matcher(line).find()) {
-                    throw new MojoFailureException("There were test errors");
+                    throw new MojoFailureException("There were test errors, see logfile '" + jmeterLog + "' for further information");
                 }
             }
             in.close();
@@ -217,11 +217,10 @@ public class JMeterMojo extends AbstractMojo {
             });
             try {
                 // This mess is necessary because the only way to know when JMeter
-                // is done is to wait for all of the threads that it spawned to exit.
-                int startThreadCount = Thread.activeCount();
+                // is done is to wait for its test end message!
                 new JMeter().start(args.toArray(new String[]{}));
-                int activeThreadCount;
-                while ((activeThreadCount = Thread.activeCount()) > startThreadCount) {
+                BufferedReader in = new BufferedReader(new FileReader(jmeterLog));
+                while (!checkForEndOfTest(in)) {
                     try {
                         Thread.sleep(1000);
                     } catch (InterruptedException e) {
@@ -239,6 +238,22 @@ public class JMeterMojo extends AbstractMojo {
         } catch (IOException e) {
             throw new MojoExecutionException("Can't execute test", e);
         }
+    }
+
+    private boolean checkForEndOfTest(BufferedReader in) throws MojoExecutionException {
+        boolean testEnded = false;
+        try {
+                String line;
+                while ( (line = in.readLine()) != null) {
+                        if (line.indexOf("Test has ended") != -1) {
+                                testEnded = true;
+                                break;
+                        }
+                }
+        } catch (IOException e) {
+                throw new MojoExecutionException("Can't read log file", e);
+        }
+        return testEnded;
     }
 
     private ArrayList<String> getUserProperties() {

@@ -13,6 +13,7 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -28,8 +29,14 @@ public class JMeterMojo extends AbstractMojo {
 
     private static final Pattern PAT_ERROR = Pattern.compile(".*\\s+ERROR\\s+.*");
 
+    // TODO Provide the same for excludes!
     /**
-     * @parameter
+     * @parameter expression="${jmeter.includefiles}"
+     */
+    private String includeFiles;
+
+    /**
+     * @parameter 
      */
     private List<String> includes;
 
@@ -90,13 +97,27 @@ public class JMeterMojo extends AbstractMojo {
         try {
             DirectoryScanner scanner = new DirectoryScanner();
             scanner.setBasedir(srcDir);
-            scanner.setIncludes(includes == null ? new String[]{"**/*.jmx"}
-                    : includes.toArray(new String[]{}));
+            if (null != includeFiles) {
+            	if (null != includes) {
+            		getLog().debug("Overwriting configured includes list by includefiles = '" + includeFiles + "'");
+            	} else {
+            		getLog().debug("Using includefiles = '" + includeFiles + "'");
+            	}
+            	scanner.setIncludes(new String[]{includeFiles});
+            } else if (null == includes) {
+            	getLog().debug("Using default includes");
+            	scanner.setIncludes(new String[]{"**/*.jmx"});
+            } else {
+            	getLog().debug("Using configured includes");
+            	scanner.setIncludes(includes.toArray(new String[]{}));
+            }
             if (excludes != null) {
                 scanner.setExcludes(excludes.toArray(new String[]{}));
             }
             scanner.scan();
-            for (String file : scanner.getIncludedFiles()) {
+            String[] finalIncludes = scanner.getIncludedFiles();
+            getLog().debug("Finally using test files" + StringUtils.join(finalIncludes, ", "));
+            for (String file : finalIncludes) {
                 executeTest(new File(srcDir, file));
             }
             checkForErrors();
@@ -218,6 +239,7 @@ public class JMeterMojo extends AbstractMojo {
             try {
                 // This mess is necessary because the only way to know when JMeter
                 // is done is to wait for its test end message!
+            	logParamsAndProps(args);
                 new JMeter().start(args.toArray(new String[]{}));
                 BufferedReader in = new BufferedReader(new FileReader(jmeterLog));
                 while (!checkForEndOfTest(in)) {
@@ -239,6 +261,22 @@ public class JMeterMojo extends AbstractMojo {
             throw new MojoExecutionException("Can't execute test", e);
         }
     }
+
+	private void logParamsAndProps(List<String> args) {
+		getLog().debug ("Starting JMeter with the following parameters:");
+		for (String arg : args) {
+			getLog().debug(arg);
+		}
+		Properties props = System.getProperties();
+		Set<Object> keysUnsorted = props.keySet();
+		SortedSet<Object> keys = new TreeSet<Object> (keysUnsorted);
+		getLog().debug("... and the following properties:");
+		for (Object k : keys) {
+		        String key = (String) k;
+		        String value = props.getProperty(key);
+		        getLog().debug(key + " = " + value);
+		}
+	}
 
     private boolean checkForEndOfTest(BufferedReader in) throws MojoExecutionException {
         boolean testEnded = false;

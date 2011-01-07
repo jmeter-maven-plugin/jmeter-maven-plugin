@@ -4,7 +4,7 @@
   <groupId>org.apache.jmeter</groupId>
   <artifactId>maven-jmeter-plugin</artifactId>
   <packaging>maven-plugin</packaging>
-  <version>1.0-GA</version>
+  <version>1.1</version>
   <name>Maven JMeter Plugin</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

@@ -154,4 +154,12 @@
         </plugins>
     </build>
 
+    <!-- github pages branch repository -->
+    <distributionManagement>
+      <repository>
+        <id>gh-pages</id>
+        <url>file:///${basedir}/../maven-jmeter-plugin-pages/repository/</url>
+      </repository>
+    </distributionManagement>
+
 </project>

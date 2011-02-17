@@ -79,16 +79,53 @@ public class JMeterMojo extends AbstractMojo {
      * @parameter
      */
     private Map jmeterUserProperties;
+	
+    /**
+     * JMeter Properties to be overridden
+     *
+     * @parameter
+     */
+    private Map jmeterJavaProperties;
 
     /**
      * @parameter
      */
     private boolean remote;
+    
+    /**
+     * JMeter.log log level.
+     * @parameter expression="INFO"
+     */
+    private String jmeterLogLevel;
 
     /**
      * @parameter expression="${project}"
      */
     private org.apache.maven.project.MavenProject mavenProject;
+	
+    /**
+     * HTTP proxy host name.
+     * @parameter
+     */
+    private String proxyHost;
+    
+    /**
+     * HTTP proxy port.
+     * @parameter expression="80"
+     */
+    private Integer proxyPort;
+    
+    /**
+     * HTTP proxy username.
+     * @parameter
+     */
+    private String proxyUsername;
+    
+    /**
+     * HTTP proxy user password.
+     * @parameter
+     */
+    private String proxyPassword;
 
 
     private File workDir;
@@ -154,6 +191,21 @@ public class JMeterMojo extends AbstractMojo {
         workDir = new File("target" + File.separator + "jmeter");
         workDir.mkdirs();
         createSaveServiceProps();
+        
+        // now create lib dir for jmeter fallback mode
+        File libDir = new File("target" + File.separator + "jmeter" + File.separator + "lib");
+        if(!libDir.exists()){
+            libDir.mkdirs();
+            libDir = new File("target" + File.separator + "jmeter" 
+                    + File.separator + "lib" + File.separator + "ext");
+            if(!libDir.exists())
+                libDir.mkdirs();
+            libDir = new File("target" + File.separator + "jmeter" 
+                    + File.separator + "lib" + File.separator + "junit");
+            if(!libDir.exists())
+                libDir.mkdirs();
+        }
+        
         jmeterLog = new File(workDir, "jmeter.log");
         try {
             System.setProperty("log_file", jmeterLog.getCanonicalPath());
@@ -168,8 +220,11 @@ public class JMeterMojo extends AbstractMojo {
      * Resources won't work.
      */
     private void createSaveServiceProps() throws MojoExecutionException {
-        saveServiceProps = new File(workDir, "saveservice.properties");
-        upgradeProps = new File(workDir, "upgrade.properties");
+        File binDir = new File("target" + File.separator + "jmeter" + File.separator + "bin");
+        if(!binDir.exists())
+            binDir.mkdirs();
+        saveServiceProps = new File(binDir, "saveservice.properties");
+        upgradeProps = new File(binDir, "upgrade.properties");
         try {
             FileWriter out = new FileWriter(saveServiceProps);
             IOUtils.copy(Thread.currentThread().getContextClassLoader()
@@ -177,7 +232,7 @@ public class JMeterMojo extends AbstractMojo {
             out.flush();
             out.close();
             System.setProperty("saveservice_properties",
-                    File.separator + "target" + File.separator + "jmeter" + File.separator +
+                    File.separator + "bin" +File.separator +
                             "saveservice.properties");
 
             out = new FileWriter(upgradeProps);
@@ -186,11 +241,28 @@ public class JMeterMojo extends AbstractMojo {
             out.flush();
             out.close();
             System.setProperty("upgrade_properties",
-                    File.separator + "target" + File.separator + "jmeter" + File.separator +
+                    File.separator + "bin" + File.separator +
                             "upgrade.properties");
 
-
-            System.setProperty("search_paths", repoDir.toString() + "/org/apache/jmeter/jmeter/2.3/jmeter-2.3.jar");
+            // TODO: retrieve classpath from pom.xml dependencies
+            String searchPaths = new StringBuilder()
+                    .append(repoDir.toString()).append("/org/apache/jmeter/ApacheJMeter_components/2.4/ApacheJMeter_components-2.4.jar;")
+                    .append(repoDir.toString()).append("/org/apache/jmeter/ApacheJMeter_core/2.4/ApacheJMeter_core-2.4.jar;")
+                    .append(repoDir.toString()).append("/org/apache/jmeter/ApacheJMeter_ftp/2.4/ApacheJMeter_ftp-2.4.jar;")
+                    .append(repoDir.toString()).append("/org/apache/jmeter/ApacheJMeter_functions/2.4/ApacheJMeter_functions-2.4.jar;")
+                    .append(repoDir.toString()).append("/org/apache/jmeter/ApacheJMeter_http/2.4/ApacheJMeter_http-2.4.jar;")
+                    .append(repoDir.toString()).append("/org/apache/jmeter/ApacheJMeter_java/2.4/ApacheJMeter_java-2.4.jar;")
+                    .append(repoDir.toString()).append("/org/apache/jmeter/ApacheJMeter_jdbc/2.4/ApacheJMeter_jdbc-2.4.jar;")
+                    .append(repoDir.toString()).append("/org/apache/jmeter/ApacheJMeter_jms/2.4/ApacheJMeter_jms-2.4.jar;")
+                    // FIXME: Missing libs?
+                    //.append(repoDir.toString()).append("/org/apache/jmeter/ApacheJMeter_junit/2.4/ApacheJMeter_junit-2.4.jar;")
+                    //.append(repoDir.toString()).append("/org/apache/jmeter/ApacheJMeter_monitors/2.4/ApacheJMeter_monitors-2.4.jar;")
+                    .append(repoDir.toString()).append("/org/apache/jmeter/ApacheJMeter_ldap/2.4/ApacheJMeter_ldap-2.4.jar;")
+                    .append(repoDir.toString()).append("/org/apache/jmeter/ApacheJMeter_mail/2.4/ApacheJMeter_mail-2.4.jar;")
+                    .append(repoDir.toString()).append("/org/apache/jmeter/ApacheJMeter_reports/2.4/ApacheJMeter_reports-2.4.jar;")
+                    .append(repoDir.toString()).append("/org/apache/jmeter/ApacheJMeter_tcp/2.4/ApacheJMeter_tcp-2.4.jar")
+                    .toString();
+            System.setProperty("search_paths", searchPaths);
         } catch (IOException e) {
             throw new MojoExecutionException("Could not create temporary saveservice.properties", e);
         }
@@ -210,14 +282,36 @@ public class JMeterMojo extends AbstractMojo {
                     "-t", test.getCanonicalPath(),
                     "-l", reportDir.toString() + File.separator + reportFileName,
                     "-p", jmeterProps.toString(),
-                    "-d", System.getProperty("user.dir"));
+                    "-d", System.getProperty("user.dir") + File.separator 
+                    + "target" + File.separator + "jmeter",
+                    "-L","jorphan="+jmeterLogLevel,
+                    "-L","jmeter.util="+jmeterLogLevel);
 
             List<String> args = new ArrayList<String>();
             args.addAll(argsTmp);
             args.addAll(getUserProperties());
-            if (remote) {
+			args.addAll(getJavaProperties());
+
+            if (remote) {
                 args.add("-r");
             }
+            
+            if(proxyHost != null && !proxyHost.equals("")){
+                args.add("-H");
+                args.add(proxyHost);
+                args.add("-P");
+                args.add(proxyPort.toString());
+                getLog().info("Setting HTTP proxy to " + proxyHost + ":" + proxyPort );
+            }
+		
+            if(proxyUsername != null && !proxyUsername.equals("")){
+                args.add("-u");
+                args.add(proxyUsername);
+                args.add("-a");
+                args.add(proxyPassword);
+                getLog().info("Logging with " + proxyUsername + ":" + proxyPassword );
+            }
+		
             // This mess is necessary because JMeter likes to use System.exit.
             // We need to trap the exit call.
             SecurityManager oldManager = System.getSecurityManager();
@@ -244,6 +338,7 @@ public class JMeterMojo extends AbstractMojo {
                     getLog().error("Error in thread " + t.getName());
                 }
             });
+			
             try {
                 // This mess is necessary because the only way to know when JMeter
                 // is done is to wait for its test end message!
@@ -317,6 +412,23 @@ public class JMeterMojo extends AbstractMojo {
 
         return propsList;
     }
+	
+	private ArrayList<String> getJavaProperties() {
+        ArrayList<String> propsList = new ArrayList<String>();
+        if (jmeterJavaProperties == null) {
+            return propsList;
+        }
+        Set<String> keySet = (Set<String>) jmeterJavaProperties.keySet();
+
+        for (String key : keySet) {
+
+            propsList.add("-D");
+            propsList.add(key + "=" + jmeterJavaProperties.get(key));
+        }
+
+        return propsList;
+    }
+
 
     private static class ExitException extends SecurityException {
         private static final long serialVersionUID = 5544099211927987521L;

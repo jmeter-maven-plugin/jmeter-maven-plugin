@@ -13,37 +13,33 @@ Usage
 
 * Add this fork's Maven repository to your project (or personal maven repo):
 
-	<xml>
-	<repository>
-		<id>Maven JMeter Plugin</id>
-		<url>http://yciabaud.github.com/jmeter-maven-plugin/repository</url>
-	</repository>
-	</xml>
-	
+		<repository>
+			<id>Maven JMeter Plugin</id>
+			<url>http://yciabaud.github.com/jmeter-maven-plugin/repository</url>
+		</repository>
+
 * Add the plugin to the build section of your pom's project :
-	
-	<xml>
-	<plugin>
-		<groupId>org.apache.jmeter</groupId>
-		<artifactId>maven-jmeter-plugin</artifactId>
-		<version>1.2</version>
-		<executions>
-			<execution>
-				<id>jmeter-tests</id>
-				<phase>verify</phase>
-				<goals>
-					<goal>jmeter</goal>
-				</goals>
-		   </execution>
-		</executions>
-		<configuration>
-			<reportDir>${project.build.directory}/jmeter-reports</reportDir>
-			<jmeterUserProperties>
-				<!-- for user properites -->
-			</jmeterUserProperties>
-		</configuration>
-	</plugin>
-	</xml>
+
+		<plugin>
+			<groupId>org.apache.jmeter</groupId>
+			<artifactId>maven-jmeter-plugin</artifactId>
+			<version>1.2</version>
+			<executions>
+				<execution>
+					<id>jmeter-tests</id>
+					<phase>verify</phase>
+					<goals>
+						<goal>jmeter</goal>
+					</goals>
+			   </execution>
+			</executions>
+			<configuration>
+				<reportDir>${project.build.directory}/jmeter-reports</reportDir>
+				<jmeterUserProperties>
+					<!-- for user properites -->
+				</jmeterUserProperties>
+			</configuration>
+		</plugin>
 
 I’ll go over some of the options later.
 
@@ -53,7 +49,7 @@ This one should be simple enough, unless you don’t know about JMeter.  It can be
 
 Once you create your JMeter tests, you’ll want to copy them to :
 
-	<Project Dir>/src/test/jmeter
+		<Project Dir>/src/test/jmeter
 
 ### Copy properties files to your Maven project
 
@@ -73,17 +69,13 @@ Options
 
 * <jmeterUserProperties>
 
-In this section, you can define properties in JMeter files.  For example, you could define a hostname in your JMeter test like this:
-
-	${__P(someVariableName, localhost)
+In this section, you can define properties in JMeter files.  For example, you could define a hostname in your JMeter test like this: `${__P(someVariableName, localhost)`
 
 Then, in your pom.xml, you can define that variable like so:
 
-	<xml>
-	<jmeterUserProperties>
-	   <someVariableName>hostname.com</someVariableName>
-	</jmeterUserProperties>
-	</xml>
+		<jmeterUserProperties>
+		   <someVariableName>hostname.com</someVariableName>
+		</jmeterUserProperties>
 
 This has the same effect as using -D on the command line, as described here (search for section 2.4.7).
 

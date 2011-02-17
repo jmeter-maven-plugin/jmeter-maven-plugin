@@ -13,13 +13,16 @@ Usage
 
 * Add this fork's Maven repository to your project (or personal maven repo):
 
+	<xml>
 	<repository>
 		<id>Maven JMeter Plugin</id>
 		<url>http://yciabaud.github.com/jmeter-maven-plugin/repository</url>
 	</repository>
+	</xml>
 	
 * Add the plugin to the build section of your pom's project :
 	
+	<xml>
 	<plugin>
 		<groupId>org.apache.jmeter</groupId>
 		<artifactId>maven-jmeter-plugin</artifactId>
@@ -40,7 +43,7 @@ Usage
 			</jmeterUserProperties>
 		</configuration>
 	</plugin>
-
+	</xml>
 
 I’ll go over some of the options later.
 
@@ -76,10 +79,11 @@ In this section, you can define properties in JMeter files.  For example, you co
 
 Then, in your pom.xml, you can define that variable like so:
 
+	<xml>
 	<jmeterUserProperties>
 	   <someVariableName>hostname.com</someVariableName>
 	</jmeterUserProperties>
-
+	</xml>
 
 This has the same effect as using -D on the command line, as described here (search for section 2.4.7).
 

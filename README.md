@@ -41,13 +41,13 @@ Usage
 			</configuration>
 		</plugin>
 
-I’ll go over some of the options later.
+I'll go over some of the options later.
 
 ### Reference JMX files
 
-This one should be simple enough, unless you don’t know about JMeter.  It can be a bit daunting and counterintuitive at first, but once you start to get the hang of it, it will be like second nature, and you will realize how powerful the tool can be.
+This one should be simple enough, unless you don't know about JMeter.  It can be a bit daunting and counterintuitive at first, but once you start to get the hang of it, it will be like second nature, and you will realize how powerful the tool can be.
 
-Once you create your JMeter tests, you’ll want to copy them to :
+Once you create your JMeter tests, you'll want to copy them to :
 
 		<Project Dir>/src/test/jmeter
 

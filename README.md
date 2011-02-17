@@ -47,9 +47,7 @@ I'll go over some of the options later.
 
 This one should be simple enough, unless you don't know about JMeter.  It can be a bit daunting and counterintuitive at first, but once you start to get the hang of it, it will be like second nature, and you will realize how powerful the tool can be.
 
-Once you create your JMeter tests, you'll want to copy them to :
-
-		<Project Dir>/src/test/jmeter
+Once you create your JMeter tests, you'll want to copy them to : `<Project Dir>/src/test/jmeter`
 
 ### Copy properties files to your Maven project
 
@@ -67,7 +65,7 @@ All your tests should run in maven now!
 Options
 -------
 
-* <jmeterUserProperties>
+* `<jmeterUserProperties>`
 
 In this section, you can define properties in JMeter files.  For example, you could define a hostname in your JMeter test like this: `${__P(someVariableName, localhost)`
 

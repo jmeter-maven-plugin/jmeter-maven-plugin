@@ -161,7 +161,7 @@ public class JMeterMojo extends AbstractMojo {
                             "upgrade.properties");
 
 
-            System.setProperty("search_paths", repoDir.toString() + "/org/apache/jmeter/jmeter/2.3/jmeter-2.3.jar");
+            System.setProperty("search_paths", repoDir.toString() + "/org/apache/jmeter/jmeter/2.4/jmeter-2.4.jar");
         } catch (IOException e) {
             throw new MojoExecutionException("Could not create temporary saveservice.properties", e);
         }

@@ -69,8 +69,21 @@ public class JMeterMojo extends AbstractMojo {
      * @parameter
      */
     private boolean remote;
-
+    
     /**
+     * @parameter
+     */
+    private boolean jmeterIgnoreFailure;
+
+    public boolean isJmeterIgnoreFailure() {
+		return jmeterIgnoreFailure;
+	}
+
+	public void setJmeterIgnoreFailure(boolean jmeterIgnoreFailure) {
+		this.jmeterIgnoreFailure = jmeterIgnoreFailure;
+	}
+
+	/**
      * @parameter expression="${project}"
      */
     private org.apache.maven.project.MavenProject mavenProject;
@@ -112,7 +125,12 @@ public class JMeterMojo extends AbstractMojo {
             String line;
             while ((line = in.readLine()) != null) {
                 if (PAT_ERROR.matcher(line).find()) {
-                    throw new MojoFailureException("There were test errors, see logfile '" + jmeterLog + "' for further information");
+                	
+                	if (this.jmeterIgnoreFailure) {
+                		getLog().warn("There were test errors, continuing because jmeterIgnoreFailure = 'true', see logfile '" + jmeterLog + "' for further information.");
+                	} else {
+                		throw new MojoFailureException("There were test errors, see logfile '" + jmeterLog + "' for further information");
+                	}
                 }
             }
             in.close();

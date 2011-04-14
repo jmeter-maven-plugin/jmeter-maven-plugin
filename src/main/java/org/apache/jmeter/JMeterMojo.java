@@ -71,7 +71,7 @@ public class JMeterMojo extends AbstractMojo {
     private boolean remote;
     
     /**
-     * @parameter
+     * @parameter expression=${jmeterIgnoreFailure}
      */
     private boolean jmeterIgnoreFailure;
 

@@ -19,7 +19,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Pattern;
 
 import javax.xml.transform.TransformerException;
 
@@ -32,7 +31,7 @@ import org.apache.tools.ant.DirectoryScanner;
 /**
  * JMeter Maven plugin.
  * 
- * @author Tim McCune
+ * @author Tim McCune 
  * @goal jmeter
  */
 public class JMeterMojo extends AbstractMojo {
@@ -53,8 +52,7 @@ public class JMeterMojo extends AbstractMojo {
     private File srcDir;
 
     /**
-     * @parameter default-value="jmeter-reports",
-     *            expression="${jmeter.reports.dir}"
+     * @parameter expression="${jmeter.reports.dir}" default-value="${basedir}/target/jmeter-report",
      */
     private File reportDir;
 
@@ -92,12 +90,12 @@ public class JMeterMojo extends AbstractMojo {
     private boolean remote;
 
     /**
-     * @parameter expression=${jmeter.ignore.failure}
+     * @parameter expression="${jmeter.ignore.failure}" default-value=false
      */
     private boolean jmeterIgnoreFailure;
     
     /**
-     * @parameter expression=${jmeter.ignore.error}
+     * @parameter expression="${jmeter.ignore.error}" default-value=false
      */
     private boolean jmeterIgnoreError;
 
@@ -153,7 +151,7 @@ public class JMeterMojo extends AbstractMojo {
             for (String resultFile : results) {
                 final String outputFile = toOutputFileName(resultFile);                
                 getLog().info("transforming: " + resultFile + " to " + outputFile);
-                transformer.transform(resultFile, outputFile);
+                transformer.transform(resultFile, outputFile);                
             }
         } catch (FileNotFoundException e) {
             throw new MojoExecutionException("Error writing report file jmeter file.", e);
@@ -194,6 +192,8 @@ public class JMeterMojo extends AbstractMojo {
     }
 
     private void checkForErrors(List<String> results) throws MojoExecutionException, MojoFailureException {   
+        getLog().info("jmeterIgnoreError = " + this.jmeterIgnoreError);
+        getLog().info("jmeterIgnoreFailure = " + this.jmeterIgnoreFailure);
         ErrorScanner scanner = new ErrorScanner(this.jmeterIgnoreError, this.jmeterIgnoreFailure);
         try {
             for (String file : results) {
@@ -255,6 +255,7 @@ public class JMeterMojo extends AbstractMojo {
         try {
             getLog().info("Executing test: " + test.getCanonicalPath());
             String reportFileName = reportDir.toString() + File.separator + test.getName().substring(0, test.getName().lastIndexOf(".")) + "-" + fmt.format(new Date()) + ".xml";
+            new File(reportFileName).delete(); //delete file if it exists
             List<String> argsTmp = Arrays.asList("-n", "-t",
                     test.getCanonicalPath(), 
                     "-l",reportFileName, 

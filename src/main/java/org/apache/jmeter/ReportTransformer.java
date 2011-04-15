@@ -14,8 +14,7 @@ import javax.xml.transform.stream.StreamSource;
 /**
  * Handles the xslt transform for the jmeter report.
  * 
- * @author Jon Roberts 
- * @goal jmeter
+ * @author Jon Roberts
  */
 public class ReportTransformer {
 		

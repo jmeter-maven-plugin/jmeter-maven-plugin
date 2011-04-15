@@ -31,8 +31,8 @@ public class ErrorScanner {
      *            exception instead of returning true;
      */
     public ErrorScanner(boolean ignoreErrors, boolean ignoreFailures) {
-        this.ignoreErrors = false;
-        this.ignoreFailures = false;
+        this.ignoreErrors = ignoreErrors;
+        this.ignoreFailures = ignoreFailures;
     }
 
     public boolean scanForProblems(File file) throws MojoFailureException, IOException {

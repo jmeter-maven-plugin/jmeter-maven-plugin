@@ -37,8 +37,6 @@ import org.apache.tools.ant.DirectoryScanner;
  */
 public class JMeterMojo extends AbstractMojo {
 
-    private static final Pattern PAT_ERROR = Pattern.compile(".*\\s+ERROR\\s+.*");
-
     /**
      * @parameter
      */
@@ -97,6 +95,12 @@ public class JMeterMojo extends AbstractMojo {
      * @parameter expression=${jmeter.ignore.failure}
      */
     private boolean jmeterIgnoreFailure;
+    
+    /**
+     * @parameter expression=${jmeter.ignore.error}
+     */
+    private boolean jmeterIgnoreError;
+
 
     /**
      * @parameter expression="${project}"
@@ -134,7 +138,7 @@ public class JMeterMojo extends AbstractMojo {
             if (this.enableReports) {
                 makeReport(results);
             }
-            checkForErrors();
+            checkForErrors(results);
         } finally {
             saveServiceProps.delete();
             upgradeProps.delete();
@@ -189,23 +193,13 @@ public class JMeterMojo extends AbstractMojo {
         }
     }
 
-    private void checkForErrors() throws MojoExecutionException, MojoFailureException {
+    private void checkForErrors(List<String> results) throws MojoExecutionException, MojoFailureException {   
+        ErrorScanner scanner = new ErrorScanner(this.jmeterIgnoreError, this.jmeterIgnoreFailure);
         try {
-            BufferedReader in = new BufferedReader(new FileReader(jmeterLog));
-            String line;
-            boolean foundErrors = false;
-            while ((line = in.readLine()) != null) {
-                if (PAT_ERROR.matcher(line).find()) {
-                    if (this.jmeterIgnoreFailure) {
-                        foundErrors = true;
-                    } else {
-                        throw new MojoFailureException("There were test errors, see logfile '" + jmeterLog + "' for further information");
-                    }
-                }
-            }            
-            in.close();
-            if ( foundErrors ) {
-                getLog().warn("There were test errors, continuing because jmeterIgnoreFailure = 'true', see logfile '" + jmeterLog + "' for further information.");
+            for (String file : results) {
+               if (scanner.scanForProblems(new File(file))) {
+                   getLog().warn("There were test errors.  See the jmeter logs for details");                  
+               }
             }
         } catch (IOException e) {
             throw new MojoExecutionException("Can't read log file", e);

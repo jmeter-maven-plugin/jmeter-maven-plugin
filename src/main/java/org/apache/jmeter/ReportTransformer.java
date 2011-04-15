@@ -11,6 +11,12 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+/**
+ * Handles the xslt transform for the jmeter report.
+ * 
+ * @author Jon Roberts 
+ * @goal jmeter
+ */
 public class ReportTransformer {
 		
 	private final Transformer transformer;

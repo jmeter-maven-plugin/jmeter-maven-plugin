@@ -191,9 +191,7 @@ public class JMeterMojo extends AbstractMojo {
         }
     }
 
-    private void checkForErrors(List<String> results) throws MojoExecutionException, MojoFailureException {   
-        getLog().info("jmeterIgnoreError = " + this.jmeterIgnoreError);
-        getLog().info("jmeterIgnoreFailure = " + this.jmeterIgnoreFailure);
+    private void checkForErrors(List<String> results) throws MojoExecutionException, MojoFailureException {
         ErrorScanner scanner = new ErrorScanner(this.jmeterIgnoreError, this.jmeterIgnoreFailure);
         try {
             for (String file : results) {

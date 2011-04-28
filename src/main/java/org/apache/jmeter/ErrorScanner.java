@@ -15,6 +15,7 @@ import org.apache.maven.plugin.MojoFailureException;
 public class ErrorScanner {
 
     private static final String PAT_ERROR = "<error>true</error>";
+    private static final String PAT_FAILURE_REQUEST = "s=\"false\"";
     private static final String PAT_FAILURE = "<failure>true</failure>";
 
     private boolean ignoreErrors;
@@ -41,24 +42,35 @@ public class ErrorScanner {
             in = new BufferedReader(new FileReader(file));
             String line;            
             while ((line = in.readLine()) != null) {
-                if (line.contains(PAT_ERROR)) {
-                    if (this.ignoreErrors) {
-                        return true;
-                    } else {
-                        throw new MojoFailureException("There were test errors.  See the jmeter logs for details.");
-                    }
-                }
-                if (line.contains(PAT_FAILURE)) {
-                    if (this.ignoreFailures) {
-                        return true;
-                    } else {
-                        throw new MojoFailureException("There were test failures.  See the jmeter logs for details.");
-                    }
-                }
+                this.lineContainsForErrors(line);
             }
         } finally {
             in.close();
         }
+        return false;
+    }
+    
+    /** 
+     * protected for testing
+     * @param line
+     * @return
+     * @throws MojoFailureException
+     */
+    protected boolean lineContainsForErrors(String line) throws MojoFailureException {
+    	if (line.contains(PAT_ERROR)) {
+            if (this.ignoreErrors) {
+                return true;
+            } else {
+                throw new MojoFailureException("There were test errors.  See the jmeter logs for details.");
+            }
+        }
+        if (line.contains(PAT_FAILURE) || line.contains(PAT_FAILURE_REQUEST)) {
+            if (this.ignoreFailures) {
+                return true;
+            } else {
+                throw new MojoFailureException("There were test failures.  See the jmeter logs for details.");
+            }
+        }       
         return false;
     }
 }

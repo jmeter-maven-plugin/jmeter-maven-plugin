@@ -82,7 +82,8 @@ public class JMeterMojo extends AbstractMojo {
      * 
      * @parameter
      */
-    private Map jmeterUserProperties;
+    @SuppressWarnings("rawtypes")
+	private Map jmeterUserProperties;
 
     /**
      * @parameter
@@ -103,7 +104,8 @@ public class JMeterMojo extends AbstractMojo {
     /**
      * @parameter expression="${project}"
      */
-    private org.apache.maven.project.MavenProject mavenProject;
+    @SuppressWarnings("unused")
+	private org.apache.maven.project.MavenProject mavenProject;
 
     /**
      * @parameter default-value="-report.html"

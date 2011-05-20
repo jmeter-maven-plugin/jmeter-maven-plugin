@@ -2,15 +2,25 @@ package org.apache.jmeter;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.security.Permission;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.regex.Pattern;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.xml.transform.TransformerException;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.plugin.AbstractMojo;
@@ -20,13 +30,11 @@ import org.apache.tools.ant.DirectoryScanner;
 
 /**
  * JMeter Maven plugin.
- *
- * @author Tim McCune
+ * 
+ * @author Tim McCune 
  * @goal jmeter
  */
 public class JMeterMojo extends AbstractMojo {
-
-    private static final Pattern PAT_ERROR = Pattern.compile(".*\\s+ERROR\\s+.*");
 
     /**
      * @parameter
@@ -44,9 +52,20 @@ public class JMeterMojo extends AbstractMojo {
     private File srcDir;
 
     /**
-     * @parameter expression="jmeter-reports"
+     * @parameter expression="${jmeter.reports.dir}" default-value="${basedir}/target/jmeter-report",
      */
     private File reportDir;
+
+    /**
+     * @parameter default-value="true"
+     * 
+     */
+    private boolean enableReports;
+
+    /**
+     * @parameter
+     */
+    private File reportXslt;
 
     /**
      * @parameter expression="${basedir}/src/test/jmeter/jmeter.properties"
@@ -60,34 +79,38 @@ public class JMeterMojo extends AbstractMojo {
 
     /**
      * JMeter Properties to be overridden
-     *
+     * 
      * @parameter
      */
-    private Map jmeterUserProperties;
+    @SuppressWarnings("rawtypes")
+	private Map jmeterUserProperties;
 
     /**
      * @parameter
      */
     private boolean remote;
-    
+
     /**
-     * @parameter
+     * @parameter expression="${jmeter.ignore.failure}" default-value=false
      */
     private boolean jmeterIgnoreFailure;
+    
+    /**
+     * @parameter expression="${jmeter.ignore.error}" default-value=false
+     */
+    private boolean jmeterIgnoreError;
 
-    public boolean isJmeterIgnoreFailure() {
-		return jmeterIgnoreFailure;
-	}
 
-	public void setJmeterIgnoreFailure(boolean jmeterIgnoreFailure) {
-		this.jmeterIgnoreFailure = jmeterIgnoreFailure;
-	}
-
-	/**
+    /**
      * @parameter expression="${project}"
      */
-    private org.apache.maven.project.MavenProject mavenProject;
+    @SuppressWarnings("unused")
+	private org.apache.maven.project.MavenProject mavenProject;
 
+    /**
+     * @parameter default-value="-report.html"
+     */
+    private String reportPostfix;
 
     private File workDir;
     private File saveServiceProps;
@@ -103,37 +126,81 @@ public class JMeterMojo extends AbstractMojo {
         try {
             DirectoryScanner scanner = new DirectoryScanner();
             scanner.setBasedir(srcDir);
-            scanner.setIncludes(includes == null ? new String[]{"**/*.jmx"}
-                    : includes.toArray(new String[]{}));
+            scanner.setIncludes(includes == null ? new String[] { "**/*.jmx" } : includes.toArray(new String[] {}));
             if (excludes != null) {
-                scanner.setExcludes(excludes.toArray(new String[]{}));
+                scanner.setExcludes(excludes.toArray(new String[] {}));
             }
             scanner.scan();
+            List<String> results = new ArrayList<String>();
             for (String file : scanner.getIncludedFiles()) {
-                executeTest(new File(srcDir, file));
+                results.add(executeTest(new File(srcDir, file)));
             }
-            checkForErrors();
+            if (this.enableReports) {
+                makeReport(results);
+            }
+            checkForErrors(results);
         } finally {
             saveServiceProps.delete();
             upgradeProps.delete();
         }
     }
 
-    private void checkForErrors() throws MojoExecutionException, MojoFailureException {
+    private void makeReport(List<String> results) throws MojoExecutionException {
         try {
-            BufferedReader in = new BufferedReader(new FileReader(jmeterLog));
-            String line;
-            while ((line = in.readLine()) != null) {
-                if (PAT_ERROR.matcher(line).find()) {
-                	
-                	if (this.jmeterIgnoreFailure) {
-                		getLog().warn("There were test errors, continuing because jmeterIgnoreFailure = 'true', see logfile '" + jmeterLog + "' for further information.");
-                	} else {
-                		throw new MojoFailureException("There were test errors, see logfile '" + jmeterLog + "' for further information");
-                	}
-                }
+            ReportTransformer transformer;
+            transformer = new ReportTransformer(getXslt());
+            getLog().info("Building JMeter Report.");
+            for (String resultFile : results) {
+                final String outputFile = toOutputFileName(resultFile);                
+                getLog().info("transforming: " + resultFile + " to " + outputFile);
+                transformer.transform(resultFile, outputFile);                
             }
-            in.close();
+        } catch (FileNotFoundException e) {
+            throw new MojoExecutionException("Error writing report file jmeter file.", e);
+        } catch (TransformerException e) {
+            throw new MojoExecutionException("Error transforming jmeter results", e);
+        } catch (IOException e) {
+            throw new MojoExecutionException("Error copying resources to jmeter results", e);
+        }
+    }
+
+    /**
+     * returns the fileName with the configured outputFileExtension
+     * 
+     * @param fileName
+     * @return
+     */
+    private String toOutputFileName(String fileName) {
+        if (fileName.endsWith(".xml")) {               
+            return fileName.replace(".xml", this.reportPostfix);
+        } else {
+            return fileName + this.reportPostfix;
+        }
+    }
+
+    private InputStream getXslt() throws IOException {
+        if (this.reportXslt == null) {
+            //if we are using the default report, also copy the images out.
+            IOUtils.copy(Thread.currentThread()
+                    .getContextClassLoader()
+                    .getResourceAsStream("reports/collapse.jpg"), new FileOutputStream(this.reportDir.getPath() + File.separator + "collapse.jpg"));
+            IOUtils.copy(Thread.currentThread()
+                    .getContextClassLoader()
+                    .getResourceAsStream("reports/expand.jpg"), new FileOutputStream(this.reportDir.getPath() + File.separator + "expand.jpg"));
+            return Thread.currentThread().getContextClassLoader().getResourceAsStream("reports/jmeter-results-detail-report_21.xsl");
+        } else {
+            return new FileInputStream(this.reportXslt);
+        }
+    }
+
+    private void checkForErrors(List<String> results) throws MojoExecutionException, MojoFailureException {
+        ErrorScanner scanner = new ErrorScanner(this.jmeterIgnoreError, this.jmeterIgnoreFailure);
+        try {
+            for (String file : results) {
+               if (scanner.scanForProblems(new File(file))) {
+                   getLog().warn("There were test errors.  See the jmeter logs for details");                  
+               }
+            }
         } catch (IOException e) {
             throw new MojoExecutionException("Can't read log file", e);
         }
@@ -152,32 +219,24 @@ public class JMeterMojo extends AbstractMojo {
     }
 
     /**
-     * This mess is necessary because JMeter must load this info from a file.
-     * Do the same for the upgrade.properties
-     * Resources won't work.
+     * This mess is necessary because JMeter must load this info from a file. Do
+     * the same for the upgrade.properties Resources won't work.
      */
     private void createSaveServiceProps() throws MojoExecutionException {
         saveServiceProps = new File(workDir, "saveservice.properties");
         upgradeProps = new File(workDir, "upgrade.properties");
         try {
             FileWriter out = new FileWriter(saveServiceProps);
-            IOUtils.copy(Thread.currentThread().getContextClassLoader()
-                    .getResourceAsStream("saveservice.properties"), out);
+            IOUtils.copy(Thread.currentThread().getContextClassLoader().getResourceAsStream("saveservice.properties"), out);
             out.flush();
             out.close();
-            System.setProperty("saveservice_properties",
-                    File.separator + "target" + File.separator + "jmeter" + File.separator +
-                            "saveservice.properties");
+            System.setProperty("saveservice_properties", File.separator + "target" + File.separator + "jmeter" + File.separator + "saveservice.properties");
 
             out = new FileWriter(upgradeProps);
-            IOUtils.copy(Thread.currentThread().getContextClassLoader()
-                    .getResourceAsStream("upgrade.properties"), out);
+            IOUtils.copy(Thread.currentThread().getContextClassLoader().getResourceAsStream("upgrade.properties"), out);
             out.flush();
             out.close();
-            System.setProperty("upgrade_properties",
-                    File.separator + "target" + File.separator + "jmeter" + File.separator +
-                            "upgrade.properties");
-
+            System.setProperty("upgrade_properties", File.separator + "target" + File.separator + "jmeter" + File.separator + "upgrade.properties");
 
             System.setProperty("search_paths", repoDir.toString() + "/org/apache/jmeter/jmeter/2.4/jmeter-2.4.jar");
         } catch (IOException e) {
@@ -188,23 +247,26 @@ public class JMeterMojo extends AbstractMojo {
     /**
      * Executes a single JMeter test by building up a list of command line
      * parameters to pass to JMeter.start().
+     * 
+     * @return the report file names.
      */
-    private void executeTest(File test) throws MojoExecutionException {
+    private String executeTest(File test) throws MojoExecutionException {
+
         try {
             getLog().info("Executing test: " + test.getCanonicalPath());
-            String reportFileName = test.getName().substring(0,
-                    test.getName().lastIndexOf(".")) + "-" +
-                    fmt.format(new Date()) + ".xml";
-            List<String> argsTmp = Arrays.asList("-n",
-                    "-t", test.getCanonicalPath(),
-                    "-l", reportDir.toString() + File.separator + reportFileName,
-                    "-p", jmeterProps.toString(),
+            String reportFileName = reportDir.toString() + File.separator + test.getName().substring(0, test.getName().lastIndexOf(".")) + "-" + fmt.format(new Date()) + ".xml";
+            new File(reportFileName).delete(); //delete file if it exists
+            List<String> argsTmp = Arrays.asList("-n", "-t",
+                    test.getCanonicalPath(), 
+                    "-l",reportFileName, 
+                    "-p",jmeterProps.toString(), 
                     "-d", System.getProperty("user.dir"));
 
             List<String> args = new ArrayList<String>();
             args.addAll(argsTmp);
             args.addAll(getUserProperties());
-            if (remote) {
+
+            if (remote) {
                 args.add("-r");
             }
             // This mess is necessary because JMeter likes to use System.exit.
@@ -228,15 +290,16 @@ public class JMeterMojo extends AbstractMojo {
             Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler() {
                 public void uncaughtException(Thread t, Throwable e) {
                     if (e instanceof ExitException && ((ExitException) e).getCode() == 0) {
-                        return;    //Ignore
+                        return; // Ignore
                     }
                     getLog().error("Error in thread " + t.getName());
                 }
             });
             try {
-                // This mess is necessary because the only way to know when JMeter
+                // This mess is necessary because the only way to know when
+                // JMeter
                 // is done is to wait for its test end message!
-                new JMeter().start(args.toArray(new String[]{}));
+                new JMeter().start(args.toArray(new String[] {}));
                 BufferedReader in = new BufferedReader(new FileReader(jmeterLog));
                 while (!checkForEndOfTest(in)) {
                     try {
@@ -253,6 +316,8 @@ public class JMeterMojo extends AbstractMojo {
                 System.setSecurityManager(oldManager);
                 Thread.setDefaultUncaughtExceptionHandler(oldHandler);
             }
+
+            return reportFileName;
         } catch (IOException e) {
             throw new MojoExecutionException("Can't execute test", e);
         }
@@ -261,15 +326,15 @@ public class JMeterMojo extends AbstractMojo {
     private boolean checkForEndOfTest(BufferedReader in) throws MojoExecutionException {
         boolean testEnded = false;
         try {
-                String line;
-                while ( (line = in.readLine()) != null) {
-                        if (line.indexOf("Test has ended") != -1) {
-                                testEnded = true;
-                                break;
-                        }
+            String line;
+            while ((line = in.readLine()) != null) {
+                if (line.indexOf("Test has ended") != -1) {
+                    testEnded = true;
+                    break;
                 }
+            }
         } catch (IOException e) {
-                throw new MojoExecutionException("Can't read log file", e);
+            throw new MojoExecutionException("Can't read log file", e);
         }
         return testEnded;
     }

@@ -187,7 +187,6 @@ public class JMeterMojo extends AbstractMojo {
     private String reportPostfix;
 
     private File workDir;
-    private List<File> temporaryPropertyFiles = new ArrayList<File>();
     private File jmeterLog;
     private DateFormat fmt = new SimpleDateFormat("yyMMdd");
 
@@ -200,35 +199,29 @@ public class JMeterMojo extends AbstractMojo {
      */
     public void execute() throws MojoExecutionException, MojoFailureException {
         initSystemProps();
-        try {
-            List<String> jmeterTestFiles = new ArrayList<String>();
-            List<String> results = new ArrayList<String>();
-            if(jmeterTestFile != null) {
-                jmeterTestFiles.add(jmeterTestFile.getName());
-            } else {
-            DirectoryScanner scanner = new DirectoryScanner();
-            scanner.setBasedir(srcDir);
-            scanner.setIncludes(includes == null ? new String[] { "**/*.jmx" } : includes.toArray(new String[] {}));
-            if (excludes != null) {
-                scanner.setExcludes(excludes.toArray(new String[] {}));
-            }
-            scanner.scan();
-                jmeterTestFiles.addAll(Arrays.asList(scanner.getIncludedFiles()));
-            }
 
-            for (String file : jmeterTestFiles) {
-                results.add(executeTest(new File(srcDir, file)));
-            }
-            if (this.enableReports) {
-                makeReport(results);
-            }
-            checkForErrors(results);
-        } finally {
-            //not really necessary...
-            for(File temporaryPropertyFile : temporaryPropertyFiles) {
-                temporaryPropertyFile.delete();
-            }
+        List<String> jmeterTestFiles = new ArrayList<String>();
+        List<String> results = new ArrayList<String>();
+        if(jmeterTestFile != null) {
+            jmeterTestFiles.add(jmeterTestFile.getName());
+        } else {
+        DirectoryScanner scanner = new DirectoryScanner();
+        scanner.setBasedir(srcDir);
+        scanner.setIncludes(includes == null ? new String[] { "**/*.jmx" } : includes.toArray(new String[] {}));
+        if (excludes != null) {
+            scanner.setExcludes(excludes.toArray(new String[] {}));
         }
+        scanner.scan();
+            jmeterTestFiles.addAll(Arrays.asList(scanner.getIncludedFiles()));
+        }
+
+        for (String file : jmeterTestFiles) {
+            results.add(executeTest(new File(srcDir, file)));
+        }
+        if (this.enableReports) {
+            makeReport(results);
+        }
+        checkForErrors(results);
     }
 
     private void makeReport(List<String> results) throws MojoExecutionException {
@@ -358,6 +351,8 @@ public class JMeterMojo extends AbstractMojo {
      */
     @SuppressWarnings("unchecked")
     private void createTemporaryProperties() throws MojoExecutionException {
+        List<File> temporaryPropertyFiles = new ArrayList<File>();
+
         String jmeterTargetDir = File.separator + "target" + File.separator + "jmeter" + File.separator;
         File saveServiceProps = new File(workDir, "saveservice.properties");
         System.setProperty("saveservice_properties", jmeterTargetDir + saveServiceProps.getName());

@@ -224,6 +224,7 @@ public class JMeterMojo extends AbstractMojo {
             }
             checkForErrors(results);
         } finally {
+            //not really necessary...
             for(File temporaryPropertyFile : temporaryPropertyFiles) {
                 temporaryPropertyFile.delete();
             }
@@ -253,6 +254,7 @@ public class JMeterMojo extends AbstractMojo {
      * returns the fileName with the configured reportPostfix
      * 
      * @param fileName the String to modify
+     *
      * @return modified fileName
      */
     private String toOutputFileName(String fileName) {
@@ -278,6 +280,14 @@ public class JMeterMojo extends AbstractMojo {
         }
     }
 
+    /**
+     * Scan JMeter result files for "error" and "failure" messages
+     *
+     * @param results List of JMeter result files.
+     *
+     * @throws MojoExecutionException exception
+     * @throws MojoFailureException exception
+     */
     private void checkForErrors(List<String> results) throws MojoExecutionException, MojoFailureException {
         ErrorScanner scanner = new ErrorScanner(this.jmeterIgnoreError, this.jmeterIgnoreFailure);
         try {
@@ -291,6 +301,11 @@ public class JMeterMojo extends AbstractMojo {
         }
     }
 
+    /**
+     * Initialize System Properties needed for JMeter run.
+     *
+     * @throws MojoExecutionException exception
+     */
     private void initSystemProps() throws MojoExecutionException {
         workDir = new File("target" + File.separator + "jmeter");
         workDir.mkdirs();
@@ -310,6 +325,7 @@ public class JMeterMojo extends AbstractMojo {
      *
      * This mess is necessary because JMeter must load this info from a file.
      * Loading resources from classpath won't work.
+     *
      * @throws org.apache.maven.plugin.MojoExecutionException exception
      */
     private void resolveJmeterArtifact() throws MojoExecutionException {
@@ -367,7 +383,9 @@ public class JMeterMojo extends AbstractMojo {
      * parameters to pass to JMeter.start().
      * 
      * @param test JMeter test XML
+     *
      * @return the report file names.
+     *
      * @throws org.apache.maven.plugin.MojoExecutionException
      *          Exception
      */
@@ -454,6 +472,15 @@ public class JMeterMojo extends AbstractMojo {
         }
     }
 
+    /**
+     * Check JMeter logfile (provided as a BufferedReader) for End message.
+     *
+     * @param in JMeter logfile
+     *
+     * @return true if test ended
+     *
+     * @throws MojoExecutionException exception
+     */
     private boolean checkForEndOfTest(BufferedReader in) throws MojoExecutionException {
         boolean testEnded = false;
         try {
@@ -470,6 +497,11 @@ public class JMeterMojo extends AbstractMojo {
         return testEnded;
     }
 
+    /**
+     * Translates map of jmeterUserProperties to List of JMeter compatible commandline flags.
+     *
+     * @return List of JMeter compatible commandline flags
+     */
     @SuppressWarnings("unchecked")
     private ArrayList<String> getUserProperties() {
         ArrayList<String> propsList = new ArrayList<String>();

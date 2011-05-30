@@ -34,6 +34,7 @@ import org.apache.tools.ant.DirectoryScanner;
  * 
  * @author Tim McCune 
  * @goal jmeter
+ * @requiresProject true
  */
 public class JMeterMojo extends AbstractMojo {
 
@@ -143,8 +144,7 @@ public class JMeterMojo extends AbstractMojo {
     private String reportPostfix;
 
     private File workDir;
-    private File saveServiceProps;
-    private File upgradeProps;
+    private List<File> temporaryPropertyFiles = new ArrayList<File>();
     private File jmeterLog;
     private DateFormat fmt = new SimpleDateFormat("yyMMdd");
 
@@ -170,8 +170,9 @@ public class JMeterMojo extends AbstractMojo {
             }
             checkForErrors(results);
         } finally {
-            saveServiceProps.delete();
-            upgradeProps.delete();
+            for(File temporaryPropertyFile : temporaryPropertyFiles) {
+                temporaryPropertyFile.delete();
+            }
         }
     }
 
@@ -239,7 +240,9 @@ public class JMeterMojo extends AbstractMojo {
     private void initSystemProps() throws MojoExecutionException {
         workDir = new File("target" + File.separator + "jmeter");
         workDir.mkdirs();
-        createSaveServiceProps();
+        createTemporaryProperties();
+        resolveJmeterArtifact();
+
         jmeterLog = new File(workDir, "jmeter.log");
         try {
             System.setProperty("log_file", jmeterLog.getCanonicalPath());
@@ -249,6 +252,19 @@ public class JMeterMojo extends AbstractMojo {
     }
 
     /**
+     * Resolve JMeter artifact, set necessary System Property.
+     *
+     * This mess is necessary because JMeter must load this info from a file.
+     * Loading resources from classpath won't work.
+     */
+    private void resolveJmeterArtifact() {
+        //set search path for JMeter. JMeter loads function classes from this path.
+        System.setProperty("search_paths", repoDir.toString() + "/org/apache/jmeter/jmeter/2.4/jmeter-2.4.jar");
+    }
+
+    /**
+     * Create temporary property files and set necessary System Properties.
+     *
      * This mess is necessary because JMeter must load this info from a file.
      * Loading resources from classpath won't work.
      *
@@ -256,25 +272,24 @@ public class JMeterMojo extends AbstractMojo {
      *          Exception
      */
     @SuppressWarnings("unchecked")
-    private void createSaveServiceProps() throws MojoExecutionException {
-        saveServiceProps = new File(workDir, "saveservice.properties");
-        upgradeProps = new File(workDir, "upgrade.properties");
-        try {
-            FileWriter out = new FileWriter(saveServiceProps);
-            IOUtils.copy(Thread.currentThread().getContextClassLoader().getResourceAsStream("saveservice.properties"), out);
-            out.flush();
-            out.close();
-            System.setProperty("saveservice_properties", File.separator + "target" + File.separator + "jmeter" + File.separator + "saveservice.properties");
+    private void createTemporaryProperties() throws MojoExecutionException {
+        String jmeterTargetDir = File.separator + "target" + File.separator + "jmeter" + File.separator;
+        File saveServiceProps = new File(workDir, "saveservice.properties");
+        System.setProperty("saveservice_properties", jmeterTargetDir + saveServiceProps.getName());
+        temporaryPropertyFiles.add(saveServiceProps);
+        File upgradeProps = new File(workDir, "upgrade.properties");
+        System.setProperty("upgrade_properties", jmeterTargetDir + upgradeProps.getName());
+        temporaryPropertyFiles.add(upgradeProps);
 
-            out = new FileWriter(upgradeProps);
-            IOUtils.copy(Thread.currentThread().getContextClassLoader().getResourceAsStream("upgrade.properties"), out);
-            out.flush();
-            out.close();
-            System.setProperty("upgrade_properties", File.separator + "target" + File.separator + "jmeter" + File.separator + "upgrade.properties");
-
-            System.setProperty("search_paths", repoDir.toString() + "/org/apache/jmeter/jmeter/2.4/jmeter-2.4.jar");
-        } catch (IOException e) {
-            throw new MojoExecutionException("Could not create temporary saveservice.properties", e);
+        for (File propertyFile : temporaryPropertyFiles) {
+            try {
+                FileWriter out = new FileWriter(propertyFile);
+                IOUtils.copy(Thread.currentThread().getContextClassLoader().getResourceAsStream(propertyFile.getName()), out);
+                out.flush();
+                out.close();
+            } catch (IOException e) {
+                throw new MojoExecutionException("Could not create temporary property file "+propertyFile.getName()+" in directory "+jmeterTargetDir, e);
+            }
         }
     }
 

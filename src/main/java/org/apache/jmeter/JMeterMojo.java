@@ -99,12 +99,20 @@ public class JMeterMojo extends AbstractMojo {
 
     /**
      * Absolute path to JMeter default properties file.
+     * The default properties file is part of a JMeter installation and sets basic properties needed for running JMeter.
      *
      * @parameter expression="${jmeter.properties}"
      *          default-value="${basedir}/src/test/jmeter/jmeter.properties"
      * @required
      */
-    private File jmeterProps;
+    private File jmeterDefaultPropertiesFile;
+
+    /**
+     * Absolute path to JMeter custom (test dependent) properties file.
+     *
+     * @parameter
+     */
+    private File jmeterCustomPropertiesFile;
 
     /**
      * @parameter expression="${settings.localRepository}"
@@ -330,13 +338,16 @@ public class JMeterMojo extends AbstractMojo {
             List<String> argsTmp = Arrays.asList("-n", "-t",
                     test.getCanonicalPath(), 
                     "-l",reportFileName, 
-                    "-p",jmeterProps.toString(), 
+                    "-p", jmeterDefaultPropertiesFile.toString(),
                     "-d", System.getProperty("user.dir"));
 
             List<String> args = new ArrayList<String>();
             args.addAll(argsTmp);
             args.addAll(getUserProperties());
-
+            if(jmeterCustomPropertiesFile != null) {
+                args.add("-q");
+                args.add(jmeterCustomPropertiesFile.toString());
+            }
             if (remote) {
                 args.add("-r");
             }

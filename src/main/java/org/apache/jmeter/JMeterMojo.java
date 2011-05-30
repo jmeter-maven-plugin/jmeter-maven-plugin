@@ -40,8 +40,19 @@ public class JMeterMojo extends AbstractMojo {
 
 
     /**
+     * Path to a Jmeter test XML file.
+     * Relative to srcDir.
+     * May be declared instead of the parameter includes.
+     *
+     * @parameter
+     */
+    private File jmeterTestFile;
+
+    /**
      * Sets the list of include patterns to use in directory scan for JMeter Test XML files.
      * Relative to srcDir.
+     * May be declared instead of a single jmeterTestFile.
+     * Ignored if parameter jmeterTestFile is given.
      *
      * @parameter
      */
@@ -50,6 +61,7 @@ public class JMeterMojo extends AbstractMojo {
     /**
      * Sets the list of exclude patterns to use in directory scan for Test files.
      * Relative to srcDir.
+     * Ignored if parameter jmeterTestFile file is given.
      *
      * @parameter
      */
@@ -154,6 +166,11 @@ public class JMeterMojo extends AbstractMojo {
     public void execute() throws MojoExecutionException, MojoFailureException {
         initSystemProps();
         try {
+            List<String> jmeterTestFiles = new ArrayList<String>();
+            List<String> results = new ArrayList<String>();
+            if(jmeterTestFile != null) {
+                jmeterTestFiles.add(jmeterTestFile.getName());
+            } else {
             DirectoryScanner scanner = new DirectoryScanner();
             scanner.setBasedir(srcDir);
             scanner.setIncludes(includes == null ? new String[] { "**/*.jmx" } : includes.toArray(new String[] {}));
@@ -161,8 +178,10 @@ public class JMeterMojo extends AbstractMojo {
                 scanner.setExcludes(excludes.toArray(new String[] {}));
             }
             scanner.scan();
-            List<String> results = new ArrayList<String>();
-            for (String file : scanner.getIncludedFiles()) {
+                jmeterTestFiles.addAll(Arrays.asList(scanner.getIncludedFiles()));
+            }
+
+            for (String file : jmeterTestFiles) {
                 results.add(executeTest(new File(srcDir, file)));
             }
             if (this.enableReports) {
@@ -198,8 +217,8 @@ public class JMeterMojo extends AbstractMojo {
     /**
      * returns the fileName with the configured reportPostfix
      * 
-     * @param fileName
-     * @return
+     * @param fileName the String to modify
+     * @return modified fileName
      */
     private String toOutputFileName(String fileName) {
         if (fileName.endsWith(".xml")) {               

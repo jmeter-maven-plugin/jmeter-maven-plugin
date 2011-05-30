@@ -39,7 +39,7 @@ public class JMeterMojo extends AbstractMojo {
 
 
     /**
-     * Directories to include in directory scan for JMeter Test XML files.
+     * Sets the list of include patterns to use in directory scan for JMeter Test XML files.
      * Relative to srcDir.
      *
      * @parameter
@@ -47,7 +47,7 @@ public class JMeterMojo extends AbstractMojo {
     private List<String> includes;
 
     /**
-     * Directories to include in directory scan for Test files.
+     * Sets the list of exclude patterns to use in directory scan for Test files.
      * Relative to srcDir.
      *
      * @parameter

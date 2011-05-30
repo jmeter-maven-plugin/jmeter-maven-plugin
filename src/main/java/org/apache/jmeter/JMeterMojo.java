@@ -23,6 +23,15 @@ import java.util.Set;
 import javax.xml.transform.TransformerException;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.DefaultArtifact;
+import org.apache.maven.artifact.handler.DefaultArtifactHandler;
+import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
+import org.apache.maven.artifact.resolver.ArtifactResolutionException;
+import org.apache.maven.artifact.resolver.ArtifactResolver;
+import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
+import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -164,6 +173,18 @@ public class JMeterMojo extends AbstractMojo {
 	private MavenProject mavenProject;
 
     /**
+     * @parameter expression="${component.org.apache.maven.artifact.resolver.ArtifactResolver}"
+     * @required
+     */
+    private ArtifactResolver artifactResolver;
+
+    /**
+     * @parameter expression="${localRepository}"
+     */
+    private ArtifactRepository localRepository;
+
+
+    /**
      * Postfix to add to report file.
      *
      * @parameter default-value="-report.html"
@@ -174,6 +195,10 @@ public class JMeterMojo extends AbstractMojo {
     private List<File> temporaryPropertyFiles = new ArrayList<File>();
     private File jmeterLog;
     private DateFormat fmt = new SimpleDateFormat("yyMMdd");
+
+    private static final String JMETER_ARTIFACT_GROUPID = "org.apache.jmeter";
+    private static final String JMETER_ARTIFACT_ID = "jmeter";
+    private static final String JMETER_ARTIFACT_VERSION = "2.4";
 
     /**
      * Run all JMeter tests.
@@ -290,10 +315,25 @@ public class JMeterMojo extends AbstractMojo {
      *
      * This mess is necessary because JMeter must load this info from a file.
      * Loading resources from classpath won't work.
+     * @throws org.apache.maven.plugin.MojoExecutionException exception
      */
-    private void resolveJmeterArtifact() {
-        //set search path for JMeter. JMeter loads function classes from this path.
-        System.setProperty("search_paths", repoDir.toString() + "/org/apache/jmeter/jmeter/2.4/jmeter-2.4.jar");
+    private void resolveJmeterArtifact() throws MojoExecutionException {
+        try {
+            //VersionRange needed for Maven 2.x compatibility.
+            VersionRange versionRange = VersionRange.createFromVersionSpec(JMETER_ARTIFACT_VERSION);
+            Artifact jmeterArtifact = new DefaultArtifact(JMETER_ARTIFACT_GROUPID, JMETER_ARTIFACT_ID, versionRange, "", "jar", "", new DefaultArtifactHandler());
+            List remoteArtifactRepositories = mavenProject.getRemoteArtifactRepositories();
+            artifactResolver.resolve(jmeterArtifact, remoteArtifactRepositories, localRepository);
+
+            System.setProperty("search_paths", jmeterArtifact.getFile().getAbsolutePath());
+
+        } catch (ArtifactResolutionException e) {
+            throw new MojoExecutionException("Could not resolve JMeter artifact. ", e);
+        } catch (ArtifactNotFoundException e) {
+            throw new MojoExecutionException("Could not find JMeter artifact. ", e);
+        } catch (InvalidVersionSpecificationException e) {
+            throw new MojoExecutionException("Invalid version declaration. ", e);
+        }
     }
 
     /**
@@ -361,6 +401,9 @@ public class JMeterMojo extends AbstractMojo {
             }
             if (remote) {
                 args.add("-r");
+            }
+            if(getLog().isDebugEnabled()) {
+                getLog().debug("JMeter is called with the following command line arguments: " + args.toString());
             }
             // This mess is necessary because JMeter likes to use System.exit.
             // We need to trap the exit call.

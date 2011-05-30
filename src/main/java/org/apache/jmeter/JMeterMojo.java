@@ -124,11 +124,6 @@ public class JMeterMojo extends AbstractMojo {
     private File jmeterCustomPropertiesFile;
 
     /**
-     * @parameter expression="${settings.localRepository}"
-     */
-    private File repoDir;
-
-    /**
      * JMeter Properties that override those given in jmeterProps
      * 
      * @parameter

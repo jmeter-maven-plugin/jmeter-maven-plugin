@@ -157,7 +157,7 @@ public class JMeterMojo extends AbstractMojo {
     private String resultFileName;
 
     /**
-     * @parameter expression="${component.org.apache.maven.artifact.resolver.ArtifactResolver}"
+     * @parameter expression="${project}"
      * @required
      */
     @SuppressWarnings("unused")

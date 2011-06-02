@@ -26,6 +26,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.project.MavenProject;
 import org.apache.tools.ant.DirectoryScanner;
 
 /**
@@ -36,39 +37,59 @@ import org.apache.tools.ant.DirectoryScanner;
  */
 public class JMeterMojo extends AbstractMojo {
 
+
     /**
+     * Sets the list of include patterns to use in directory scan for JMeter Test XML files.
+     * Relative to srcDir.
+     *
      * @parameter
      */
     private List<String> includes;
 
     /**
+     * Sets the list of exclude patterns to use in directory scan for Test files.
+     * Relative to srcDir.
+     *
      * @parameter
      */
     private List<String> excludes;
 
     /**
-     * @parameter expression="${basedir}/src/test/jmeter"
+     * Path under which JMeter test XML files are stored.
+     *
+     * @parameter expression="${jmeter.testfiles.basedir}"
+     *          default-value="${basedir}/src/test/jmeter"
      */
     private File srcDir;
 
     /**
-     * @parameter expression="${jmeter.reports.dir}" default-value="${basedir}/target/jmeter-report",
+     * Directory in which the reports are stored.
+     *
+     * @parameter expression="${jmeter.reports.dir}"
+     *          default-value="${basedir}/target/jmeter-report"
      */
     private File reportDir;
 
     /**
-     * @parameter default-value="true"
+     * Whether or not to generate reports after measurement.
      * 
+     * @parameter default-value="true"
      */
     private boolean enableReports;
 
     /**
+     * Custom Xslt which is used to create the report.
+     *
      * @parameter
      */
     private File reportXslt;
 
     /**
-     * @parameter expression="${basedir}/src/test/jmeter/jmeter.properties"
+     * Absolute path to JMeter default properties file.
+     *
+     * @parameter expression="${jmeter.properties}"
+     *          default-value="${basedir}/src/test/jmeter/jmeter.properties"
+     * @required
      */
     private File jmeterProps;
 
@@ -78,7 +99,7 @@ public class JMeterMojo extends AbstractMojo {
     private File repoDir;
 
     /**
-     * JMeter Properties to be overridden
+     * JMeter Properties that override those given in jmeterProps
      * 
      * @parameter
      */
@@ -86,16 +107,22 @@ public class JMeterMojo extends AbstractMojo {
 	private Map jmeterUserProperties;
 
     /**
-     * @parameter
+     * Use remote JMeter installation to run tests
+     *
+     * @parameter default-value=false
      */
     private boolean remote;
 
     /**
+     * Sets whether ErrorScanner should ignore failures in JMeter result file.
+     *
      * @parameter expression="${jmeter.ignore.failure}" default-value=false
      */
     private boolean jmeterIgnoreFailure;
     
     /**
+     * Sets whether ErrorScanner should ignore errors in JMeter result file.
+     *
      * @parameter expression="${jmeter.ignore.error}" default-value=false
      */
     private boolean jmeterIgnoreError;
@@ -103,11 +130,14 @@ public class JMeterMojo extends AbstractMojo {
 
     /**
      * @parameter expression="${project}"
+     * @required
      */
     @SuppressWarnings("unused")
-	private org.apache.maven.project.MavenProject mavenProject;
+	private MavenProject mavenProject;
 
     /**
+     * Postfix to add to report file.
+     *
      * @parameter default-value="-report.html"
      */
     private String reportPostfix;
@@ -165,7 +195,7 @@ public class JMeterMojo extends AbstractMojo {
     }
 
     /**
-     * returns the fileName with the configured outputFileExtension
+     * returns the fileName with the configured reportPostfix
      * 
      * @param fileName
      * @return
@@ -219,9 +249,13 @@ public class JMeterMojo extends AbstractMojo {
     }
 
     /**
-     * This mess is necessary because JMeter must load this info from a file. Do
-     * the same for the upgrade.properties Resources won't work.
+     * This mess is necessary because JMeter must load this info from a file.
+     * Loading resources from classpath won't work.
+     *
+     * @throws org.apache.maven.plugin.MojoExecutionException
+     *          Exception
      */
+    @SuppressWarnings("unchecked")
     private void createSaveServiceProps() throws MojoExecutionException {
         saveServiceProps = new File(workDir, "saveservice.properties");
         upgradeProps = new File(workDir, "upgrade.properties");
@@ -248,7 +282,10 @@ public class JMeterMojo extends AbstractMojo {
      * Executes a single JMeter test by building up a list of command line
      * parameters to pass to JMeter.start().
      * 
+     * @param test JMeter test XML
      * @return the report file names.
+     * @throws org.apache.maven.plugin.MojoExecutionException
+     *          Exception
      */
     private String executeTest(File test) throws MojoExecutionException {
 
@@ -328,7 +365,7 @@ public class JMeterMojo extends AbstractMojo {
         try {
             String line;
             while ((line = in.readLine()) != null) {
-                if (line.indexOf("Test has ended") != -1) {
+                if (line.contains("Test has ended")) {
                     testEnded = true;
                     break;
                 }
@@ -339,6 +376,7 @@ public class JMeterMojo extends AbstractMojo {
         return testEnded;
     }
 
+    @SuppressWarnings("unchecked")
     private ArrayList<String> getUserProperties() {
         ArrayList<String> propsList = new ArrayList<String>();
         if (jmeterUserProperties == null) {

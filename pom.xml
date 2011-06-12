@@ -17,16 +17,9 @@
             <id>Java maven repo</id>
             <url>http://download.java.net/maven/2</url>
         </repository>
-	<!--  Need this only for apache commons-lang -->
         <repository>
-            <id>jboss</id>
-            <url>http://repository.jboss.com/maven2/</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
+            <id>Maven JMeter Repo</id>
+            <url>http://yciabaud.github.com/jmeter-maven-plugin/repository</url>
         </repository>
     </repositories>
 
@@ -35,16 +28,6 @@
             <groupId>org.apache.ant</groupId>
             <artifactId>ant</artifactId>
             <version>1.8.1</version>
-        </dependency>
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>2.0</version>
-        </dependency>
-        <dependency>
-            <groupId>apache-lang</groupId>
-            <artifactId>commons-lang</artifactId>
-            <version>2.1</version>
         </dependency>
         <dependency>
             <groupId>org.apache.maven</groupId>
@@ -156,10 +139,10 @@
 
     <!-- github pages branch repository -->
     <distributionManagement>
-      <repository>
-        <id>gh-pages</id>
-        <url>file:///${basedir}/../maven-jmeter-plugin-pages/repository/</url>
-      </repository>
+        <repository>
+            <id>gh-pages</id>
+            <url>file:///${basedir}/../maven-jmeter-plugin-pages/repository/</url>
+        </repository>
     </distributionManagement>
 
 </project>

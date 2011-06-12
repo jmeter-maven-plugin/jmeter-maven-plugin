@@ -2,6 +2,7 @@
 \.project
 \.settings
 target
+.idea
+*.iml
 \.dorsync
-
 /nbactions.xml

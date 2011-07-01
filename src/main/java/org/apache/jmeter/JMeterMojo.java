@@ -17,7 +17,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.*;
 import java.util.Set;
 import javax.xml.transform.TransformerException;
 
@@ -424,7 +426,14 @@ public class JMeterMojo extends AbstractMojo {
 
             List<String> args = new ArrayList<String>();
             args.addAll(argsTmp);
-            args.addAll(getUserProperties());
+            /* 
+             * The user properties are passed across OK, but JMeter refuses to use them! Even after
+             * I rewrote the method to stop passing the arguments as one long quoted string.
+             * So, gonna have to do this the hard way and replace them in the jmx here. 
+             */
+            //args.addAll(getUserProperties());
+            expandParameters(getUserProperties(),test);
+            
             if (jmeterCustomPropertiesFile != null) {
                 args.add("-q");
                 args.add(jmeterCustomPropertiesFile.toString());
@@ -501,6 +510,13 @@ public class JMeterMojo extends AbstractMojo {
             } finally {
                 System.setSecurityManager(oldManager);
                 Thread.setDefaultUncaughtExceptionHandler(oldHandler);
+                // Replace the test with expanded parameters with the original
+                File origtest = new File(test.getCanonicalFile() + ".old");
+                if (test.delete()) {
+                	if ( !origtest.renameTo(test.getCanonicalFile()) ) {
+                		throw new MojoExecutionException("Can't rename test file: " + test.getName() );
+                	}
+                }
             }
 
             return resultFileName;
@@ -509,6 +525,89 @@ public class JMeterMojo extends AbstractMojo {
         }
     }
 
+    /**
+     * Replace the -J parameters that JMeter can use directly in the jmx file.
+     * @param replacements - list of replacements to make
+     * @param test - The full path and filename of the test to alter
+     * @throws MojoExecutionException exception
+     */
+    private void expandParameters(ArrayList<String> replacements,File test) throws MojoExecutionException {
+    	Map<String,String> m = new HashMap<String, String>();
+    	String strline;
+    	
+    	for (String s : replacements) {
+    		if( s.toLowerCase().startsWith("-j") == false ) {
+    			m.put(s.substring(0,s.indexOf("=")),s.substring(s.indexOf("=")+1));
+    		}
+    	}
+    	
+    	try {
+        	BufferedReader input = new BufferedReader(new FileReader(test));
+        	FileWriter output = new FileWriter(test.getCanonicalFile() + ".new");
+    		while (null != ((strline = input.readLine())))
+    		{
+    			strline = tokenReplace(strline,m);
+    			output.write(strline.concat("\n"));
+    		}
+    		
+    		input.close();
+    		output.close();
+    		File oldtest = new File( test.getCanonicalFile() + ".old" );
+    		if ( test.renameTo(oldtest.getCanonicalFile()) ) {
+    			File newtest = new File( test.getCanonicalFile() + ".new" );
+    			if ( !newtest.renameTo( test.getCanonicalFile() ) ) {
+    				throw new MojoExecutionException("Can't rename test file: " + newtest.getName() );
+    			}
+    		} else {
+    			throw new MojoExecutionException("Can't rename test file: " + test.getName() );
+    		}
+    	} catch (IOException e) {
+    		throw new MojoExecutionException("Can't read test file: " + test.getName(), e);
+    	}
+    }
+    
+    /**
+     * Replaces the parameter tokens with their values
+     * @param template The string to replace tokens in
+     * @param map The list of token keys and their associated replacement values
+     * @return A string with all tokens replaced
+     */
+    private static String tokenReplace ( final String template, final Map<String,String> map ) { 
+    	final StringBuilder list = new StringBuilder( "\\$\\{__P\\((" );
+    	for( final String key: map.keySet() ) {
+    		list.append( key ); list.append( "|" );
+    	}
+    	list.deleteCharAt(list.length()-1);
+    	list.append( ").*?\\)\\}" );
+    	Pattern pattern = Pattern.compile( list.toString() );
+    	Matcher matcher = pattern.matcher( template );
+    	final StringBuffer stringBuffer = new StringBuffer();
+    	while ( matcher.find() ) {
+    		final String string = matcher.group( 1 );
+    		matcher.appendReplacement( stringBuffer, map.get( string ) );
+    	}
+    	matcher.appendTail( stringBuffer );
+    	return tokenReplace( stringBuffer.toString() );
+    }
+    
+    /**
+     * Replaces the parameter tokens with their default values
+     * @param template The string to replace tokens in
+     * @return A string with tokens replaced with their default values
+     */
+    private static String tokenReplace ( final String template ) {
+    	final String regex = "\\$\\{__P\\(.*?,(.*?)\\)\\}";
+    	Pattern pattern = Pattern.compile( regex );
+    	Matcher matcher = pattern.matcher( template );
+    	final StringBuffer stringBuffer = new StringBuffer();
+    	while ( matcher.find() ) {
+    		final String string = matcher.group( 1 );
+    		matcher.appendReplacement( stringBuffer, string );
+    	}
+    	matcher.appendTail( stringBuffer );
+    	return stringBuffer.toString();
+    }
+    
     /**
      * Check JMeter logfile (provided as a BufferedReader) for End message.
      *

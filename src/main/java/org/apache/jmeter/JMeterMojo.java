@@ -341,7 +341,7 @@ public class JMeterMojo extends AbstractMojo {
             
             String searchPath = "";
 
-            for (Object oDep : mavenProject.getDependencyArtifacts()) {
+            for (Object oDep : mavenProject.getDependencies()) {
                 Dependency dep = (Dependency) oDep;
                 if (JMETER_ARTIFACT_GROUPID.equals(dep.getGroupId())) {
                     //VersionRange needed for Maven 2.x compatibility.

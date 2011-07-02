@@ -24,16 +24,6 @@ import java.util.Set;
 import javax.xml.transform.TransformerException;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.DefaultArtifact;
-import org.apache.maven.artifact.handler.DefaultArtifactHandler;
-import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
-import org.apache.maven.artifact.resolver.ArtifactResolutionException;
-import org.apache.maven.artifact.resolver.ArtifactResolver;
-import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
-import org.apache.maven.artifact.versioning.VersionRange;
-import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -165,18 +155,7 @@ public class JMeterMojo extends AbstractMojo {
      */
     @SuppressWarnings("unused")
     private MavenProject mavenProject;
-    
-    /**
-     * @parameter expression="${component.org.apache.maven.artifact.resolver.ArtifactResolver}"
-     * @required
-     */
-    private ArtifactResolver artifactResolver;
-    
-    /**
-     * @parameter expression="${localRepository}"
-     */
-    private ArtifactRepository localRepository;
-    
+       
     /**
      * HTTP proxy host name.
      * @parameter
@@ -211,7 +190,6 @@ public class JMeterMojo extends AbstractMojo {
     private File workDir;
     private File jmeterLog;
     private DateFormat fmt = new SimpleDateFormat("yyMMdd");
-    private static final String JMETER_ARTIFACT_GROUPID = "org.apache.jmeter";
     
     /**
      * Run all JMeter tests.
@@ -318,49 +296,12 @@ public class JMeterMojo extends AbstractMojo {
         workDir = new File("target" + File.separator + "jmeter");
         workDir.mkdirs();
         createTemporaryProperties();
-        resolveJmeterArtifact();
 
         jmeterLog = new File(workDir, "jmeter.log");
         try {
             System.setProperty("log_file", jmeterLog.getCanonicalPath());
         } catch (IOException e) {
             throw new MojoExecutionException("Can't get canonical path for log file", e);
-        }
-    }
-
-    /**
-     * Resolve JMeter artifact, set necessary System Property.
-     *
-     * This mess is necessary because JMeter must load this info from a file.
-     * Loading resources from classpath won't work.
-     *
-     * @throws org.apache.maven.plugin.MojoExecutionException exception
-     */
-    private void resolveJmeterArtifact() throws MojoExecutionException {
-        try {
-            
-            String searchPath = "";
-
-            for (Object oDep : mavenProject.getDependencies()) {
-                Dependency dep = (Dependency) oDep;
-                if (JMETER_ARTIFACT_GROUPID.equals(dep.getGroupId())) {
-                    //VersionRange needed for Maven 2.x compatibility.
-                    VersionRange versionRange = VersionRange.createFromVersionSpec(dep.getVersion());
-                    Artifact jmeterArtifact = new DefaultArtifact(JMETER_ARTIFACT_GROUPID, dep.getArtifactId(), versionRange, "", "jar", "", new DefaultArtifactHandler());
-                    List remoteArtifactRepositories = mavenProject.getRemoteArtifactRepositories();
-                    artifactResolver.resolve(jmeterArtifact, remoteArtifactRepositories, localRepository);
-                    searchPath += jmeterArtifact.getFile().getAbsolutePath() + ";";
-                }
-            }
-
-            System.setProperty("search_paths", searchPath);
-
-        } catch (ArtifactResolutionException e) {
-            throw new MojoExecutionException("Could not resolve JMeter artifact. ", e);
-        } catch (ArtifactNotFoundException e) {
-            throw new MojoExecutionException("Could not find JMeter artifact. ", e);
-        } catch (InvalidVersionSpecificationException e) {
-            throw new MojoExecutionException("Invalid version declaration. ", e);
         }
     }
 
@@ -373,7 +314,6 @@ public class JMeterMojo extends AbstractMojo {
      * @throws org.apache.maven.plugin.MojoExecutionException
      *          Exception
      */
-    @SuppressWarnings("unchecked")
     private void createTemporaryProperties() throws MojoExecutionException {
         List<File> temporaryPropertyFiles = new ArrayList<File>();
 

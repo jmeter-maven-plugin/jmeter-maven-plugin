@@ -187,6 +187,12 @@ public class JMeterMojo extends AbstractMojo {
      */
     private String reportPostfix;
     
+    /**
+     * Add date to the report file 
+     * @parameter default-value=true
+     */
+    private Boolean reportDated;
+    
     private File workDir;
     private File jmeterLog;
     private DateFormat fmt = new SimpleDateFormat("yyMMdd");
@@ -354,7 +360,9 @@ public class JMeterMojo extends AbstractMojo {
             getLog().info("Executing test: " + test.getCanonicalPath());
 
             if (resultFileName == null) {
-                resultFileName = reportDir.toString() + File.separator + test.getName().substring(0, test.getName().lastIndexOf(".")) + "-" + fmt.format(new Date()) + ".xml";
+            	resultFileName = reportDir.toString() + File.separator + test.getName().substring(0, test.getName().lastIndexOf("."));            	
+            	if ( reportDated ) resultFileName += "-" + fmt.format(new Date());
+            	resultFileName += ".xml";
             }
             //delete file if it already exists
             new File(resultFileName).delete();
@@ -467,8 +475,11 @@ public class JMeterMojo extends AbstractMojo {
 
     /**
      * Replace the -J parameters that JMeter can use directly in the jmx file.
+     * 
      * @param replacements - list of replacements to make
+     * 
      * @param test - The full path and filename of the test to alter
+     * 
      * @throws MojoExecutionException exception
      */
     private void expandParameters(ArrayList<String> replacements,File test) throws MojoExecutionException {
@@ -477,7 +488,8 @@ public class JMeterMojo extends AbstractMojo {
     	
     	for (String s : replacements) {
     		if( s.toLowerCase().startsWith("-j") == false ) {
-    			m.put(s.substring(0,s.indexOf("=")),s.substring(s.indexOf("=")+1));
+    			if ( ! s.substring(s.indexOf("=")+1).equals("null") ) 
+    				m.put(s.substring(0,s.indexOf("=")),s.substring(s.indexOf("=")+1));
     		}
     	}
     	

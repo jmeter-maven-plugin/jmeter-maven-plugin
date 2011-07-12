@@ -152,13 +152,6 @@ public class JMeterMojo extends AbstractMojo {
     private boolean jmeterIgnoreError;
 
     /**
-     * Absolute path to File to log results to.
-     *
-     * @parameter
-     */
-    private String resultFileName;
-
-    /**
      * @parameter expression="${project}"
      * @required
      */
@@ -433,9 +426,7 @@ public class JMeterMojo extends AbstractMojo {
         try {
             getLog().info("Executing test: " + test.getCanonicalPath());
 
-            if (resultFileName == null) {
-                resultFileName = reportDir.toString() + File.separator + test.getName().substring(0, test.getName().lastIndexOf(".")) + "-" + fmt.format(new Date()) + ".xml";
-            }
+            String resultFileName = reportDir.toString() + File.separator + test.getName().substring(0, test.getName().lastIndexOf(".")) + "-" + fmt.format(new Date()) + ".xml";
             //delete file if it already exists
             new File(resultFileName).delete();
             List<String> argsTmp = Arrays.asList("-n", "-t",

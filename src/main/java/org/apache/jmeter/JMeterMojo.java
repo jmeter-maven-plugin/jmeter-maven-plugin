@@ -15,6 +15,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -40,8 +41,8 @@ import org.apache.tools.ant.DirectoryScanner;
 
 /**
  * JMeter Maven plugin.
- * 
- * @author Tim McCune 
+ *
+ * @author Tim McCune
  * @goal jmeter
  * @requiresProject true
  */
@@ -55,7 +56,7 @@ public class JMeterMojo extends AbstractMojo {
      * @parameter
      */
     private File jmeterTestFile;
-    
+
     /**
      * Sets the list of include patterns to use in directory scan for JMeter Test XML files.
      * Relative to srcDir.
@@ -65,7 +66,7 @@ public class JMeterMojo extends AbstractMojo {
      * @parameter
      */
     private List<String> includes;
-    
+
     /**
      * Sets the list of exclude patterns to use in directory scan for Test files.
      * Relative to srcDir.
@@ -74,7 +75,7 @@ public class JMeterMojo extends AbstractMojo {
      * @parameter
      */
     private List<String> excludes;
-    
+
     /**
      * Path under which JMeter test XML files are stored.
      *
@@ -82,7 +83,7 @@ public class JMeterMojo extends AbstractMojo {
      *          default-value="${basedir}/src/test/jmeter"
      */
     private File srcDir;
-    
+
     /**
      * Directory in which the reports are stored.
      *
@@ -90,21 +91,21 @@ public class JMeterMojo extends AbstractMojo {
      *          default-value="${basedir}/target/jmeter-report"
      */
     private File reportDir;
-    
+
     /**
      * Whether or not to generate reports after measurement.
-     * 
+     *
      * @parameter default-value="true"
      */
     private boolean enableReports;
-    
+
     /**
      * Custom Xslt which is used to create the report.
      *
      * @parameter
      */
     private File reportXslt;
-    
+
     /**
      * Absolute path to JMeter default properties file.
      * The default properties file is part of a JMeter installation and sets basic properties needed for running JMeter.
@@ -114,7 +115,7 @@ public class JMeterMojo extends AbstractMojo {
      * @required
      */
     private File jmeterDefaultPropertiesFile;
-    
+
     /**
      * Absolute path to JMeter custom (test dependent) properties file.
      *
@@ -123,94 +124,94 @@ public class JMeterMojo extends AbstractMojo {
     private File jmeterCustomPropertiesFile;
     /**
      * JMeter Properties that override those given in jmeterProps
-     * 
+     *
      * @parameter
      */
     @SuppressWarnings("rawtypes")
     private Map jmeterUserProperties;
-    
+
     /**
      * Use remote JMeter installation to run tests
      *
      * @parameter default-value=false
      */
     private boolean remote;
-    
+
     /**
      * Sets whether ErrorScanner should ignore failures in JMeter result file.
      *
      * @parameter expression="${jmeter.ignore.failure}" default-value=false
      */
     private boolean jmeterIgnoreFailure;
-    
+
     /**
      * Sets whether ErrorScanner should ignore errors in JMeter result file.
      *
      * @parameter expression="${jmeter.ignore.error}" default-value=false
      */
     private boolean jmeterIgnoreError;
-    
-    /**
-     * Absolute path to File to log results to.
-     *
-     * @parameter
-     */
-    private String resultFileName;
-    
+
     /**
      * @parameter expression="${project}"
      * @required
      */
     @SuppressWarnings("unused")
     private MavenProject mavenProject;
-    
+
     /**
      * @parameter expression="${component.org.apache.maven.artifact.resolver.ArtifactResolver}"
      * @required
      */
     private ArtifactResolver artifactResolver;
-    
+
     /**
      * @parameter expression="${localRepository}"
      */
     private ArtifactRepository localRepository;
-    
+
     /**
      * HTTP proxy host name.
      * @parameter
      */
     private String proxyHost;
-    
+
     /**
      * HTTP proxy port.
      * @parameter expression="80"
      */
     private Integer proxyPort;
-    
+
     /**
      * HTTP proxy username.
      * @parameter
      */
     private String proxyUsername;
-    
+
     /**
      * HTTP proxy user password.
      * @parameter
      */
     private String proxyPassword;
-    
+
     /**
      * Postfix to add to report file.
      *
      * @parameter default-value="-report.html"
      */
     private String reportPostfix;
-    
+
+    /**
+     * Sets whether the test execution shall preserve the order of patterns in include clauses.
+     *
+     * @parameter expression="${jmeter.preserve.includeOrder}" default-value=false
+     */
+    private boolean jmeterPreserveIncludeOrder;
+
     private File workDir;
     private File jmeterLog;
     private DateFormat fmt = new SimpleDateFormat("yyMMdd");
     private static final String JMETER_ARTIFACT_GROUPID = "org.apache.jmeter";
-    
+
     /**
      * Run all JMeter tests.
      */
@@ -229,7 +230,11 @@ public class JMeterMojo extends AbstractMojo {
                 scanner.setExcludes(excludes.toArray(new String[]{}));
             }
             scanner.scan();
-            jmeterTestFiles.addAll(Arrays.asList(scanner.getIncludedFiles()));
+            final List<String> includedFiles = Arrays.asList(scanner.getIncludedFiles());
+            if (jmeterPreserveIncludeOrder) {
+                Collections.sort(includedFiles, new IncludesComparator(includes));
+            }
+            jmeterTestFiles.addAll(includedFiles);
         }
 
         for (String file : jmeterTestFiles) {
@@ -262,7 +267,7 @@ public class JMeterMojo extends AbstractMojo {
 
     /**
      * returns the fileName with the configured reportPostfix
-     * 
+     *
      * @param fileName the String to modify
      *
      * @return modified fileName
@@ -336,18 +341,28 @@ public class JMeterMojo extends AbstractMojo {
      */
     private void resolveJmeterArtifact() throws MojoExecutionException {
         try {
-            
+
             String searchPath = "";
 
             for (Object oDep : mavenProject.getDependencyArtifacts()) {
-                Dependency dep = (Dependency) oDep;
-                if (JMETER_ARTIFACT_GROUPID.equals(dep.getGroupId())) {
-                    //VersionRange needed for Maven 2.x compatibility.
-                    VersionRange versionRange = VersionRange.createFromVersionSpec(dep.getVersion());
-                    Artifact jmeterArtifact = new DefaultArtifact(JMETER_ARTIFACT_GROUPID, dep.getArtifactId(), versionRange, "", "jar", "", new DefaultArtifactHandler());
-                    List remoteArtifactRepositories = mavenProject.getRemoteArtifactRepositories();
-                    artifactResolver.resolve(jmeterArtifact, remoteArtifactRepositories, localRepository);
-                    searchPath += jmeterArtifact.getFile().getAbsolutePath() + ";";
+                if (oDep instanceof Dependency) {
+                    Dependency dep = (Dependency) oDep;
+                    if (JMETER_ARTIFACT_GROUPID.equals(dep.getGroupId())) {
+                        //VersionRange needed for Maven 2.x compatibility.
+                        VersionRange versionRange = VersionRange.createFromVersionSpec(dep.getVersion());
+                        Artifact jmeterArtifact = new DefaultArtifact(JMETER_ARTIFACT_GROUPID, dep.getArtifactId(), versionRange, "", "jar", "", new DefaultArtifactHandler());
+                        List remoteArtifactRepositories = mavenProject.getRemoteArtifactRepositories();
+                        artifactResolver.resolve(jmeterArtifact, remoteArtifactRepositories, localRepository);
+                        searchPath += jmeterArtifact.getFile().getAbsolutePath() + ";";
+                    }
+                }
+                if (oDep instanceof Artifact) {
+                    Artifact jmeterArtifact = (Artifact) oDep;
+                    if (JMETER_ARTIFACT_GROUPID.equals(jmeterArtifact.getGroupId())) {
+                        List remoteArtifactRepositories = mavenProject.getRemoteArtifactRepositories();
+                        artifactResolver.resolve(jmeterArtifact, remoteArtifactRepositories, localRepository);
+                        searchPath += jmeterArtifact.getFile().getAbsolutePath() + ";";
+                    }
                 }
             }
 
@@ -398,7 +413,7 @@ public class JMeterMojo extends AbstractMojo {
     /**
      * Executes a single JMeter test by building up a list of command line
      * parameters to pass to JMeter.start().
-     * 
+     *
      * @param test JMeter test XML
      *
      * @return the report file names.
@@ -411,9 +426,7 @@ public class JMeterMojo extends AbstractMojo {
         try {
             getLog().info("Executing test: " + test.getCanonicalPath());
 
-            if (resultFileName == null) {
-                resultFileName = reportDir.toString() + File.separator + test.getName().substring(0, test.getName().lastIndexOf(".")) + "-" + fmt.format(new Date()) + ".xml";
-            }
+            String resultFileName = reportDir.toString() + File.separator + test.getName().substring(0, test.getName().lastIndexOf(".")) + "-" + fmt.format(new Date()) + ".xml";
             //delete file if it already exists
             new File(resultFileName).delete();
             List<String> argsTmp = Arrays.asList("-n", "-t",

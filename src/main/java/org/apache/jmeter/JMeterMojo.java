@@ -17,21 +17,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.*;
 import java.util.Set;
 import javax.xml.transform.TransformerException;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.DefaultArtifact;
-import org.apache.maven.artifact.handler.DefaultArtifactHandler;
-import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
-import org.apache.maven.artifact.resolver.ArtifactResolutionException;
-import org.apache.maven.artifact.resolver.ArtifactResolver;
-import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
-import org.apache.maven.artifact.versioning.VersionRange;
-import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -163,18 +155,7 @@ public class JMeterMojo extends AbstractMojo {
      */
     @SuppressWarnings("unused")
     private MavenProject mavenProject;
-    
-    /**
-     * @parameter expression="${component.org.apache.maven.artifact.resolver.ArtifactResolver}"
-     * @required
-     */
-    private ArtifactResolver artifactResolver;
-    
-    /**
-     * @parameter expression="${localRepository}"
-     */
-    private ArtifactRepository localRepository;
-    
+       
     /**
      * HTTP proxy host name.
      * @parameter
@@ -206,10 +187,15 @@ public class JMeterMojo extends AbstractMojo {
      */
     private String reportPostfix;
     
+    /**
+     * Add date to the report file 
+     * @parameter default-value=true
+     */
+    private Boolean reportDated;
+    
     private File workDir;
     private File jmeterLog;
     private DateFormat fmt = new SimpleDateFormat("yyMMdd");
-    private static final String JMETER_ARTIFACT_GROUPID = "org.apache.jmeter";
     
     /**
      * Run all JMeter tests.
@@ -316,49 +302,12 @@ public class JMeterMojo extends AbstractMojo {
         workDir = new File("target" + File.separator + "jmeter");
         workDir.mkdirs();
         createTemporaryProperties();
-        resolveJmeterArtifact();
 
         jmeterLog = new File(workDir, "jmeter.log");
         try {
             System.setProperty("log_file", jmeterLog.getCanonicalPath());
         } catch (IOException e) {
             throw new MojoExecutionException("Can't get canonical path for log file", e);
-        }
-    }
-
-    /**
-     * Resolve JMeter artifact, set necessary System Property.
-     *
-     * This mess is necessary because JMeter must load this info from a file.
-     * Loading resources from classpath won't work.
-     *
-     * @throws org.apache.maven.plugin.MojoExecutionException exception
-     */
-    private void resolveJmeterArtifact() throws MojoExecutionException {
-        try {
-            
-            String searchPath = "";
-
-            for (Object oDep : mavenProject.getDependencyArtifacts()) {
-                Dependency dep = (Dependency) oDep;
-                if (JMETER_ARTIFACT_GROUPID.equals(dep.getGroupId())) {
-                    //VersionRange needed for Maven 2.x compatibility.
-                    VersionRange versionRange = VersionRange.createFromVersionSpec(dep.getVersion());
-                    Artifact jmeterArtifact = new DefaultArtifact(JMETER_ARTIFACT_GROUPID, dep.getArtifactId(), versionRange, "", "jar", "", new DefaultArtifactHandler());
-                    List remoteArtifactRepositories = mavenProject.getRemoteArtifactRepositories();
-                    artifactResolver.resolve(jmeterArtifact, remoteArtifactRepositories, localRepository);
-                    searchPath += jmeterArtifact.getFile().getAbsolutePath() + ";";
-                }
-            }
-
-            System.setProperty("search_paths", searchPath);
-
-        } catch (ArtifactResolutionException e) {
-            throw new MojoExecutionException("Could not resolve JMeter artifact. ", e);
-        } catch (ArtifactNotFoundException e) {
-            throw new MojoExecutionException("Could not find JMeter artifact. ", e);
-        } catch (InvalidVersionSpecificationException e) {
-            throw new MojoExecutionException("Invalid version declaration. ", e);
         }
     }
 
@@ -371,7 +320,6 @@ public class JMeterMojo extends AbstractMojo {
      * @throws org.apache.maven.plugin.MojoExecutionException
      *          Exception
      */
-    @SuppressWarnings("unchecked")
     private void createTemporaryProperties() throws MojoExecutionException {
         List<File> temporaryPropertyFiles = new ArrayList<File>();
 
@@ -412,7 +360,9 @@ public class JMeterMojo extends AbstractMojo {
             getLog().info("Executing test: " + test.getCanonicalPath());
 
             if (resultFileName == null) {
-                resultFileName = reportDir.toString() + File.separator + test.getName().substring(0, test.getName().lastIndexOf(".")) + "-" + fmt.format(new Date()) + ".xml";
+            	resultFileName = reportDir.toString() + File.separator + test.getName().substring(0, test.getName().lastIndexOf("."));            	
+            	if ( reportDated ) resultFileName += "-" + fmt.format(new Date());
+            	resultFileName += ".xml";
             }
             //delete file if it already exists
             new File(resultFileName).delete();
@@ -424,7 +374,14 @@ public class JMeterMojo extends AbstractMojo {
 
             List<String> args = new ArrayList<String>();
             args.addAll(argsTmp);
-            args.addAll(getUserProperties());
+            /* 
+             * The user properties are passed across OK, but JMeter refuses to use them! Even after
+             * I rewrote the method to stop passing the arguments as one long quoted string.
+             * So, gonna have to do this the hard way and replace them in the jmx here. 
+             */
+            //args.addAll(getUserProperties());
+            expandParameters(getUserProperties(),test);
+            
             if (jmeterCustomPropertiesFile != null) {
                 args.add("-q");
                 args.add(jmeterCustomPropertiesFile.toString());
@@ -501,6 +458,13 @@ public class JMeterMojo extends AbstractMojo {
             } finally {
                 System.setSecurityManager(oldManager);
                 Thread.setDefaultUncaughtExceptionHandler(oldHandler);
+                // Replace the test with expanded parameters with the original
+                File origtest = new File(test.getCanonicalFile() + ".old");
+                if (test.delete()) {
+                	if ( !origtest.renameTo(test.getCanonicalFile()) ) {
+                		throw new MojoExecutionException("Can't rename test file: " + test.getName() );
+                	}
+                }
             }
 
             return resultFileName;
@@ -509,6 +473,93 @@ public class JMeterMojo extends AbstractMojo {
         }
     }
 
+    /**
+     * Replace the -J parameters that JMeter can use directly in the jmx file.
+     * 
+     * @param replacements - list of replacements to make
+     * 
+     * @param test - The full path and filename of the test to alter
+     * 
+     * @throws MojoExecutionException exception
+     */
+    private void expandParameters(ArrayList<String> replacements,File test) throws MojoExecutionException {
+    	Map<String,String> m = new HashMap<String, String>();
+    	String strline;
+    	
+    	for (String s : replacements) {
+    		if( s.toLowerCase().startsWith("-j") == false ) {
+    			if ( ! s.substring(s.indexOf("=")+1).equals("null") ) 
+    				m.put(s.substring(0,s.indexOf("=")),s.substring(s.indexOf("=")+1));
+    		}
+    	}
+    	
+    	try {
+        	BufferedReader input = new BufferedReader(new FileReader(test));
+        	FileWriter output = new FileWriter(test.getCanonicalFile() + ".new");
+    		while (null != ((strline = input.readLine())))
+    		{
+    			strline = tokenReplace(strline,m);
+    			output.write(strline.concat("\n"));
+    		}
+    		
+    		input.close();
+    		output.close();
+    		File oldtest = new File( test.getCanonicalFile() + ".old" );
+    		if ( test.renameTo(oldtest.getCanonicalFile()) ) {
+    			File newtest = new File( test.getCanonicalFile() + ".new" );
+    			if ( !newtest.renameTo( test.getCanonicalFile() ) ) {
+    				throw new MojoExecutionException("Can't rename test file: " + newtest.getName() );
+    			}
+    		} else {
+    			throw new MojoExecutionException("Can't rename test file: " + test.getName() );
+    		}
+    	} catch (IOException e) {
+    		throw new MojoExecutionException("Can't read test file: " + test.getName(), e);
+    	}
+    }
+    
+    /**
+     * Replaces the parameter tokens with their values
+     * @param template The string to replace tokens in
+     * @param map The list of token keys and their associated replacement values
+     * @return A string with all tokens replaced
+     */
+    private static String tokenReplace ( final String template, final Map<String,String> map ) { 
+    	final StringBuilder list = new StringBuilder( "\\$\\{__P\\((" );
+    	for( final String key: map.keySet() ) {
+    		list.append( key ); list.append( "|" );
+    	}
+    	list.deleteCharAt(list.length()-1);
+    	list.append( ").*?\\)\\}" );
+    	Pattern pattern = Pattern.compile( list.toString() );
+    	Matcher matcher = pattern.matcher( template );
+    	final StringBuffer stringBuffer = new StringBuffer();
+    	while ( matcher.find() ) {
+    		final String string = matcher.group( 1 );
+    		matcher.appendReplacement( stringBuffer, map.get( string ) );
+    	}
+    	matcher.appendTail( stringBuffer );
+    	return tokenReplace( stringBuffer.toString() );
+    }
+    
+    /**
+     * Replaces the parameter tokens with their default values
+     * @param template The string to replace tokens in
+     * @return A string with tokens replaced with their default values
+     */
+    private static String tokenReplace ( final String template ) {
+    	final String regex = "\\$\\{__P\\(.*?,(.*?)\\)\\}";
+    	Pattern pattern = Pattern.compile( regex );
+    	Matcher matcher = pattern.matcher( template );
+    	final StringBuffer stringBuffer = new StringBuffer();
+    	while ( matcher.find() ) {
+    		final String string = matcher.group( 1 );
+    		matcher.appendReplacement( stringBuffer, string );
+    	}
+    	matcher.appendTail( stringBuffer );
+    	return stringBuffer.toString();
+    }
+    
     /**
      * Check JMeter logfile (provided as a BufferedReader) for End message.
      *

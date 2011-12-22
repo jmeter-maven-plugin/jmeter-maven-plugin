@@ -4,5 +4,7 @@
 target
 .idea
 *.iml
+*.ipr
+*.iws
 \.dorsync
 /nbactions.xml

@@ -44,7 +44,7 @@ public class JMeterArgumentsArray {
     }
 
     public void setProxyHostDetails(String value, int port) {
-        if (value == null) return;
+        if (value == null || value.equals("")) return;
         this.proxyHost = value;
         this.proxyPort = Integer.toString(port);
         this.argumentMap.put(JMeterCommandLineArguments.PROXY_HOST, true);

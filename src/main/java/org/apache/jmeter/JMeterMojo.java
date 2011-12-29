@@ -19,7 +19,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import javax.xml.transform.TransformerException;
 
 import org.apache.commons.io.IOUtils;
@@ -49,38 +48,26 @@ import org.apache.tools.ant.DirectoryScanner;
 public class JMeterMojo extends AbstractMojo {
 
     /**
-     * Path to a Jmeter test XML file.
+     * Sets the list of include patterns to use in directory scan for JMX files.
      * Relative to srcDir.
-     * May be declared instead of the parameter includes.
      *
      * @parameter
      */
-    private File jmeterTestFile;
-
-    /**
-     * Sets the list of include patterns to use in directory scan for JMeter Test XML files.
-     * Relative to srcDir.
-     * May be declared instead of a single jmeterTestFile.
-     * Ignored if parameter jmeterTestFile is given.
-     *
-     * @parameter
-     */
-    private List<String> includes;
+    private List<String> jMeterTestFiles;
 
     /**
      * Sets the list of exclude patterns to use in directory scan for Test files.
      * Relative to srcDir.
-     * Ignored if parameter jmeterTestFile file is given.
      *
      * @parameter
      */
-    private List<String> excludes;
+    private List<String> excludeJMeterTestFiles;
 
     /**
-     * Path under which JMeter test XML files are stored.
+     * Path under which JMX files are stored.
      *
      * @parameter expression="${jmeter.testfiles.basedir}"
-     *          default-value="${basedir}/src/test/jmeter"
+     * default-value="${basedir}/src/test/jmeter"
      */
     private File srcDir;
 
@@ -88,7 +75,7 @@ public class JMeterMojo extends AbstractMojo {
      * Directory in which the reports are stored.
      *
      * @parameter expression="${jmeter.reports.dir}"
-     *          default-value="${basedir}/target/jmeter-report"
+     * default-value="${basedir}/target/jmeter-report"
      */
     private File reportDir;
 
@@ -111,7 +98,7 @@ public class JMeterMojo extends AbstractMojo {
      * The default properties file is part of a JMeter installation and sets basic properties needed for running JMeter.
      *
      * @parameter expression="${jmeter.properties}"
-     *          default-value="${basedir}/src/test/jmeter/jmeter.properties"
+     * default-value="${basedir}/src/test/jmeter/jmeter.properties"
      * @required
      */
     private File jmeterDefaultPropertiesFile;
@@ -171,7 +158,7 @@ public class JMeterMojo extends AbstractMojo {
 
     /**
      * HTTP proxy host name.
-     * @parameter
+     * @parameter default-value=null
      */
     private String proxyHost;
 
@@ -183,13 +170,13 @@ public class JMeterMojo extends AbstractMojo {
 
     /**
      * HTTP proxy username.
-     * @parameter
+     * @parameter default-value=null
      */
     private String proxyUsername;
 
     /**
      * HTTP proxy user password.
-     * @parameter
+     * @parameter default-value=null
      */
     private String proxyPassword;
 
@@ -209,35 +196,19 @@ public class JMeterMojo extends AbstractMojo {
 
     private File workDir;
     private File jmeterLog;
-    private DateFormat fmt = new SimpleDateFormat("yyMMdd");
     private static final String JMETER_ARTIFACT_GROUPID = "org.apache.jmeter";
+    private JMeterArgumentsArray testArgs;
 
     /**
      * Run all JMeter tests.
      */
     public void execute() throws MojoExecutionException, MojoFailureException {
-        initSystemProps();
-
-        List<String> jmeterTestFiles = new ArrayList<String>();
+        createWorkingFiles();
+        createTemporaryProperties();
+        resolveJmeterArtifact();
+        initialiseJMeterArgumentsArray();
         List<String> results = new ArrayList<String>();
-        if (jmeterTestFile != null) {
-            jmeterTestFiles.add(jmeterTestFile.getName());
-        } else {
-            DirectoryScanner scanner = new DirectoryScanner();
-            scanner.setBasedir(srcDir);
-            scanner.setIncludes(includes == null ? new String[]{"**/*.jmx"} : includes.toArray(new String[]{}));
-            if (excludes != null) {
-                scanner.setExcludes(excludes.toArray(new String[]{}));
-            }
-            scanner.scan();
-            final List<String> includedFiles = Arrays.asList(scanner.getIncludedFiles());
-            if (jmeterPreserveIncludeOrder) {
-                Collections.sort(includedFiles, new IncludesComparator(includes));
-            }
-            jmeterTestFiles.addAll(includedFiles);
-        }
-
-        for (String file : jmeterTestFiles) {
+        for (String file : generateTestList()) {
             results.add(executeTest(new File(srcDir, file)));
         }
         if (this.enableReports) {
@@ -297,7 +268,7 @@ public class JMeterMojo extends AbstractMojo {
      * @param results List of JMeter result files.
      *
      * @throws MojoExecutionException exception
-     * @throws MojoFailureException exception
+     * @throws MojoFailureException   exception
      */
     private void checkForErrors(List<String> results) throws MojoExecutionException, MojoFailureException {
         ErrorScanner scanner = new ErrorScanner(this.jmeterIgnoreError, this.jmeterIgnoreFailure);
@@ -312,17 +283,9 @@ public class JMeterMojo extends AbstractMojo {
         }
     }
 
-    /**
-     * Initialize System Properties needed for JMeter run.
-     *
-     * @throws MojoExecutionException exception
-     */
-    private void initSystemProps() throws MojoExecutionException {
+    private void createWorkingFiles() throws MojoExecutionException {
         workDir = new File("target" + File.separator + "jmeter");
         workDir.mkdirs();
-        createTemporaryProperties();
-        resolveJmeterArtifact();
-
         jmeterLog = new File(workDir, "jmeter.log");
         try {
             System.setProperty("log_file", jmeterLog.getCanonicalPath());
@@ -333,7 +296,7 @@ public class JMeterMojo extends AbstractMojo {
 
     /**
      * Resolve JMeter artifact, set necessary System Property.
-     *
+     * <p/>
      * This mess is necessary because JMeter must load this info from a file.
      * Loading resources from classpath won't work.
      *
@@ -341,9 +304,7 @@ public class JMeterMojo extends AbstractMojo {
      */
     private void resolveJmeterArtifact() throws MojoExecutionException {
         try {
-
             String searchPath = "";
-
             for (Object oDep : mavenProject.getDependencyArtifacts()) {
                 if (oDep instanceof Dependency) {
                     Dependency dep = (Dependency) oDep;
@@ -365,9 +326,7 @@ public class JMeterMojo extends AbstractMojo {
                     }
                 }
             }
-
             System.setProperty("search_paths", searchPath);
-
         } catch (ArtifactResolutionException e) {
             throw new MojoExecutionException("Could not resolve JMeter artifact. ", e);
         } catch (ArtifactNotFoundException e) {
@@ -379,9 +338,12 @@ public class JMeterMojo extends AbstractMojo {
 
     /**
      * Create temporary property files and set necessary System Properties.
-     *
+     * <p/>
      * This mess is necessary because JMeter must load this info from a file.
      * Loading resources from classpath won't work.
+     * <p/>
+     * ARGH JMeter assumes all paths set in system properties are relative to jmeter_home.
+     * Double ARGH It also assumes that upgrade.properties is relative to jmeter_home/bin.
      *
      * @throws org.apache.maven.plugin.MojoExecutionException
      *          Exception
@@ -389,13 +351,14 @@ public class JMeterMojo extends AbstractMojo {
     @SuppressWarnings("unchecked")
     private void createTemporaryProperties() throws MojoExecutionException {
         List<File> temporaryPropertyFiles = new ArrayList<File>();
-
-        String jmeterTargetDir = File.separator + "target" + File.separator + "jmeter" + File.separator;
         File saveServiceProps = new File(workDir, "saveservice.properties");
-        System.setProperty("saveservice_properties", jmeterTargetDir + saveServiceProps.getName());
+        System.setProperty("saveservice_properties", "/" + saveServiceProps.getName());
         temporaryPropertyFiles.add(saveServiceProps);
-        File upgradeProps = new File(workDir, "upgrade.properties");
-        System.setProperty("upgrade_properties", jmeterTargetDir + upgradeProps.getName());
+        //Seems JMeter
+        File binDir = new File(workDir, "bin");
+        binDir.mkdirs();
+        File upgradeProps = new File(binDir, "upgrade.properties");
+        System.setProperty("upgrade_properties", "/" + upgradeProps.getName());
         temporaryPropertyFiles.add(upgradeProps);
 
         for (File propertyFile : temporaryPropertyFiles) {
@@ -405,9 +368,40 @@ public class JMeterMojo extends AbstractMojo {
                 out.flush();
                 out.close();
             } catch (IOException e) {
-                throw new MojoExecutionException("Could not create temporary property file " + propertyFile.getName() + " in directory " + jmeterTargetDir, e);
+                throw new MojoExecutionException("Could not create temporary property file " + propertyFile.getName() + " in directory " + workDir, e);
             }
         }
+    }
+
+    private void initialiseJMeterArgumentsArray() {
+        testArgs = new JMeterArgumentsArray(reportDir.getAbsolutePath());
+        testArgs.setJMeterHome(this.workDir.getAbsolutePath());
+        testArgs.setJMeterDefaultPropertiesFile(this.jmeterDefaultPropertiesFile);
+        testArgs.setACustomPropertiesFile(this.jmeterCustomPropertiesFile);
+        testArgs.setUserProperties(this.jmeterUserProperties);
+        testArgs.setUseRemoteHost(this.remote);
+        testArgs.setProxyHost(this.proxyHost);
+        testArgs.setProxyPort(this.proxyPort);
+        testArgs.setProxyUsername(this.proxyUsername);
+        testArgs.setProxyPassword(this.proxyPassword);
+    }
+
+    private List<String> generateTestList() {
+        List<String> jmeterTestFiles = new ArrayList<String>();
+        DirectoryScanner scanner = new DirectoryScanner();
+        scanner.setBasedir(srcDir);
+        scanner.setIncludes(this.jMeterTestFiles == null ? new String[]{"**/*.jmx"} : this.jMeterTestFiles.toArray(new String[]{}));
+        if (excludeJMeterTestFiles != null) {
+            scanner.setExcludes(excludeJMeterTestFiles.toArray(new String[]{}));
+        }
+        scanner.scan();
+        final List<String> includedFiles = Arrays.asList(scanner.getIncludedFiles());
+        if (jmeterPreserveIncludeOrder) {
+            Collections.sort(includedFiles, new IncludesComparator(this.jMeterTestFiles));
+        }
+        jmeterTestFiles.addAll(includedFiles);
+
+        return jmeterTestFiles;
     }
 
     /**
@@ -415,9 +409,7 @@ public class JMeterMojo extends AbstractMojo {
      * parameters to pass to JMeter.start().
      *
      * @param test JMeter test XML
-     *
      * @return the report file names.
-     *
      * @throws org.apache.maven.plugin.MojoExecutionException
      *          Exception
      */
@@ -425,46 +417,19 @@ public class JMeterMojo extends AbstractMojo {
 
         try {
             getLog().info("Executing test: " + test.getCanonicalPath());
+            testArgs.setTestFile(test);
+            //Delete results file if it already exists
+            new File(testArgs.getResultsFilename()).delete();
 
-            String resultFileName = reportDir.toString() + File.separator + test.getName().substring(0, test.getName().lastIndexOf(".")) + "-" + fmt.format(new Date()) + ".xml";
-            //delete file if it already exists
-            new File(resultFileName).delete();
-            List<String> argsTmp = Arrays.asList("-n", "-t",
-                    test.getCanonicalPath(),
-                    "-l", resultFileName,
-                    "-p", jmeterDefaultPropertiesFile.toString(),
-                    "-d", System.getProperty("user.dir"));
+//                getLog().info("Setting HTTP proxy to " + proxyHost + ":" + proxyPort);
+//                getLog().info("Logging with " + proxyUsername + ":" + proxyPassword);
 
-            List<String> args = new ArrayList<String>();
-            args.addAll(argsTmp);
-            args.addAll(getUserProperties());
-            if (jmeterCustomPropertiesFile != null) {
-                args.add("-q");
-                args.add(jmeterCustomPropertiesFile.toString());
-            }
-            if (remote) {
-                args.add("-r");
-            }
-
-            if (proxyHost != null && !proxyHost.equals("")) {
-                args.add("-H");
-                args.add(proxyHost);
-                args.add("-P");
-                args.add(proxyPort.toString());
-                getLog().info("Setting HTTP proxy to " + proxyHost + ":" + proxyPort);
-            }
-
-            if (proxyUsername != null && !proxyUsername.equals("")) {
-                args.add("-u");
-                args.add(proxyUsername);
-                args.add("-a");
-                args.add(proxyPassword);
-                getLog().info("Logging with " + proxyUsername + ":" + proxyPassword);
-            }
 
             if (getLog().isDebugEnabled()) {
-                getLog().debug("JMeter is called with the following command line arguments: " + args.toString());
+                getLog().debug("JMeter is called with the following command line arguments: " + testArgs.build().toString());
             }
+
+            System.out.println("JMeter is called with the following command line arguments: " + testArgs.build().toString());
 
             // This mess is necessary because JMeter likes to use System.exit.
             // We need to trap the exit call.
@@ -498,7 +463,7 @@ public class JMeterMojo extends AbstractMojo {
                 // This mess is necessary because the only way to know when
                 // JMeter
                 // is done is to wait for its test end message!
-                new JMeter().start(args.toArray(new String[]{}));
+                new JMeter().start(testArgs.build());
                 BufferedReader in = new BufferedReader(new FileReader(jmeterLog));
                 while (!checkForEndOfTest(in)) {
                     try {
@@ -516,7 +481,7 @@ public class JMeterMojo extends AbstractMojo {
                 Thread.setDefaultUncaughtExceptionHandler(oldHandler);
             }
 
-            return resultFileName;
+            return testArgs.getResultsFilename();
         } catch (IOException e) {
             throw new MojoExecutionException("Can't execute test", e);
         }
@@ -545,28 +510,6 @@ public class JMeterMojo extends AbstractMojo {
             throw new MojoExecutionException("Can't read log file", e);
         }
         return testEnded;
-    }
-
-    /**
-     * Translates map of jmeterUserProperties to List of JMeter compatible commandline flags.
-     *
-     * @return List of JMeter compatible commandline flags
-     */
-    @SuppressWarnings("unchecked")
-    private ArrayList<String> getUserProperties() {
-        ArrayList<String> propsList = new ArrayList<String>();
-        if (jmeterUserProperties == null) {
-            return propsList;
-        }
-        Set<String> keySet = (Set<String>) jmeterUserProperties.keySet();
-
-        for (String key : keySet) {
-
-            propsList.add("-J");
-            propsList.add(key + "=" + jmeterUserProperties.get(key));
-        }
-
-        return propsList;
     }
 
     private static class ExitException extends SecurityException {

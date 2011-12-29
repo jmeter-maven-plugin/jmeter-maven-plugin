@@ -12,7 +12,7 @@ public class JMeterArgumentsArray {
     private LinkedHashMap<JMeterCommandLineArguments, Boolean> argumentMap = new LinkedHashMap<JMeterCommandLineArguments, Boolean>();
     private DateFormat fmt = new SimpleDateFormat("yyMMdd");
     private String proxyHost = null;
-    private String proxyPort = "80";
+    private String proxyPort = null;
     private String proxyUsername = null;
     private String proxyPassword = null;
     private String customPropertiesFile = null;
@@ -43,35 +43,22 @@ public class JMeterArgumentsArray {
         argumentMap.put(JMeterCommandLineArguments.PROXY_PASSWORD, false);  //Set to true if proxy password is specified
     }
 
-    /**
-     * Setting a proxy host will also enable the proxy port which defaults to port 80
-     *
-     * @param value
-     */
-    public void setProxyHost(String value) {
+    public void setProxyHostDetails(String value, int port) {
         if (value == null) return;
         this.proxyHost = value;
+        this.proxyPort = Integer.toString(port);
         this.argumentMap.put(JMeterCommandLineArguments.PROXY_HOST, true);
         this.argumentMap.put(JMeterCommandLineArguments.PROXY_PORT, true);
     }
 
-    /**
-     * Proxy port is only enabled if a proxy host is set.
-     *
-     * @param value
-     */
-    public void setProxyPort(int value) {
-        this.proxyPort = Integer.toString(value);
-    }
-
     public void setProxyUsername(String value) {
-        if (value == null) return;
+        if (value == null || value.equals("")) return;
         this.proxyUsername = value;
         this.argumentMap.put(JMeterCommandLineArguments.PROXY_USERNAME, true);
     }
 
     public void setProxyPassword(String value) {
-        if (value == null) return;
+        if (value == null || value.equals("")) return;
         this.proxyPassword = value;
         this.argumentMap.put(JMeterCommandLineArguments.PROXY_PASSWORD, true);
     }
@@ -81,33 +68,33 @@ public class JMeterArgumentsArray {
     }
 
     public void setACustomPropertiesFile(File value) {
-        if (value == null) return;
+        if (value == null || value.equals("")) return;
         this.customPropertiesFile = value.toString();
         this.argumentMap.put(JMeterCommandLineArguments.PROPFILE2_OPT, true);
     }
 
     public void setUserProperties(Map value) {
-        if (value == null) return;
+        if (value == null || value.equals("")) return;
         this.jMeterProperties = value;
         this.argumentMap.put(JMeterCommandLineArguments.JMETER_PROPERTY, true);
     }
 
     public void setTestFile(File value) {
-        if (value == null) return;
+        if (value == null || value.equals("")) return;
         this.testFile = value.getAbsolutePath();
         this.argumentMap.put(JMeterCommandLineArguments.TESTFILE_OPT, true);
-        this.resultsFile =  this.reportDirectory + File.separator + value.getName().substring(0, value.getName().lastIndexOf(".")) + "-" + fmt.format(new Date()) + ".xml";
+        this.resultsFile = this.reportDirectory + File.separator + value.getName().substring(0, value.getName().lastIndexOf(".")) + "-" + fmt.format(new Date()) + ".xml";
         this.argumentMap.put(JMeterCommandLineArguments.LOGFILE_OPT, true);
     }
 
     public void setJMeterDefaultPropertiesFile(File value) {
-        if (value == null) return;
+        if (value == null || value.equals("")) return;
         this.jmeterDefaultPropertiesFile = value.getAbsolutePath();
         this.argumentMap.put(JMeterCommandLineArguments.PROPFILE_OPT, true);
     }
 
     public void setJMeterHome(String value) {
-        if (value == null) return;
+        if (value == null || value.equals("")) return;
         this.jMeterHome = value;
         this.argumentMap.put(JMeterCommandLineArguments.JMETER_HOME_OPT, true);
     }
@@ -116,7 +103,22 @@ public class JMeterArgumentsArray {
         return this.resultsFile;
     }
 
-    public String[] build() throws MojoExecutionException {
+    public String getProxyDetails() {
+        String proxyDetails = "Proxy server is not being used.";
+        if (!this.argumentMap.get(JMeterCommandLineArguments.PROXY_HOST)) {
+            return proxyDetails;
+        }
+        proxyDetails = "Proxy Details:\n\nHost: " + this.proxyHost + ":" + this.proxyPort + "\n";
+        if (this.argumentMap.get(JMeterCommandLineArguments.PROXY_USERNAME)){
+            proxyDetails += "Username:" + this.proxyUsername + "\n";
+        }
+        if (this.argumentMap.get(JMeterCommandLineArguments.PROXY_PASSWORD)){
+            proxyDetails += "Password:" + this.proxyPassword + "\n";
+        }
+        return proxyDetails + "\n";
+    }
+
+    public String[] buildArgumentsArray() throws MojoExecutionException {
         if (!argumentMap.get(JMeterCommandLineArguments.TESTFILE_OPT)) {
             throw new MojoExecutionException("No test specified!");
         } else if (!argumentMap.get(JMeterCommandLineArguments.LOGFILE_OPT)) {

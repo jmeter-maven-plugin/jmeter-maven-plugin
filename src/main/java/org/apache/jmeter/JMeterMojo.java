@@ -11,12 +11,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.security.Permission;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import javax.xml.transform.TransformerException;
@@ -158,25 +155,29 @@ public class JMeterMojo extends AbstractMojo {
 
     /**
      * HTTP proxy host name.
-     * @parameter default-value=null
+     *
+     * @parameter
      */
     private String proxyHost;
 
     /**
      * HTTP proxy port.
+     *
      * @parameter expression="80"
      */
     private Integer proxyPort;
 
     /**
      * HTTP proxy username.
-     * @parameter default-value=null
+     *
+     * @parameter
      */
     private String proxyUsername;
 
     /**
      * HTTP proxy user password.
-     * @parameter default-value=null
+     *
+     * @parameter
      */
     private String proxyPassword;
 
@@ -240,7 +241,6 @@ public class JMeterMojo extends AbstractMojo {
      * returns the fileName with the configured reportPostfix
      *
      * @param fileName the String to modify
-     *
      * @return modified fileName
      */
     private String toOutputFileName(String fileName) {
@@ -266,7 +266,6 @@ public class JMeterMojo extends AbstractMojo {
      * Scan JMeter result files for "error" and "failure" messages
      *
      * @param results List of JMeter result files.
-     *
      * @throws MojoExecutionException exception
      * @throws MojoFailureException   exception
      */
@@ -300,7 +299,8 @@ public class JMeterMojo extends AbstractMojo {
      * This mess is necessary because JMeter must load this info from a file.
      * Loading resources from classpath won't work.
      *
-     * @throws org.apache.maven.plugin.MojoExecutionException exception
+     * @throws org.apache.maven.plugin.MojoExecutionException
+     *          exception
      */
     private void resolveJmeterArtifact() throws MojoExecutionException {
         try {
@@ -380,8 +380,7 @@ public class JMeterMojo extends AbstractMojo {
         testArgs.setACustomPropertiesFile(this.jmeterCustomPropertiesFile);
         testArgs.setUserProperties(this.jmeterUserProperties);
         testArgs.setUseRemoteHost(this.remote);
-        testArgs.setProxyHost(this.proxyHost);
-        testArgs.setProxyPort(this.proxyPort);
+        testArgs.setProxyHostDetails(this.proxyHost, this.proxyPort);
         testArgs.setProxyUsername(this.proxyUsername);
         testArgs.setProxyPassword(this.proxyPassword);
     }
@@ -420,16 +419,15 @@ public class JMeterMojo extends AbstractMojo {
             testArgs.setTestFile(test);
             //Delete results file if it already exists
             new File(testArgs.getResultsFilename()).delete();
-
-//                getLog().info("Setting HTTP proxy to " + proxyHost + ":" + proxyPort);
-//                getLog().info("Logging with " + proxyUsername + ":" + proxyPassword);
-
-
+            getLog().info(testArgs.getProxyDetails());
             if (getLog().isDebugEnabled()) {
-                getLog().debug("JMeter is called with the following command line arguments: " + testArgs.build().toString());
+                String[] debugTestArgs = testArgs.buildArgumentsArray();
+                String debugOutput = ("JMeter is called with the following command line arguments: ");
+                for (int i = 0; i < debugTestArgs.length; i++) {
+                    debugOutput += debugTestArgs[i] + " ";
+                }
+                getLog().debug(debugOutput);
             }
-
-            System.out.println("JMeter is called with the following command line arguments: " + testArgs.build().toString());
 
             // This mess is necessary because JMeter likes to use System.exit.
             // We need to trap the exit call.
@@ -463,7 +461,7 @@ public class JMeterMojo extends AbstractMojo {
                 // This mess is necessary because the only way to know when
                 // JMeter
                 // is done is to wait for its test end message!
-                new JMeter().start(testArgs.build());
+                new JMeter().start(testArgs.buildArgumentsArray());
                 BufferedReader in = new BufferedReader(new FileReader(jmeterLog));
                 while (!checkForEndOfTest(in)) {
                     try {
@@ -491,9 +489,7 @@ public class JMeterMojo extends AbstractMojo {
      * Check JMeter logfile (provided as a BufferedReader) for End message.
      *
      * @param in JMeter logfile
-     *
      * @return true if test ended
-     *
      * @throws MojoExecutionException exception
      */
     private boolean checkForEndOfTest(BufferedReader in) throws MojoExecutionException {

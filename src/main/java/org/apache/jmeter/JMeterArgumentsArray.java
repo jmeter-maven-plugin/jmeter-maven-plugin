@@ -24,6 +24,7 @@ public class JMeterArgumentsArray {
     private String reportDirectory = null;
     private Map jMeterUserProperties = null;
     private Map jMeterGlobalProperties = null;
+    private Map systemProperties = null;
 
     /**
      * The argument map will define which arguments are set on the command line.
@@ -36,6 +37,7 @@ public class JMeterArgumentsArray {
         argumentMap.put(JMeterCommandLineArguments.LOGFILE_OPT, false);         //Required - output file as specified.
         argumentMap.put(JMeterCommandLineArguments.PROPFILE_OPT, false);        //Required - jmeter.properties location as specified.
         argumentMap.put(JMeterCommandLineArguments.JMETER_HOME_OPT, false);     //Required - JMETER_HOME location as specified.
+        argumentMap.put(JMeterCommandLineArguments.SYSTEM_PROPERTY, false);     //Set to true if system properties are specified.
         argumentMap.put(JMeterCommandLineArguments.JMETER_PROPERTY, false);     //Set to true if user properties are specified.
         argumentMap.put(JMeterCommandLineArguments.JMETER_GLOBAL_PROP, false);  //Set to true if global properties are specified
         argumentMap.put(JMeterCommandLineArguments.PROPFILE2_OPT, false);       //Set to true if a custom properties file is specified.
@@ -92,6 +94,12 @@ public class JMeterArgumentsArray {
         if (value == null || value.equals("")) return;
         this.jMeterGlobalPropertiesFile = value.toString();
         this.argumentMap.put(JMeterCommandLineArguments.JMETER_GLOBAL_PROP, true);
+    }
+
+    public void setSystemProperties(Map value) {
+        if (value == null || value.equals("")) return;
+        this.systemProperties = value;
+        this.argumentMap.put(JMeterCommandLineArguments.SYSTEM_PROPERTY, true);
     }
 
     public void setTestFile(File value) {
@@ -185,6 +193,13 @@ public class JMeterArgumentsArray {
                         } else {
                             argumentsArray.add(JMeterCommandLineArguments.JMETER_GLOBAL_PROP.getCommandLineArgument());
                             argumentsArray.add(this.jMeterGlobalPropertiesFile);
+                        }
+                        break;
+                    case SYSTEM_PROPERTY:
+                        Set<String> systemPropertySet = (Set<String>) this.systemProperties.keySet();
+                        for (String property : systemPropertySet) {
+                            argumentsArray.add(JMeterCommandLineArguments.SYSTEM_PROPERTY.getCommandLineArgument());
+                            argumentsArray.add(property + "=" + this.jMeterUserProperties.get(property));
                         }
                         break;
                     case PROPFILE2_OPT:

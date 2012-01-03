@@ -130,6 +130,14 @@ public class JMeterMojo extends AbstractMojo {
     private File jmeterGlobalPropertiesFile;
 
     /**
+     * System properties set by JMeter
+     *
+     * @parameter
+     */
+    @SuppressWarnings("rawtypes")
+    private Map systemProperties;
+
+    /**
      * Use remote JMeter installation to run tests
      *
      * @parameter default-value=false
@@ -298,14 +306,14 @@ public class JMeterMojo extends AbstractMojo {
         }
     }
 
-    private void validateInput() throws MojoExecutionException{
-        if(this.jmeterGlobalPropertiesFile != null|| !this.jmeterGlobalPropertiesFile.equals("")){
-            if(this.jmeterGlobalProperties != null || !this.jmeterGlobalProperties.equals("")){
+    private void validateInput() throws MojoExecutionException {
+        if (this.jmeterGlobalPropertiesFile != null || !this.jmeterGlobalPropertiesFile.equals("")) {
+            if (this.jmeterGlobalProperties != null || !this.jmeterGlobalProperties.equals("")) {
                 throw new MojoExecutionException("You cannot specify a global properties file and individual global properties!");
             }
         }
-        if(this.jmeterGlobalProperties != null|| !this.jmeterGlobalProperties.equals("")){
-            if(this.jmeterGlobalPropertiesFile != null || !this.jmeterGlobalPropertiesFile.equals("")){
+        if (this.jmeterGlobalProperties != null || !this.jmeterGlobalProperties.equals("")) {
+            if (this.jmeterGlobalPropertiesFile != null || !this.jmeterGlobalPropertiesFile.equals("")) {
                 throw new MojoExecutionException("You cannot specify a global properties file and individual global properties!");
             }
         }
@@ -414,6 +422,7 @@ public class JMeterMojo extends AbstractMojo {
         testArgs.setProxyHostDetails(this.proxyHost, this.proxyPort);
         testArgs.setProxyUsername(this.proxyUsername);
         testArgs.setProxyPassword(this.proxyPassword);
+        testArgs.setSystemProperties(this.systemProperties);
     }
 
     private List<String> generateTestList() {

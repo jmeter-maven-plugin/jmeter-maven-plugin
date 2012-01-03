@@ -310,12 +310,15 @@ public class JMeterMojo extends AbstractMojo {
      */
     private void checkForErrors(List<String> results) throws MojoExecutionException, MojoFailureException {
         ErrorScanner scanner = new ErrorScanner(this.jmeterIgnoreError, this.jmeterIgnoreFailure);
+        int errorCount = 0;
         try {
             for (String file : results) {
                 if (scanner.scanForProblems(new File(file))) {
-                    getLog().warn("There were test errors.  See the jmeter logs for details");
+                    errorCount++;
                 }
             }
+            getLog().info("\n\nResults :\n\n");
+            getLog().info("Tests Run: " + results.size() + ", Errors: " + errorCount +"\n\n");
         } catch (IOException e) {
             throw new MojoExecutionException("Can't read log file", e);
         }

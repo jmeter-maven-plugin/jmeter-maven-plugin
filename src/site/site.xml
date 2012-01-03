@@ -1,13 +1,20 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<project xmlns="http://maven.apache.org/DECORATION/1.0.0"
+<project xmlns="http://maven.apache.org/DECORATION/1.1.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/DECORATION/1.0.0 http://maven.apache.org/xsd/decoration-1.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/DECORATION/1.1.0 http://maven.apache.org/xsd/decoration-1.1.0.xsd"
+         name="maven-jmeter-plugin documentation">
 
     <bannerLeft>
         <name>${project.name}</name>
-        <src>http://jmeter.apache.org/images/logo.jpg</src>
+        <alt>${project.name}</alt>
         <href>https://github.com/Ronnie76er/jmeter-maven-plugin</href>
     </bannerLeft>
+    <bannerRight>
+        <name>Apache JMeter</name>
+        <alt>Apache JMeter</alt>
+        <src>http://jmeter.apache.org/images/logo.jpg</src>
+        <href>http://jmeter.apache.org/</href>
+    </bannerRight>
 
     <skin>
         <groupId>org.apache.maven.skins</groupId>
@@ -18,7 +25,7 @@
     <body>
         <head/>
         <menu name="Overview">
-            <item name="Basic Usage" href="usage.html"/>
+            <item name="Basic Usage" href="index.html"/>
         </menu>
         <menu name="Examples">
             <item name="Running Tests" href="examples/running-tests.html"/>

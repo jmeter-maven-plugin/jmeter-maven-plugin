@@ -112,7 +112,7 @@ public class JMeterMojo extends AbstractMojo {
      * @parameter
      */
     @SuppressWarnings("rawtypes")
-    private Map jmeterUserProperties;
+    private Map<String, String> jmeterUserProperties;
 
     /**
      * JMeter Global Properties that override those given in jmeterProps
@@ -120,7 +120,7 @@ public class JMeterMojo extends AbstractMojo {
      * @parameter
      */
     @SuppressWarnings("rawtypes")
-    private Map jmeterGlobalProperties;
+    private Map<String, String> jmeterGlobalProperties;
 
     /**
      * JMeter Global Properties file
@@ -135,7 +135,7 @@ public class JMeterMojo extends AbstractMojo {
      * @parameter
      */
     @SuppressWarnings("rawtypes")
-    private Map systemProperties;
+    private Map<String, String> systemProperties;
 
     /**
      * Override JMeter logging categories
@@ -143,7 +143,7 @@ public class JMeterMojo extends AbstractMojo {
      * @parameter
      */
     @SuppressWarnings("rawtypes")
-    private Map overrideLogCategories;
+    private Map<String, String> overrideLogCategories;
 
     /**
      * Override JMeter root log level

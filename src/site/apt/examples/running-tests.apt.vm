@@ -1,0 +1,8 @@
+Running Tests
+
+To run all tests that have been specified in the POM you just need to run the phase you have assigned to the execution phase.
+For example if you have set the execution phase to verify run:
+
++---+
+mvn verify
++---+

@@ -2,15 +2,18 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
     <groupId>org.apache.jmeter</groupId>
     <artifactId>maven-jmeter-plugin</artifactId>
     <packaging>maven-plugin</packaging>
     <version>1.2</version>
+
     <name>Maven JMeter Plugin</name>
+    <url>http://jakarta.apache.org/jmeter</url>
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
-    <url>http://jakarta.apache.org/jmeter</url>
 
     <repositories>
         <repository>

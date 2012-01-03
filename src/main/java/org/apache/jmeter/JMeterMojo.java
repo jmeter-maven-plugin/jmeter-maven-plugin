@@ -409,6 +409,7 @@ public class JMeterMojo extends AbstractMojo {
         testArgs.setACustomPropertiesFile(this.jmeterCustomPropertiesFile);
         testArgs.setUserProperties(this.jmeterUserProperties);
         testArgs.setGlobalProperties(this.jmeterGlobalProperties);
+        testArgs.setGlobalPropertiesFile(this.jmeterGlobalPropertiesFile);
         testArgs.setUseRemoteHost(this.remote);
         testArgs.setProxyHostDetails(this.proxyHost, this.proxyPort);
         testArgs.setProxyUsername(this.proxyUsername);

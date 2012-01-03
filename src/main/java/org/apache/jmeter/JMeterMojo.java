@@ -138,6 +138,21 @@ public class JMeterMojo extends AbstractMojo {
     private Map systemProperties;
 
     /**
+     * Override JMeter logging categories
+     *
+     * @parameter
+     */
+    @SuppressWarnings("rawtypes")
+    private Map overrideLogCategories;
+
+    /**
+     * Override JMeter root log level
+     *
+     * @parameter
+     */
+    private String overrideRootLogLevel;
+
+    /**
      * Use remote JMeter installation to run tests
      *
      * @parameter default-value=false
@@ -317,6 +332,16 @@ public class JMeterMojo extends AbstractMojo {
                 throw new MojoExecutionException("You cannot specify a global properties file and individual global properties!");
             }
         }
+        if (this.overrideLogCategories != null || !this.overrideLogCategories.equals("")) {
+            if (this.overrideRootLogLevel != null || !this.overrideRootLogLevel.equals("")) {
+                throw new MojoExecutionException("You cannot override both the root log level and individual log categories!");
+            }
+        }
+        if (this.overrideRootLogLevel != null || !this.overrideRootLogLevel.equals("")) {
+            if (this.overrideLogCategories != null || !this.overrideRootLogLevel.equals("")) {
+                throw new MojoExecutionException("You cannot override both the root log level and individual log categories!");
+            }
+        }
     }
 
     private void createWorkingFiles() throws MojoExecutionException {
@@ -423,6 +448,8 @@ public class JMeterMojo extends AbstractMojo {
         testArgs.setProxyUsername(this.proxyUsername);
         testArgs.setProxyPassword(this.proxyPassword);
         testArgs.setSystemProperties(this.systemProperties);
+        testArgs.setLogCategoriesOverrides(this.overrideLogCategories);
+        testArgs.setLogRootOverride(this.overrideRootLogLevel);
     }
 
     private List<String> generateTestList() {

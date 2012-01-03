@@ -41,7 +41,7 @@ Global Properties
           <artifactId>${project.artifactId}</artifactId>
           <version>${project.version}</version>
           <configuration>
-            <jmeterGlobalPropertiesFile>src/test/jmeter/global.properties</jmeterGlobalProperties>
+            <jmeterGlobalPropertiesFile>${basedir}/src/test/jmeter/global.properties</jmeterGlobalProperties>
           </configuration>
         </plugin>
       </plugins>

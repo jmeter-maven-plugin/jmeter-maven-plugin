@@ -1,6 +1,6 @@
 Usage
 
-Best practice is to define the version of the Maven JMeter plugin that you want to use in either your <<<pom.xml>>> or a parent <<<pom.xml>>>
+    Best practice is to define the version of the Maven JMeter plugin that you want to use in either your <<<pom.xml>>> or a parent <<<pom.xml>>>
 
 +---+
 <project>

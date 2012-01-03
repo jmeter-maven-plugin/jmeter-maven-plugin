@@ -16,12 +16,14 @@ public class JMeterArgumentsArray {
     private String proxyUsername = null;
     private String proxyPassword = null;
     private String customPropertiesFile = null;
+    private String jMeterGlobalPropertiesFile = null;
     private String testFile = null;
     private String resultsFile = null;
     private String jmeterDefaultPropertiesFile = null;
     private String jMeterHome = null;
     private String reportDirectory = null;
-    private Map jMeterProperties = null;
+    private Map jMeterUserProperties = null;
+    private Map jMeterGlobalProperties = null;
 
     /**
      * The argument map will define which arguments are set on the command line.
@@ -29,18 +31,19 @@ public class JMeterArgumentsArray {
      */
     public JMeterArgumentsArray(String reportDirectory) {
         this.reportDirectory = reportDirectory;
-        argumentMap.put(JMeterCommandLineArguments.NONGUI_OPT, true);       //Always suppress the GUI.
-        argumentMap.put(JMeterCommandLineArguments.TESTFILE_OPT, false);    //Required - test file as specified.
-        argumentMap.put(JMeterCommandLineArguments.LOGFILE_OPT, false);     //Required - output file as specified.
-        argumentMap.put(JMeterCommandLineArguments.PROPFILE_OPT, false);    //Required - jmeter.properties location as specified.
-        argumentMap.put(JMeterCommandLineArguments.JMETER_HOME_OPT, false); //Required - JMETER_HOME location as specified.
-        argumentMap.put(JMeterCommandLineArguments.JMETER_PROPERTY, false); //Set to true if user properties are specified.
-        argumentMap.put(JMeterCommandLineArguments.PROPFILE2_OPT, false);   //Set to true if a custom properties file is specified.
-        argumentMap.put(JMeterCommandLineArguments.REMOTE_OPT, false);      //Set to true if a remote host used.
-        argumentMap.put(JMeterCommandLineArguments.PROXY_HOST, false);      //Set to true if proxy host is specified
-        argumentMap.put(JMeterCommandLineArguments.PROXY_PORT, false);      //Set to true if proxy port is specified
-        argumentMap.put(JMeterCommandLineArguments.PROXY_USERNAME, false);  //Set to true if proxy username is specified
-        argumentMap.put(JMeterCommandLineArguments.PROXY_PASSWORD, false);  //Set to true if proxy password is specified
+        argumentMap.put(JMeterCommandLineArguments.NONGUI_OPT, true);           //Always suppress the GUI.
+        argumentMap.put(JMeterCommandLineArguments.TESTFILE_OPT, false);        //Required - test file as specified.
+        argumentMap.put(JMeterCommandLineArguments.LOGFILE_OPT, false);         //Required - output file as specified.
+        argumentMap.put(JMeterCommandLineArguments.PROPFILE_OPT, false);        //Required - jmeter.properties location as specified.
+        argumentMap.put(JMeterCommandLineArguments.JMETER_HOME_OPT, false);     //Required - JMETER_HOME location as specified.
+        argumentMap.put(JMeterCommandLineArguments.JMETER_PROPERTY, false);     //Set to true if user properties are specified.
+        argumentMap.put(JMeterCommandLineArguments.JMETER_GLOBAL_PROP, false);  //Set to true if global properties are specified
+        argumentMap.put(JMeterCommandLineArguments.PROPFILE2_OPT, false);       //Set to true if a custom properties file is specified.
+        argumentMap.put(JMeterCommandLineArguments.REMOTE_OPT, false);          //Set to true if a remote host used.
+        argumentMap.put(JMeterCommandLineArguments.PROXY_HOST, false);          //Set to true if proxy host is specified
+        argumentMap.put(JMeterCommandLineArguments.PROXY_PORT, false);          //Set to true if proxy port is specified
+        argumentMap.put(JMeterCommandLineArguments.PROXY_USERNAME, false);      //Set to true if proxy username is specified
+        argumentMap.put(JMeterCommandLineArguments.PROXY_PASSWORD, false);      //Set to true if proxy password is specified
     }
 
     public void setProxyHostDetails(String value, int port) {
@@ -75,8 +78,20 @@ public class JMeterArgumentsArray {
 
     public void setUserProperties(Map value) {
         if (value == null || value.equals("")) return;
-        this.jMeterProperties = value;
+        this.jMeterUserProperties = value;
         this.argumentMap.put(JMeterCommandLineArguments.JMETER_PROPERTY, true);
+    }
+
+    public void setGlobalProperties(Map value) {
+        if (value == null || value.equals("")) return;
+        this.jMeterGlobalProperties = value;
+        this.argumentMap.put(JMeterCommandLineArguments.JMETER_GLOBAL_PROP, true);
+    }
+
+    public void setGlobalPropertiesFile(File value) {
+        if (value == null || value.equals("")) return;
+        this.jMeterGlobalPropertiesFile = value.toString();
+        this.argumentMap.put(JMeterCommandLineArguments.JMETER_GLOBAL_PROP, true);
     }
 
     public void setTestFile(File value) {
@@ -109,10 +124,10 @@ public class JMeterArgumentsArray {
             return proxyDetails;
         }
         proxyDetails = "Proxy Details:\n\nHost: " + this.proxyHost + ":" + this.proxyPort + "\n";
-        if (this.argumentMap.get(JMeterCommandLineArguments.PROXY_USERNAME)){
+        if (this.argumentMap.get(JMeterCommandLineArguments.PROXY_USERNAME)) {
             proxyDetails += "Username:" + this.proxyUsername + "\n";
         }
-        if (this.argumentMap.get(JMeterCommandLineArguments.PROXY_PASSWORD)){
+        if (this.argumentMap.get(JMeterCommandLineArguments.PROXY_PASSWORD)) {
             proxyDetails += "Password:" + this.proxyPassword + "\n";
         }
         return proxyDetails + "\n";
@@ -154,10 +169,22 @@ public class JMeterArgumentsArray {
                         argumentsArray.add(this.jMeterHome);
                         break;
                     case JMETER_PROPERTY:
-                        Set<String> propertySet = (Set<String>) this.jMeterProperties.keySet();
-                        for (String property : propertySet) {
+                        Set<String> userPropertySet = (Set<String>) this.jMeterUserProperties.keySet();
+                        for (String property : userPropertySet) {
                             argumentsArray.add(JMeterCommandLineArguments.JMETER_PROPERTY.getCommandLineArgument());
-                            argumentsArray.add(property + "=" + this.jMeterProperties.get(property));
+                            argumentsArray.add(property + "=" + this.jMeterUserProperties.get(property));
+                        }
+                        break;
+                    case JMETER_GLOBAL_PROP:
+                        if (this.jMeterGlobalPropertiesFile == null) {
+                            Set<String> globalPropertySet = (Set<String>) this.jMeterUserProperties.keySet();
+                            for (String property : globalPropertySet) {
+                                argumentsArray.add(JMeterCommandLineArguments.JMETER_GLOBAL_PROP.getCommandLineArgument());
+                                argumentsArray.add(property + "=" + this.jMeterGlobalProperties.get(property));
+                            }
+                        } else {
+                            argumentsArray.add(JMeterCommandLineArguments.JMETER_GLOBAL_PROP.getCommandLineArgument());
+                            argumentsArray.add(this.jMeterGlobalPropertiesFile);
                         }
                         break;
                     case PROPFILE2_OPT:

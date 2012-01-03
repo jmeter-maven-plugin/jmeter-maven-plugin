@@ -115,6 +115,21 @@ public class JMeterMojo extends AbstractMojo {
     private Map jmeterUserProperties;
 
     /**
+     * JMeter Global Properties that override those given in jmeterProps
+     *
+     * @parameter
+     */
+    @SuppressWarnings("rawtypes")
+    private Map jmeterGlobalProperties;
+
+    /**
+     * JMeter Global Properties file
+     *
+     * @parameter
+     */
+    private File jmeterGlobalPropertiesFile;
+
+    /**
      * Use remote JMeter installation to run tests
      *
      * @parameter default-value=false
@@ -204,6 +219,7 @@ public class JMeterMojo extends AbstractMojo {
      * Run all JMeter tests.
      */
     public void execute() throws MojoExecutionException, MojoFailureException {
+        validateInput();
         createWorkingFiles();
         createTemporaryProperties();
         resolveJmeterArtifact();
@@ -279,6 +295,19 @@ public class JMeterMojo extends AbstractMojo {
             }
         } catch (IOException e) {
             throw new MojoExecutionException("Can't read log file", e);
+        }
+    }
+
+    private void validateInput() throws MojoExecutionException{
+        if(this.jmeterGlobalPropertiesFile != null|| !this.jmeterGlobalPropertiesFile.equals("")){
+            if(this.jmeterGlobalProperties != null || !this.jmeterGlobalProperties.equals("")){
+                throw new MojoExecutionException("You cannot specify a global properties file and individual global properties!");
+            }
+        }
+        if(this.jmeterGlobalProperties != null|| !this.jmeterGlobalProperties.equals("")){
+            if(this.jmeterGlobalPropertiesFile != null || !this.jmeterGlobalPropertiesFile.equals("")){
+                throw new MojoExecutionException("You cannot specify a global properties file and individual global properties!");
+            }
         }
     }
 
@@ -379,6 +408,7 @@ public class JMeterMojo extends AbstractMojo {
         testArgs.setJMeterDefaultPropertiesFile(this.jmeterDefaultPropertiesFile);
         testArgs.setACustomPropertiesFile(this.jmeterCustomPropertiesFile);
         testArgs.setUserProperties(this.jmeterUserProperties);
+        testArgs.setGlobalProperties(this.jmeterGlobalProperties);
         testArgs.setUseRemoteHost(this.remote);
         testArgs.setProxyHostDetails(this.proxyHost, this.proxyPort);
         testArgs.setProxyUsername(this.proxyUsername);

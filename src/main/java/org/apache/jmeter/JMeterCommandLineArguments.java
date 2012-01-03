@@ -4,7 +4,7 @@ public enum JMeterCommandLineArguments {
 
     PROXY_PASSWORD("a"),
     JMETER_HOME_OPT("d"),
-    HELP_OPT("h"),
+    HELP_OPT("h"),              //Shows help information, never used in this plugin.
     JMLOGFILE_OPT("j"),
     LOGFILE_OPT("l"),
     NONGUI_OPT("n"),

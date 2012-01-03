@@ -22,9 +22,11 @@ public class JMeterArgumentsArray {
     private String jmeterDefaultPropertiesFile = null;
     private String jMeterHome = null;
     private String reportDirectory = null;
+    private String overrideRootLogLevel = null;
     private Map jMeterUserProperties = null;
     private Map jMeterGlobalProperties = null;
     private Map systemProperties = null;
+    private Map overrideLogCategories = null;
 
     /**
      * The argument map will define which arguments are set on the command line.
@@ -39,7 +41,8 @@ public class JMeterArgumentsArray {
         argumentMap.put(JMeterCommandLineArguments.JMETER_HOME_OPT, false);     //Required - JMETER_HOME location as specified.
         argumentMap.put(JMeterCommandLineArguments.SYSTEM_PROPERTY, false);     //Set to true if system properties are specified.
         argumentMap.put(JMeterCommandLineArguments.JMETER_PROPERTY, false);     //Set to true if user properties are specified.
-        argumentMap.put(JMeterCommandLineArguments.JMETER_GLOBAL_PROP, false);  //Set to true if global properties are specified
+        argumentMap.put(JMeterCommandLineArguments.JMETER_GLOBAL_PROP, false);  //Set to true if global properties are specified(These get sent to remote servers as well).
+        argumentMap.put(JMeterCommandLineArguments.LOGLEVEL, false);            //Set to true if log level overrides have been specified
         argumentMap.put(JMeterCommandLineArguments.PROPFILE2_OPT, false);       //Set to true if a custom properties file is specified.
         argumentMap.put(JMeterCommandLineArguments.REMOTE_OPT, false);          //Set to true if a remote host used.
         argumentMap.put(JMeterCommandLineArguments.PROXY_HOST, false);          //Set to true if proxy host is specified
@@ -94,6 +97,18 @@ public class JMeterArgumentsArray {
         if (value == null || value.equals("")) return;
         this.jMeterGlobalPropertiesFile = value.toString();
         this.argumentMap.put(JMeterCommandLineArguments.JMETER_GLOBAL_PROP, true);
+    }
+
+    public void setLogCategoriesOverrides(Map value) {
+        if (value == null || value.equals("")) return;
+        this.overrideLogCategories = value;
+        this.argumentMap.put(JMeterCommandLineArguments.LOGLEVEL, true);
+    }
+
+    public void setLogRootOverride(String value) {
+        if (value == null || value.equals("")) return;
+        this.overrideRootLogLevel = value;
+        this.argumentMap.put(JMeterCommandLineArguments.LOGLEVEL, true);
     }
 
     public void setSystemProperties(Map value) {
@@ -193,6 +208,18 @@ public class JMeterArgumentsArray {
                         } else {
                             argumentsArray.add(JMeterCommandLineArguments.JMETER_GLOBAL_PROP.getCommandLineArgument());
                             argumentsArray.add(this.jMeterGlobalPropertiesFile);
+                        }
+                        break;
+                    case LOGLEVEL:
+                        if (this.overrideRootLogLevel == null) {
+                            Set<String> logCategorySet = (Set<String>) this.overrideLogCategories.keySet();
+                            for (String category : logCategorySet) {
+                                argumentsArray.add(JMeterCommandLineArguments.LOGLEVEL.getCommandLineArgument());
+                                argumentsArray.add(category + "=" + this.overrideLogCategories.get(category));
+                            }
+                        } else {
+                            argumentsArray.add(JMeterCommandLineArguments.LOGLEVEL.getCommandLineArgument());
+                            argumentsArray.add(this.overrideRootLogLevel);
                         }
                         break;
                     case SYSTEM_PROPERTY:

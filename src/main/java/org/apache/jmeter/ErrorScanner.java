@@ -24,21 +24,19 @@ public class ErrorScanner {
     private int errorCount = 0;
 
     /**
-     * @param ignoreErrors   if an error is found with this scanner it will throw an
-     *                       exception instead of returning true;
-     * @param ignoreFailures if a failure is found with this scanner it will throw an
-     *                       exception instead of returning true;
+     * @param ignoreErrors
+     * @param ignoreFailures
      */
     public ErrorScanner(boolean ignoreErrors, boolean ignoreFailures) {
         this.ignoreErrors = ignoreErrors;
         this.ignoreFailures = ignoreFailures;
     }
 
-    private void resetErrorAndFailureCount(){
+    private void resetErrorAndFailureCount() {
         this.failureCount = 0;
         this.errorCount = 0;
     }
-    
+
     public boolean hasTestPassed(File file) throws IOException {
         resetErrorAndFailureCount();
         BufferedReader in = null;

@@ -7,6 +7,11 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+/**
+ * Creates an arguments array to pass to the JMeter object to run tests.
+ *
+ * @author Mark Collin
+ */
 public class JMeterArgumentsArray {
 
     private LinkedHashMap<JMeterCommandLineArguments, Boolean> argumentMap = new LinkedHashMap<JMeterCommandLineArguments, Boolean>();

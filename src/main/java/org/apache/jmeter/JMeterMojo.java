@@ -316,8 +316,8 @@ public class JMeterMojo extends AbstractMojo {
         try {
             for (String file : results) {
                 if (!scanner.hasTestPassed(new File(file))) {
-                    totalErrorCount =+ scanner.getErrorCount();
-                    totalFailureCount =+ scanner.getFailureCount();
+                    totalErrorCount = +scanner.getErrorCount();
+                    totalFailureCount = +scanner.getFailureCount();
                     failed = true;
                 }
             }
@@ -504,12 +504,7 @@ public class JMeterMojo extends AbstractMojo {
             new File(testArgs.getResultsFilename()).delete();
             getLog().info(testArgs.getProxyDetails());
             if (getLog().isDebugEnabled()) {
-                String[] debugTestArgs = testArgs.buildArgumentsArray();
-                String debugOutput = ("JMeter is called with the following command line arguments: ");
-                for (int i = 0; i < debugTestArgs.length; i++) {
-                    debugOutput += debugTestArgs[i] + " ";
-                }
-                getLog().debug(debugOutput);
+                getLog().debug("JMeter is called with the following command line arguments: " + humanReadableCommandLineOutput(testArgs.buildArgumentsArray()));
             }
 
             // This mess is necessary because JMeter likes to use System.exit.
@@ -588,6 +583,14 @@ public class JMeterMojo extends AbstractMojo {
             throw new MojoExecutionException("Can't read log file", e);
         }
         return testEnded;
+    }
+
+    public String humanReadableCommandLineOutput(String[] arguments) {
+        String debugOutput = "";
+        for (int i = 0; i < arguments.length; i++) {
+            debugOutput += arguments[i] + " ";
+        }
+        return debugOutput;
     }
 
     private static class ExitException extends SecurityException {

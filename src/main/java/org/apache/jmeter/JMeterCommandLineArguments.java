@@ -1,5 +1,10 @@
 package org.apache.jmeter;
 
+/**
+ * An Enum holding all of the command line arguments accepted by JMeter
+ *
+ * @author Mark Collin
+ */
 public enum JMeterCommandLineArguments {
 
     PROXY_PASSWORD("a"),

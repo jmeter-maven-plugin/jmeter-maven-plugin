@@ -38,7 +38,7 @@ public class ErrorScannerTest {
     @Test
     public void jtlFormatFileWithFailures() throws Exception {
         ErrorScanner scanner = new ErrorScanner(false, false);
-        URI testResultsFile = this.getClass().getResource("/jtl2-1-fail.xml").toURI();
+        URI testResultsFile = this.getClass().getResource("/jtl2-1-fail.jtl").toURI();
         assertThat(scanner.hasTestPassed(new File(testResultsFile)), is(equalTo(false)));
         assertThat(scanner.getFailureCount(), is(equalTo(2)));
         assertThat(scanner.getErrorCount(), is(equalTo(0)));
@@ -47,7 +47,7 @@ public class ErrorScannerTest {
     @Test
     public void jtlFormatFileWithNoFailures() throws Exception {
         ErrorScanner scanner = new ErrorScanner(false, false);
-        URI testResultsFile = this.getClass().getResource("/jtl2-1-pass.xml").toURI();
+        URI testResultsFile = this.getClass().getResource("/jtl2-1-pass.jtl").toURI();
         assertThat(scanner.hasTestPassed(new File(testResultsFile)), is(equalTo(true)));
         assertThat(scanner.getFailureCount(), is(equalTo(0)));
         assertThat(scanner.getErrorCount(), is(equalTo(0)));

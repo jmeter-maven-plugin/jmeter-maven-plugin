@@ -34,7 +34,13 @@ public class ErrorScanner {
         this.ignoreFailures = ignoreFailures;
     }
 
-    public boolean scanForProblems(File file) throws IOException {
+    private void resetErrorAndFailureCount(){
+        this.failureCount = 0;
+        this.errorCount = 0;
+    }
+    
+    public boolean hasTestPassed(File file) throws IOException {
+        resetErrorAndFailureCount();
         BufferedReader in = null;
         try {
             in = new BufferedReader(new FileReader(file));
@@ -46,9 +52,9 @@ public class ErrorScanner {
             in.close();
         }
         if (this.errorCount == 0 && this.failureCount == 0) {
-            return false;
-        } else {
             return true;
+        } else {
+            return false;
         }
     }
 
@@ -60,21 +66,20 @@ public class ErrorScanner {
      * @throws MojoFailureException
      */
     protected boolean lineContainsForErrors(String line) {
+        boolean lineHasProblems = false;
         if (line.contains(PAT_ERROR)) {
-            if (this.ignoreErrors) {
-                return true;
-            } else {
+            if (!this.ignoreErrors) {
                 this.errorCount++;
+                lineHasProblems = true;
             }
         }
         if (line.contains(PAT_FAILURE) || line.contains(PAT_FAILURE_REQUEST)) {
-            if (this.ignoreFailures) {
-                return true;
-            } else {
+            if (!this.ignoreFailures) {
                 this.failureCount++;
+                lineHasProblems = true;
             }
         }
-        return false;
+        return lineHasProblems;
     }
 
     public int getFailureCount() {

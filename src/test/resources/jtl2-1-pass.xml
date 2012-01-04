@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testResults version="1.2">
+    <httpSample t="1187" lt="0" ts="1133521593546" s="true" lb="/my_webapp/root/auth" rc="302" rm="Moved Temporarily" tn="Thread Group 1-1" dt="text"/>
+    <httpSample t="16" lt="0" ts="1133521593562" s="true" lb="/my_webapp/root/;jsessionid=xxx" rc="302" rm="Moved Temporarily" tn="Thread Group 1-1" dt="text"/>
+    <httpSample t="16" lt="0" ts="1133521593578" s="true" lb="/my_webapp/root/portal" rc="302" rm="Moved Temporarily" tn="Thread Group 1-1" dt="text"/>
+    <httpSample t="15" lt="0" ts="1133521593593" s="true" lb="/my_webapp/root/docbook/css/docbook.css" rc="304" rm="Not Modified" tn="Thread Group 1-1" dt=""/>
+</testResults>

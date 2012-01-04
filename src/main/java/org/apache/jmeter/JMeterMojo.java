@@ -315,7 +315,7 @@ public class JMeterMojo extends AbstractMojo {
         boolean failed = false;
         try {
             for (String file : results) {
-                if (scanner.scanForProblems(new File(file))) {
+                if (!scanner.hasTestPassed(new File(file))) {
                     totalErrorCount =+ scanner.getErrorCount();
                     totalFailureCount =+ scanner.getFailureCount();
                     failed = true;

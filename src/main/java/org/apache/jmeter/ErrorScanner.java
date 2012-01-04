@@ -9,7 +9,7 @@ import org.apache.maven.plugin.MojoFailureException;
 
 /**
  * Handles checking the jmeter xml logs for errors and failures.
- * 
+ *
  * @author Jon Roberts
  */
 public class ErrorScanner {
@@ -19,58 +19,69 @@ public class ErrorScanner {
     private static final String PAT_FAILURE = "<failure>true</failure>";
 
     private boolean ignoreErrors;
-
     private boolean ignoreFailures;
+    private int failureCount = 0;
+    private int errorCount = 0;
 
     /**
-     * 
-     * @param ignoreErrors
-     *            if an error is found with this scanner it will throw an
-     *            exception instead of returning true;
-     * @param ignoreFailures
-     *            if a failure is found with this scanner it will throw an
-     *            exception instead of returning true;
+     * @param ignoreErrors   if an error is found with this scanner it will throw an
+     *                       exception instead of returning true;
+     * @param ignoreFailures if a failure is found with this scanner it will throw an
+     *                       exception instead of returning true;
      */
     public ErrorScanner(boolean ignoreErrors, boolean ignoreFailures) {
         this.ignoreErrors = ignoreErrors;
         this.ignoreFailures = ignoreFailures;
     }
 
-    public boolean scanForProblems(File file) throws MojoFailureException, IOException {
+    public boolean scanForProblems(File file) throws IOException {
         BufferedReader in = null;
         try {
             in = new BufferedReader(new FileReader(file));
-            String line;            
+            String line;
             while ((line = in.readLine()) != null) {
                 this.lineContainsForErrors(line);
             }
         } finally {
             in.close();
         }
-        return false;
+        if (this.errorCount == 0 && this.failureCount == 0) {
+            return false;
+        } else {
+            return true;
+        }
     }
-    
-    /** 
+
+    /**
      * protected for testing
+     *
      * @param line
      * @return
      * @throws MojoFailureException
      */
-    protected boolean lineContainsForErrors(String line) throws MojoFailureException {
-    	if (line.contains(PAT_ERROR)) {
+    protected boolean lineContainsForErrors(String line) {
+        if (line.contains(PAT_ERROR)) {
             if (this.ignoreErrors) {
                 return true;
             } else {
-                throw new MojoFailureException("There were test errors.  See the jmeter logs for details.");
+                this.errorCount++;
             }
         }
         if (line.contains(PAT_FAILURE) || line.contains(PAT_FAILURE_REQUEST)) {
             if (this.ignoreFailures) {
                 return true;
             } else {
-                throw new MojoFailureException("There were test failures.  See the jmeter logs for details.");
+                this.failureCount++;
             }
-        }       
+        }
         return false;
+    }
+
+    public int getFailureCount() {
+        return this.failureCount;
+    }
+
+    public int getErrorCount() {
+        return this.errorCount;
     }
 }

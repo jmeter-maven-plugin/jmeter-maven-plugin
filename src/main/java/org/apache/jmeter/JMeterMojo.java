@@ -227,7 +227,7 @@ public class JMeterMojo extends AbstractMojo {
     private String reportPostfix;
 
     /**
-     * Sets whether the test execution shall preserve the order of patterns in include clauses.
+     * Sets whether the test execution shall preserve the order of tests in jMeterTestFiles clauses.
      *
      * @parameter expression="${jmeter.preserve.includeOrder}" default-value=false
      */
@@ -310,17 +310,30 @@ public class JMeterMojo extends AbstractMojo {
      */
     private void checkForErrors(List<String> results) throws MojoExecutionException, MojoFailureException {
         ErrorScanner scanner = new ErrorScanner(this.jmeterIgnoreError, this.jmeterIgnoreFailure);
-        int errorCount = 0;
+        int totalErrorCount = 0;
+        int totalFailureCount = 0;
+        boolean failed = false;
         try {
             for (String file : results) {
                 if (scanner.scanForProblems(new File(file))) {
-                    errorCount++;
+                    totalErrorCount =+ scanner.getErrorCount();
+                    totalFailureCount =+ scanner.getFailureCount();
+                    failed = true;
                 }
             }
             getLog().info("\n\nResults :\n\n");
-            getLog().info("Tests Run: " + results.size() + ", Errors: " + errorCount +"\n\n");
+            getLog().info("Tests Run: " + results.size() + ", Failures: " + totalFailureCount + ", Errors: " + totalErrorCount + "\n\n");
         } catch (IOException e) {
             throw new MojoExecutionException("Can't read log file", e);
+        }
+        if (failed) {
+            if (totalErrorCount == 0) {
+                throw new MojoExecutionException("There were test failures.  See the jmeter logs for details.");
+            } else if (totalFailureCount == 0) {
+                throw new MojoExecutionException("There were test errors.  See the jmeter logs for details.");
+            } else {
+                throw new MojoExecutionException("There were test errors and failures.  See the jmeter logs for details.");
+            }
         }
     }
 
@@ -529,8 +542,7 @@ public class JMeterMojo extends AbstractMojo {
             });
             try {
                 // This mess is necessary because the only way to know when
-                // JMeter
-                // is done is to wait for its test end message!
+                // JMeter is done is to wait for its test end message!
                 new JMeter().start(testArgs.buildArgumentsArray());
                 BufferedReader in = new BufferedReader(new FileReader(jmeterLog));
                 while (!checkForEndOfTest(in)) {

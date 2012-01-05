@@ -5,6 +5,9 @@ import org.junit.Test;
 
 import java.io.File;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNot.not;
@@ -48,6 +51,19 @@ public class JMeterArgumentsArrayTest {
         assertThat(testArgs.getResultsFilename(), not(equalTo("")));
         assertThat(testArgs.getResultsFilename(), not(equalTo(null)));
         assertThat(util.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()), is(equalTo("-n -t " + new File(this.testFile.toURI()).getAbsolutePath() + " -l " + testArgs.getResultsFilename() + " -p " + new File(this.propertiesFile.toURI()).getAbsolutePath() + " -d target/jmeter/ ")));
+    }
+
+    @Test
+    public void validateJMeterGlobalProperties() throws Exception{
+        JMeterArgumentsArray testArgs = new JMeterArgumentsArray(reportDir.getAbsolutePath());
+        testArgs.setTestFile(new File(this.testFile.toURI()));
+        testArgs.setJMeterDefaultPropertiesFile(new File(this.propertiesFile.toURI()));
+        testArgs.setJMeterHome("target/jmeter/");
+        Map<String, String> globalProps = new HashMap<String, String>();
+        globalProps.put("threads", "1");
+        globalProps.put("testIterations", "10");
+        testArgs.setGlobalProperties(globalProps);
+        assertThat(util.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()), is(equalTo("-n -t " + new File(this.testFile.toURI()).getAbsolutePath() + " -l " + testArgs.getResultsFilename() + " -p " + new File(this.propertiesFile.toURI()).getAbsolutePath() + " -d target/jmeter/ " + util.argumentsArrayToString(globalProps))));
     }
 
     //TODO test that each command line switch is set correctly

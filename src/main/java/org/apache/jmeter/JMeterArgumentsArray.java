@@ -206,7 +206,7 @@ public class JMeterArgumentsArray {
                         break;
                     case JMETER_GLOBAL_PROP:
                         if (this.jMeterGlobalPropertiesFile == null) {
-                            Set<String> globalPropertySet = (Set<String>) this.jMeterUserProperties.keySet();
+                            Set<String> globalPropertySet = (Set<String>) this.jMeterGlobalProperties.keySet();
                             for (String property : globalPropertySet) {
                                 argumentsArray.add(JMeterCommandLineArguments.JMETER_GLOBAL_PROP.getCommandLineArgument());
                                 argumentsArray.add(property + "=" + this.jMeterGlobalProperties.get(property));

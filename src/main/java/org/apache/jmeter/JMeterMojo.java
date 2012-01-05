@@ -115,7 +115,24 @@ public class JMeterMojo extends AbstractMojo {
     private Map<String, String> jmeterUserProperties;
 
     /**
+     * JMeter Remote Properties that override those given in jmeterProps
+     *
+     * @parameter
+     */
+    @SuppressWarnings("rawtypes")
+    private Map<String, String> jmeterRemoteProperties;
+
+    /**
+     * JMeter Global Properties file
+     *
+     * @parameter
+     */
+    private File jmeterRemotePropertiesFile;
+
+    /**
      * JMeter Global Properties that override those given in jmeterProps
+     * This sets local and remote properties (JMeter's definition of global properties is actually remote properties)
+     * This will override any local/remote properties already set
      *
      * @parameter
      */
@@ -124,6 +141,8 @@ public class JMeterMojo extends AbstractMojo {
 
     /**
      * JMeter Global Properties file
+     * This sets local and remote properties (JMeter's definition of global properties is actually remote properties)
+     * This will override any local/remote properties already set
      *
      * @parameter
      */
@@ -342,6 +361,16 @@ public class JMeterMojo extends AbstractMojo {
     }
 
     private void validateInput() throws MojoExecutionException {
+        if (!util.isNotSet(this.jmeterRemotePropertiesFile)) {
+            if (!util.isNotSet(this.jmeterRemoteProperties)) {
+                throw new MojoExecutionException("You cannot specify a remote properties file and individual remote properties!");
+            }
+        }
+        if (!util.isNotSet(this.jmeterRemoteProperties)) {
+            if (!util.isNotSet(this.jmeterRemotePropertiesFile)) {
+                throw new MojoExecutionException("You cannot specify a remote properties file and individual remote properties!");
+            }
+        }
         if (!util.isNotSet(this.jmeterGlobalPropertiesFile)) {
             if (!util.isNotSet(this.jmeterGlobalProperties)) {
                 throw new MojoExecutionException("You cannot specify a global properties file and individual global properties!");
@@ -461,8 +490,9 @@ public class JMeterMojo extends AbstractMojo {
         testArgs.setJMeterDefaultPropertiesFile(this.jmeterDefaultPropertiesFile);
         testArgs.setACustomPropertiesFile(this.jmeterCustomPropertiesFile);
         testArgs.setUserProperties(this.jmeterUserProperties);
+        testArgs.setRemoteProperties(this.jmeterRemoteProperties);
+        testArgs.setRemotePropertiesFile(this.jmeterRemotePropertiesFile);
         testArgs.setGlobalProperties(this.jmeterGlobalProperties);
-        testArgs.setGlobalPropertiesFile(this.jmeterGlobalPropertiesFile);
         testArgs.setUseRemoteHost(this.remote);
         testArgs.setProxyHostDetails(this.proxyHost, this.proxyPort);
         testArgs.setProxyUsername(this.proxyUsername);

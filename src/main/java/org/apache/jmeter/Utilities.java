@@ -43,11 +43,11 @@ public class Utilities {
         }
     }
 
-    public String argumentsArrayToString(Map<String, String> value) {
+    public String argumentsMapToString(Map<String, String> value, JMeterCommandLineArguments type) {
         String arguments = "";
         Set<String> globalPropertySet = (Set<String>) value.keySet();
         for (String property : globalPropertySet) {
-            arguments += JMeterCommandLineArguments.JMETER_GLOBAL_PROP.getCommandLineArgument() + " ";
+            arguments += type.getCommandLineArgument() + " ";
             arguments += property + "=" + value.get(property) + " ";
         }
         return arguments;

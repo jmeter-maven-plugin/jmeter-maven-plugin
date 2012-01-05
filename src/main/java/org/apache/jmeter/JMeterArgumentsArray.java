@@ -96,10 +96,18 @@ public class JMeterArgumentsArray {
     public void setGlobalProperties(Map value) {
         if (util.isNotSet(value)) return;
         this.jMeterGlobalProperties = value;
+        this.jMeterUserProperties = value;
+        this.argumentMap.put(JMeterCommandLineArguments.JMETER_GLOBAL_PROP, true);
+        this.argumentMap.put(JMeterCommandLineArguments.JMETER_PROPERTY, true);
+    }
+
+    public void setRemoteProperties(Map value) {
+        if (util.isNotSet(value)) return;
+        this.jMeterGlobalProperties = value;
         this.argumentMap.put(JMeterCommandLineArguments.JMETER_GLOBAL_PROP, true);
     }
 
-    public void setGlobalPropertiesFile(File value) {
+    public void setRemotePropertiesFile(File value) {
         if (util.isNotSet(value)) return;
         this.jMeterGlobalPropertiesFile = value.toString();
         this.argumentMap.put(JMeterCommandLineArguments.JMETER_GLOBAL_PROP, true);

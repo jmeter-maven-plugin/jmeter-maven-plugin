@@ -29,8 +29,9 @@
         </menu>
         <menu name="Examples">
             <item name="Running Tests" href="examples/running-tests.html"/>
-            <item name="Global Properties" href="examples/setting-global-properties.html"/>
             <item name="User Properties" href="examples/setting-user-properties.html"/>
+            <item name="Remote Properties" href="examples/setting-remote-properties.html"/>
+            <item name="Global Properties" href="examples/setting-global-properties.html"/>
             <item name="System Properties" href="examples/setting-system-properties.html"/>
         </menu>
     </body>

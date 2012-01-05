@@ -1,6 +1,10 @@
 Global Properties
 
+    <<<Global properties in this plugin are defined as properties sent to both local and remote servers!.  This differs from the jmeter definition of global properties where globals are only sent to remote machines.>>>
+    <<<If you want to set properties for remote machines only have a look at {{{examples/setting-remote-properties.html}Remote properties}}>>>
+
     JMeter global properties are identical to user properties with one exception, they are used by both local and remote instances of JMeter.
+    <<<Any global properties that have been set will override any local, or remote properties that have already been set.>>>
 
     You have two options for setting global properties, the first is to specify each property in your <<<pom.xml>>> (The example below shows a property called <<threads>> and a propery called <<testIterations>> being set):
 

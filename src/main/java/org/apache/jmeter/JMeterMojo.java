@@ -243,6 +243,9 @@ public class JMeterMojo extends AbstractMojo {
      * Run all JMeter tests.
      */
     public void execute() throws MojoExecutionException, MojoFailureException {
+        getLog().info("\n\n-------------------------------------------------------" +
+                "\n P E R F O R M A N C E    T E S T S" +
+                "\n-------------------------------------------------------\n\n");
         validateInput();
         createWorkingFiles();
         createTemporaryProperties();

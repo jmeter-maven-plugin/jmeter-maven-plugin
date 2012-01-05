@@ -237,6 +237,7 @@ public class JMeterMojo extends AbstractMojo {
     private File jmeterLog;
     private static final String JMETER_ARTIFACT_GROUPID = "org.apache.jmeter";
     private JMeterArgumentsArray testArgs;
+    private static Utilities util = new Utilities();
 
     /**
      * Run all JMeter tests.
@@ -264,7 +265,7 @@ public class JMeterMojo extends AbstractMojo {
             getLog().info("Building JMeter Report.");
             for (String resultFile : results) {
                 final String outputFile = toOutputFileName(resultFile);
-                getLog().info("transforming: " + resultFile + " to " + outputFile);
+                getLog().info("transforming: " + resultFile + "\nto: " + outputFile);
                 transformer.transform(resultFile, outputFile);
             }
         } catch (FileNotFoundException e) {
@@ -338,23 +339,23 @@ public class JMeterMojo extends AbstractMojo {
     }
 
     private void validateInput() throws MojoExecutionException {
-        if (this.jmeterGlobalPropertiesFile != null || !this.jmeterGlobalPropertiesFile.equals("")) {
-            if (this.jmeterGlobalProperties != null || !this.jmeterGlobalProperties.equals("")) {
+        if (!util.isNotSet(this.jmeterGlobalPropertiesFile)) {
+            if (!util.isNotSet(this.jmeterGlobalProperties)) {
                 throw new MojoExecutionException("You cannot specify a global properties file and individual global properties!");
             }
         }
-        if (this.jmeterGlobalProperties != null || !this.jmeterGlobalProperties.equals("")) {
-            if (this.jmeterGlobalPropertiesFile != null || !this.jmeterGlobalPropertiesFile.equals("")) {
+        if (!util.isNotSet(this.jmeterGlobalProperties)) {
+            if (!util.isNotSet(this.jmeterGlobalPropertiesFile)) {
                 throw new MojoExecutionException("You cannot specify a global properties file and individual global properties!");
             }
         }
-        if (this.overrideLogCategories != null || !this.overrideLogCategories.equals("")) {
-            if (this.overrideRootLogLevel != null || !this.overrideRootLogLevel.equals("")) {
+        if (!util.isNotSet(this.overrideLogCategories)) {
+            if (!util.isNotSet(this.overrideRootLogLevel)) {
                 throw new MojoExecutionException("You cannot override both the root log level and individual log categories!");
             }
         }
-        if (this.overrideRootLogLevel != null || !this.overrideRootLogLevel.equals("")) {
-            if (this.overrideLogCategories != null || !this.overrideRootLogLevel.equals("")) {
+        if (!util.isNotSet(this.overrideRootLogLevel)) {
+            if (!util.isNotSet(this.overrideLogCategories)) {
                 throw new MojoExecutionException("You cannot override both the root log level and individual log categories!");
             }
         }
@@ -504,7 +505,7 @@ public class JMeterMojo extends AbstractMojo {
             new File(testArgs.getResultsFilename()).delete();
             getLog().info(testArgs.getProxyDetails());
             if (getLog().isDebugEnabled()) {
-                getLog().debug("JMeter is called with the following command line arguments: " + humanReadableCommandLineOutput(testArgs.buildArgumentsArray()));
+                getLog().debug("JMeter is called with the following command line arguments: " + util.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()));
             }
 
             // This mess is necessary because JMeter likes to use System.exit.
@@ -583,14 +584,6 @@ public class JMeterMojo extends AbstractMojo {
             throw new MojoExecutionException("Can't read log file", e);
         }
         return testEnded;
-    }
-
-    public String humanReadableCommandLineOutput(String[] arguments) {
-        String debugOutput = "";
-        for (int i = 0; i < arguments.length; i++) {
-            debugOutput += arguments[i] + " ";
-        }
-        return debugOutput;
     }
 
     private static class ExitException extends SecurityException {

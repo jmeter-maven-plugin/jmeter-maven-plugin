@@ -32,6 +32,7 @@ public class JMeterArgumentsArray {
     private Map jMeterGlobalProperties = null;
     private Map systemProperties = null;
     private Map overrideLogCategories = null;
+    private static Utilities util = new Utilities();
 
     /**
      * The argument map will define which arguments are set on the command line.
@@ -57,7 +58,7 @@ public class JMeterArgumentsArray {
     }
 
     public void setProxyHostDetails(String value, int port) {
-        if (value == null || value.equals("")) return;
+        if (util.isNotSet(value)) return;
         this.proxyHost = value;
         this.proxyPort = Integer.toString(port);
         this.argumentMap.put(JMeterCommandLineArguments.PROXY_HOST, true);
@@ -65,13 +66,13 @@ public class JMeterArgumentsArray {
     }
 
     public void setProxyUsername(String value) {
-        if (value == null || value.equals("")) return;
+        if (util.isNotSet(value)) return;
         this.proxyUsername = value;
         this.argumentMap.put(JMeterCommandLineArguments.PROXY_USERNAME, true);
     }
 
     public void setProxyPassword(String value) {
-        if (value == null || value.equals("")) return;
+        if (util.isNotSet(value)) return;
         this.proxyPassword = value;
         this.argumentMap.put(JMeterCommandLineArguments.PROXY_PASSWORD, true);
     }
@@ -81,49 +82,49 @@ public class JMeterArgumentsArray {
     }
 
     public void setACustomPropertiesFile(File value) {
-        if (value == null || value.equals("")) return;
+        if (util.isNotSet(value)) return;
         this.customPropertiesFile = value.toString();
         this.argumentMap.put(JMeterCommandLineArguments.PROPFILE2_OPT, true);
     }
 
     public void setUserProperties(Map value) {
-        if (value == null || value.equals("")) return;
+        if (util.isNotSet(value)) return;
         this.jMeterUserProperties = value;
         this.argumentMap.put(JMeterCommandLineArguments.JMETER_PROPERTY, true);
     }
 
     public void setGlobalProperties(Map value) {
-        if (value == null || value.equals("")) return;
+        if (util.isNotSet(value)) return;
         this.jMeterGlobalProperties = value;
         this.argumentMap.put(JMeterCommandLineArguments.JMETER_GLOBAL_PROP, true);
     }
 
     public void setGlobalPropertiesFile(File value) {
-        if (value == null || value.equals("")) return;
+        if (util.isNotSet(value)) return;
         this.jMeterGlobalPropertiesFile = value.toString();
         this.argumentMap.put(JMeterCommandLineArguments.JMETER_GLOBAL_PROP, true);
     }
 
     public void setLogCategoriesOverrides(Map value) {
-        if (value == null || value.equals("")) return;
+        if (util.isNotSet(value)) return;
         this.overrideLogCategories = value;
         this.argumentMap.put(JMeterCommandLineArguments.LOGLEVEL, true);
     }
 
     public void setLogRootOverride(String value) {
-        if (value == null || value.equals("")) return;
+        if (util.isNotSet(value)) return;
         this.overrideRootLogLevel = value;
         this.argumentMap.put(JMeterCommandLineArguments.LOGLEVEL, true);
     }
 
     public void setSystemProperties(Map value) {
-        if (value == null || value.equals("")) return;
+        if (util.isNotSet(value)) return;
         this.systemProperties = value;
         this.argumentMap.put(JMeterCommandLineArguments.SYSTEM_PROPERTY, true);
     }
 
     public void setTestFile(File value) {
-        if (value == null || value.equals("")) return;
+        if (util.isNotSet(value)) return;
         this.testFile = value.getAbsolutePath();
         this.argumentMap.put(JMeterCommandLineArguments.TESTFILE_OPT, true);
         this.resultsFile = this.reportDirectory + File.separator + value.getName().substring(0, value.getName().lastIndexOf(".")) + "-" + fmt.format(new Date()) + ".xml";
@@ -131,13 +132,13 @@ public class JMeterArgumentsArray {
     }
 
     public void setJMeterDefaultPropertiesFile(File value) {
-        if (value == null || value.equals("")) return;
+        if (util.isNotSet(value)) return;
         this.jmeterDefaultPropertiesFile = value.getAbsolutePath();
         this.argumentMap.put(JMeterCommandLineArguments.PROPFILE_OPT, true);
     }
 
     public void setJMeterHome(String value) {
-        if (value == null || value.equals("")) return;
+        if (util.isNotSet(value)) return;
         this.jMeterHome = value;
         this.argumentMap.put(JMeterCommandLineArguments.JMETER_HOME_OPT, true);
     }

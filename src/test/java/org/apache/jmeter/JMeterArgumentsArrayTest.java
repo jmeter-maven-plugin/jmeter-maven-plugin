@@ -16,14 +16,7 @@ public class JMeterArgumentsArrayTest {
     private File reportDir = new File("${basedir}/target/jmeter-report");
     private URL testFile = this.getClass().getResource("/test.jmx");
     private URL propertiesFile = this.getClass().getResource("/jmeter.properties");
-
-    private String humanReadableCommandLineOutput(String[] arguments) {
-        String debugOutput = "";
-        for (int i = 0; i < arguments.length; i++) {
-            debugOutput += arguments[i] + " ";
-        }
-        return debugOutput;
-    }
+    private static Utilities util = new Utilities();
 
     @Test(expected = MojoExecutionException.class)
     public void noTestSpecified() throws MojoExecutionException {
@@ -54,7 +47,7 @@ public class JMeterArgumentsArrayTest {
         testArgs.setJMeterHome("target/jmeter/");
         assertThat(testArgs.getResultsFilename(), not(equalTo("")));
         assertThat(testArgs.getResultsFilename(), not(equalTo(null)));
-        assertThat(humanReadableCommandLineOutput(testArgs.buildArgumentsArray()), is(equalTo("-n -t " + new File(this.testFile.toURI()).getAbsolutePath() + " -l " + testArgs.getResultsFilename() + " -p " + new File(this.propertiesFile.toURI()).getAbsolutePath() + " -d target/jmeter/ ")));
+        assertThat(util.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()), is(equalTo("-n -t " + new File(this.testFile.toURI()).getAbsolutePath() + " -l " + testArgs.getResultsFilename() + " -p " + new File(this.propertiesFile.toURI()).getAbsolutePath() + " -d target/jmeter/ ")));
     }
 
     //TODO test that each command line switch is set correctly

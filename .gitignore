@@ -6,5 +6,6 @@ target
 *.iml
 *.ipr
 *.iws
+*.log
 \.dorsync
 /nbactions.xml

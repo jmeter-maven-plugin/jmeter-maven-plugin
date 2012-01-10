@@ -11,29 +11,18 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.security.Permission;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import javax.xml.transform.TransformerException;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.DefaultArtifact;
-import org.apache.maven.artifact.handler.DefaultArtifactHandler;
 import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
-import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
-import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
-import org.apache.maven.artifact.versioning.VersionRange;
-import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.apache.tools.ant.DirectoryScanner;
+import org.codehaus.plexus.util.StringUtils;
 
 /**
  * JMeter Maven plugin.
@@ -43,6 +32,14 @@ import org.apache.tools.ant.DirectoryScanner;
  * @requiresProject true
  */
 public class JMeterMojo extends AbstractMojo {
+
+
+    /**
+     * Get a list of artifacts used by this plugin
+     *
+     * @parameter default-value="${plugin.artifacts}"
+     */
+    private List<String> pluginArtifacts;
 
     /**
      * Sets the list of include patterns to use in directory scan for JMX files.
@@ -267,14 +264,8 @@ public class JMeterMojo extends AbstractMojo {
                 "\n P E R F O R M A N C E    T E S T S" +
                 "\n-------------------------------------------------------\n");
         validateInput();
-        try {
-            createWorkingFiles();
-            createTemporaryProperties();
-            resolveJmeterArtifact();
-            initialiseJMeterArgumentsArray();
-        } catch (IOException ex) {
-            throw new MojoFailureException("IOException: " + ex.toString());
-        }
+        generateTemporaryPropertiesAndSetClasspath();
+        initialiseJMeterArgumentsArray();
         List<String> results = new ArrayList<String>();
         for (String file : generateTestList()) {
             results.add(executeTest(new File(srcDir, file)));
@@ -398,82 +389,31 @@ public class JMeterMojo extends AbstractMojo {
         }
     }
 
-    private void createWorkingFiles() throws MojoExecutionException, IOException {
-        this.workDir = new File(mavenProject.getBasedir() + File.separator + "target" + File.separator + "jmeter");
-        this.workDir.mkdirs();
-        this.binDir = new File(this.workDir + File.separator + "/bin");
-        this.binDir.mkdirs();
-        System.setProperty("user.dir", this.binDir.getCanonicalPath());
-        this.jmeterLog = new File(this.workDir + File.separator + "/jmeter.log");
-        System.setProperty("log_file", this.jmeterLog.getCanonicalPath());
-    }
-
-    /**
-     * Resolve JMeter artifact, set necessary System Property.
-     * <p/>
-     * This mess is necessary because JMeter must load this info from a file.
-     * Loading resources from classpath won't work.
-     *
-     * @throws org.apache.maven.plugin.MojoExecutionException
-     *          exception
-     */
-    private void resolveJmeterArtifact() throws MojoExecutionException, IOException {
-        try {
-            String searchPath = "";
-            for (Object oDep : mavenProject.getDependencyArtifacts()) {
-                if (oDep instanceof Dependency) {
-                    Dependency dep = (Dependency) oDep;
-                    if (JMETER_ARTIFACT_GROUPID.equals(dep.getGroupId())) {
-                        //VersionRange needed for Maven 2.x compatibility.
-                        VersionRange versionRange = VersionRange.createFromVersionSpec(dep.getVersion());
-                        Artifact jmeterArtifact = new DefaultArtifact(JMETER_ARTIFACT_GROUPID, dep.getArtifactId(), versionRange, "", "jar", "", new DefaultArtifactHandler());
-                        List remoteArtifactRepositories = mavenProject.getRemoteArtifactRepositories();
-                        artifactResolver.resolve(jmeterArtifact, remoteArtifactRepositories, localRepository);
-                        searchPath += jmeterArtifact.getFile().getCanonicalPath() + ";";
-                    }
-                }
-                if (oDep instanceof Artifact) {
-                    Artifact jmeterArtifact = (Artifact) oDep;
-                    if (JMETER_ARTIFACT_GROUPID.equals(jmeterArtifact.getGroupId())) {
-                        List remoteArtifactRepositories = mavenProject.getRemoteArtifactRepositories();
-                        artifactResolver.resolve(jmeterArtifact, remoteArtifactRepositories, localRepository);
-                        searchPath += jmeterArtifact.getFile().getCanonicalPath() + ";";
-                    }
-                }
-            }
-            System.setProperty("search_paths", searchPath);
-        } catch (ArtifactResolutionException e) {
-            throw new MojoExecutionException("Could not resolve JMeter artifact. ", e);
-        } catch (ArtifactNotFoundException e) {
-            throw new MojoExecutionException("Could not find JMeter artifact. ", e);
-        } catch (InvalidVersionSpecificationException e) {
-            throw new MojoExecutionException("Invalid version declaration. ", e);
-        }
-    }
-
     /**
      * Create temporary property files and set necessary System Properties.
      * <p/>
      * This mess is necessary because JMeter must load this info from a file.
      * Loading resources from classpath won't work.
      * <p/>
-     * ARGH JMeter assumes all paths set in system properties are relative to jmeter_home.
-     * Double ARGH It also assumes that upgrade.properties is relative to jmeter_home/bin.
+     * Jmeter looks for these in the bin folder by default so just put them there.
      *
      * @throws org.apache.maven.plugin.MojoExecutionException
      *          Exception
      */
     @SuppressWarnings("unchecked")
-    private void createTemporaryProperties() throws MojoExecutionException, IOException {
-        System.out.println("\n\nClasspath is " + System.getProperty("java.class.path") + "\n\n");
+    private void generateTemporaryPropertiesAndSetClasspath() throws MojoExecutionException {
+        //Generate expected directory structure
+        this.workDir = new File(mavenProject.getBasedir() + File.separator + "target" + File.separator + "jmeter");
+        this.workDir.mkdirs();
+        this.binDir = new File(this.workDir + File.separator + "/bin");
+        this.binDir.mkdirs();
+        this.jmeterLog = new File(this.workDir + File.separator + "/jmeter.log");
+        System.setProperty("user.dir", this.binDir.getAbsolutePath());
+        System.setProperty("log_file", this.jmeterLog.getAbsolutePath());
+        //Create properties files in the bin directory
         List<File> temporaryPropertyFiles = new ArrayList<File>();
-        File saveServiceProps = new File(this.binDir, "saveservice.properties");
-        temporaryPropertyFiles.add(saveServiceProps);
-        //Seems JMeter
-        File upgradeProps = new File(this.binDir, "upgrade.properties");
-        System.setProperty("upgrade_properties", "/" + upgradeProps.getName());
-        temporaryPropertyFiles.add(upgradeProps);
-
+        temporaryPropertyFiles.add(new File(this.binDir, "saveservice.properties"));
+        temporaryPropertyFiles.add(new File(this.binDir, "upgrade.properties"));
         for (File propertyFile : temporaryPropertyFiles) {
             try {
                 FileWriter out = new FileWriter(propertyFile);
@@ -484,11 +424,13 @@ public class JMeterMojo extends AbstractMojo {
                 throw new MojoExecutionException("Could not create temporary property file " + propertyFile.getName() + " in directory " + this.workDir, e);
             }
         }
+        //Set the JMeter classpath
+        System.setProperty("java.class.path", StringUtils.join(pluginArtifacts.iterator(), File.pathSeparator));
     }
 
-    private void initialiseJMeterArgumentsArray() throws IOException {
-        this.testArgs = new JMeterArgumentsArray(this.reportDir.getCanonicalPath());
-        this.testArgs.setJMeterHome(this.workDir.getCanonicalPath());
+    private void initialiseJMeterArgumentsArray() throws MojoExecutionException {
+        this.testArgs = new JMeterArgumentsArray(this.reportDir.getAbsolutePath());
+        this.testArgs.setJMeterHome(this.workDir.getAbsolutePath());
         this.testArgs.setJMeterDefaultPropertiesFile(this.jmeterDefaultPropertiesFile);
         this.testArgs.setACustomPropertiesFile(this.jmeterCustomPropertiesFile);
         this.testArgs.setUserProperties(this.jmeterUserProperties);

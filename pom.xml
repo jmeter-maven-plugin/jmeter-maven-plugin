@@ -6,13 +6,14 @@
     <groupId>org.apache.jmeter</groupId>
     <artifactId>maven-jmeter-plugin</artifactId>
     <packaging>maven-plugin</packaging>
-    <version>1.2</version>
+    <version>1.23</version>
 
     <name>Maven JMeter Plugin</name>
     <url>http://jakarta.apache.org/jmeter</url>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <jmeter.version>2.4</jmeter.version>
     </properties>
 
     <repositories>
@@ -68,62 +69,62 @@
         <dependency>
             <groupId>org.apache.jmeter</groupId>
             <artifactId>ApacheJMeter_core</artifactId>
-            <version>2.4</version>
+            <version>${jmeter.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.jmeter</groupId>
             <artifactId>ApacheJMeter_components</artifactId>
-            <version>2.4</version>
+            <version>${jmeter.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.jmeter</groupId>
             <artifactId>ApacheJMeter_functions</artifactId>
-            <version>2.4</version>
+            <version>${jmeter.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.jmeter</groupId>
             <artifactId>ApacheJMeter_http</artifactId>
-            <version>2.4</version>
+            <version>${jmeter.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.jmeter</groupId>
             <artifactId>ApacheJMeter_java</artifactId>
-            <version>2.4</version>
+            <version>${jmeter.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.jmeter</groupId>
             <artifactId>ApacheJMeter_reports</artifactId>
-            <version>2.4</version>
+            <version>${jmeter.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.jmeter</groupId>
             <artifactId>ApacheJMeter_tcp</artifactId>
-            <version>2.4</version>
+            <version>${jmeter.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.jmeter</groupId>
             <artifactId>ApacheJMeter_ftp</artifactId>
-            <version>2.4</version>
+            <version>${jmeter.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.jmeter</groupId>
             <artifactId>ApacheJMeter_jdbc</artifactId>
-            <version>2.4</version>
+            <version>${jmeter.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.jmeter</groupId>
             <artifactId>ApacheJMeter_jms</artifactId>
-            <version>2.4</version>
+            <version>${jmeter.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.jmeter</groupId>
             <artifactId>ApacheJMeter_ldap</artifactId>
-            <version>2.4</version>
+            <version>${jmeter.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.jmeter</groupId>
             <artifactId>ApacheJMeter_mail</artifactId>
-            <version>2.4</version>
+            <version>${jmeter.version}</version>
         </dependency>
     </dependencies>
 

@@ -253,6 +253,7 @@ public class JMeterMojo extends AbstractMojo {
     private boolean jmeterPreserveIncludeOrder;
 
     private File workDir;
+    private File binDir;
     private File jmeterLog;
     private static final String JMETER_ARTIFACT_GROUPID = "org.apache.jmeter";
     private JMeterArgumentsArray testArgs;
@@ -266,10 +267,14 @@ public class JMeterMojo extends AbstractMojo {
                 "\n P E R F O R M A N C E    T E S T S" +
                 "\n-------------------------------------------------------\n");
         validateInput();
-        createWorkingFiles();
-        createTemporaryProperties();
-        resolveJmeterArtifact();
-        initialiseJMeterArgumentsArray();
+        try {
+            createWorkingFiles();
+            createTemporaryProperties();
+            resolveJmeterArtifact();
+            initialiseJMeterArgumentsArray();
+        } catch (IOException ex) {
+            throw new MojoFailureException("IOException: " + ex.toString());
+        }
         List<String> results = new ArrayList<String>();
         for (String file : generateTestList()) {
             results.add(executeTest(new File(srcDir, file)));
@@ -361,47 +366,46 @@ public class JMeterMojo extends AbstractMojo {
     }
 
     private void validateInput() throws MojoExecutionException {
-        if (!util.isNotSet(this.jmeterRemotePropertiesFile)) {
-            if (!util.isNotSet(this.jmeterRemoteProperties)) {
+        if (!this.util.isNotSet(this.jmeterRemotePropertiesFile)) {
+            if (!this.util.isNotSet(this.jmeterRemoteProperties)) {
                 throw new MojoExecutionException("You cannot specify a remote properties file and individual remote properties!");
             }
         }
-        if (!util.isNotSet(this.jmeterRemoteProperties)) {
-            if (!util.isNotSet(this.jmeterRemotePropertiesFile)) {
+        if (!this.util.isNotSet(this.jmeterRemoteProperties)) {
+            if (!this.util.isNotSet(this.jmeterRemotePropertiesFile)) {
                 throw new MojoExecutionException("You cannot specify a remote properties file and individual remote properties!");
             }
         }
-        if (!util.isNotSet(this.jmeterGlobalPropertiesFile)) {
-            if (!util.isNotSet(this.jmeterGlobalProperties)) {
+        if (!this.util.isNotSet(this.jmeterGlobalPropertiesFile)) {
+            if (!this.util.isNotSet(this.jmeterGlobalProperties)) {
                 throw new MojoExecutionException("You cannot specify a global properties file and individual global properties!");
             }
         }
-        if (!util.isNotSet(this.jmeterGlobalProperties)) {
-            if (!util.isNotSet(this.jmeterGlobalPropertiesFile)) {
+        if (!this.util.isNotSet(this.jmeterGlobalProperties)) {
+            if (!this.util.isNotSet(this.jmeterGlobalPropertiesFile)) {
                 throw new MojoExecutionException("You cannot specify a global properties file and individual global properties!");
             }
         }
-        if (!util.isNotSet(this.overrideLogCategories)) {
-            if (!util.isNotSet(this.overrideRootLogLevel)) {
+        if (!this.util.isNotSet(this.overrideLogCategories)) {
+            if (!this.util.isNotSet(this.overrideRootLogLevel)) {
                 throw new MojoExecutionException("You cannot override both the root log level and individual log categories!");
             }
         }
-        if (!util.isNotSet(this.overrideRootLogLevel)) {
-            if (!util.isNotSet(this.overrideLogCategories)) {
+        if (!this.util.isNotSet(this.overrideRootLogLevel)) {
+            if (!this.util.isNotSet(this.overrideLogCategories)) {
                 throw new MojoExecutionException("You cannot override both the root log level and individual log categories!");
             }
         }
     }
 
-    private void createWorkingFiles() throws MojoExecutionException {
-        workDir = new File("target" + File.separator + "jmeter");
-        workDir.mkdirs();
-        jmeterLog = new File(workDir, "jmeter.log");
-        try {
-            System.setProperty("log_file", jmeterLog.getCanonicalPath());
-        } catch (IOException e) {
-            throw new MojoExecutionException("Can't get canonical path for log file", e);
-        }
+    private void createWorkingFiles() throws MojoExecutionException, IOException {
+        this.workDir = new File(mavenProject.getBasedir() + File.separator + "target" + File.separator + "jmeter");
+        this.workDir.mkdirs();
+        this.binDir = new File(this.workDir + File.separator + "/bin");
+        this.binDir.mkdirs();
+        System.setProperty("user.dir", this.binDir.getCanonicalPath());
+        this.jmeterLog = new File(this.workDir + File.separator + "/jmeter.log");
+        System.setProperty("log_file", this.jmeterLog.getCanonicalPath());
     }
 
     /**
@@ -413,7 +417,7 @@ public class JMeterMojo extends AbstractMojo {
      * @throws org.apache.maven.plugin.MojoExecutionException
      *          exception
      */
-    private void resolveJmeterArtifact() throws MojoExecutionException {
+    private void resolveJmeterArtifact() throws MojoExecutionException, IOException {
         try {
             String searchPath = "";
             for (Object oDep : mavenProject.getDependencyArtifacts()) {
@@ -425,7 +429,7 @@ public class JMeterMojo extends AbstractMojo {
                         Artifact jmeterArtifact = new DefaultArtifact(JMETER_ARTIFACT_GROUPID, dep.getArtifactId(), versionRange, "", "jar", "", new DefaultArtifactHandler());
                         List remoteArtifactRepositories = mavenProject.getRemoteArtifactRepositories();
                         artifactResolver.resolve(jmeterArtifact, remoteArtifactRepositories, localRepository);
-                        searchPath += jmeterArtifact.getFile().getAbsolutePath() + ";";
+                        searchPath += jmeterArtifact.getFile().getCanonicalPath() + ";";
                     }
                 }
                 if (oDep instanceof Artifact) {
@@ -433,7 +437,7 @@ public class JMeterMojo extends AbstractMojo {
                     if (JMETER_ARTIFACT_GROUPID.equals(jmeterArtifact.getGroupId())) {
                         List remoteArtifactRepositories = mavenProject.getRemoteArtifactRepositories();
                         artifactResolver.resolve(jmeterArtifact, remoteArtifactRepositories, localRepository);
-                        searchPath += jmeterArtifact.getFile().getAbsolutePath() + ";";
+                        searchPath += jmeterArtifact.getFile().getCanonicalPath() + ";";
                     }
                 }
             }
@@ -460,15 +464,13 @@ public class JMeterMojo extends AbstractMojo {
      *          Exception
      */
     @SuppressWarnings("unchecked")
-    private void createTemporaryProperties() throws MojoExecutionException {
+    private void createTemporaryProperties() throws MojoExecutionException, IOException {
+        System.out.println("\n\nClasspath is " + System.getProperty("java.class.path") + "\n\n");
         List<File> temporaryPropertyFiles = new ArrayList<File>();
-        File saveServiceProps = new File(workDir, "saveservice.properties");
-        System.setProperty("saveservice_properties", "/" + saveServiceProps.getName());
+        File saveServiceProps = new File(this.binDir, "saveservice.properties");
         temporaryPropertyFiles.add(saveServiceProps);
         //Seems JMeter
-        File binDir = new File(workDir, "bin");
-        binDir.mkdirs();
-        File upgradeProps = new File(binDir, "upgrade.properties");
+        File upgradeProps = new File(this.binDir, "upgrade.properties");
         System.setProperty("upgrade_properties", "/" + upgradeProps.getName());
         temporaryPropertyFiles.add(upgradeProps);
 
@@ -479,44 +481,43 @@ public class JMeterMojo extends AbstractMojo {
                 out.flush();
                 out.close();
             } catch (IOException e) {
-                throw new MojoExecutionException("Could not create temporary property file " + propertyFile.getName() + " in directory " + workDir, e);
+                throw new MojoExecutionException("Could not create temporary property file " + propertyFile.getName() + " in directory " + this.workDir, e);
             }
         }
     }
 
-    private void initialiseJMeterArgumentsArray() {
-        testArgs = new JMeterArgumentsArray(reportDir.getAbsolutePath());
-        testArgs.setJMeterHome(this.workDir.getAbsolutePath());
-        testArgs.setJMeterDefaultPropertiesFile(this.jmeterDefaultPropertiesFile);
-        testArgs.setACustomPropertiesFile(this.jmeterCustomPropertiesFile);
-        testArgs.setUserProperties(this.jmeterUserProperties);
-        testArgs.setRemoteProperties(this.jmeterRemoteProperties);
-        testArgs.setRemotePropertiesFile(this.jmeterRemotePropertiesFile);
-        testArgs.setGlobalProperties(this.jmeterGlobalProperties);
-        testArgs.setUseRemoteHost(this.remote);
-        testArgs.setProxyHostDetails(this.proxyHost, this.proxyPort);
-        testArgs.setProxyUsername(this.proxyUsername);
-        testArgs.setProxyPassword(this.proxyPassword);
-        testArgs.setSystemProperties(this.systemProperties);
-        testArgs.setLogCategoriesOverrides(this.overrideLogCategories);
-        testArgs.setLogRootOverride(this.overrideRootLogLevel);
+    private void initialiseJMeterArgumentsArray() throws IOException {
+        this.testArgs = new JMeterArgumentsArray(this.reportDir.getCanonicalPath());
+        this.testArgs.setJMeterHome(this.workDir.getCanonicalPath());
+        this.testArgs.setJMeterDefaultPropertiesFile(this.jmeterDefaultPropertiesFile);
+        this.testArgs.setACustomPropertiesFile(this.jmeterCustomPropertiesFile);
+        this.testArgs.setUserProperties(this.jmeterUserProperties);
+        this.testArgs.setRemoteProperties(this.jmeterRemoteProperties);
+        this.testArgs.setRemotePropertiesFile(this.jmeterRemotePropertiesFile);
+        this.testArgs.setGlobalProperties(this.jmeterGlobalProperties);
+        this.testArgs.setUseRemoteHost(this.remote);
+        this.testArgs.setProxyHostDetails(this.proxyHost, this.proxyPort);
+        this.testArgs.setProxyUsername(this.proxyUsername);
+        this.testArgs.setProxyPassword(this.proxyPassword);
+        this.testArgs.setSystemProperties(this.systemProperties);
+        this.testArgs.setLogCategoriesOverrides(this.overrideLogCategories);
+        this.testArgs.setLogRootOverride(this.overrideRootLogLevel);
     }
 
     private List<String> generateTestList() {
         List<String> jmeterTestFiles = new ArrayList<String>();
         DirectoryScanner scanner = new DirectoryScanner();
-        scanner.setBasedir(srcDir);
+        scanner.setBasedir(this.srcDir);
         scanner.setIncludes(this.jMeterTestFiles == null ? new String[]{"**/*.jmx"} : this.jMeterTestFiles.toArray(new String[]{}));
-        if (excludeJMeterTestFiles != null) {
-            scanner.setExcludes(excludeJMeterTestFiles.toArray(new String[]{}));
+        if (this.excludeJMeterTestFiles != null) {
+            scanner.setExcludes(this.excludeJMeterTestFiles.toArray(new String[]{}));
         }
         scanner.scan();
         final List<String> includedFiles = Arrays.asList(scanner.getIncludedFiles());
-        if (jmeterPreserveIncludeOrder) {
+        if (this.jmeterPreserveIncludeOrder) {
             Collections.sort(includedFiles, new IncludesComparator(this.jMeterTestFiles));
         }
         jmeterTestFiles.addAll(includedFiles);
-
         return jmeterTestFiles;
     }
 

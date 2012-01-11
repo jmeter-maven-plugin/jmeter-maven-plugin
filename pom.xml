@@ -23,7 +23,7 @@
         </repository>
         <repository>
             <id>Maven JMeter Repo</id>
-            <url>http://yciabaud.github.com/jmeter-maven-plugin/repository</url>
+            <url>http://ardesco.github.com/jmeter-maven-plugin/repository</url>
         </repository>
     </repositories>
 
@@ -155,7 +155,7 @@
     <distributionManagement>
         <repository>
             <id>gh-pages</id>
-            <url>file:///${basedir}/../maven-jmeter-plugin-pages/repository/</url>
+            <url>file:///${basedir}/../jmeter-maven-plugin-pages/repository/</url>
         </repository>
     </distributionManagement>
 

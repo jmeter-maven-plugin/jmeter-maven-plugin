@@ -427,13 +427,15 @@ public class JMeterMojo extends AbstractMojo {
                 throw new MojoExecutionException("Could not create temporary property file " + propertyFile.getName() + " in directory " + this.workDir, e);
             }
         }
-        //Copy files to lib/ext for JMeter function search
+        //Copy JMeter components to lib/ext for JMeter function search
         this.libExt = new File(this.workDir + File.separator + "lib" + File.separator + "ext");
         this.libExt.mkdirs();
         List<String> classPath = new ArrayList<String>();
         for (Artifact artifact : pluginArtifacts) {
             try {
-                FileUtils.copyFile(artifact.getFile(), new File(this.libExt + File.separator + artifact.getFile().getName()));
+                if (artifact.getArtifactId().startsWith("ApacheJMeter_")) {
+                    FileUtils.copyFile(artifact.getFile(), new File(this.libExt + File.separator + artifact.getFile().getName()));
+                }
                 classPath.add(artifact.getFile().getCanonicalPath());
             } catch (IOException mx) {
                 throw new MojoExecutionException("Unable to get the canonical path for " + artifact);

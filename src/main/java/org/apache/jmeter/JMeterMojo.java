@@ -15,6 +15,7 @@ import java.util.*;
 import javax.xml.transform.TransformerException;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.plugin.AbstractMojo;
@@ -39,7 +40,7 @@ public class JMeterMojo extends AbstractMojo {
      *
      * @parameter default-value="${plugin.artifacts}"
      */
-    private List<String> pluginArtifacts;
+    private List<Artifact> pluginArtifacts;
 
     /**
      * Sets the list of include patterns to use in directory scan for JMX files.
@@ -425,7 +426,15 @@ public class JMeterMojo extends AbstractMojo {
             }
         }
         //Set the JMeter classpath
-        System.setProperty("java.class.path", StringUtils.join(pluginArtifacts.iterator(), File.pathSeparator));
+        List<String> artifactFilePaths = new ArrayList<String>();
+        for (Artifact artifact : pluginArtifacts) {
+            try {
+                artifactFilePaths.add(artifact.getFile().getCanonicalPath());
+            } catch (IOException mx) {
+                throw new MojoExecutionException("Unable to get the canonical path for " + artifact);
+            }
+        }
+        System.setProperty("java.class.path", StringUtils.join(artifactFilePaths.iterator(), File.pathSeparator));
     }
 
     private void initialiseJMeterArgumentsArray() throws MojoExecutionException {

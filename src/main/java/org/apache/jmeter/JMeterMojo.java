@@ -14,6 +14,7 @@ import java.security.Permission;
 import java.util.*;
 import javax.xml.transform.TransformerException;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
@@ -252,6 +253,7 @@ public class JMeterMojo extends AbstractMojo {
 
     private File workDir;
     private File binDir;
+    private File libExt;
     private File jmeterLog;
     private static final String JMETER_ARTIFACT_GROUPID = "org.apache.jmeter";
     private JMeterArgumentsArray testArgs;
@@ -406,9 +408,9 @@ public class JMeterMojo extends AbstractMojo {
         //Generate expected directory structure
         this.workDir = new File(mavenProject.getBasedir() + File.separator + "target" + File.separator + "jmeter");
         this.workDir.mkdirs();
-        this.binDir = new File(this.workDir + File.separator + "/bin");
+        this.binDir = new File(this.workDir + File.separator + "bin");
         this.binDir.mkdirs();
-        this.jmeterLog = new File(this.workDir + File.separator + "/jmeter.log");
+        this.jmeterLog = new File(this.workDir + File.separator + "jmeter.log");
         System.setProperty("user.dir", this.binDir.getAbsolutePath());
         System.setProperty("log_file", this.jmeterLog.getAbsolutePath());
         //Create properties files in the bin directory
@@ -425,16 +427,20 @@ public class JMeterMojo extends AbstractMojo {
                 throw new MojoExecutionException("Could not create temporary property file " + propertyFile.getName() + " in directory " + this.workDir, e);
             }
         }
-        //Set the JMeter classpath
-        List<String> artifactFilePaths = new ArrayList<String>();
+        //Copy files to lib/ext for JMeter function search
+        this.libExt = new File(this.workDir + File.separator + "lib" + File.separator + "ext");
+        this.libExt.mkdirs();
+        List<String> classPath = new ArrayList<String>();
         for (Artifact artifact : pluginArtifacts) {
             try {
-                artifactFilePaths.add(artifact.getFile().getCanonicalPath());
+                FileUtils.copyFile(artifact.getFile(), new File(this.libExt + File.separator + artifact.getFile().getName()));
+                classPath.add(artifact.getFile().getCanonicalPath());
             } catch (IOException mx) {
                 throw new MojoExecutionException("Unable to get the canonical path for " + artifact);
             }
         }
-        System.setProperty("java.class.path", StringUtils.join(artifactFilePaths.iterator(), File.pathSeparator));
+        //Set the JMeter classpath
+        System.setProperty("java.class.path", StringUtils.join(classPath.iterator(), File.pathSeparator));
     }
 
     private void initialiseJMeterArgumentsArray() throws MojoExecutionException {

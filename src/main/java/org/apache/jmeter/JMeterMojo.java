@@ -255,7 +255,6 @@ public class JMeterMojo extends AbstractMojo {
     private File binDir;
     private File libExt;
     private File jmeterLog;
-    private static final String JMETER_ARTIFACT_GROUPID = "org.apache.jmeter";
     private JMeterArgumentsArray testArgs;
     private static Utilities util = new Utilities();
 
@@ -283,11 +282,12 @@ public class JMeterMojo extends AbstractMojo {
         try {
             ReportTransformer transformer;
             transformer = new ReportTransformer(getXslt());
-            getLog().info("Building JMeter Report.");
+            getLog().info("Building JMeter Report...");
             for (String resultFile : results) {
                 final String outputFile = toOutputFileName(resultFile);
-                getLog().info("transforming: " + resultFile + "\nto: " + outputFile);
                 transformer.transform(resultFile, outputFile);
+                getLog().info("Raw results: " + resultFile);
+                getLog().info("Test report: " + outputFile);
             }
         } catch (FileNotFoundException e) {
             throw new MojoExecutionException("Error writing report file jmeter file.", e);
@@ -393,12 +393,12 @@ public class JMeterMojo extends AbstractMojo {
     }
 
     /**
-     * Create temporary property files and set necessary System Properties.
+     * Create temporary property files, copy jars to ext dir and set necessary System Properties.
      * <p/>
      * This mess is necessary because JMeter must load this info from a file.
-     * Loading resources from classpath won't work.
+     * JMeter can load resources from classpath, but it checks the files in it's lib/ext dir for usable functions
      * <p/>
-     * Jmeter looks for these in the bin folder by default so just put them there.
+     * <p/>
      *
      * @throws org.apache.maven.plugin.MojoExecutionException
      *          Exception
@@ -433,6 +433,7 @@ public class JMeterMojo extends AbstractMojo {
         List<String> classPath = new ArrayList<String>();
         for (Artifact artifact : pluginArtifacts) {
             try {
+                //This assumes that all JMeter components are named "ApacheJMeter_<component>" in thier POM files
                 if (artifact.getArtifactId().startsWith("ApacheJMeter_")) {
                     FileUtils.copyFile(artifact.getFile(), new File(this.libExt + File.separator + artifact.getFile().getName()));
                 }
@@ -503,6 +504,8 @@ public class JMeterMojo extends AbstractMojo {
 
             // This mess is necessary because JMeter likes to use System.exit.
             // We need to trap the exit call.
+
+            //TODO Investigate the use of a listener here (Looks like JMeter reports startup and shutdown to a listener when it finishes a test...
             SecurityManager oldManager = System.getSecurityManager();
             System.setSecurityManager(new SecurityManager() {
 

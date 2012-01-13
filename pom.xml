@@ -13,12 +13,6 @@
     <!-- Really need to change the below to point at the site for this plugin, below is incorrect! -->
     <url>http://jakarta.apache.org/jmeter</url>
 
-    <scm>
-        <connection>scm:git:git@github.com:juven/git-demo.git</connection>
-        <developerConnection>scm:git:git@github.com:juven/git-demo.git</developerConnection>
-        <url>git@github.com:juven/git-demo.git</url>
-    </scm>
-
     <licenses>
         <license>
             <name>Apache 2</name>
@@ -27,6 +21,12 @@
             <comments>A business-friendly OSS license</comments>
         </license>
     </licenses>
+
+    <scm>
+        <connection>scm:git:git@github.com:Ardesco/jmeter-maven-plugin.git</connection>
+        <developerConnection>scm:git:git@github.com:Ardesco/jmeter-maven-plugin.git</developerConnection>
+        <url>git@github.com:Ardesco/jmeter-maven-plugin.git</url>
+    </scm>
 
     <developers>
         <developer>
@@ -107,7 +107,7 @@
         <dependency>
             <groupId>org.apache.ant</groupId>
             <artifactId>ant</artifactId>
-            <version>1.8.1</version>
+            <version>1.8.2</version>
         </dependency>
         <dependency>
             <groupId>org.apache.maven</groupId>
@@ -117,7 +117,7 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.8.1</version>
+            <version>4.9</version>
             <scope>test</scope>
         </dependency>
         <dependency>

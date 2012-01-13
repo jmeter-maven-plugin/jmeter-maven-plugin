@@ -1,15 +1,91 @@
 <?xml version="1.0"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-    <modelVersion>4.0.0</modelVersion>
 
+    <modelVersion>4.0.0</modelVersion>
     <groupId>org.apache.jmeter</groupId>
     <artifactId>maven-jmeter-plugin</artifactId>
+    <version>SNAPSHOT</version>
     <packaging>maven-plugin</packaging>
-    <version>1.3</version>
 
     <name>Maven JMeter Plugin</name>
+    <description>A plugin to allow you to run JMeter tests with Maven.</description>
+    <!-- Really need to change the below to point at the site for this plugin, below is incorrect! -->
     <url>http://jakarta.apache.org/jmeter</url>
+
+    <scm>
+        <connection>scm:git:git@github.com:juven/git-demo.git</connection>
+        <developerConnection>scm:git:git@github.com:juven/git-demo.git</developerConnection>
+        <url>git@github.com:juven/git-demo.git</url>
+    </scm>
+
+    <licenses>
+        <license>
+            <name>Apache 2</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+            <comments>A business-friendly OSS license</comments>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <id>Ardesco</id>
+            <name>Mark Collin</name>
+            <roles>
+                <role>Comitter</role>
+            </roles>
+        </developer>
+        <developer>
+            <id>afranken</id>
+            <name>Arne Franken</name>
+            <roles>
+                <role>Comitter</role>
+            </roles>
+        </developer>
+        <developer>
+            <id>yciabaud</id>
+            <name>Yoann Ciabaud</name>
+            <roles>
+                <role>Comitter</role>
+            </roles>
+        </developer>
+        <developer>
+            <id>ascheman</id>
+            <name>Gerd Aschemann</name>
+            <roles>
+                <role>Comitter</role>
+            </roles>
+        </developer>
+        <developer>
+            <id>Ronnie76er</id>
+            <name>Ron Alleva</name>
+            <roles>
+                <role>Comitter</role>
+            </roles>
+        </developer>
+        <developer>
+            <id>captrespect</id>
+            <name>Jonathon Roberts</name>
+            <roles>
+                <role>Comitter</role>
+            </roles>
+        </developer>
+        <developer>
+            <id>dyokomizo</id>
+            <name>Daniel Yokomizo</name>
+            <roles>
+                <role>Comitter</role>
+            </roles>
+        </developer>
+        <developer>
+            <id>mantree</id>
+            <name>Tom Coupland</name>
+            <roles>
+                <role>Comitter</role>
+            </roles>
+        </developer>
+    </developers>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -161,11 +237,14 @@
         </pluginManagement>
     </build>
 
-    <!-- github pages branch repository -->
     <distributionManagement>
+        <snapshotRepository>
+            <id>snapshot</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+        </snapshotRepository>
         <repository>
-            <id>gh-pages</id>
-            <url>file:///${basedir}/../jmeter-maven-plugin-pages/repository/</url>
+            <id>release</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
     </distributionManagement>
 

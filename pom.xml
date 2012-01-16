@@ -1,16 +1,96 @@
 <?xml version="1.0"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.apache.jmeter</groupId>
     <artifactId>maven-jmeter-plugin</artifactId>
+    <version>SNAPSHOT</version>
     <packaging>maven-plugin</packaging>
-    <version>1.2</version>
+
     <name>Maven JMeter Plugin</name>
+    <description>A plugin to allow you to run JMeter tests with Maven.</description>
+    <!-- Really need to change the below to point at the site for this plugin, below is incorrect! -->
+    <url>http://jakarta.apache.org/jmeter</url>
+
+    <licenses>
+        <license>
+            <name>Apache 2</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+            <comments>A business-friendly OSS license</comments>
+        </license>
+    </licenses>
+
+    <scm>
+        <connection>scm:git:git@github.com:Ardesco/jmeter-maven-plugin.git</connection>
+        <developerConnection>scm:git:git@github.com:Ardesco/jmeter-maven-plugin.git</developerConnection>
+        <url>git@github.com:Ardesco/jmeter-maven-plugin.git</url>
+    </scm>
+
+    <developers>
+        <developer>
+            <id>Ardesco</id>
+            <name>Mark Collin</name>
+            <roles>
+                <role>Comitter</role>
+            </roles>
+        </developer>
+        <developer>
+            <id>afranken</id>
+            <name>Arne Franken</name>
+            <roles>
+                <role>Comitter</role>
+            </roles>
+        </developer>
+        <developer>
+            <id>yciabaud</id>
+            <name>Yoann Ciabaud</name>
+            <roles>
+                <role>Comitter</role>
+            </roles>
+        </developer>
+        <developer>
+            <id>ascheman</id>
+            <name>Gerd Aschemann</name>
+            <roles>
+                <role>Comitter</role>
+            </roles>
+        </developer>
+        <developer>
+            <id>Ronnie76er</id>
+            <name>Ron Alleva</name>
+            <roles>
+                <role>Comitter</role>
+            </roles>
+        </developer>
+        <developer>
+            <id>captrespect</id>
+            <name>Jonathon Roberts</name>
+            <roles>
+                <role>Comitter</role>
+            </roles>
+        </developer>
+        <developer>
+            <id>dyokomizo</id>
+            <name>Daniel Yokomizo</name>
+            <roles>
+                <role>Comitter</role>
+            </roles>
+        </developer>
+        <developer>
+            <id>mantree</id>
+            <name>Tom Coupland</name>
+            <roles>
+                <role>Comitter</role>
+            </roles>
+        </developer>
+    </developers>
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <jmeter.version>2.5.1</jmeter.version>
     </properties>
-    <url>http://jakarta.apache.org/jmeter</url>
 
     <repositories>
         <repository>
@@ -19,7 +99,7 @@
         </repository>
         <repository>
             <id>Maven JMeter Repo</id>
-            <url>http://yciabaud.github.com/jmeter-maven-plugin/repository</url>
+            <url>http://ardesco.github.com/jmeter-maven-plugin/repository</url>
         </repository>
     </repositories>
 
@@ -27,7 +107,7 @@
         <dependency>
             <groupId>org.apache.ant</groupId>
             <artifactId>ant</artifactId>
-            <version>1.8.1</version>
+            <version>1.8.2</version>
         </dependency>
         <dependency>
             <groupId>org.apache.maven</groupId>
@@ -37,7 +117,7 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.8.1</version>
+            <version>4.9</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -60,88 +140,111 @@
             <artifactId>maven-project</artifactId>
             <version>2.2.1</version>
         </dependency>
-		
-	<!-- JMeter dependencies -->
+
+        <!-- JMeter dependencies -->
         <dependency>
             <groupId>org.apache.jmeter</groupId>
             <artifactId>ApacheJMeter_core</artifactId>
-            <version>2.4</version>
+            <version>${jmeter.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.jmeter</groupId>
             <artifactId>ApacheJMeter_components</artifactId>
-            <version>2.4</version>
+            <version>${jmeter.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.jmeter</groupId>
             <artifactId>ApacheJMeter_functions</artifactId>
-            <version>2.4</version>
+            <version>${jmeter.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.jmeter</groupId>
             <artifactId>ApacheJMeter_http</artifactId>
-            <version>2.4</version>
+            <version>${jmeter.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.jmeter</groupId>
             <artifactId>ApacheJMeter_java</artifactId>
-            <version>2.4</version>
+            <version>${jmeter.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.jmeter</groupId>
             <artifactId>ApacheJMeter_reports</artifactId>
-            <version>2.4</version>
+            <version>${jmeter.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.jmeter</groupId>
             <artifactId>ApacheJMeter_tcp</artifactId>
-            <version>2.4</version>
+            <version>${jmeter.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.jmeter</groupId>
             <artifactId>ApacheJMeter_ftp</artifactId>
-            <version>2.4</version>
+            <version>${jmeter.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.jmeter</groupId>
             <artifactId>ApacheJMeter_jdbc</artifactId>
-            <version>2.4</version>
+            <version>${jmeter.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.jmeter</groupId>
             <artifactId>ApacheJMeter_jms</artifactId>
-            <version>2.4</version>
+            <version>${jmeter.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.jmeter</groupId>
             <artifactId>ApacheJMeter_ldap</artifactId>
-            <version>2.4</version>
+            <version>${jmeter.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.jmeter</groupId>
             <artifactId>ApacheJMeter_mail</artifactId>
-            <version>2.4</version>
+            <version>${jmeter.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.jmeter</groupId>
+            <artifactId>ApacheJMeter_junit</artifactId>
+            <version>${jmeter.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.jmeter</groupId>
+            <artifactId>ApacheJMeter_monitors</artifactId>
+            <version>${jmeter.version}</version>
         </dependency>
     </dependencies>
 
     <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>1.5</source>
-                    <target>1.5</target>
-                </configuration>
-            </plugin>
-        </plugins>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <configuration>
+                        <source>1.6</source>
+                        <target>1.6</target>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-site-plugin</artifactId>
+                    <version>3.0</version>
+                    <configuration>
+                        <locales>en</locales>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
     </build>
 
-    <!-- github pages branch repository -->
     <distributionManagement>
+        <snapshotRepository>
+            <id>snapshot</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+        </snapshotRepository>
         <repository>
-            <id>gh-pages</id>
-            <url>file:///${basedir}/../maven-jmeter-plugin-pages/repository/</url>
+            <id>release</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
     </distributionManagement>
 

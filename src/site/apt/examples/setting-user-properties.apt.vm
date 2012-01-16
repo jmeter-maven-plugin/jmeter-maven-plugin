@@ -1,0 +1,29 @@
+User Properties
+
+    JMeter user properties are properties supplied to JMeter that can be used in JMeter tests.
+
+    To set user properties you will need to specify each property in your <<<pom.xml>>> (The example below shows a property called <<threads>> and a propery called <<testIterations>> being set):
+
++---+
+<project>
+  [...]
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>${project.artifactId}</artifactId>
+          <version>${project.version}</version>
+          <configuration>
+            <jmeterUserProperties>
+              <threads>10</threads>
+              <testIterations>5</testIterations>
+            </jmeterUserProperties>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+  [...]
+</project>
++---+

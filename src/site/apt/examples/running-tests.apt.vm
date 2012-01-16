@@ -1,0 +1,101 @@
+Running Tests
+
+* Running All Tests
+
+    To run all tests held in the <<$\{project.base.directory\}/src/test/jmeter>> you just need to run the phase you have assigned to the execution phase.
+
+    In the example below the execution phase has been set to verify:
+
++---+
+<project>
+  [...]
+    <build>
+      <pluginManagement>
+        <plugins>
+          <plugin>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>${project.artifactId}</artifactId>
+            <version>${project.version}</version>
+            <executions>
+              <execution>
+                <id>jmeter-tests</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>jmeter</goal>
+                </goals>
+              </execution>
+            </executions>
+            <configuration>
+              <reportDir>${project.build.directory}/jmeter-reports</reportDir>
+            </configuration>
+          </plugin>
+        </plugins>
+      </pluginManagement>
+    </build>
+  [...]
+</project>
++---+
+
+    So to run all the tests type `<<mvn verify>>`
+
+* Specifying Tests To Run
+
+    You can explicitly specify which tests in the <<$\{project.base.directory\}/src/test/jmeter>> should be run by using the <<\<jMeterTestFiles\>>> tag:
+
++---+
+<project>
+  [...]
+    <build>
+      <pluginManagement>
+        <plugins>
+          <plugin>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>${project.artifactId}</artifactId>
+            <version>${project.version}</version>
+            <configuration>
+              <reportDir>${project.build.directory}/jmeter-reports</reportDir>
+              <jMeterTestFiles>
+                <jMeterTestFile>test1.jmx</jMeterTestFile>
+                <jMeterTestFile>test2.jmx</jMeterTestFile>
+              </jMeterTestFiles>
+            </configuration>
+          </plugin>
+        </plugins>
+      </pluginManagement>
+    </build>
+  [...]
+</project>
++---+
+
+    This time when you type `<<mvn verify>>` only <<test1.jmx>> and <<test2.jmx>> will be run.
+
+* Specifying Tests That Should Not Be Run
+
+    Rather than specifying which tests should be run, you could alternativly specify which tests in the <<$\{project.base.directory\}/src/test/jmeter>> you do not wish to run by using the <<\<excludeJMeterTestFiles\>>> tag:
+
++---+
+<project>
+  [...]
+    <build>
+      <pluginManagement>
+        <plugins>
+          <plugin>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>${project.artifactId}</artifactId>
+            <version>${project.version}</version>
+            <configuration>
+              <reportDir>${project.build.directory}/jmeter-reports</reportDir>
+              <excludeJMeterTestFiles>
+                <excludeJMeterTestFile>test3.jmx</excludeJMeterTestFile>
+                <excludeJMeterTestFile>test4.jmx</excludeJMeterTestFile>
+              </excludeJMeterTestFiles>
+            </configuration>
+          </plugin>
+        </plugins>
+      </pluginManagement>
+    </build>
+  [...]
+</project>
++---+
+
+    This time when you type `<<mvn verify>>` all tests in the tests in the <<$\{project.base.directory\}/src/test/jmeter>> apart from <<test3.jmx>> and <<test4.jmx>> will be run.

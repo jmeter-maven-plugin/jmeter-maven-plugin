@@ -1,0 +1,29 @@
+System Properties
+
+    JMeter can also set system properties, these are global environment properties accessible by all applications running in the same JVM (They are not accessible outside the JVM).
+
+    To set system properties you will need to specify each property in your <<<pom.xml>>> (The example below shows a property called <<threads>> and a propery called <<testIterations>> being set):
+
++---+
+<project>
+  [...]
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>${project.artifactId}</artifactId>
+          <version>${project.version}</version>
+          <configuration>
+            <systemProperties>
+              <threads>10</threads>
+              <testIterations>5</testIterations>
+            </systemProperties>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+  [...]
+</project>
++---+

@@ -1,0 +1,52 @@
+Log Level Overrides
+
+    You have two options for overriding log levels, the first is to specify a series of log levels as shown below:
+
++---+
+<project>
+  [...]
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>${project.artifactId}</artifactId>
+          <version>${project.version}</version>
+          <configuration>
+            <overrideLogCategories>
+              <jorphan>INFO</jorphan>
+              <jmeter.util>DEBUG</jmeter.util>
+            </overrideLogCategories>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+  [...]
+</project>
++---+
+
+    The second is to specify a root log level that will override all log levels.
+
++---+
+<project>
+  [...]
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>${project.artifactId}</artifactId>
+          <version>${project.version}</version>
+          <configuration>
+            <overrideRootLogLevel>debug</overrideRootLogLevel>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+  [...]
+</project>
++---+
+
+    Setting the root log level will always override any settings for individual category log levels (as a result if the <<overrideRootLogLevel>> is set all category log levels will be ignored by this plugin). .

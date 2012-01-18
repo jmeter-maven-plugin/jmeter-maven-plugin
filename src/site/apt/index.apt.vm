@@ -3,10 +3,12 @@ Basic Usage
     First of all add this fork's Maven repository to your project (or personal maven repo):
 
 +---+
-<repository>
-  <id>Maven JMeter Plugin</id>
-  <url>http://yciabaud.github.com/jmeter-maven-plugin/repository</url>
-</repository>
+<pluginRepositories>
+  <pluginRepository>
+    <id>Maven JMeter Plugin</id>
+    <url>http://ardesco.github.com/jmeter-maven-plugin/repository</url>
+  </pluginRepository>
+</pluginRepositories>
 +---+
 
     Add the plugin to the build section of your <<<pom.xml>>> (Best practice is to define the version of the Maven JMeter plugin that you want to use in either your <<<pom.xml>>> or a parent <<<pom.xml>>>):

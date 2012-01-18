@@ -17,6 +17,7 @@ Usage
 ***Use the ardesco repo for JMeter 2.5.1-2012-01-17 and jmeter-maven-plugin 1.3-2012-01-17 (Current Development Snapshot)***
 
 * Add this fork's Maven repository to your project (or personal maven repo):
+
         <pluginRepositories>
 		    <pluginRepository>
 			    <id>yciabaud Maven JMeter Plugin</id>

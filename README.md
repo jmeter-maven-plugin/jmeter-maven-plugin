@@ -12,16 +12,17 @@ Usage
 
 ### Add the plugin to your project
 
+*Use the yciabaud repo for JMeter 2.4 and jmeter-maven-plugin 1.2 (Current Release)*
+*Use the ardesco repo for JMeter 2.5.1-2012-01-17 and jmeter-maven-plugin 1.3-2012-01-17 (Current Development Snapshot)*
+
 * Add this fork's Maven repository to your project (or personal maven repo):
         <pluginRepositories>
-            <!-- JMeter 2.4 and jmeter-maven-plugin 1.2 (Current Release) -->
 		    <pluginRepository>
-			    <id>Maven JMeter Plugin</id>
+			    <id>yciabaud Maven JMeter Plugin</id>
 			    <url>http://yciabaud.github.com/jmeter-maven-plugin/repository</url>
 		    </pluginRepository>
-		    <!-- JMeter 2.5.1-2012-01-17 and jmeter-maven-plugin 1.3-2012-01-17 (Current Development Snapshot) -->
 		    <pluginRepository>
-            	<id>Maven JMeter Plugin</id>
+            	<id>ardesco Maven JMeter Plugin</id>
             	<url>http://ardesco.github.com/jmeter-maven-plugin/repository</url>
             </pluginRepository>
 		</pluginRepositories>

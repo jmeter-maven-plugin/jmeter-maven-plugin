@@ -5,18 +5,29 @@ The Maven JMeter Plugin allows you to automate JMeter tests in Maven.
 
 This fork use the JMeter module tree and the poms attached to the JMeter issue [#49753](https://issues.apache.org/bugzilla/show_bug.cgi?id=49753)
 
+*For the latest documentation do a "mvn site:run" in the terminal*
 
 Usage
 -----
 
 ### Add the plugin to your project
 
+***Use the yciabaud repo for JMeter 2.4 and jmeter-maven-plugin 1.2 (Current Release)***
+
+***Use the ardesco repo for JMeter 2.5.1-2012-01-17 and jmeter-maven-plugin 1.3-2012-01-17 (Current Development Snapshot)***
+
 * Add this fork's Maven repository to your project (or personal maven repo):
 
-		<repository>
-			<id>Maven JMeter Plugin</id>
-			<url>http://yciabaud.github.com/jmeter-maven-plugin/repository</url>
-		</repository>
+        <pluginRepositories>
+		    <pluginRepository>
+			    <id>yciabaud Maven JMeter Plugin</id>
+			    <url>http://yciabaud.github.com/jmeter-maven-plugin/repository</url>
+		    </pluginRepository>
+		    <pluginRepository>
+            	<id>ardesco Maven JMeter Plugin</id>
+            	<url>http://ardesco.github.com/jmeter-maven-plugin/repository</url>
+            </pluginRepository>
+		</pluginRepositories>
 
 * Add the plugin to the build section of your pom's project :
 

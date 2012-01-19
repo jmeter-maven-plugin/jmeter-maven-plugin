@@ -23,9 +23,9 @@
     </licenses>
 
     <scm>
-        <connection>scm:git:git@github.com:Ardesco/jmeter-maven-plugin.git</connection>
-        <developerConnection>scm:git:git@github.com:Ardesco/jmeter-maven-plugin.git</developerConnection>
-        <url>git@github.com:Ardesco/jmeter-maven-plugin.git</url>
+        <connection>scm:git:git@github.com:Ronnie76er/jmeter-maven-plugin.git</connection>
+        <developerConnection>scm:git:git@github.com:Ronnie76er/jmeter-maven-plugin.git</developerConnection>
+        <url>git@github.com:Ronnie76er/jmeter-maven-plugin.git</url>
     </scm>
 
     <developers>
@@ -89,17 +89,13 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <jmeter.version>2.5.1-2012-01-17</jmeter.version>
+        <jmeter.version>2.6-SNAPSHOT</jmeter.version>
     </properties>
 
     <repositories>
         <repository>
-            <id>Java maven repo</id>
-            <url>http://download.java.net/maven/2</url>
-        </repository>
-        <repository>
-            <id>Maven JMeter Repo</id>
-            <url>http://ardesco.github.com/jmeter-maven-plugin/repository</url>
+            <id>Apache JMeter Repository</id>
+            <url>https://repository.apache.org/content/repositories/snapshots</url>
         </repository>
     </repositories>
 
@@ -169,7 +165,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.jmeter</groupId>
-            <artifactId>ApacheJMeter_reports</artifactId>
+            <artifactId>ApacheJMeter_report</artifactId>
             <version>${jmeter.version}</version>
         </dependency>
         <dependency>

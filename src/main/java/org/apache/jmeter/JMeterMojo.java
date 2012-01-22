@@ -415,6 +415,8 @@ public class JMeterMojo extends AbstractMojo {
         System.setProperty("log_file", this.jmeterLog.getAbsolutePath());
         //Create properties files in the bin directory
         List<File> temporaryPropertyFiles = new ArrayList<File>();
+
+        //TODO Collect these from parent artifact when they are available + allow a local override.
         temporaryPropertyFiles.add(new File(this.binDir, "saveservice.properties"));
         temporaryPropertyFiles.add(new File(this.binDir, "upgrade.properties"));
         for (File propertyFile : temporaryPropertyFiles) {
@@ -427,13 +429,14 @@ public class JMeterMojo extends AbstractMojo {
                 throw new MojoExecutionException("Could not create temporary property file " + propertyFile.getName() + " in directory " + this.workDir, e);
             }
         }
+
         //Copy JMeter components to lib/ext for JMeter function search
         this.libExt = new File(this.workDir + File.separator + "lib" + File.separator + "ext");
         this.libExt.mkdirs();
         List<String> classPath = new ArrayList<String>();
         for (Artifact artifact : pluginArtifacts) {
             try {
-                //This assumes that all JMeter components are named "ApacheJMeter_<component>" in thier POM files
+                //This assumes that all JMeter components are named "ApacheJMeter_<component>" in their POM files
                 if (artifact.getArtifactId().startsWith("ApacheJMeter_")) {
                     FileUtils.copyFile(artifact.getFile(), new File(this.libExt + File.separator + artifact.getFile().getName()));
                 }

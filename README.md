@@ -35,7 +35,7 @@ Usage
 
 ***Use the yciabaud repo for JMeter 2.4 and jmeter-maven-plugin 1.2 (Current Release)***
 
-***Use the ardesco repo for JMeter 2.5.1-2012-01-17 and jmeter-maven-plugin 1.3-2012-01-17 (Current Development Snapshot)***
+***Use the ardesco repo for JMeter 2.6-SNAPSHOT (From official apache repo) and jmeter-maven-plugin 1.4-SNAPSHOT (Current Development Snapshot)***
 
 * Add this fork's Maven repository to your project (or personal maven repo):
 
@@ -55,7 +55,7 @@ Usage
 		<plugin>
 			<groupId>org.apache.jmeter</groupId>
 			<artifactId>maven-jmeter-plugin</artifactId>
-			<version>1.2</version>
+			<version>1.4-SNAPSHOT</version>
 			<executions>
 				<execution>
 					<id>jmeter-tests</id>

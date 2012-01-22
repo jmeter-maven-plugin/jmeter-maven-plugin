@@ -16,15 +16,17 @@ A couple of google groups have been created for discussion about this plugin:
 
 A place to discuss usage of the maven-jmeter-plugin, let people know how you use it here.
 
-[http://groups.google.com/group/maven-jmeter-plugin-users](http://groups.google.com/group/maven-jmeter-plugin-users)
-[maven-jmeter-plugin-users@googlegroups.com](mailto:maven-jmeter-plugin-users@googlegroups.com)
+Homepage: [http://groups.google.com/group/maven-jmeter-plugin-users](http://groups.google.com/group/maven-jmeter-plugin-users)
+
+Group Email: [maven-jmeter-plugin-users@googlegroups.com](mailto:maven-jmeter-plugin-users@googlegroups.com)
 
 ### Devs Group
 
 A place to disciss the development of the maven-jmeter-plugin, or ask about features you would like to see added.
 
-[http://groups.google.com/group/maven-jmeter-plugin-devs](http://groups.google.com/group/maven-jmeter-plugin-devs)
-[maven-jmeter-plugin-devs@googlegroups.com](mailto:maven-jmeter-plugin-devs@googlegroups.com)
+Homepage: [http://groups.google.com/group/maven-jmeter-plugin-devs](http://groups.google.com/group/maven-jmeter-plugin-devs)
+
+Group Email: [maven-jmeter-plugin-devs@googlegroups.com](mailto:maven-jmeter-plugin-devs@googlegroups.com)
 
 Usage
 -----

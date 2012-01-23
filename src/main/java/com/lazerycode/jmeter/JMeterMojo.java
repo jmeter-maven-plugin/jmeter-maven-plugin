@@ -247,7 +247,8 @@ public class JMeterMojo extends AbstractMojo {
     private File binDir;
     private File libExt;
     private File jmeterLog;
-    private JMeterArgumentsArray testArgs;
+    private String jmeterConfigArtifact = "ApacheJMeter_config";
+    private JMeterArgumentsArray testArgs;    
     private static Utilities util = new Utilities();
 
     /**
@@ -406,6 +407,21 @@ public class JMeterMojo extends AbstractMojo {
         return false;
     }
 
+    /**
+     * Search the list of plugin artifacts for an artifact with a specific name
+     *
+     * @param artifactName
+     * @return
+     * @throws MojoExecutionException
+     */
+    private Artifact getArtifactNamed(String artifactName) throws MojoExecutionException {
+        for (Artifact artifact : this.pluginArtifacts) {
+            if (artifact.getArtifactId().equals(artifactName)) {
+                return artifact;
+            }
+        }
+        throw new MojoExecutionException("Unable to find artifact '" + artifactName + "'!");
+    }
 
     /**
      * Create temporary property files, copy jars to ext dir and set necessary System Properties.
@@ -431,16 +447,19 @@ public class JMeterMojo extends AbstractMojo {
         //Create properties files in the bin directory
         List<String> temporaryPropertyFiles = new ArrayList<String>();
 
-        //TODO Collect these from parent artifact when they are available + allow a local override.
+        //TODO refactor this to make it cleaner
+        temporaryPropertyFiles.add("jmeter.properties");
         temporaryPropertyFiles.add("saveservice.properties");
         temporaryPropertyFiles.add("upgrade.properties");
-        temporaryPropertyFiles.add("jmeter.properties");
+        temporaryPropertyFiles.add("system.properties");
+        temporaryPropertyFiles.add("user.properties");
+
         for (String propertyFile : temporaryPropertyFiles) {
             if (!usedCustomPropertiesFile(propertyFile)) {
                 getLog().warn("Custom " + propertyFile + " not found, using the default version supplied with JMeter.");
                 try {
                     FileWriter out = new FileWriter(new File(this.binDir + File.separator + propertyFile));
-                    InputStream in = this.getClass().getResourceAsStream("bin/" + propertyFile);
+                    InputStream in = getArtifactNamed(this.jmeterConfigArtifact).getClass().getResourceAsStream("bin/" + propertyFile);
                     IOUtils.copy(in, out);
                     in.close();
                     out.flush();
@@ -450,12 +469,11 @@ public class JMeterMojo extends AbstractMojo {
                 }
             }
         }
-
         //Copy JMeter components to lib/ext for JMeter function search
         this.libExt = new File(this.workDir + File.separator + "lib" + File.separator + "ext");
         this.libExt.mkdirs();
         List<String> classPath = new ArrayList<String>();
-        for (Artifact artifact : pluginArtifacts) {
+        for (Artifact artifact : this.pluginArtifacts) {
             try {
                 //This assumes that all JMeter components are named "ApacheJMeter_<component>" in their POM files
                 if (artifact.getArtifactId().startsWith("ApacheJMeter_")) {

@@ -1,5 +1,8 @@
-package org.apache.jmeter;
+package com.lazerycode.jmeter;
 
+import com.lazerycode.jmeter.JMeterArgumentsArray;
+import com.lazerycode.jmeter.JMeterCommandLineArguments;
+import com.lazerycode.jmeter.Utilities;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.junit.Test;
 

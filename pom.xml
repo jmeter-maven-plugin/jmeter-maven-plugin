@@ -1,17 +1,15 @@
 <?xml version="1.0"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.apache.jmeter</groupId>
+    <groupId>com.lazerycode.jmeter</groupId>
     <artifactId>maven-jmeter-plugin</artifactId>
     <version>1.4-SNAPSHOT</version>
     <packaging>maven-plugin</packaging>
 
     <name>Maven JMeter Plugin</name>
     <description>A plugin to allow you to run JMeter tests with Maven.</description>
-    <!-- Really need to change the below to point at the site for this plugin, below is incorrect! -->
-    <url>http://jakarta.apache.org/jmeter</url>
+    <url>http://jmeter.lazerycode.com</url>
 
     <licenses>
         <license>

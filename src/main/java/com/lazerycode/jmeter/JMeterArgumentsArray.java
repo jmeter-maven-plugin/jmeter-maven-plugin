@@ -1,4 +1,4 @@
-package org.apache.jmeter;
+package com.lazerycode.jmeter;
 
 import org.apache.maven.plugin.MojoExecutionException;
 

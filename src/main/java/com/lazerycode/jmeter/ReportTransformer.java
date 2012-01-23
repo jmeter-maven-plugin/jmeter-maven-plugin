@@ -1,4 +1,4 @@
-package org.apache.jmeter;
+package com.lazerycode.jmeter;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;

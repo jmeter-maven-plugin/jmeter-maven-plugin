@@ -91,17 +91,8 @@ public class JMeterMojo extends AbstractMojo {
     private File reportXslt;
 
     /**
-     * Absolute path to JMeter default properties file.
-     * The default properties file is part of a JMeter installation and sets basic properties needed for running JMeter.
-     *
-     * @parameter expression="${jmeter.properties}"
-     * default-value="${basedir}/src/test/jmeter/jmeter.properties"
-     * @required
-     */
-    private File jmeterDefaultPropertiesFile;
-
-    /**
      * Absolute path to JMeter custom (test dependent) properties file.
+     * .
      *
      * @parameter
      */
@@ -393,6 +384,29 @@ public class JMeterMojo extends AbstractMojo {
         }
     }
 
+
+    /**
+     * Copy a properties file to the bin directory ready to be read in by JMeter
+     * (Bin dir must have been initialised before this is called)
+     *
+     * @param filename
+     * @return
+     */
+    private boolean usedCustomPropertiesFile(String filename) {
+        File propFile = new File(this.srcDir + File.separator + filename);
+        if (propFile.exists()) {
+            File destinationFile = new File(this.binDir + File.separator + filename);
+            try {
+                FileUtils.copyFile(propFile, destinationFile);
+                return true;
+            } catch (IOException ex) {
+                getLog().warn("Unable to copy " + filename + " to " + this.binDir);
+            }
+        }
+        return false;
+    }
+
+
     /**
      * Create temporary property files, copy jars to ext dir and set necessary System Properties.
      * <p/>
@@ -415,19 +429,25 @@ public class JMeterMojo extends AbstractMojo {
         System.setProperty("user.dir", this.binDir.getAbsolutePath());
         System.setProperty("log_file", this.jmeterLog.getAbsolutePath());
         //Create properties files in the bin directory
-        List<File> temporaryPropertyFiles = new ArrayList<File>();
+        List<String> temporaryPropertyFiles = new ArrayList<String>();
 
         //TODO Collect these from parent artifact when they are available + allow a local override.
-        temporaryPropertyFiles.add(new File(this.binDir, "saveservice.properties"));
-        temporaryPropertyFiles.add(new File(this.binDir, "upgrade.properties"));
-        for (File propertyFile : temporaryPropertyFiles) {
-            try {
-                FileWriter out = new FileWriter(propertyFile);
-                IOUtils.copy(Thread.currentThread().getContextClassLoader().getResourceAsStream(propertyFile.getName()), out);
-                out.flush();
-                out.close();
-            } catch (IOException e) {
-                throw new MojoExecutionException("Could not create temporary property file " + propertyFile.getName() + " in directory " + this.workDir, e);
+        temporaryPropertyFiles.add("saveservice.properties");
+        temporaryPropertyFiles.add("upgrade.properties");
+        temporaryPropertyFiles.add("jmeter.properties");
+        for (String propertyFile : temporaryPropertyFiles) {
+            if (!usedCustomPropertiesFile(propertyFile)) {
+                getLog().warn("Custom " + propertyFile + " not found, using the default version supplied with JMeter.");
+                try {
+                    FileWriter out = new FileWriter(new File(this.binDir + File.separator + propertyFile));
+                    InputStream in = this.getClass().getResourceAsStream("bin/" + propertyFile);
+                    IOUtils.copy(in, out);
+                    in.close();
+                    out.flush();
+                    out.close();
+                } catch (IOException e) {
+                    throw new MojoExecutionException("Could not create temporary property file " + propertyFile + " in directory " + this.workDir, e);
+                }
             }
         }
 
@@ -453,7 +473,7 @@ public class JMeterMojo extends AbstractMojo {
     private void initialiseJMeterArgumentsArray() throws MojoExecutionException {
         this.testArgs = new JMeterArgumentsArray(this.reportDir.getAbsolutePath());
         this.testArgs.setJMeterHome(this.workDir.getAbsolutePath());
-        this.testArgs.setJMeterDefaultPropertiesFile(this.jmeterDefaultPropertiesFile);
+//        this.testArgs.setJMeterDefaultPropertiesFile(this.jmeterDefaultPropertiesFile);
         this.testArgs.setACustomPropertiesFile(this.jmeterCustomPropertiesFile);
         this.testArgs.setUserProperties(this.jmeterUserProperties);
         this.testArgs.setRemoteProperties(this.jmeterRemoteProperties);

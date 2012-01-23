@@ -206,6 +206,11 @@
             <artifactId>ApacheJMeter_monitors</artifactId>
             <version>${jmeter.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.jmeter</groupId>
+            <artifactId>ApacheJMeter_config</artifactId>
+            <version>${jmeter.version}</version>
+        </dependency>
     </dependencies>
 
     <build>

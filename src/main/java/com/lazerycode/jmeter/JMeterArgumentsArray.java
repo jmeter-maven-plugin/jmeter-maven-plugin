@@ -43,7 +43,7 @@ public class JMeterArgumentsArray {
         argumentMap.put(JMeterCommandLineArguments.NONGUI_OPT, true);           //Always suppress the GUI.
         argumentMap.put(JMeterCommandLineArguments.TESTFILE_OPT, false);        //Required - test file as specified.
         argumentMap.put(JMeterCommandLineArguments.LOGFILE_OPT, false);         //Required - output file as specified.
-        argumentMap.put(JMeterCommandLineArguments.PROPFILE_OPT, false);        //Required - jmeter.properties location as specified.
+//        argumentMap.put(JMeterCommandLineArguments.PROPFILE_OPT, false);        //Required - jmeter.properties location as specified.
         argumentMap.put(JMeterCommandLineArguments.JMETER_HOME_OPT, false);     //Required - JMETER_HOME location as specified.
         argumentMap.put(JMeterCommandLineArguments.SYSTEM_PROPERTY, false);     //Set to true if system properties are specified.
         argumentMap.put(JMeterCommandLineArguments.JMETER_PROPERTY, false);     //Set to true if user properties are specified.
@@ -139,11 +139,11 @@ public class JMeterArgumentsArray {
         this.argumentMap.put(JMeterCommandLineArguments.LOGFILE_OPT, true);
     }
 
-    public void setJMeterDefaultPropertiesFile(File value) {
-        if (util.isNotSet(value)) return;
-        this.jmeterDefaultPropertiesFile = value.getAbsolutePath();
-        this.argumentMap.put(JMeterCommandLineArguments.PROPFILE_OPT, true);
-    }
+//    public void setJMeterDefaultPropertiesFile(File value) {
+//        if (util.isNotSet(value)) return;
+//        this.jmeterDefaultPropertiesFile = value.getAbsolutePath();
+//        this.argumentMap.put(JMeterCommandLineArguments.PROPFILE_OPT, true);
+//    }
 
     public void setJMeterHome(String value) {
         if (util.isNotSet(value)) return;
@@ -175,8 +175,8 @@ public class JMeterArgumentsArray {
             throw new MojoExecutionException("No test specified!");
         } else if (!argumentMap.get(JMeterCommandLineArguments.LOGFILE_OPT)) {
             throw new MojoExecutionException("Log file not set!");
-        } else if (!argumentMap.get(JMeterCommandLineArguments.PROPFILE_OPT)) {
-            throw new MojoExecutionException("Properties file not set!");
+//        } else if (!argumentMap.get(JMeterCommandLineArguments.PROPFILE_OPT)) {
+//            throw new MojoExecutionException("Properties file not set!");
         } else if (!argumentMap.get(JMeterCommandLineArguments.JMETER_HOME_OPT)) {
             throw new MojoExecutionException("JMETER_HOME not set!");
         }
@@ -198,8 +198,8 @@ public class JMeterArgumentsArray {
                         argumentsArray.add(this.resultsFile);
                         break;
                     case PROPFILE_OPT:
-                        argumentsArray.add(JMeterCommandLineArguments.PROPFILE_OPT.getCommandLineArgument());
-                        argumentsArray.add(this.jmeterDefaultPropertiesFile);
+//                        argumentsArray.add(JMeterCommandLineArguments.PROPFILE_OPT.getCommandLineArgument());
+//                        argumentsArray.add(this.jmeterDefaultPropertiesFile);
                         break;
                     case JMETER_HOME_OPT:
                         argumentsArray.add(JMeterCommandLineArguments.JMETER_HOME_OPT.getCommandLineArgument());

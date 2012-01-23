@@ -40,7 +40,7 @@ public class JMeterArgumentsArrayTest {
     public void jMeterHomeNotSet() throws Exception {
         JMeterArgumentsArray testArgs = new JMeterArgumentsArray(reportDir.getAbsolutePath());
         testArgs.setTestFile(new File(this.testFile.toURI()));
-        testArgs.setJMeterDefaultPropertiesFile(new File(this.propertiesFile.toURI()));
+//        testArgs.setJMeterDefaultPropertiesFile(new File(this.propertiesFile.toURI()));
         testArgs.buildArgumentsArray();
     }
 
@@ -48,37 +48,37 @@ public class JMeterArgumentsArrayTest {
     public void validateDefaultCommandLineOutput() throws Exception{
         JMeterArgumentsArray testArgs = new JMeterArgumentsArray(reportDir.getAbsolutePath());
         testArgs.setTestFile(new File(this.testFile.toURI()));
-        testArgs.setJMeterDefaultPropertiesFile(new File(this.propertiesFile.toURI()));
+//        testArgs.setJMeterDefaultPropertiesFile(new File(this.propertiesFile.toURI()));
         testArgs.setJMeterHome("target/jmeter/");
         assertThat(testArgs.getResultsFilename(), not(equalTo("")));
         assertThat(testArgs.getResultsFilename(), not(equalTo(null)));
-        assertThat(util.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()), is(equalTo("-n -t " + new File(this.testFile.toURI()).getAbsolutePath() + " -l " + testArgs.getResultsFilename() + " -p " + new File(this.propertiesFile.toURI()).getAbsolutePath() + " -d target/jmeter/ ")));
+        assertThat(util.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()), is(equalTo("-n -t " + new File(this.testFile.toURI()).getAbsolutePath() + " -l " + testArgs.getResultsFilename() + " -d target/jmeter/ ")));
     }
 
     @Test
     public void validateJMeterRemoteProperties() throws Exception{
         JMeterArgumentsArray testArgs = new JMeterArgumentsArray(reportDir.getAbsolutePath());
         testArgs.setTestFile(new File(this.testFile.toURI()));
-        testArgs.setJMeterDefaultPropertiesFile(new File(this.propertiesFile.toURI()));
+//        testArgs.setJMeterDefaultPropertiesFile(new File(this.propertiesFile.toURI()));
         testArgs.setJMeterHome("target/jmeter/");
         Map<String, String> remoteProps = new HashMap<String, String>();
         remoteProps.put("threads", "1");
         remoteProps.put("testIterations", "10");
         testArgs.setRemoteProperties(remoteProps);
-        assertThat(util.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()), is(equalTo("-n -t " + new File(this.testFile.toURI()).getAbsolutePath() + " -l " + testArgs.getResultsFilename() + " -p " + new File(this.propertiesFile.toURI()).getAbsolutePath() + " -d target/jmeter/ " + util.argumentsMapToString(remoteProps, JMeterCommandLineArguments.JMETER_GLOBAL_PROP))));
+        assertThat(util.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()), is(equalTo("-n -t " + new File(this.testFile.toURI()).getAbsolutePath() + " -l " + testArgs.getResultsFilename() + " -d target/jmeter/ " + util.argumentsMapToString(remoteProps, JMeterCommandLineArguments.JMETER_GLOBAL_PROP))));
     }
 
     @Test
     public void validateJMeterGlobalProperties() throws Exception{
         JMeterArgumentsArray testArgs = new JMeterArgumentsArray(reportDir.getAbsolutePath());
         testArgs.setTestFile(new File(this.testFile.toURI()));
-        testArgs.setJMeterDefaultPropertiesFile(new File(this.propertiesFile.toURI()));
+//        testArgs.setJMeterDefaultPropertiesFile(new File(this.propertiesFile.toURI()));
         testArgs.setJMeterHome("target/jmeter/");
         Map<String, String> globalProps = new HashMap<String, String>();
         globalProps.put("threads", "1");
         globalProps.put("testIterations", "10");
         testArgs.setGlobalProperties(globalProps);
-        assertThat(util.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()), is(equalTo("-n -t " + new File(this.testFile.toURI()).getAbsolutePath() + " -l " + testArgs.getResultsFilename() + " -p " + new File(this.propertiesFile.toURI()).getAbsolutePath() + " -d target/jmeter/ " + util.argumentsMapToString(globalProps, JMeterCommandLineArguments.JMETER_PROPERTY) + util.argumentsMapToString(globalProps, JMeterCommandLineArguments.JMETER_GLOBAL_PROP))));
+        assertThat(util.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()), is(equalTo("-n -t " + new File(this.testFile.toURI()).getAbsolutePath() + " -l " + testArgs.getResultsFilename() + " -d target/jmeter/ " + util.argumentsMapToString(globalProps, JMeterCommandLineArguments.JMETER_PROPERTY) + util.argumentsMapToString(globalProps, JMeterCommandLineArguments.JMETER_GLOBAL_PROP))));
     }
 
     //TODO test that each command line switch is set correctly

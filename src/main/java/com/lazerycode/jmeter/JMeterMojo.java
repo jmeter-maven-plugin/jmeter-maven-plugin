@@ -248,6 +248,7 @@ public class JMeterMojo extends AbstractMojo {
     private File workDir;
     private File binDir;
     private File libExt;
+    private File libJunit;
     private File jmeterLog;
     private String jmeterConfigArtifact = "ApacheJMeter_config";
     private JMeterArgumentsArray testArgs;    
@@ -475,6 +476,8 @@ public class JMeterMojo extends AbstractMojo {
         //Copy JMeter components to lib/ext for JMeter function search
         this.libExt = new File(this.workDir + File.separator + "lib" + File.separator + "ext");
         this.libExt.mkdirs();
+        this.libJunit = new File(this.workDir + File.separator + "lib" + File.separator + "junit");
+        this.libJunit.mkdirs();
         List<String> classPath = new ArrayList<String>();
         for (Artifact artifact : this.pluginArtifacts) {
             try {

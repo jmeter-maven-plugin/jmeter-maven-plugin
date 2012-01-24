@@ -12,6 +12,8 @@ import java.io.InputStream;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.security.Permission;
 import java.util.*;
+import java.util.jar.JarFile;
+import java.util.zip.ZipEntry;
 import javax.xml.transform.TransformerException;
 
 import org.apache.commons.io.FileUtils;
@@ -343,11 +345,11 @@ public class JMeterMojo extends AbstractMojo {
         }
         if (failed) {
             if (totalErrorCount == 0) {
-                throw new MojoExecutionException("There were test failures.  See the jmeter logs for details.");
+                throw new MojoFailureException("There were test failures.  See the jmeter logs for details.");
             } else if (totalFailureCount == 0) {
-                throw new MojoExecutionException("There were test errors.  See the jmeter logs for details.");
+                throw new MojoFailureException("There were test errors.  See the jmeter logs for details.");
             } else {
-                throw new MojoExecutionException("There were test errors and failures.  See the jmeter logs for details.");
+                throw new MojoFailureException("There were test errors and failures.  See the jmeter logs for details.");
             }
         }
     }
@@ -453,13 +455,14 @@ public class JMeterMojo extends AbstractMojo {
         temporaryPropertyFiles.add("upgrade.properties");
         temporaryPropertyFiles.add("system.properties");
         temporaryPropertyFiles.add("user.properties");
-
+        //TODO Extract everything from bin folder?  All needed for something...
         for (String propertyFile : temporaryPropertyFiles) {
             if (!usedCustomPropertiesFile(propertyFile)) {
                 getLog().warn("Custom " + propertyFile + " not found, using the default version supplied with JMeter.");
                 try {
                     FileWriter out = new FileWriter(new File(this.binDir + File.separator + propertyFile));
-                    InputStream in = getArtifactNamed(this.jmeterConfigArtifact).getClass().getResourceAsStream("bin/" + propertyFile);
+                    JarFile propertyJar = new JarFile(getArtifactNamed(this.jmeterConfigArtifact).getFile());
+                    InputStream in = propertyJar.getInputStream(propertyJar.getEntry("bin/" + propertyFile));
                     IOUtils.copy(in, out);
                     in.close();
                     out.flush();

@@ -8,8 +8,9 @@ This fork uses the official Apache JMeter maven artifacts
 *For the latest documentation do a "mvn site:run" in the terminal*
 
 *PLEASE NOTE: The Group ID and Artifact ID have changed!*
+-----
 
- This is to bring the project in line with maven naming practice from non-maven snapshots and to enable us to upload to Sonatypes OSS repos.  This means the next release of this project will be promoted to the maven central repo.
+ This is to bring the project in line with maven naming practice for non-maven plugins and to enable us to upload to the Sonatype OSS repos.  This means the next release of this project will be promoted to the maven central repo.
 
 Community
 -----
@@ -26,7 +27,7 @@ Group Email: [maven-jmeter-plugin-users@googlegroups.com](mailto:maven-jmeter-pl
 
 ### Devs Group
 
-A place to disciss the development of the maven-jmeter-plugin, or ask about features you would like to see added.
+A place to discuss the development of the maven-jmeter-plugin, or ask about features you would like to see added.
 
 Homepage: [http://groups.google.com/group/maven-jmeter-plugin-devs](http://groups.google.com/group/maven-jmeter-plugin-devs)
 

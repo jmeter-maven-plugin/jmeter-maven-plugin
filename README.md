@@ -3,7 +3,7 @@ Maven JMeter Plugin
 
 The Maven JMeter Plugin allows you to automate JMeter tests in Maven.
 
-This fork use the JMeter module tree and the poms attached to the JMeter issue [#49753](https://issues.apache.org/bugzilla/show_bug.cgi?id=49753)
+This fork uses the official Apache JMeter maven artifacts
 
 *For the latest documentation do a "mvn site:run" in the terminal*
 
@@ -28,25 +28,23 @@ Homepage: [http://groups.google.com/group/maven-jmeter-plugin-devs](http://group
 
 Group Email: [maven-jmeter-plugin-devs@googlegroups.com](mailto:maven-jmeter-plugin-devs@googlegroups.com)
 
+Build Server
+-----
+
+You can see the state of the current codebase by looking at the CI server - [http://ci.lazerycode.com](http://ci.lazerycode.com)
+
+
 Usage
 -----
 
 ### Add the plugin to your project
 
-***Use the yciabaud repo for JMeter 2.4 and jmeter-maven-plugin 1.2 (Current Release)***
-
-***Use the ardesco repo for JMeter 2.6-SNAPSHOT (From official apache repo) and jmeter-maven-plugin 1.4-SNAPSHOT (Current Development Snapshot)***
-
-* Add this fork's Maven repository to your project (or personal maven repo):
+* Add this projects Maven repository to your project (or personal maven repo):
 
         <pluginRepositories>
 		    <pluginRepository>
-			    <id>yciabaud Maven JMeter Plugin</id>
-			    <url>http://yciabaud.github.com/jmeter-maven-plugin/repository</url>
-		    </pluginRepository>
-		    <pluginRepository>
-            	<id>ardesco Maven JMeter Plugin</id>
-            	<url>http://ardesco.github.com/jmeter-maven-plugin/repository</url>
+            	<id>Sonatype Snapshots</id>
+            	<url>https://oss.sonatype.org/content/repositories/snapshots</url>
             </pluginRepository>
 		</pluginRepositories>
 
@@ -54,7 +52,7 @@ Usage
 
 		<plugin>
 			<groupId>org.apache.jmeter</groupId>
-			<artifactId>maven-jmeter-plugin</artifactId>
+			<artifactId>jmeter-maven-plugin</artifactId>
 			<version>1.4-SNAPSHOT</version>
 			<executions>
 				<execution>
@@ -65,28 +63,13 @@ Usage
 					</goals>
 			   </execution>
 			</executions>
-			<configuration>
-				<reportDir>${project.build.directory}/jmeter-reports</reportDir>
-				<jmeterUserProperties>
-					<!-- for user properites -->
-				</jmeterUserProperties>
-			</configuration>
 		</plugin>
-
-I'll go over some of the options later.
 
 ### Reference JMX files
 
 This one should be simple enough, unless you don't know about JMeter.  It can be a bit daunting and counterintuitive at first, but once you start to get the hang of it, it will be like second nature, and you will realize how powerful the tool can be.
 
 Once you create your JMeter tests, you'll want to copy them to : `<Project Dir>/src/test/jmeter`
-
-### Copy properties files to your Maven project
-
-* Copy over jmeter.properties
-* Copy `<JMETER_HOME>/bin/jmeter.properties` to `<Project Dir>/src/test/jmeter`.  
-
-You can make any tweaks necessary to the jmeter.properties file you see fit.
 
 ### Run the tests
 
@@ -96,6 +79,10 @@ All your tests should run in maven now!
 
 Options
 -------
+
+* Custom properties files
+
+You can override the default JMeter properties files by adding your own version into `<ProjectDir>/src/test/jmeter`
 
 * JMeter user properties
 
@@ -148,4 +135,3 @@ Contributing
 4. Push to the branch (`git push origin my_plugin`)
 5. Create an [Issue][1] with a link to your branch
 6. Enjoy a refreshing Diet Coke and wait
-

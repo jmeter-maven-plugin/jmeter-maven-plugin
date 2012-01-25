@@ -25,9 +25,6 @@ Running Tests
                 </goals>
               </execution>
             </executions>
-            <configuration>
-              <reportDir>${project.build.directory}/jmeter-reports</reportDir>
-            </configuration>
           </plugin>
         </plugins>
       </pluginManagement>
@@ -84,7 +81,6 @@ Running Tests
             <artifactId>${project.artifactId}</artifactId>
             <version>${project.version}</version>
             <configuration>
-              <reportDir>${project.build.directory}/jmeter-reports</reportDir>
               <excludeJMeterTestFiles>
                 <excludeJMeterTestFile>test3.jmx</excludeJMeterTestFile>
                 <excludeJMeterTestFile>test4.jmx</excludeJMeterTestFile>

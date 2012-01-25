@@ -240,6 +240,7 @@ public class JMeterMojo extends AbstractMojo {
     private File binDir;
     private File libExt;
     private File libJunit;
+    private File logsDir;
     private File jmeterLog;
     private String jmeterConfigArtifact = "ApacheJMeter_config";
     private JMeterArgumentsArray testArgs;
@@ -418,6 +419,16 @@ public class JMeterMojo extends AbstractMojo {
     }
 
     /**
+     * Create the jmeter.log file and set the log_file system property for JMeter to pick up
+     *
+     * @param value
+     */
+    private void setJMeterLogFile(String value) {
+        this.jmeterLog = new File(this.logsDir + File.separator + value);
+        System.setProperty("log_file", this.jmeterLog.getAbsolutePath());
+    }
+
+    /**
      * Create temporary property files, copy jars to ext dir and set necessary System Properties.
      * <p/>
      * This mess is necessary because JMeter must load this info from a file.
@@ -433,16 +444,15 @@ public class JMeterMojo extends AbstractMojo {
         //Generate expected directory structure
         this.workDir = new File(mavenProject.getBasedir() + File.separator + "target" + File.separator + "jmeter");
         this.workDir.mkdirs();
+        this.logsDir = new File(this.workDir + File.separator + "jmeter-logs");
+        this.logsDir.mkdirs();
         this.binDir = new File(this.workDir + File.separator + "bin");
         this.binDir.mkdirs();
         this.libExt = new File(this.workDir + File.separator + "lib" + File.separator + "ext");
         this.libExt.mkdirs();
         this.libJunit = new File(this.workDir + File.separator + "lib" + File.separator + "junit");
         this.libJunit.mkdirs();
-        //TODO reset this for each test
-        this.jmeterLog = new File(this.workDir + File.separator + "jmeter.log");
         System.setProperty("user.dir", this.binDir.getAbsolutePath());
-        System.setProperty("log_file", this.jmeterLog.getAbsolutePath());
         //Create/copy properties files and put them in the bin directory
         for (JMeterPropertiesFiles propertyFile : JMeterPropertiesFiles.values()) {
             if (!usedCustomPropertiesFile(propertyFile.getPropertiesFileName())) {
@@ -564,7 +574,8 @@ public class JMeterMojo extends AbstractMojo {
             });
             try {
                 // This mess is necessary because the only way to know when
-                // JMeter is done is to wait for its test end message!
+                // JMeter is done is to wait for its test end message!                
+                setJMeterLogFile(test.getName() + ".log");
                 new JMeter().start(testArgs.buildArgumentsArray());
                 BufferedReader in = new BufferedReader(new FileReader(jmeterLog));
                 while (!checkForEndOfTest(in)) {

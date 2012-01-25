@@ -7,6 +7,10 @@ This fork uses the official Apache JMeter maven artifacts
 
 *For the latest documentation do a "mvn site:run" in the terminal*
 
+*PLEASE NOTE: The Group ID and Artifact ID have changed!*
+
+ This is to bring the project in line with maven naming practice from non-maven snapshots and to enable us to upload to Sonatypes OSS repos.  This means the next release of this project will be promoted to the maven central repo.
+
 Community
 -----
 
@@ -43,8 +47,8 @@ Usage
 
         <pluginRepositories>
 		    <pluginRepository>
-            	<id>Sonatype Snapshots</id>
-            	<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+            	<id>Sonatype Repository</id>
+            	<url>https://oss.sonatype.org/content/groups/staging</url>
             </pluginRepository>
 		</pluginRepositories>
 

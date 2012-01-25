@@ -1,11 +1,11 @@
 package com.lazerycode.jmeter;
 
+import org.apache.maven.plugin.MojoFailureException;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-
-import org.apache.maven.plugin.MojoFailureException;
 /**
  * Handles checking the jmeter xml logs for errors and failures.
  *

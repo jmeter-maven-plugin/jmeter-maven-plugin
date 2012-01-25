@@ -1,21 +1,5 @@
 package com.lazerycode.jmeter;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.Thread.UncaughtExceptionHandler;
-import java.security.Permission;
-import java.util.*;
-import java.util.jar.JarFile;
-import java.util.zip.ZipEntry;
-import javax.xml.transform.TransformerException;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.jmeter.JMeter;
@@ -28,6 +12,13 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.apache.tools.ant.DirectoryScanner;
 import org.codehaus.plexus.util.StringUtils;
+
+import javax.xml.transform.TransformerException;
+import java.io.*;
+import java.lang.Thread.UncaughtExceptionHandler;
+import java.security.Permission;
+import java.util.*;
+import java.util.jar.JarFile;
 
 /**
  * JMeter Maven plugin.
@@ -251,7 +242,7 @@ public class JMeterMojo extends AbstractMojo {
     private File libJunit;
     private File jmeterLog;
     private String jmeterConfigArtifact = "ApacheJMeter_config";
-    private JMeterArgumentsArray testArgs;    
+    private JMeterArgumentsArray testArgs;
     private static Utilities util = new Utilities();
 
     /**
@@ -444,40 +435,32 @@ public class JMeterMojo extends AbstractMojo {
         this.workDir.mkdirs();
         this.binDir = new File(this.workDir + File.separator + "bin");
         this.binDir.mkdirs();
+        this.libExt = new File(this.workDir + File.separator + "lib" + File.separator + "ext");
+        this.libExt.mkdirs();
+        this.libJunit = new File(this.workDir + File.separator + "lib" + File.separator + "junit");
+        this.libJunit.mkdirs();
+        //TODO reset this for each test
         this.jmeterLog = new File(this.workDir + File.separator + "jmeter.log");
         System.setProperty("user.dir", this.binDir.getAbsolutePath());
         System.setProperty("log_file", this.jmeterLog.getAbsolutePath());
-        //Create properties files in the bin directory
-        List<String> temporaryPropertyFiles = new ArrayList<String>();
-
-        //TODO refactor this to make it cleaner
-        temporaryPropertyFiles.add("jmeter.properties");
-        temporaryPropertyFiles.add("saveservice.properties");
-        temporaryPropertyFiles.add("upgrade.properties");
-        temporaryPropertyFiles.add("system.properties");
-        temporaryPropertyFiles.add("user.properties");
-        //TODO Extract everything from bin folder?  All needed for something...
-        for (String propertyFile : temporaryPropertyFiles) {
-            if (!usedCustomPropertiesFile(propertyFile)) {
-                getLog().warn("Custom " + propertyFile + " not found, using the default version supplied with JMeter.");
+        //Create/copy properties files and put them in the bin directory
+        for (JMeterPropertiesFiles propertyFile : JMeterPropertiesFiles.values()) {
+            if (!usedCustomPropertiesFile(propertyFile.getPropertiesFileName())) {
+                getLog().warn("Custom " + propertyFile.getPropertiesFileName() + " not found, using the default version supplied with JMeter.");
                 try {
-                    FileWriter out = new FileWriter(new File(this.binDir + File.separator + propertyFile));
+                    FileWriter out = new FileWriter(new File(this.binDir + File.separator + propertyFile.getPropertiesFileName()));
                     JarFile propertyJar = new JarFile(getArtifactNamed(this.jmeterConfigArtifact).getFile());
-                    InputStream in = propertyJar.getInputStream(propertyJar.getEntry("bin/" + propertyFile));
+                    InputStream in = propertyJar.getInputStream(propertyJar.getEntry("bin/" + propertyFile.getPropertiesFileName()));
                     IOUtils.copy(in, out);
                     in.close();
                     out.flush();
                     out.close();
                 } catch (IOException e) {
-                    throw new MojoExecutionException("Could not create temporary property file " + propertyFile + " in directory " + this.workDir, e);
+                    throw new MojoExecutionException("Could not create temporary property file " + propertyFile.getPropertiesFileName() + " in directory " + this.workDir, e);
                 }
             }
         }
         //Copy JMeter components to lib/ext for JMeter function search
-        this.libExt = new File(this.workDir + File.separator + "lib" + File.separator + "ext");
-        this.libExt.mkdirs();
-        this.libJunit = new File(this.workDir + File.separator + "lib" + File.separator + "junit");
-        this.libJunit.mkdirs();
         List<String> classPath = new ArrayList<String>();
         for (Artifact artifact : this.pluginArtifacts) {
             try {
@@ -497,7 +480,6 @@ public class JMeterMojo extends AbstractMojo {
     private void initialiseJMeterArgumentsArray() throws MojoExecutionException {
         this.testArgs = new JMeterArgumentsArray(this.reportDir.getAbsolutePath());
         this.testArgs.setJMeterHome(this.workDir.getAbsolutePath());
-//        this.testArgs.setJMeterDefaultPropertiesFile(this.jmeterDefaultPropertiesFile);
         this.testArgs.setACustomPropertiesFile(this.jmeterCustomPropertiesFile);
         this.testArgs.setUserProperties(this.jmeterUserProperties);
         this.testArgs.setRemoteProperties(this.jmeterRemoteProperties);

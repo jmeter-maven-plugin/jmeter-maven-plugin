@@ -1,9 +1,9 @@
 package com.lazerycode.jmeter;
 
+import org.apache.tools.ant.types.selectors.SelectorUtils;
+
 import java.util.Comparator;
 import java.util.List;
-
-import org.apache.tools.ant.types.selectors.SelectorUtils;
 
 /**
  * Compare filenames based on their order in a list of includes (using default

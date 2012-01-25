@@ -13,7 +13,7 @@ public enum JMeterCommandLineArguments {
     JMLOGFILE_OPT("j"),         //TODO
     LOGFILE_OPT("l"),
     NONGUI_OPT("n"),
-    PROPFILE_OPT("p"),
+    PROPFILE_OPT("p"),          //We place the jmeter.log in the correct place on the filesystem so this is never needed
     PROPFILE2_OPT("q"),
     REMOTE_OPT("r"),
     SERVER_OPT("s"),            //TODO

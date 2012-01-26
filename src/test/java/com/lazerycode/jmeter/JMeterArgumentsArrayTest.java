@@ -2,7 +2,6 @@ package com.lazerycode.jmeter;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.junit.Test;
-import org.junit.Ignore;
 
 import java.io.File;
 import java.net.URL;
@@ -18,7 +17,6 @@ public class JMeterArgumentsArrayTest {
 
     private File reportDir = new File("${basedir}/target/jmeter-report");
     private URL testFile = this.getClass().getResource("/test.jmx");
-    private URL propertiesFile = this.getClass().getResource("/jmeter.properties");
     private static Utilities util = new Utilities();
 
     @Test(expected = MojoExecutionException.class)

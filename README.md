@@ -15,6 +15,10 @@ This fork uses the official Apache JMeter maven artifacts
 Community
 -----
 
+### Website
+
+Website for this project: [http://jmeter.lazerycode.com/](http://jmeter.lazerycode.com/)
+
 A couple of google groups have been created for discussion about this plugin:
 
 ### Users Group
@@ -99,7 +103,7 @@ Then, in your pom.xml, you can define that variable like so:
 		   <someVariableName>hostname.com</someVariableName>
 		</jmeterUserProperties>
 
-This has the same effect as using -J on the command line, as described here (search for section 2.4.7).
+This has the same effect as using -J on the command line.
 
 * Java properties
 
@@ -109,7 +113,7 @@ If you have to set specific Java properties such as SSL certificates parameters,
 		   <java.property>value</java.property>
 		</jmeterJavaProperties>
 
-This has the same effect as using -D on the command line, as described here (search for section 2.4.7).
+This has the same effect as using -D on the command line.
 		
 * JMeter log level
 

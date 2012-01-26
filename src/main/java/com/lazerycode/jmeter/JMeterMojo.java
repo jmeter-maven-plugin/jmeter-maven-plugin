@@ -4,7 +4,6 @@ import com.lazerycode.jmeter.reporting.ReportGenerator;
 import com.lazerycode.jmeter.testExecution.TestManager;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.jmeter.JMeter;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
@@ -13,12 +12,9 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
-import org.apache.tools.ant.DirectoryScanner;
 import org.codehaus.plexus.util.StringUtils;
 
 import java.io.*;
-import java.lang.Thread.UncaughtExceptionHandler;
-import java.security.Permission;
 import java.util.*;
 import java.util.jar.JarFile;
 
@@ -238,18 +234,20 @@ public class JMeterMojo extends AbstractMojo {
      */
     private boolean jmeterPreserveIncludeOrder;
 
+    private static Utilities util = new Utilities();
+    private Log log = getLog();
     private File workDir;
     private File binDir;
     private File libExt;
-    private File libJunit;
     private File logsDir;
     private String jmeterConfigArtifact = "ApacheJMeter_config";
     private JMeterArgumentsArray testArgs;
-    private static Utilities util = new Utilities();
-    private Log log = getLog();
 
     /**
-     * Run all JMeter tests.
+     * Run all the JMeter tests.
+     *
+     * @throws MojoExecutionException
+     * @throws MojoFailureException
      */
     public void execute() throws MojoExecutionException, MojoFailureException {
         log.info("\n" +
@@ -258,51 +256,20 @@ public class JMeterMojo extends AbstractMojo {
                 "\n-------------------------------------------------------" +
                 "\n");
         validateInput();
-        generateTemporaryPropertiesAndSetClasspath();
+        generateJMeterDirectoryTree();
+        configureJMeterPropertiesFiles();
+        setJMeterClasspath();
         initialiseJMeterArgumentsArray();
-        List<String> results;
-        TestManager foo = new TestManager(this.testArgs, this.logsDir, this.srcDir, this.log);
-        results = foo.executeTests(generateTestList());
+        List<String> results = new TestManager(this.testArgs, this.logsDir, this.srcDir, this.log, this.jmeterPreserveIncludeOrder, this.jMeterTestFiles, this.excludeJMeterTestFiles).executeTests();
         new ReportGenerator(this.reportPostfix, this.reportXslt, this.reportDir, this.enableReports, this.log).makeReport(results);
         checkForErrors(results);
     }
 
     /**
-     * Scan JMeter result files for "error" and "failure" messages
+     * Validate the data passed into this plugin by the POM file and fail early if there are any obvious problems.
      *
-     * @param results List of JMeter result files.
-     * @throws MojoExecutionException exception
-     * @throws MojoFailureException   exception
+     * @throws MojoExecutionException
      */
-    private void checkForErrors(List<String> results) throws MojoExecutionException, MojoFailureException {
-        ErrorScanner scanner = new ErrorScanner(this.jmeterIgnoreError, this.jmeterIgnoreFailure);
-        int totalErrorCount = 0;
-        int totalFailureCount = 0;
-        boolean failed = false;
-        try {
-            for (String file : results) {
-                if (!scanner.hasTestPassed(new File(file))) {
-                    totalErrorCount = +scanner.getErrorCount();
-                    totalFailureCount = +scanner.getFailureCount();
-                    failed = true;
-                }
-            }
-            log.info("\n\nResults :\n\n");
-            log.info("Tests Run: " + results.size() + ", Failures: " + totalFailureCount + ", Errors: " + totalErrorCount + "\n\n");
-        } catch (IOException e) {
-            throw new MojoExecutionException("Can't read log file", e);
-        }
-        if (failed) {
-            if (totalErrorCount == 0) {
-                throw new MojoFailureException("There were test failures.  See the jmeter logs for details.");
-            } else if (totalFailureCount == 0) {
-                throw new MojoFailureException("There were test errors.  See the jmeter logs for details.");
-            } else {
-                throw new MojoFailureException("There were test errors and failures.  See the jmeter logs for details.");
-            }
-        }
-    }
-
     private void validateInput() throws MojoExecutionException {
         if (!this.util.isNotSet(this.jmeterRemotePropertiesFile)) {
             if (!this.util.isNotSet(this.jmeterRemoteProperties)) {
@@ -336,9 +303,50 @@ public class JMeterMojo extends AbstractMojo {
         }
     }
 
+    /**
+     * Generate the directory tree utilised by JMeter.
+     */
+    private void generateJMeterDirectoryTree() {
+        this.workDir = new File(mavenProject.getBasedir() + File.separator + "target" + File.separator + "jmeter");
+        this.workDir.mkdirs();
+        this.logsDir = new File(this.workDir + File.separator + "jmeter-logs");
+        this.logsDir.mkdirs();
+        this.binDir = new File(this.workDir + File.separator + "bin");
+        this.binDir.mkdirs();
+        this.libExt = new File(this.workDir + File.separator + "lib" + File.separator + "ext");
+        this.libExt.mkdirs();
+        //JMeter expects a <workdir>/lib/junit directory and complains if it can't find it.
+        new File(this.workDir + File.separator + "lib" + File.separator + "junit").mkdirs();
+        //JMeter uses the system property "user.dir" to set its base working directory
+        System.setProperty("user.dir", this.binDir.getAbsolutePath());
+    }
 
     /**
-     * Copy a properties file to the bin directory ready to be read in by JMeter
+     * Create/Copy the properties files used by JMeter into the JMeter directory tree.
+     *
+     * @throws MojoExecutionException
+     */
+    private void configureJMeterPropertiesFiles() throws MojoExecutionException {
+        for (JMeterPropertiesFiles propertyFile : JMeterPropertiesFiles.values()) {
+            if (!usedCustomPropertiesFile(propertyFile.getPropertiesFileName())) {
+                log.warn("Custom " + propertyFile.getPropertiesFileName() + " not found, using the default version supplied with JMeter.");
+                try {
+                    FileWriter out = new FileWriter(new File(this.binDir + File.separator + propertyFile.getPropertiesFileName()));
+                    JarFile propertyJar = new JarFile(getArtifactNamed(this.jmeterConfigArtifact).getFile());
+                    InputStream in = propertyJar.getInputStream(propertyJar.getEntry("bin/" + propertyFile.getPropertiesFileName()));
+                    IOUtils.copy(in, out);
+                    in.close();
+                    out.flush();
+                    out.close();
+                } catch (IOException e) {
+                    throw new MojoExecutionException("Could not create temporary property file " + propertyFile.getPropertiesFileName() + " in directory " + this.workDir, e);
+                }
+            }
+        }
+    }
+
+    /**
+     * Copy a user created properties file to the JMeter bin directory
      * (Bin dir must have been initialised before this is called)
      *
      * @param filename
@@ -359,64 +367,12 @@ public class JMeterMojo extends AbstractMojo {
     }
 
     /**
-     * Search the list of plugin artifacts for an artifact with a specific name
+     * Copy jars to JMeter ext dir for JMeter function search and set the classpath.
      *
-     * @param artifactName
-     * @return
      * @throws MojoExecutionException
      */
-    private Artifact getArtifactNamed(String artifactName) throws MojoExecutionException {
-        for (Artifact artifact : this.pluginArtifacts) {
-            if (artifact.getArtifactId().equals(artifactName)) {
-                return artifact;
-            }
-        }
-        throw new MojoExecutionException("Unable to find artifact '" + artifactName + "'!");
-    }
-
-    /**
-     * Create temporary property files, copy jars to ext dir and set necessary System Properties.
-     * <p/>
-     * This mess is necessary because JMeter must load this info from a file.
-     * JMeter can load resources from classpath, but it checks the files in it's lib/ext dir for usable functions
-     * <p/>
-     * <p/>
-     *
-     * @throws org.apache.maven.plugin.MojoExecutionException
-     *          Exception
-     */
     @SuppressWarnings("unchecked")
-    private void generateTemporaryPropertiesAndSetClasspath() throws MojoExecutionException {
-        //Generate expected directory structure
-        this.workDir = new File(mavenProject.getBasedir() + File.separator + "target" + File.separator + "jmeter");
-        this.workDir.mkdirs();
-        this.logsDir = new File(this.workDir + File.separator + "jmeter-logs");
-        this.logsDir.mkdirs();
-        this.binDir = new File(this.workDir + File.separator + "bin");
-        this.binDir.mkdirs();
-        this.libExt = new File(this.workDir + File.separator + "lib" + File.separator + "ext");
-        this.libExt.mkdirs();
-        this.libJunit = new File(this.workDir + File.separator + "lib" + File.separator + "junit");
-        this.libJunit.mkdirs();
-        System.setProperty("user.dir", this.binDir.getAbsolutePath());
-        //Create/copy properties files and put them in the bin directory
-        for (JMeterPropertiesFiles propertyFile : JMeterPropertiesFiles.values()) {
-            if (!usedCustomPropertiesFile(propertyFile.getPropertiesFileName())) {
-                log.warn("Custom " + propertyFile.getPropertiesFileName() + " not found, using the default version supplied with JMeter.");
-                try {
-                    FileWriter out = new FileWriter(new File(this.binDir + File.separator + propertyFile.getPropertiesFileName()));
-                    JarFile propertyJar = new JarFile(getArtifactNamed(this.jmeterConfigArtifact).getFile());
-                    InputStream in = propertyJar.getInputStream(propertyJar.getEntry("bin/" + propertyFile.getPropertiesFileName()));
-                    IOUtils.copy(in, out);
-                    in.close();
-                    out.flush();
-                    out.close();
-                } catch (IOException e) {
-                    throw new MojoExecutionException("Could not create temporary property file " + propertyFile.getPropertiesFileName() + " in directory " + this.workDir, e);
-                }
-            }
-        }
-        //Copy JMeter components to lib/ext for JMeter function search
+    private void setJMeterClasspath() throws MojoExecutionException {
         List<String> classPath = new ArrayList<String>();
         for (Artifact artifact : this.pluginArtifacts) {
             try {
@@ -433,6 +389,27 @@ public class JMeterMojo extends AbstractMojo {
         System.setProperty("java.class.path", StringUtils.join(classPath.iterator(), File.pathSeparator));
     }
 
+    /**
+     * Search the list of plugin artifacts for an artifact with a specific name
+     *
+     * @param artifactName
+     * @return
+     * @throws MojoExecutionException
+     */
+    private Artifact getArtifactNamed(String artifactName) throws MojoExecutionException {
+        for (Artifact artifact : this.pluginArtifacts) {
+            if (artifact.getArtifactId().equals(artifactName)) {
+                return artifact;
+            }
+        }
+        throw new MojoExecutionException("Unable to find artifact '" + artifactName + "'!");
+    }
+
+    /**
+     * Generate the initial JMeter Arguments array that is used to create the command line that we pass to JMeter.
+     *
+     * @throws MojoExecutionException
+     */
     private void initialiseJMeterArgumentsArray() throws MojoExecutionException {
         this.testArgs = new JMeterArgumentsArray(this.reportDir.getAbsolutePath());
         this.testArgs.setJMeterHome(this.workDir.getAbsolutePath());
@@ -450,20 +427,39 @@ public class JMeterMojo extends AbstractMojo {
         this.testArgs.setLogRootOverride(this.overrideRootLogLevel);
     }
 
-    private List<String> generateTestList() {
-        List<String> jmeterTestFiles = new ArrayList<String>();
-        DirectoryScanner scanner = new DirectoryScanner();
-        scanner.setBasedir(this.srcDir);
-        scanner.setIncludes(this.jMeterTestFiles == null ? new String[]{"**/*.jmx"} : this.jMeterTestFiles.toArray(new String[]{}));
-        if (this.excludeJMeterTestFiles != null) {
-            scanner.setExcludes(this.excludeJMeterTestFiles.toArray(new String[]{}));
+    /**
+     * Scan JMeter result files for "error" and "failure" messages
+     *
+     * @param results List of JMeter result files.
+     * @throws MojoExecutionException
+     * @throws MojoFailureException
+     */
+    private void checkForErrors(List<String> results) throws MojoExecutionException, MojoFailureException {
+        ErrorScanner scanner = new ErrorScanner(this.jmeterIgnoreError, this.jmeterIgnoreFailure);
+        int totalErrorCount = 0;
+        int totalFailureCount = 0;
+        boolean failed = false;
+        try {
+            for (String file : results) {
+                if (!scanner.hasTestPassed(new File(file))) {
+                    totalErrorCount = +scanner.getErrorCount();
+                    totalFailureCount = +scanner.getFailureCount();
+                    failed = true;
+                }
+            }
+            log.info("\n\nResults :\n\n");
+            log.info("Tests Run: " + results.size() + ", Failures: " + totalFailureCount + ", Errors: " + totalErrorCount + "\n\n");
+        } catch (IOException e) {
+            throw new MojoExecutionException("Can't read log file", e);
         }
-        scanner.scan();
-        final List<String> includedFiles = Arrays.asList(scanner.getIncludedFiles());
-        if (this.jmeterPreserveIncludeOrder) {
-            Collections.sort(includedFiles, new IncludesComparator(this.jMeterTestFiles));
+        if (failed) {
+            if (totalErrorCount == 0) {
+                throw new MojoFailureException("There were test failures.  See the jmeter logs for details.");
+            } else if (totalFailureCount == 0) {
+                throw new MojoFailureException("There were test errors.  See the jmeter logs for details.");
+            } else {
+                throw new MojoFailureException("There were test errors and failures.  See the jmeter logs for details.");
+            }
         }
-        jmeterTestFiles.addAll(includedFiles);
-        return jmeterTestFiles;
     }
 }

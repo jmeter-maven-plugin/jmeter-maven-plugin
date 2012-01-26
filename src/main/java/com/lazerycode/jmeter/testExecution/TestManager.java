@@ -1,10 +1,12 @@
 package com.lazerycode.jmeter.testExecution;
 
+import com.lazerycode.jmeter.IncludesComparator;
 import com.lazerycode.jmeter.JMeterArgumentsArray;
 import com.lazerycode.jmeter.Utilities;
 import org.apache.jmeter.JMeter;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
+import org.apache.tools.ant.DirectoryScanner;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -12,25 +14,34 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.security.Permission;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class TestManager {
 
+    private static Utilities util = new Utilities();
     private JMeterArgumentsArray testArgs;
     private Log log;
     private File jmeterLog;
     private File logsDir;
     private File srcDir;
-    private static Utilities util = new Utilities();
+    private List<String> jMeterTestFiles;
+    private List<String> excludeJMeterTestFiles;
+    private boolean jmeterPreserveIncludeOrder;
 
-    public TestManager(JMeterArgumentsArray testArgs, File logsDir, File srcDir, Log log) {
+    public TestManager(JMeterArgumentsArray testArgs, File logsDir, File srcDir, Log log, boolean preserveTestOrder, List<String> testFiles, List<String> excludeTestFiles) {
         this.testArgs = testArgs;
         this.logsDir = logsDir;
         this.srcDir = srcDir;
         this.log = log;
+        this.jmeterPreserveIncludeOrder = preserveTestOrder;
+        this.jMeterTestFiles = testFiles;
+        this.excludeJMeterTestFiles = excludeTestFiles;
     }
 
-    public List<String> executeTests(List<String> tests) throws MojoExecutionException {
+    public List<String> executeTests() throws MojoExecutionException {
+        List<String> tests = generateTestList();
         List<String> results = new ArrayList<String>();
         for (String file : tests) {
             results.add(executeSingleTest(new File(srcDir, file)));
@@ -150,5 +161,20 @@ public class TestManager {
         System.setProperty("log_file", this.jmeterLog.getAbsolutePath());
     }
 
-
+    private List<String> generateTestList() {
+        List<String> jmeterTestFiles = new ArrayList<String>();
+        DirectoryScanner scanner = new DirectoryScanner();
+        scanner.setBasedir(this.srcDir);
+        scanner.setIncludes(this.jMeterTestFiles == null ? new String[]{"**/*.jmx"} : this.jMeterTestFiles.toArray(new String[]{}));
+        if (this.excludeJMeterTestFiles != null) {
+            scanner.setExcludes(this.excludeJMeterTestFiles.toArray(new String[]{}));
+        }
+        scanner.scan();
+        final List<String> includedFiles = Arrays.asList(scanner.getIncludedFiles());
+        if (this.jmeterPreserveIncludeOrder) {
+            Collections.sort(includedFiles, new IncludesComparator(this.jMeterTestFiles));
+        }
+        jmeterTestFiles.addAll(includedFiles);
+        return jmeterTestFiles;
+    }
 }

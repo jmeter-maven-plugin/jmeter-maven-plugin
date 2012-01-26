@@ -16,7 +16,7 @@ public class Utilities {
         for (int i = 0; i < arguments.length; i++) {
             debugOutput += arguments[i] + " ";
         }
-        return debugOutput;
+        return debugOutput.trim();
     }
 
     public Boolean isNotSet(Map<?, ?> value) {
@@ -50,6 +50,6 @@ public class Utilities {
             arguments += type.getCommandLineArgument() + " ";
             arguments += property + "=" + value.get(property) + " ";
         }
-        return arguments;
+        return arguments.trim();
     }
 }

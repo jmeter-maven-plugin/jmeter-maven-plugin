@@ -24,10 +24,10 @@ public class JMeterArgumentsArray {
     private String jMeterGlobalPropertiesFile = null;
     private String testFile = null;
     private String resultsFile = null;
-    private String jmeterDefaultPropertiesFile = null;
     private String jMeterHome = null;
     private String reportDirectory = null;
     private String overrideRootLogLevel = null;
+    private String systemPropertiesFile = null;
     private Map jMeterUserProperties = null;
     private Map jMeterGlobalProperties = null;
     private Map systemProperties = null;
@@ -44,6 +44,7 @@ public class JMeterArgumentsArray {
         argumentMap.put(JMeterCommandLineArguments.TESTFILE_OPT, false);        //Required - test file as specified.
         argumentMap.put(JMeterCommandLineArguments.LOGFILE_OPT, false);         //Required - output file as specified.
         argumentMap.put(JMeterCommandLineArguments.JMETER_HOME_OPT, false);     //Required - JMETER_HOME location as specified.
+        argumentMap.put(JMeterCommandLineArguments.SYSTEM_PROPFILE, false);     //Set to true if system properties are specified.
         argumentMap.put(JMeterCommandLineArguments.SYSTEM_PROPERTY, false);     //Set to true if system properties are specified.
         argumentMap.put(JMeterCommandLineArguments.JMETER_PROPERTY, false);     //Set to true if user properties are specified.
         argumentMap.put(JMeterCommandLineArguments.JMETER_GLOBAL_PROP, false);  //Set to true if global properties are specified(These get sent to remote servers as well).
@@ -82,8 +83,14 @@ public class JMeterArgumentsArray {
 
     public void setACustomPropertiesFile(File value) {
         if (util.isNotSet(value)) return;
-        this.customPropertiesFile = value.toString();
+        this.customPropertiesFile = value.getAbsolutePath();
         this.argumentMap.put(JMeterCommandLineArguments.PROPFILE2_OPT, true);
+    }
+
+    public void setASystemPropertiesFile(File value) {
+        if (util.isNotSet(value)) return;
+        this.systemPropertiesFile = value.getAbsolutePath();
+        this.argumentMap.put(JMeterCommandLineArguments.SYSTEM_PROPFILE, true);
     }
 
     public void setUserProperties(Map value) {
@@ -108,7 +115,7 @@ public class JMeterArgumentsArray {
 
     public void setRemotePropertiesFile(File value) {
         if (util.isNotSet(value)) return;
-        this.jMeterGlobalPropertiesFile = value.toString();
+        this.jMeterGlobalPropertiesFile = value.getAbsolutePath();
         this.argumentMap.put(JMeterCommandLineArguments.JMETER_GLOBAL_PROP, true);
     }
 
@@ -227,8 +234,12 @@ public class JMeterArgumentsArray {
                         Set<String> systemPropertySet = (Set<String>) this.systemProperties.keySet();
                         for (String property : systemPropertySet) {
                             argumentsArray.add(JMeterCommandLineArguments.SYSTEM_PROPERTY.getCommandLineArgument());
-                            argumentsArray.add(property + "=" + this.jMeterUserProperties.get(property));
+                            argumentsArray.add(property + "=" + this.systemProperties.get(property));
                         }
+                        break;
+                    case SYSTEM_PROPFILE:
+                        argumentsArray.add(JMeterCommandLineArguments.SYSTEM_PROPFILE.getCommandLineArgument());
+                        argumentsArray.add(this.systemPropertiesFile);
                         break;
                     case PROPFILE2_OPT:
                         argumentsArray.add(JMeterCommandLineArguments.PROPFILE2_OPT.getCommandLineArgument());

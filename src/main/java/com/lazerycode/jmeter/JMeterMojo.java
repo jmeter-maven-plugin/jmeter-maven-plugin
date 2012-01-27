@@ -234,6 +234,13 @@ public class JMeterMojo extends AbstractMojo {
      */
     private boolean jmeterPreserveIncludeOrder;
 
+    /**
+     * Suppress JMeter output
+     *
+     * @parameter default-value="true"
+     */
+    private boolean suppressJMeterOutput;
+
     private static Utilities util = new Utilities();
     private Log log = getLog();
     private File workDir;
@@ -250,17 +257,17 @@ public class JMeterMojo extends AbstractMojo {
      * @throws MojoFailureException
      */
     public void execute() throws MojoExecutionException, MojoFailureException {
-        log.info("\n" +
-                "\n-------------------------------------------------------" +
-                "\n P E R F O R M A N C E    T E S T S" +
-                "\n-------------------------------------------------------" +
-                "\n");
+        log.info(" ");
+        log.info("-------------------------------------------------------");
+        log.info(" P E R F O R M A N C E    T E S T S");
+        log.info("-------------------------------------------------------");
+        log.info(" ");
         validateInput();
         generateJMeterDirectoryTree();
         configureJMeterPropertiesFiles();
         setJMeterClasspath();
         initialiseJMeterArgumentsArray();
-        List<String> results = new TestManager(this.testArgs, this.logsDir, this.srcDir, this.log, this.jmeterPreserveIncludeOrder, this.jMeterTestFiles, this.excludeJMeterTestFiles).executeTests();
+        List<String> results = new TestManager(this.testArgs, this.logsDir, this.srcDir, this.log, this.jmeterPreserveIncludeOrder, this.jMeterTestFiles, this.excludeJMeterTestFiles, this.suppressJMeterOutput).executeTests();
         new ReportGenerator(this.reportPostfix, this.reportXslt, this.reportDir, this.enableReports, this.log).makeReport(results);
         checkForErrors(results);
     }
@@ -447,8 +454,11 @@ public class JMeterMojo extends AbstractMojo {
                     failed = true;
                 }
             }
-            log.info("\n\nResults :\n\n");
-            log.info("Tests Run: " + results.size() + ", Failures: " + totalFailureCount + ", Errors: " + totalErrorCount + "\n\n");
+            log.info(" ");
+            log.info("Test Results:");
+            log.info(" ");
+            log.info("Tests Run: " + results.size() + ", Failures: " + totalFailureCount + ", Errors: " + totalErrorCount + "");
+            log.info(" ");
         } catch (IOException e) {
             throw new MojoExecutionException("Can't read log file", e);
         }

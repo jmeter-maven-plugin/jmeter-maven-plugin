@@ -29,10 +29,12 @@ public class ReportGenerator {
             try {
                 ReportTransformer transformer;
                 transformer = new ReportTransformer(getXslt());
-                log.info("Building JMeter Report...");
+                log.info(" ");
+                log.info("Building JMeter Report(s)...");
                 for (String resultFile : results) {
                     final String outputFile = toOutputFileName(resultFile);
                     transformer.transform(resultFile, outputFile);
+                    log.info(" ");
                     log.info("Raw results: " + resultFile);
                     log.info("Test report: " + outputFile);
                 }

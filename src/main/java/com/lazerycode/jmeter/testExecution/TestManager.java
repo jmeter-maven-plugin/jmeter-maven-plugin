@@ -3,15 +3,13 @@ package com.lazerycode.jmeter.testExecution;
 import com.lazerycode.jmeter.IncludesComparator;
 import com.lazerycode.jmeter.JMeterArgumentsArray;
 import com.lazerycode.jmeter.Utilities;
+import org.apache.commons.io.output.NullOutputStream;
 import org.apache.jmeter.JMeter;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.tools.ant.DirectoryScanner;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.security.Permission;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,8 +27,9 @@ public class TestManager {
     private List<String> jMeterTestFiles;
     private List<String> excludeJMeterTestFiles;
     private boolean jmeterPreserveIncludeOrder;
+    private boolean suppressJMeterOutput;
 
-    public TestManager(JMeterArgumentsArray testArgs, File logsDir, File srcDir, Log log, boolean preserveTestOrder, List<String> testFiles, List<String> excludeTestFiles) {
+    public TestManager(JMeterArgumentsArray testArgs, File logsDir, File srcDir, Log log, boolean preserveTestOrder, List<String> testFiles, List<String> excludeTestFiles, boolean suppressJMeterOutput) {
         this.testArgs = testArgs;
         this.logsDir = logsDir;
         this.srcDir = srcDir;
@@ -38,6 +37,7 @@ public class TestManager {
         this.jmeterPreserveIncludeOrder = preserveTestOrder;
         this.jMeterTestFiles = testFiles;
         this.excludeJMeterTestFiles = excludeTestFiles;
+        this.suppressJMeterOutput = suppressJMeterOutput;
     }
 
     public List<String> executeTests() throws MojoExecutionException {
@@ -61,7 +61,7 @@ public class TestManager {
     private String executeSingleTest(File test) throws MojoExecutionException {
 
         try {
-            log.info("Executing test: " + test.getCanonicalPath());
+            log.info(" ");
             testArgs.setTestFile(test);
             //Delete results file if it already exists
             new File(testArgs.getResultsFilename()).delete();
@@ -100,10 +100,14 @@ public class TestManager {
                     log.error("Error in thread " + t.getName());
                 }
             });
+            PrintStream originalOut = System.out;
             try {
                 // This mess is necessary because the only way to know when
                 // JMeter is done is to wait for its test end message!                
                 setJMeterLogFile(test.getName() + ".log");
+                log.info("Executing test: " + test.getName());
+                //Suppress JMeter's annoying System.out messages
+                if (suppressJMeterOutput) System.setOut(new PrintStream(new NullOutputStream()));
                 new JMeter().start(testArgs.buildArgumentsArray());
                 BufferedReader in = new BufferedReader(new FileReader(jmeterLog));
                 while (!checkForEndOfTest(in)) {
@@ -120,8 +124,9 @@ public class TestManager {
             } finally {
                 System.setSecurityManager(oldManager);
                 Thread.setDefaultUncaughtExceptionHandler(oldHandler);
+                System.setOut(originalOut);
+                log.info("Completed Test: " + test.getName());
             }
-
             return testArgs.getResultsFilename();
         } catch (IOException e) {
             throw new MojoExecutionException("Can't execute test", e);

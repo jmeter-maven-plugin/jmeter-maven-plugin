@@ -1,15 +1,17 @@
 package com.lazerycode.jmeter;
 
+import com.lazerycode.jmeter.enums.JMeterCommandLineArguments;
+
 import java.io.File;
 import java.util.Map;
 import java.util.Set;
 
 /**
- * Series of useful utilities to make life easy
+ * Series of useful utility functions to make life easy
  *
  * @author Mark Collin
  */
-public class Utilities {
+public class UtilityFunctions {
 
     public String humanReadableCommandLineOutput(String[] arguments) {
         String debugOutput = "";
@@ -43,13 +45,4 @@ public class Utilities {
         }
     }
 
-    public String argumentsMapToString(Map<String, String> value, JMeterCommandLineArguments type) {
-        String arguments = "";
-        Set<String> globalPropertySet = (Set<String>) value.keySet();
-        for (String property : globalPropertySet) {
-            arguments += type.getCommandLineArgument() + " ";
-            arguments += property + "=" + value.get(property) + " ";
-        }
-        return arguments.trim();
-    }
 }

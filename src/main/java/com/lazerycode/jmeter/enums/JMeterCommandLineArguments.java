@@ -1,4 +1,4 @@
-package com.lazerycode.jmeter;
+package com.lazerycode.jmeter.enums;
 
 /**
  * An Enum holding all of the command line arguments accepted by JMeter

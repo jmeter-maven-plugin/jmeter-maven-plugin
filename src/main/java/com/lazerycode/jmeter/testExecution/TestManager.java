@@ -2,7 +2,7 @@ package com.lazerycode.jmeter.testExecution;
 
 import com.lazerycode.jmeter.IncludesComparator;
 import com.lazerycode.jmeter.JMeterArgumentsArray;
-import com.lazerycode.jmeter.Utilities;
+import com.lazerycode.jmeter.UtilityFunctions;
 import org.apache.commons.io.output.NullOutputStream;
 import org.apache.jmeter.JMeter;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -18,7 +18,7 @@ import java.util.List;
 
 public class TestManager {
 
-    private static Utilities util = new Utilities();
+    private static UtilityFunctions util = new UtilityFunctions();
     private JMeterArgumentsArray testArgs;
     private Log log;
     private File jmeterLog;

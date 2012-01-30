@@ -1,5 +1,6 @@
 package com.lazerycode.jmeter;
 
+import com.lazerycode.jmeter.enums.JMeterPropertiesFiles;
 import com.lazerycode.jmeter.reporting.ReportGenerator;
 import com.lazerycode.jmeter.testExecution.TestManager;
 import org.apache.commons.io.FileUtils;
@@ -241,7 +242,7 @@ public class JMeterMojo extends AbstractMojo {
      */
     private boolean suppressJMeterOutput;
 
-    private static Utilities util = new Utilities();
+    private static UtilityFunctions util = new UtilityFunctions();
     private Log log = getLog();
     private File workDir;
     private File binDir;

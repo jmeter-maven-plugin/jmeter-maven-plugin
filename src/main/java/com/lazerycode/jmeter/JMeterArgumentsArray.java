@@ -1,5 +1,6 @@
 package com.lazerycode.jmeter;
 
+import com.lazerycode.jmeter.enums.JMeterCommandLineArguments;
 import org.apache.maven.plugin.MojoExecutionException;
 
 import java.io.File;
@@ -32,7 +33,7 @@ public class JMeterArgumentsArray {
     private Map jMeterGlobalProperties = null;
     private Map systemProperties = null;
     private Map overrideLogCategories = null;
-    private static Utilities util = new Utilities();
+    private static UtilityFunctions util = new UtilityFunctions();
 
     /**
      * The argument map will define which arguments are set on the command line.

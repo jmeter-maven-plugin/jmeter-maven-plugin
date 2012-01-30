@@ -1,4 +1,4 @@
-package com.lazerycode.jmeter;
+package com.lazerycode.jmeter.enums;
 
 /**
  * An Enum holding a list of properties files expected to be in the bin dir by JMeter

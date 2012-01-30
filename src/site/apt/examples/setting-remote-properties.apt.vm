@@ -6,25 +6,34 @@ Remote Properties
 
 +---+
 <project>
-  [...]
-  <build>
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <groupId>${project.groupId}</groupId>
-          <artifactId>${project.artifactId}</artifactId>
-          <version>${project.version}</version>
-          <configuration>
-            <jmeterRemoteProperties>
-              <threads>10</threads>
-              <testIterations>5</testIterations>
-            </jmeterRemoteProperties>
-          </configuration>
-        </plugin>
-      </plugins>
-    </pluginManagement>
-  </build>
-  [...]
+    [...]
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>${project.groupId}</groupId>
+                    <artifactId>${project.artifactId}</artifactId>
+                    <version>${project.version}</version>
+                    <executions>
+                        <execution>
+                            <id>jmeter-tests</id>
+                            <phase>verify</phase>
+                            <goals>
+                                <goal>jmeter</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <jmeterRemoteProperties>
+                            <threads>10</threads>
+                            <testIterations>5</testIterations>
+                        </jmeterRemoteProperties>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+    [...]
 </project>
 +---+
 
@@ -32,22 +41,31 @@ Remote Properties
 
 +---+
 <project>
-  [...]
-  <build>
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <groupId>${project.groupId}</groupId>
-          <artifactId>${project.artifactId}</artifactId>
-          <version>${project.version}</version>
-          <configuration>
-            <jmeterRemotePropertiesFile>${basedir}/src/test/jmeter/remote.properties</jmeterRemotePropertiesFile>
-          </configuration>
-        </plugin>
-      </plugins>
-    </pluginManagement>
-  </build>
-  [...]
+    [...]
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>${project.groupId}</groupId>
+                    <artifactId>${project.artifactId}</artifactId>
+                    <version>${project.version}</version>
+                    <executions>
+                        <execution>
+                            <id>jmeter-tests</id>
+                            <phase>verify</phase>
+                            <goals>
+                                <goal>jmeter</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <jmeterRemotePropertiesFile>${basedir}/src/test/jmeter/remote.properties</jmeterRemotePropertiesFile>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+    [...]
 </project>
 +---+
 

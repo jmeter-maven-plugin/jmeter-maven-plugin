@@ -1,4 +1,4 @@
-Running Tests
+Selecting Tests To Run
 
 * Running All Tests
 
@@ -8,28 +8,28 @@ Running Tests
 
 +---+
 <project>
-  [...]
+    [...]
     <build>
-      <pluginManagement>
-        <plugins>
-          <plugin>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>${project.artifactId}</artifactId>
-            <version>${project.version}</version>
-            <executions>
-              <execution>
-                <id>jmeter-tests</id>
-                <phase>verify</phase>
-                <goals>
-                  <goal>jmeter</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </pluginManagement>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>${project.groupId}</groupId>
+                    <artifactId>${project.artifactId}</artifactId>
+                    <version>${project.version}</version>
+                    <executions>
+                        <execution>
+                            <id>jmeter-tests</id>
+                            <phase>verify</phase>
+                            <goals>
+                                <goal>jmeter</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
     </build>
-  [...]
+    [...]
 </project>
 +---+
 
@@ -41,30 +41,77 @@ Running Tests
 
 +---+
 <project>
-  [...]
+    [...]
     <build>
-      <pluginManagement>
-        <plugins>
-          <plugin>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>${project.artifactId}</artifactId>
-            <version>${project.version}</version>
-            <configuration>
-              <reportDir>${project.build.directory}/jmeter-reports</reportDir>
-              <jMeterTestFiles>
-                <jMeterTestFile>test1.jmx</jMeterTestFile>
-                <jMeterTestFile>test2.jmx</jMeterTestFile>
-              </jMeterTestFiles>
-            </configuration>
-          </plugin>
-        </plugins>
-      </pluginManagement>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>${project.groupId}</groupId>
+                    <artifactId>${project.artifactId}</artifactId>
+                    <version>${project.version}</version>
+                    <executions>
+                        <execution>
+                            <id>jmeter-tests</id>
+                            <phase>verify</phase>
+                            <goals>
+                                <goal>jmeter</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <reportDir>${project.build.directory}/jmeter-reports</reportDir>
+                        <jMeterTestFiles>
+                            <jMeterTestFile>test1.jmx</jMeterTestFile>
+                            <jMeterTestFile>test2.jmx</jMeterTestFile>
+                        </jMeterTestFiles>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
     </build>
-  [...]
+    [...]
 </project>
 +---+
 
     This time when you type `<<mvn verify>>` only <<test1.jmx>> and <<test2.jmx>> will be run.
+
+* Specifying Tests To Run Using Regex
+
+    You can also use a regex to specify which tests to include, below is a simple example showing how to include all tests starting with the text <<foo>>:
+
++---+
+<project>
+    [...]
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>${project.groupId}</groupId>
+                    <artifactId>${project.artifactId}</artifactId>
+                    <version>${project.version}</version>
+                    <executions>
+                        <execution>
+                            <id>jmeter-tests</id>
+                            <phase>verify</phase>
+                            <goals>
+                                <goal>jmeter</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <reportDir>${project.build.directory}/jmeter-reports</reportDir>
+                        <jMeterTestFiles>
+                            <jMeterTestFile>foo*.jmx</jMeterTestFile>
+                        </jMeterTestFiles>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+    [...]
+</project>
++---+
+
 
 * Specifying Tests That Should Not Be Run
 
@@ -72,26 +119,53 @@ Running Tests
 
 +---+
 <project>
-  [...]
+    [...]
     <build>
-      <pluginManagement>
-        <plugins>
-          <plugin>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>${project.artifactId}</artifactId>
-            <version>${project.version}</version>
-            <configuration>
-              <excludeJMeterTestFiles>
-                <excludeJMeterTestFile>test3.jmx</excludeJMeterTestFile>
-                <excludeJMeterTestFile>test4.jmx</excludeJMeterTestFile>
-              </excludeJMeterTestFiles>
-            </configuration>
-          </plugin>
-        </plugins>
-      </pluginManagement>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>${project.groupId}</groupId>
+                    <artifactId>${project.artifactId}</artifactId>
+                    <version>${project.version}</version>
+                    <configuration>
+                        <excludeJMeterTestFiles>
+                            <excludeJMeterTestFile>test3.jmx</excludeJMeterTestFile>
+                            <excludeJMeterTestFile>test4.jmx</excludeJMeterTestFile>
+                        </excludeJMeterTestFiles>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
     </build>
-  [...]
+    [...]
 </project>
 +---+
 
     This time when you type `<<mvn verify>>` all tests in the tests in the <<$\{project.base.directory\}/src/test/jmeter>> apart from <<test3.jmx>> and <<test4.jmx>> will be run.
+
+* Specifying Tests That Should Not Be Run Using Regex
+
+    Finally you can also use a regex to specify which tests to exclude, below is a simple example showing how to include all tests ending with the text <<bar>>:
+
++---+
+<project>
+    [...]
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>${project.groupId}</groupId>
+                    <artifactId>${project.artifactId}</artifactId>
+                    <version>${project.version}</version>
+                    <configuration>
+                        <excludeJMeterTestFiles>
+                            <excludeJMeterTestFile>*bar.jmx</excludeJMeterTestFile>
+                        </excludeJMeterTestFiles>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+    [...]
+</project>
++---+

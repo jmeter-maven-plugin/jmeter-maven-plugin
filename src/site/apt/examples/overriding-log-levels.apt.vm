@@ -4,25 +4,34 @@ Log Level Overrides
 
 +---+
 <project>
-  [...]
-  <build>
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <groupId>${project.groupId}</groupId>
-          <artifactId>${project.artifactId}</artifactId>
-          <version>${project.version}</version>
-          <configuration>
-            <overrideLogCategories>
-              <jorphan>INFO</jorphan>
-              <jmeter.util>DEBUG</jmeter.util>
-            </overrideLogCategories>
-          </configuration>
-        </plugin>
-      </plugins>
-    </pluginManagement>
-  </build>
-  [...]
+    [...]
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>${project.groupId}</groupId>
+                    <artifactId>${project.artifactId}</artifactId>
+                    <version>${project.version}</version>
+                    <executions>
+                        <execution>
+                            <id>jmeter-tests</id>
+                            <phase>verify</phase>
+                            <goals>
+                                <goal>jmeter</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <overrideLogCategories>
+                            <jorphan>INFO</jorphan>
+                            <jmeter.util>DEBUG</jmeter.util>
+                        </overrideLogCategories>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+    [...]
 </project>
 +---+
 
@@ -30,22 +39,31 @@ Log Level Overrides
 
 +---+
 <project>
-  [...]
-  <build>
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <groupId>${project.groupId}</groupId>
-          <artifactId>${project.artifactId}</artifactId>
-          <version>${project.version}</version>
-          <configuration>
-            <overrideRootLogLevel>debug</overrideRootLogLevel>
-          </configuration>
-        </plugin>
-      </plugins>
-    </pluginManagement>
-  </build>
-  [...]
+    [...]
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>${project.groupId}</groupId>
+                    <artifactId>${project.artifactId}</artifactId>
+                    <version>${project.version}</version>
+                    <executions>
+                        <execution>
+                            <id>jmeter-tests</id>
+                            <phase>verify</phase>
+                            <goals>
+                                <goal>jmeter</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <overrideRootLogLevel>debug</overrideRootLogLevel>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+    [...]
 </project>
 +---+
 

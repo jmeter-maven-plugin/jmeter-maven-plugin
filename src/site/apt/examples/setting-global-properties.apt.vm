@@ -10,25 +10,34 @@ Global Properties
 
 +---+
 <project>
-  [...]
-  <build>
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <groupId>${project.groupId}</groupId>
-          <artifactId>${project.artifactId}</artifactId>
-          <version>${project.version}</version>
-          <configuration>
-            <jmeterGlobalProperties>
-              <threads>10</threads>
-              <testIterations>5</testIterations>
-            </jmeterGlobalProperties>
-          </configuration>
-        </plugin>
-      </plugins>
-    </pluginManagement>
-  </build>
-  [...]
+    [...]
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>${project.groupId}</groupId>
+                    <artifactId>${project.artifactId}</artifactId>
+                    <version>${project.version}</version>
+                    <executions>
+                        <execution>
+                            <id>jmeter-tests</id>
+                            <phase>verify</phase>
+                            <goals>
+                                <goal>jmeter</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <jmeterGlobalProperties>
+                            <threads>10</threads>
+                            <testIterations>5</testIterations>
+                        </jmeterGlobalProperties>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+    [...]
 </project>
 +---+
 
@@ -36,23 +45,24 @@ Global Properties
 
 +---+
 <project>
-  [...]
-  <build>
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <groupId>${project.groupId}</groupId>
-          <artifactId>${project.artifactId}</artifactId>
-          <version>${project.version}</version>
-          <configuration>
-            <jmeterGlobalPropertiesFile>${basedir}/src/test/jmeter/global.properties</jmeterGlobalProperties>
-          </configuration>
-        </plugin>
-      </plugins>
-    </pluginManagement>
-  </build>
-  [...]
+    [...]
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>${project.groupId}</groupId>
+                    <artifactId>${project.artifactId}</artifactId>
+                    <version>${project.version}</version>
+
+                    <configuration>
+                        <jmeterGlobalPropertiesFile>${basedir}/src/test/jmeter/global.properties</jmeterGlobalProperties>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+    [...]
 </project>
 +---+
 
-    These methods are exclusive, you cannot specify individual global properties and a global properties file in your <<<pom.xml>>>.  If you do a MojoExecutionException will be thrown.
+    These methods are exclusive, you cannot specify individual global properties and a global properties file in your <<<pom.xml>>>. If you do a MojoExecutionException will be thrown.

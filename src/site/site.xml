@@ -27,8 +27,8 @@
         <menu name="Overview">
             <item name="Basic Usage" href="index.html"/>
         </menu>
-        <menu name="Examples">
-            <item name="Running Tests" href="./examples/running-tests.html"/>
+        <menu name="Configuration">
+            <item name="Selecting Tests" href="./examples/running-tests.html"/>
             <item name="User Properties" href="./examples/setting-user-properties.html"/>
             <item name="Remote Properties" href="./examples/setting-remote-properties.html"/>
             <item name="Global Properties" href="./examples/setting-global-properties.html"/>

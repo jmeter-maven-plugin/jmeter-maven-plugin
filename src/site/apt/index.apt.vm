@@ -1,13 +1,13 @@
 Basic Usage
 
-    First of all add this fork's Maven repository to your project (or personal maven repo):
+    First of all add the Sonatype Maven repository to your project:
 
 +---+
 <pluginRepositories>
-  <pluginRepository>
-    <id>Maven JMeter Plugin</id>
-    <url>http://ardesco.github.com/jmeter-maven-plugin/repository</url>
-  </pluginRepository>
+    <pluginRepository>
+        <id>Sonatype Repository</id>
+        <url>https://oss.sonatype.org/content/groups/staging</url>
+    </pluginRepository>
 </pluginRepositories>
 +---+
 
@@ -15,38 +15,32 @@ Basic Usage
 
 +---+
 <project>
-  [...]
+    [...]
     <build>
-      <pluginManagement>
-        <plugins>
-          <plugin>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>${project.artifactId}</artifactId>
-            <version>${project.version}</version>
-            <executions>
-              <execution>
-                <id>jmeter-tests</id>
-                <phase>verify</phase>
-                <goals>
-                  <goal>jmeter</goal>
-                </goals>
-              </execution>
-            </executions>
-            <configuration>
-              <reportDir>${project.build.directory}/jmeter-reports</reportDir>
-            </configuration>
-          </plugin>
-        </plugins>
-      </pluginManagement>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>${project.groupId}</groupId>
+                    <artifactId>${project.artifactId}</artifactId>
+                    <version>${project.version}</version>
+                    <executions>
+                        <execution>
+                            <id>jmeter-tests</id>
+                            <phase>verify</phase>
+                            <goals>
+                                <goal>jmeter</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
     </build>
-  [...]
+    [...]
 </project>
 +---+
 
-    For everything to work correctly you will need to supply a jmeter.properties file to configure the instance of JMeter started by maven.
-
-    To do this you will need to copy your <<$JMETER_HOME/bin/jmeter.properties>> to <<$\{project.base.directory\}/src/test/jmeter>>
-    You can make any tweaks necessary to the jmeter.properties file as you see fit.
+    By default the plugin will use the jmeter.properties supplied with JMeter, if you want to use a custom one you will need to create it in the folder <<$\{project.base.directory\}/src/test/jmeter>>.
 
     This plugin will automatically run all of the JMX test files held in the <<$\{project.base.directory\}/src/test/jmeter>> directory.
     To run the tests:
@@ -59,4 +53,4 @@ Basic Usage
 
     []
 
-    All your tests should run in maven now!
+    All your tests should now run!

@@ -17,6 +17,7 @@ public class JMeterArgumentsArray {
 
     private LinkedHashMap<JMeterCommandLineArguments, Boolean> argumentMap = new LinkedHashMap<JMeterCommandLineArguments, Boolean>();
     private DateFormat fmt = new SimpleDateFormat("yyMMdd");
+    private boolean remoteStop = false;
     private String nonProxyHosts = null;
     private String proxyHost = null;
     private String proxyPort = null;
@@ -58,6 +59,12 @@ public class JMeterArgumentsArray {
         argumentMap.put(JMeterCommandLineArguments.PROXY_USERNAME, false);      //Set to true if proxy username is specified
         argumentMap.put(JMeterCommandLineArguments.PROXY_PASSWORD, false);      //Set to true if proxy password is specified
         argumentMap.put(JMeterCommandLineArguments.NONPROXY_HOSTS, false);      //Set to true if non-proxy hosts are specified
+        argumentMap.put(JMeterCommandLineArguments.REMOTE_STOP, false);         //Set to true to stop remote servers at the end of the tests.
+    }
+
+    public void setRemoteStop(boolean value) {
+        this.remoteStop = value;
+        this.argumentMap.put(JMeterCommandLineArguments.REMOTE_STOP, value);
     }
 
     public void setNonProxyHosts(String value) {
@@ -276,6 +283,9 @@ public class JMeterArgumentsArray {
                     case NONPROXY_HOSTS:
                         argumentsArray.add(JMeterCommandLineArguments.NONPROXY_HOSTS.getCommandLineArgument());
                         argumentsArray.add(this.nonProxyHosts);
+                        break;
+                    case REMOTE_STOP:
+                        argumentsArray.add(JMeterCommandLineArguments.REMOTE_STOP.getCommandLineArgument());
                         break;
                 }
             }

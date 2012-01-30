@@ -201,6 +201,16 @@ public class JMeterArgumentsArrayTest {
         JMeterArgumentsArray testArgs = new JMeterArgumentsArray(reportDir.getAbsolutePath());
         testArgs.setTestFile(new File(this.testFile.toURI()));
         testArgs.setJMeterHome("target/jmeter/");
-        testArgs.setNonProxyHosts("localhost|*.lazerycode.com");assertThat(util.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()), is(equalTo("-n -t " + new File(this.testFile.toURI()).getAbsolutePath() + " -l " + testArgs.getResultsFilename() + " -d target/jmeter/ -N localhost|*.lazerycode.com")));
+        testArgs.setNonProxyHosts("localhost|*.lazerycode.com");
+        assertThat(util.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()), is(equalTo("-n -t " + new File(this.testFile.toURI()).getAbsolutePath() + " -l " + testArgs.getResultsFilename() + " -d target/jmeter/ -N localhost|*.lazerycode.com")));
+    }
+
+    @Test
+    public void validateSetRemoteStop() throws Exception{
+        JMeterArgumentsArray testArgs = new JMeterArgumentsArray(reportDir.getAbsolutePath());
+        testArgs.setTestFile(new File(this.testFile.toURI()));
+        testArgs.setJMeterHome("target/jmeter/");
+        testArgs.setRemoteStop(true);
+        assertThat(util.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()), is(equalTo("-n -t " + new File(this.testFile.toURI()).getAbsolutePath() + " -l " + testArgs.getResultsFilename() + " -d target/jmeter/ -X")));
     }
 }

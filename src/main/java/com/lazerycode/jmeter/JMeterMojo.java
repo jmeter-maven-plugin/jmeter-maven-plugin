@@ -249,6 +249,13 @@ public class JMeterMojo extends AbstractMojo {
      */
     private boolean suppressJMeterOutput;
 
+    /**
+     * Stop remote servers when the test finish
+     *
+     * @parameter default-value="false"
+     */
+    private boolean remoteStop;
+
     private static UtilityFunctions util = new UtilityFunctions();
     private Log log = getLog();
     private File workDir;
@@ -275,7 +282,7 @@ public class JMeterMojo extends AbstractMojo {
         configureJMeterPropertiesFiles();
         setJMeterClasspath();
         initialiseJMeterArgumentsArray();
-        List<String> results = new TestManager(this.testArgs, this.logsDir, this.srcDir, this.log, this.jmeterPreserveIncludeOrder, this.jMeterTestFiles, this.excludeJMeterTestFiles, this.suppressJMeterOutput).executeTests();
+        List<String> results = new TestManager(this.testArgs, this.logsDir, this.srcDir, this.log, this.jmeterPreserveIncludeOrder, this.jMeterTestFiles, this.excludeJMeterTestFiles, this.suppressJMeterOutput, this.remoteStop).executeTests();
         new ReportGenerator(this.reportPostfix, this.reportXslt, this.reportDir, this.enableReports, this.log).makeReport(results);
         checkForErrors(results);
     }

@@ -9,17 +9,17 @@ public enum JMeterCommandLineArguments {
 
     PROXY_PASSWORD("a"),        //DOCUMENTED
     JMETER_HOME_OPT("d"),
-    HELP_OPT("h"),              //Shows help information, never used in this plugin.
+    HELP_OPT("h"),              //NOT_USED - Prints help information and exits.
     JMLOGFILE_OPT("j"),         //TODO
     LOGFILE_OPT("l"),
-    NONGUI_OPT("n"),            //This plugin always runs JMeter in non-gui mode
-    PROPFILE_OPT("p"),          //We place the jmeter.properties in the correct place on the filesystem so this is never needed
+    NONGUI_OPT("n"),            //ALWAYS_SET - This plugin always runs JMeter in non-gui mode
+    PROPFILE_OPT("p"),          //NOT_USED - We place the jmeter.properties in the correct place on the filesystem.
     PROPFILE2_OPT("q"),
     REMOTE_OPT("r"),
     SERVER_OPT("s"),            //TODO
-    TESTFILE_OPT("t"),          //DOCUMENTED -- Always used, this is how we pass our test file list over to JMeter
+    TESTFILE_OPT("t"),          //ALWAYS_SET - This is how we pass our test file list over to JMeter
     PROXY_USERNAME("u"),        //DOCUMENTED
-    VERSION_OPT("v"),           //TODO
+    VERSION_OPT("v"),           //NOT_USED - Prints version information and exits.
     SYSTEM_PROPERTY("D"),       //DOCUMENTED
     JMETER_GLOBAL_PROP("G"),    //DOCUMENTED
     PROXY_HOST("H"),            //DOCUMENTED
@@ -29,7 +29,7 @@ public enum JMeterCommandLineArguments {
     PROXY_PORT("P"),            //DOCUMENTED
     REMOTE_OPT_PARAM("R"),      //TODO
     SYSTEM_PROPFILE("S"),       //TODO
-    REMOTE_STOP("X");           //TODO
+    REMOTE_STOP("X");           //DOCUMENTED
 
     private final String commandLineArgument;
 

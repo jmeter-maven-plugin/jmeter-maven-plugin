@@ -28,8 +28,9 @@ public class TestManager {
     private List<String> excludeJMeterTestFiles;
     private boolean jmeterPreserveIncludeOrder;
     private boolean suppressJMeterOutput;
+    private boolean remoteStop;
 
-    public TestManager(JMeterArgumentsArray testArgs, File logsDir, File srcDir, Log log, boolean preserveTestOrder, List<String> testFiles, List<String> excludeTestFiles, boolean suppressJMeterOutput) {
+    public TestManager(JMeterArgumentsArray testArgs, File logsDir, File srcDir, Log log, boolean preserveTestOrder, List<String> testFiles, List<String> excludeTestFiles, boolean suppressJMeterOutput, boolean remoteStop) {
         this.testArgs = testArgs;
         this.logsDir = logsDir;
         this.srcDir = srcDir;
@@ -38,12 +39,16 @@ public class TestManager {
         this.jMeterTestFiles = testFiles;
         this.excludeJMeterTestFiles = excludeTestFiles;
         this.suppressJMeterOutput = suppressJMeterOutput;
+        this.remoteStop = remoteStop;
     }
 
     public List<String> executeTests() throws MojoExecutionException {
         List<String> tests = generateTestList();
         List<String> results = new ArrayList<String>();
         for (String file : tests) {
+            if (tests.get(tests.size() - 1).equals(file)) {
+                testArgs.setRemoteStop(this.remoteStop);
+            }
             results.add(executeSingleTest(new File(srcDir, file)));
         }
         return results;

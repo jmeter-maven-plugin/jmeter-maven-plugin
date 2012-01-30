@@ -97,7 +97,7 @@ public class JMeterMojo extends AbstractMojo {
      */
     private File jmeterCustomPropertiesFile;
     /**
-     * JMeter Properties that override those given in jmeterProps
+     * JMeter Properties that override those given in jmeter.properties
      *
      * @parameter
      */

@@ -1,0 +1,47 @@
+Setting JMeter Properties Using The Standard Properties Files
+
+    By default the jmeter-maven-plugin uses the default properties files supplied with JMeter.  If you want to override any of these files you simply need to create one in <<$\{project.base.directory\}/src/test/jmeter>>.
+
+    The following files will be used if they are found in <<$\{project.base.directory\}/src/test/jmeter>>
+
+        * jmeter.properties
+
+        * saveservice.properties
+
+        * upgrade.properties
+
+        * system.properties
+
+        * user.properties
+
+    Finally you can also specify a location to an additional properties file that will override settings in jmeter.properties (either the default one, or your custom one you have placed in <<$\{project.base.directory\}/src/test/jmeter>>).
+
++---+
+<project>
+    [...]
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>${project.groupId}</groupId>
+                    <artifactId>${project.artifactId}</artifactId>
+                    <version>${project.version}</version>
+                    <executions>
+                        <execution>
+                            <id>jmeter-tests</id>
+                            <phase>verify</phase>
+                            <goals>
+                                <goal>jmeter</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <jmeterCustomPropertiesFile>/home/jmeter/custom.properties</jmeterCustomPropertiesFile>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+    [...]
+</project>
++---+

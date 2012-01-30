@@ -1,0 +1,40 @@
+Proxy Settings
+
+    You can configure proxy settings to be used by JMeter here, the proxy settings will be used to run every test.
+
+    The proxy port will always default to 80 if it is not set.  If you do not set a proxy host any port setting will be ignored, the host is blank by default.
+
+    ProxyUsername and ProxyPassword are optional settings that are set independently, you can set a ProxyUsername and/or a ProxyPassword without setting a ProxyHost and they will be sent to JMeter.
+
++---+
+<project>
+    [...]
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>${project.groupId}</groupId>
+                    <artifactId>${project.artifactId}</artifactId>
+                    <version>${project.version}</version>
+                    <executions>
+                        <execution>
+                            <id>jmeter-tests</id>
+                            <phase>verify</phase>
+                            <goals>
+                                <goal>jmeter</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <proxyHost>10.10.10.53</proxyHost>
+                        <proxyPort>80</proxyPort>
+                        <proxyUsername>jimbob</proxyUsername>
+                        <proxyPassword>correct horse battery staple</proxyPassword>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+    [...]
+</project>
++---+

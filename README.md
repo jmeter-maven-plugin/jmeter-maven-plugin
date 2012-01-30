@@ -86,54 +86,10 @@ Once you create your JMeter tests, you'll want to copy them to : `<Project Dir>/
 
 All your tests should run in maven now!
 
-Options
+Full documentation
 -------
 
-* Custom properties files
-
-You can override the default JMeter properties files by adding your own version into `<ProjectDir>/src/test/jmeter`
-
-* JMeter user properties
-
-In this section, you can define properties in JMeter files.  For example, you could define a hostname in your JMeter test like this: `${__P(someVariableName, localhost)`
-
-Then, in your pom.xml, you can define that variable like so:
-
-		<jmeterUserProperties>
-		   <someVariableName>hostname.com</someVariableName>
-		</jmeterUserProperties>
-
-This has the same effect as using -J on the command line.
-
-* Java properties
-
-If you have to set specific Java properties such as SSL certificates parameters, you can put it like:
-
-		<jmeterJavaProperties>
-		   <java.property>value</java.property>
-		</jmeterJavaProperties>
-
-This has the same effect as using -D on the command line.
-		
-* JMeter log level
-
-If you are facing a problem in JMeter execution, you may want to use this option to make JMeter more verbose
-
-		<jmeterLogLevel>DEBUG</jmeterLogLevel>
-		
-Default value is "INFO".
-
-* Proxy options
-
-If you use the plugin behind a proxy, you will have to set :
-
-		<proxyHost>hostname.com</proxyHost>
-		<proxyHost>8080</proxyHost>
-		<proxyUsername>user</proxyUsername>
-		<proxyPassword>****secret****</proxyPassword>
-		
-You should now have all you need to run maven-jmeter-plugin.
-
+Up to date documentation is available checking out the code and running mvn site:run on the command line, this information will also be mirrored on [http://jmeter.lazerycode.com](http://jmeter.lazerycode.com) in the near future.
 
 Contributing
 ------------

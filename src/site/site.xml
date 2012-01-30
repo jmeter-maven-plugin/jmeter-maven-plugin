@@ -34,6 +34,7 @@
             <item name="Global Properties" href="./examples/setting-global-properties.html"/>
             <item name="System Properties" href="./examples/setting-system-properties.html"/>
             <item name="Overriding Log Levels" href="./examples/overriding-log-levels.html"/>
+            <item name="Proxy Settings" href="./examples/proxy-settings.html"/>
         </menu>
     </body>
 </project>

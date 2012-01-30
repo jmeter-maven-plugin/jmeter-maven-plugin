@@ -1,26 +1,34 @@
 package com.lazerycode.jmeter.enums;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
- * An Enum holding a list of properties files expected to be in the bin dir by JMeter
+ * An Enum holding a list of JMeter properties files.
+ * If it is set to true JMeter expects it to be in the bin dir.
  *
  * @author Mark Collin
  */
 public enum JMeterPropertiesFiles {
 
-    JMETER("jmeter.properties"),
-    SAVESERVICE("saveservice.properties"),
-    UPGRADE("upgrade.properties"),
-    SYSTEM("system.properties"),
-    USER("user.properties");
+    JMETER("jmeter.properties", true),
+    SAVESERVICE("saveservice.properties", true),
+    UPGRADE("upgrade.properties", true),
+    SYSTEM("system.properties", false),
+    USER("user.properties", false);
 
-    private final String propertiesFileName;
+    private final Object[] propertiesData;
 
-    JMeterPropertiesFiles(String commandLineArgument) {
-        this.propertiesFileName = commandLineArgument;
+    JMeterPropertiesFiles(Object ...values) {
+        this.propertiesData = values;
     }
 
     public String getPropertiesFileName() {
-        return propertiesFileName;
+        return (String) this.propertiesData[0];
+    }
+
+    public boolean createFileIfItDoesntExist() {
+        return (Boolean) this.propertiesData[1];
     }
 
 }

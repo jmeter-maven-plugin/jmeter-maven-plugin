@@ -306,9 +306,9 @@ public class JMeterMojo extends AbstractMojo {
         initialiseJMeterArgumentsArray();
         TestManager jMeterTestManager = new TestManager(this.testArgs, this.logsDir, this.srcDir, this.log, this.jmeterPreserveIncludeOrder, this.jMeterTestFiles, this.excludeJMeterTestFiles, this.suppressJMeterOutput);
         jMeterTestManager.setRemoteStartOptions(this.remoteStop, this.remoteStartAll, this.remoteStartAndStopOnce, this.remoteStart);
-        List<String> results = jMeterTestManager.executeTests();
-        new ReportGenerator(this.reportPostfix, this.reportXslt, this.reportDir, this.enableReports, this.log).makeReport(results);
-        checkForErrors(results);
+        List<String> testResults = jMeterTestManager.executeTests();
+        new ReportGenerator(this.reportPostfix, this.reportXslt, this.reportDir, this.enableReports, this.log).makeReport(testResults);
+        checkForErrors(testResults);
     }
 
     /**
@@ -375,17 +375,21 @@ public class JMeterMojo extends AbstractMojo {
     private void configureJMeterPropertiesFiles() throws MojoExecutionException {
         for (JMeterPropertiesFiles propertyFile : JMeterPropertiesFiles.values()) {
             if (!usedCustomPropertiesFile(propertyFile.getPropertiesFileName())) {
-                log.warn("Custom " + propertyFile.getPropertiesFileName() + " not found, using the default version supplied with JMeter.");
-                try {
-                    FileWriter out = new FileWriter(new File(this.binDir + File.separator + propertyFile.getPropertiesFileName()));
-                    JarFile propertyJar = new JarFile(getArtifactNamed(this.jmeterConfigArtifact).getFile());
-                    InputStream in = propertyJar.getInputStream(propertyJar.getEntry("bin/" + propertyFile.getPropertiesFileName()));
-                    IOUtils.copy(in, out);
-                    in.close();
-                    out.flush();
-                    out.close();
-                } catch (IOException e) {
-                    throw new MojoExecutionException("Could not create temporary property file " + propertyFile.getPropertiesFileName() + " in directory " + this.workDir, e);
+                if (propertyFile.createFileIfItDoesntExist()) {
+                    log.warn("Custom " + propertyFile.getPropertiesFileName() + " not found, using the default version supplied with JMeter.");
+                    try {
+                        FileWriter out = new FileWriter(new File(this.binDir + File.separator + propertyFile.getPropertiesFileName()));
+                        JarFile propertyJar = new JarFile(getArtifactNamed(this.jmeterConfigArtifact).getFile());
+                        InputStream in = propertyJar.getInputStream(propertyJar.getEntry("bin/" + propertyFile.getPropertiesFileName()));
+                        IOUtils.copy(in, out);
+                        in.close();
+                        out.flush();
+                        out.close();
+                    } catch (IOException e) {
+                        throw new MojoExecutionException("Could not create temporary property file " + propertyFile.getPropertiesFileName() + " in directory " + this.workDir, e);
+                    }
+                } else {
+                    log.warn("Custom " + propertyFile.getPropertiesFileName() + " not found.");
                 }
             }
         }

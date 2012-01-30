@@ -11,15 +11,15 @@ import java.util.Set;
  */
 public class Utilities {
 
-    public String humanReadableCommandLineOutput(String[] arguments) {
+    public static String humanReadableCommandLineOutput(String[] arguments) {
         String debugOutput = "";
-        for (int i = 0; i < arguments.length; i++) {
-            debugOutput += arguments[i] + " ";
+        for (String argument : arguments) {
+            debugOutput += argument + " ";
         }
         return debugOutput.trim();
     }
 
-    public Boolean isNotSet(Map<?, ?> value) {
+    public static Boolean isNotSet(Map<?, ?> value) {
         if (value == null || value.isEmpty()) {
             return true;
         } else {
@@ -27,7 +27,7 @@ public class Utilities {
         }
     }
 
-    public Boolean isNotSet(String value) {
+    public static Boolean isNotSet(String value) {
         if (value == null || value.isEmpty() || value.trim().length() == 0) {
             return true;
         } else {
@@ -35,7 +35,7 @@ public class Utilities {
         }
     }
 
-    public Boolean isNotSet(File value) {
+    public static Boolean isNotSet(File value) {
         if (value == null || value.toString().isEmpty()) {
             return true;
         } else {
@@ -43,9 +43,9 @@ public class Utilities {
         }
     }
 
-    public String argumentsMapToString(Map<String, String> value, JMeterCommandLineArguments type) {
+    public static String argumentsMapToString(Map<String, String> value, JMeterCommandLineArguments type) {
         String arguments = "";
-        Set<String> globalPropertySet = (Set<String>) value.keySet();
+        Set<String> globalPropertySet = value.keySet();
         for (String property : globalPropertySet) {
             arguments += type.getCommandLineArgument() + " ";
             arguments += property + "=" + value.get(property) + " ";

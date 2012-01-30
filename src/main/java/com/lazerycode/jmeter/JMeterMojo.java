@@ -241,7 +241,6 @@ public class JMeterMojo extends AbstractMojo {
      */
     private boolean suppressJMeterOutput;
 
-    private static Utilities util = new Utilities();
     private Log log = getLog();
     private File workDir;
     private File binDir;
@@ -278,33 +277,33 @@ public class JMeterMojo extends AbstractMojo {
      * @throws MojoExecutionException
      */
     private void validateInput() throws MojoExecutionException {
-        if (!this.util.isNotSet(this.jmeterRemotePropertiesFile)) {
-            if (!this.util.isNotSet(this.jmeterRemoteProperties)) {
+        if (!Utilities.isNotSet(this.jmeterRemotePropertiesFile)) {
+            if (!Utilities.isNotSet(this.jmeterRemoteProperties)) {
                 throw new MojoExecutionException("You cannot specify a remote properties file and individual remote properties!");
             }
         }
-        if (!this.util.isNotSet(this.jmeterRemoteProperties)) {
-            if (!this.util.isNotSet(this.jmeterRemotePropertiesFile)) {
+        if (!Utilities.isNotSet(this.jmeterRemoteProperties)) {
+            if (!Utilities.isNotSet(this.jmeterRemotePropertiesFile)) {
                 throw new MojoExecutionException("You cannot specify a remote properties file and individual remote properties!");
             }
         }
-        if (!this.util.isNotSet(this.jmeterGlobalPropertiesFile)) {
-            if (!this.util.isNotSet(this.jmeterGlobalProperties)) {
+        if (!Utilities.isNotSet(this.jmeterGlobalPropertiesFile)) {
+            if (!Utilities.isNotSet(this.jmeterGlobalProperties)) {
                 throw new MojoExecutionException("You cannot specify a global properties file and individual global properties!");
             }
         }
-        if (!this.util.isNotSet(this.jmeterGlobalProperties)) {
-            if (!this.util.isNotSet(this.jmeterGlobalPropertiesFile)) {
+        if (!Utilities.isNotSet(this.jmeterGlobalProperties)) {
+            if (!Utilities.isNotSet(this.jmeterGlobalPropertiesFile)) {
                 throw new MojoExecutionException("You cannot specify a global properties file and individual global properties!");
             }
         }
-        if (!this.util.isNotSet(this.overrideLogCategories)) {
-            if (!this.util.isNotSet(this.overrideRootLogLevel)) {
+        if (!Utilities.isNotSet(this.overrideLogCategories)) {
+            if (!Utilities.isNotSet(this.overrideRootLogLevel)) {
                 throw new MojoExecutionException("You cannot override both the root log level and individual log categories!");
             }
         }
-        if (!this.util.isNotSet(this.overrideRootLogLevel)) {
-            if (!this.util.isNotSet(this.overrideLogCategories)) {
+        if (!Utilities.isNotSet(this.overrideRootLogLevel)) {
+            if (!Utilities.isNotSet(this.overrideLogCategories)) {
                 throw new MojoExecutionException("You cannot override both the root log level and individual log categories!");
             }
         }

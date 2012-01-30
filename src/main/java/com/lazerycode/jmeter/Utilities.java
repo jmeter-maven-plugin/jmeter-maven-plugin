@@ -36,6 +36,7 @@ public class Utilities {
     }
 
     public static Boolean isNotSet(File value) {
+        //TODO: value#toString() can't ever return null if value != null
         if (value == null || value.toString().isEmpty()) {
             return true;
         } else {

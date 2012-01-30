@@ -60,7 +60,7 @@ Basic Usage
 * Add the plugin to the build section of your pom's project :
 
 		<plugin>
-			<groupId>org.apache.jmeter</groupId>
+			<groupId>com.lazerycode.jmeter</groupId>
 			<artifactId>jmeter-maven-plugin</artifactId>
 			<version>1.4-SNAPSHOT</version>
 			<executions>

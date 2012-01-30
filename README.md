@@ -89,7 +89,7 @@ All your tests should run in maven now!
 Full documentation
 -------
 
-Up to date documentation is available checking out the code and running mvn site:run on the command line, this information will also be mirrored on [http://jmeter.lazerycode.com](http://jmeter.lazerycode.com) in the near future.
+Up to date documentation is available checking out the code and running `mvn site:run` on the command line, this information will also be mirrored on [http://jmeter.lazerycode.com](http://jmeter.lazerycode.com) in the near future.
 
 Contributing
 ------------

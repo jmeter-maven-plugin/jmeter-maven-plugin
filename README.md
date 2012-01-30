@@ -3,14 +3,10 @@ Maven JMeter Plugin
 
 The Maven JMeter Plugin allows you to automate JMeter tests in Maven.
 
-This fork uses the official Apache JMeter maven artifacts
-
-*For the latest documentation do a "mvn site:run" in the terminal*
-
 *PLEASE NOTE: The Group ID and Artifact ID have changed!*
 -----
 
- This is to bring the project in line with maven naming practice for non-maven plugins and to enable us to upload to the Sonatype OSS repos.  This means the next release of this project will be promoted to the maven central repo.
+This is to bring the project in line with maven naming practice for non-maven plugins and to enable us to upload to the Sonatype OSS repos.  This means the next release of this project will be promoted to the maven central repo.
 
 Community
 -----
@@ -42,8 +38,12 @@ Build Server
 
 You can see the state of the current codebase by looking at the CI server - [http://ci.lazerycode.com](http://ci.lazerycode.com)
 
+Full Documentation
+-------
 
-Usage
+Up to date documentation is available by checking out the code and running `mvn site:run` on the command line, this information will also be mirrored on [http://jmeter.lazerycode.com](http://jmeter.lazerycode.com) in the near future.
+
+Basic Usage
 -----
 
 ### Add the plugin to your project
@@ -82,14 +82,11 @@ Once you create your JMeter tests, you'll want to copy them to : `<Project Dir>/
 
 ### Run the tests
 
-	mvn verify
+	`mvn verify`
 
 All your tests should run in maven now!
 
-Full documentation
--------
-
-Up to date documentation is available checking out the code and running `mvn site:run` on the command line, this information will also be mirrored on [http://jmeter.lazerycode.com](http://jmeter.lazerycode.com) in the near future.
+See the full documentation for information on how to configure the plugin.
 
 Contributing
 ------------

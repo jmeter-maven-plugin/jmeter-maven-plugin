@@ -84,7 +84,6 @@ public class TestManager {
             testArgs.setTestFile(test);
             //Delete results file if it already exists
             new File(testArgs.getResultsFilename()).delete();
-            log.info(testArgs.getProxyDetails());
             if (log.isDebugEnabled()) {
                 log.debug("JMeter is called with the following command line arguments: " + util.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()));
             }

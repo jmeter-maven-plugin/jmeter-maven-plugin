@@ -306,6 +306,8 @@ public class JMeterMojo extends AbstractMojo {
         initialiseJMeterArgumentsArray();
         TestManager jMeterTestManager = new TestManager(this.testArgs, this.logsDir, this.srcDir, this.log, this.jmeterPreserveIncludeOrder, this.jMeterTestFiles, this.excludeJMeterTestFiles, this.suppressJMeterOutput);
         jMeterTestManager.setRemoteStartOptions(this.remoteStop, this.remoteStartAll, this.remoteStartAndStopOnce, this.remoteStart);
+        log.info(" ");
+        log.info(testArgs.getProxyDetails());
         List<String> testResults = jMeterTestManager.executeTests();
         new ReportGenerator(this.reportPostfix, this.reportXslt, this.reportDir, this.enableReports, this.log).makeReport(testResults);
         checkForErrors(testResults);

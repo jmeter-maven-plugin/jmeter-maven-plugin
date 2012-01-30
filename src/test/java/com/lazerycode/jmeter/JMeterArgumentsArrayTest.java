@@ -161,15 +161,6 @@ public class JMeterArgumentsArrayTest {
     }
 
     @Test
-    public void validateJMeterUseRemoteHost() throws Exception {
-        JMeterArgumentsArray testArgs = new JMeterArgumentsArray(reportDir.getAbsolutePath());
-        testArgs.setTestFile(new File(this.testFile.toURI()));
-        testArgs.setJMeterHome("target/jmeter/");
-        testArgs.setUseRemoteHost(true);
-        assertThat(util.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()), is(equalTo("-n -t " + new File(this.testFile.toURI()).getAbsolutePath() + " -l " + testArgs.getResultsFilename() + " -d target/jmeter/ -r")));
-    }
-
-    @Test
     public void validateJMeterSetProxyHost() throws Exception {
         JMeterArgumentsArray testArgs = new JMeterArgumentsArray(reportDir.getAbsolutePath());
         testArgs.setTestFile(new File(this.testFile.toURI()));
@@ -212,5 +203,23 @@ public class JMeterArgumentsArrayTest {
         testArgs.setJMeterHome("target/jmeter/");
         testArgs.setRemoteStop(true);
         assertThat(util.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()), is(equalTo("-n -t " + new File(this.testFile.toURI()).getAbsolutePath() + " -l " + testArgs.getResultsFilename() + " -d target/jmeter/ -X")));
+    }
+
+    @Test
+    public void validateSetRemoteStartAll() throws Exception{
+        JMeterArgumentsArray testArgs = new JMeterArgumentsArray(reportDir.getAbsolutePath());
+        testArgs.setTestFile(new File(this.testFile.toURI()));
+        testArgs.setJMeterHome("target/jmeter/");
+        testArgs.setRemoteStartAll(true);
+        assertThat(util.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()), is(equalTo("-n -t " + new File(this.testFile.toURI()).getAbsolutePath() + " -l " + testArgs.getResultsFilename() + " -d target/jmeter/ -r")));
+    }
+
+    @Test
+    public void validateSetRemoteStart() throws Exception{
+        JMeterArgumentsArray testArgs = new JMeterArgumentsArray(reportDir.getAbsolutePath());
+        testArgs.setTestFile(new File(this.testFile.toURI()));
+        testArgs.setJMeterHome("target/jmeter/");
+        testArgs.setRemoteStart("server1, server2");
+        assertThat(util.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()), is(equalTo("-n -t " + new File(this.testFile.toURI()).getAbsolutePath() + " -l " + testArgs.getResultsFilename() + " -d target/jmeter/ -R server1, server2")));
     }
 }

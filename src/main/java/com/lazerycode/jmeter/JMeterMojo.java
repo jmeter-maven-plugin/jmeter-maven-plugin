@@ -250,11 +250,33 @@ public class JMeterMojo extends AbstractMojo {
     private boolean suppressJMeterOutput;
 
     /**
-     * Stop remote servers when the test finish
+     * Stop remote servers when the test finishes
      *
      * @parameter default-value="false"
      */
     private boolean remoteStop;
+
+    /**
+     * Start all remote servers as defined in jmeter.properties when the test starts
+     *
+     * @parameter default-value="false"
+     */
+    private boolean remoteStartAll;
+
+    /**
+     * Comma separated list of servers to start when starting tests
+     *
+     * @parameter
+     */
+    private String remoteStart;
+
+    /**
+     * Remote start and stop for every test, or once for the entire test suite of tests.
+     * (Defaults to once for the entire suite of tests)
+     *
+     * @parameter default-value="true"
+     */
+    private boolean remoteStartAndStopOnce;
 
     private static UtilityFunctions util = new UtilityFunctions();
     private Log log = getLog();
@@ -282,7 +304,9 @@ public class JMeterMojo extends AbstractMojo {
         configureJMeterPropertiesFiles();
         setJMeterClasspath();
         initialiseJMeterArgumentsArray();
-        List<String> results = new TestManager(this.testArgs, this.logsDir, this.srcDir, this.log, this.jmeterPreserveIncludeOrder, this.jMeterTestFiles, this.excludeJMeterTestFiles, this.suppressJMeterOutput, this.remoteStop).executeTests();
+        TestManager jMeterTestManager = new TestManager(this.testArgs, this.logsDir, this.srcDir, this.log, this.jmeterPreserveIncludeOrder, this.jMeterTestFiles, this.excludeJMeterTestFiles, this.suppressJMeterOutput);
+        jMeterTestManager.setRemoteStartOptions(this.remoteStop, this.remoteStartAll, this.remoteStartAndStopOnce, this.remoteStart);
+        List<String> results = jMeterTestManager.executeTests();
         new ReportGenerator(this.reportPostfix, this.reportXslt, this.reportDir, this.enableReports, this.log).makeReport(results);
         checkForErrors(results);
     }
@@ -440,7 +464,6 @@ public class JMeterMojo extends AbstractMojo {
         this.testArgs.setRemoteProperties(this.jmeterRemoteProperties);
         this.testArgs.setRemotePropertiesFile(this.jmeterRemotePropertiesFile);
         this.testArgs.setGlobalProperties(this.jmeterGlobalProperties);
-        this.testArgs.setUseRemoteHost(this.remote);
         this.testArgs.setProxyHostDetails(this.proxyHost, this.proxyPort);
         this.testArgs.setProxyUsername(this.proxyUsername);
         this.testArgs.setProxyPassword(this.proxyPassword);

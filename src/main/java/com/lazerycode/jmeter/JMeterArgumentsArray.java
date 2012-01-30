@@ -17,7 +17,7 @@ public class JMeterArgumentsArray {
 
     private LinkedHashMap<JMeterCommandLineArguments, Boolean> argumentMap = new LinkedHashMap<JMeterCommandLineArguments, Boolean>();
     private DateFormat fmt = new SimpleDateFormat("yyMMdd");
-    private boolean remoteStop = false;
+    private String remoteStartList = null;
     private String nonProxyHosts = null;
     private String proxyHost = null;
     private String proxyPort = null;
@@ -60,11 +60,21 @@ public class JMeterArgumentsArray {
         argumentMap.put(JMeterCommandLineArguments.PROXY_PASSWORD, false);      //Set to true if proxy password is specified
         argumentMap.put(JMeterCommandLineArguments.NONPROXY_HOSTS, false);      //Set to true if non-proxy hosts are specified
         argumentMap.put(JMeterCommandLineArguments.REMOTE_STOP, false);         //Set to true to stop remote servers at the end of the tests.
+        argumentMap.put(JMeterCommandLineArguments.REMOTE_OPT_PARAM, false);    //Set to true to stop remote servers at the end of the tests.
     }
 
     public void setRemoteStop(boolean value) {
-        this.remoteStop = value;
         this.argumentMap.put(JMeterCommandLineArguments.REMOTE_STOP, value);
+    }
+
+    public void setRemoteStartAll(boolean value) {
+        this.argumentMap.put(JMeterCommandLineArguments.REMOTE_OPT, value);
+    }
+
+    public void setRemoteStart(String value) {
+        if (util.isNotSet(value)) return;
+        this.remoteStartList = value;
+        this.argumentMap.put(JMeterCommandLineArguments.REMOTE_OPT_PARAM, true);
     }
 
     public void setNonProxyHosts(String value) {
@@ -91,10 +101,6 @@ public class JMeterArgumentsArray {
         if (util.isNotSet(value)) return;
         this.proxyPassword = value;
         this.argumentMap.put(JMeterCommandLineArguments.PROXY_PASSWORD, true);
-    }
-
-    public void setUseRemoteHost(Boolean value) {
-        this.argumentMap.put(JMeterCommandLineArguments.REMOTE_OPT, value);
     }
 
     public void setACustomPropertiesFile(File value) {
@@ -287,7 +293,10 @@ public class JMeterArgumentsArray {
                     case REMOTE_STOP:
                         argumentsArray.add(JMeterCommandLineArguments.REMOTE_STOP.getCommandLineArgument());
                         break;
-                }
+                    case REMOTE_OPT_PARAM:
+                        argumentsArray.add(JMeterCommandLineArguments.REMOTE_OPT_PARAM.getCommandLineArgument());
+                        argumentsArray.add(this.remoteStartList);
+                        break;}
             }
         }
         return argumentsArray.toArray(new String[]{});

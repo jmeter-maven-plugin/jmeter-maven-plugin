@@ -15,7 +15,7 @@ public enum JMeterCommandLineArguments {
     NONGUI_OPT("n"),            //ALWAYS_SET - This plugin always runs JMeter in non-gui mode
     PROPFILE_OPT("p"),          //NOT_USED - We place the jmeter.properties in the correct place on the filesystem.
     PROPFILE2_OPT("q"),
-    REMOTE_OPT("r"),
+    REMOTE_OPT("r"),            //DOCUMENTED
     SERVER_OPT("s"),            //TODO
     TESTFILE_OPT("t"),          //ALWAYS_SET - This is how we pass our test file list over to JMeter
     PROXY_USERNAME("u"),        //DOCUMENTED
@@ -27,7 +27,7 @@ public enum JMeterCommandLineArguments {
     LOGLEVEL("L"),              //DOCUMENTED
     NONPROXY_HOSTS("N"),        //DOCUMENTED
     PROXY_PORT("P"),            //DOCUMENTED
-    REMOTE_OPT_PARAM("R"),      //TODO
+    REMOTE_OPT_PARAM("R"),      //DOCUMENTED
     SYSTEM_PROPFILE("S"),       //TODO
     REMOTE_STOP("X");           //DOCUMENTED
 

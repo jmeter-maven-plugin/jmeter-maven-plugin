@@ -35,6 +35,7 @@
             <item name="System Properties" href="./examples/setting-system-properties.html"/>
             <item name="Overriding Log Levels" href="./examples/overriding-log-levels.html"/>
             <item name="Proxy Settings" href="./examples/proxy-settings.html"/>
+            <item name="Remote Start And Stop" href="./examples/remote-start-and-stop.html"/>
         </menu>
     </body>
 </project>

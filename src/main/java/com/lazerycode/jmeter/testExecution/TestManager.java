@@ -28,9 +28,12 @@ public class TestManager {
     private List<String> excludeJMeterTestFiles;
     private boolean jmeterPreserveIncludeOrder;
     private boolean suppressJMeterOutput;
-    private boolean remoteStop;
+    private boolean remoteStop = false;
+    private boolean remoteStartAll = false;
+    private boolean remoteStartAndStopOnce = true;
+    private String remoteStart = null;
 
-    public TestManager(JMeterArgumentsArray testArgs, File logsDir, File srcDir, Log log, boolean preserveTestOrder, List<String> testFiles, List<String> excludeTestFiles, boolean suppressJMeterOutput, boolean remoteStop) {
+    public TestManager(JMeterArgumentsArray testArgs, File logsDir, File srcDir, Log log, boolean preserveTestOrder, List<String> testFiles, List<String> excludeTestFiles, boolean suppressJMeterOutput) {
         this.testArgs = testArgs;
         this.logsDir = logsDir;
         this.srcDir = srcDir;
@@ -39,15 +42,26 @@ public class TestManager {
         this.jMeterTestFiles = testFiles;
         this.excludeJMeterTestFiles = excludeTestFiles;
         this.suppressJMeterOutput = suppressJMeterOutput;
+    }
+
+    public void setRemoteStartOptions(boolean remoteStop, boolean remoteStartAll, boolean remoteStartAndStopOnce, String remoteStart) {
         this.remoteStop = remoteStop;
+        this.remoteStartAll = remoteStartAll;
+        this.remoteStartAndStopOnce = remoteStartAndStopOnce;
+        if (util.isNotSet(remoteStart)) return;
+        this.remoteStart = remoteStart;
     }
 
     public List<String> executeTests() throws MojoExecutionException {
         List<String> tests = generateTestList();
         List<String> results = new ArrayList<String>();
         for (String file : tests) {
-            if (tests.get(tests.size() - 1).equals(file)) {
+            if (this.remoteStartAndStopOnce == false || tests.get(tests.size() - 1).equals(file)) {
                 testArgs.setRemoteStop(this.remoteStop);
+            }
+            if (this.remoteStartAndStopOnce == false || tests.get(0).equals(file)) {
+                testArgs.setRemoteStartAll(this.remoteStartAll);
+                testArgs.setRemoteStart(this.remoteStart);
             }
             results.add(executeSingleTest(new File(srcDir, file)));
         }

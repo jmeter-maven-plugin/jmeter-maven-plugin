@@ -201,6 +201,13 @@ public class JMeterMojo extends AbstractMojo {
     private ArtifactRepository localRepository;
 
     /**
+     * Regex of nonproxy hosts.
+     *
+     * @parameter
+     */
+    private String nonProxyHosts;
+
+    /**
      * HTTP proxy host name.
      *
      * @parameter
@@ -430,6 +437,7 @@ public class JMeterMojo extends AbstractMojo {
         this.testArgs.setProxyHostDetails(this.proxyHost, this.proxyPort);
         this.testArgs.setProxyUsername(this.proxyUsername);
         this.testArgs.setProxyPassword(this.proxyPassword);
+        this.testArgs.setNonProxyHosts(this.nonProxyHosts);
         this.testArgs.setSystemProperties(this.systemProperties);
         this.testArgs.setLogCategoriesOverrides(this.overrideLogCategories);
         this.testArgs.setLogRootOverride(this.overrideRootLogLevel);

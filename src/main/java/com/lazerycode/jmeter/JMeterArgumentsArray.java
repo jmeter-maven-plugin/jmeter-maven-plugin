@@ -17,6 +17,7 @@ public class JMeterArgumentsArray {
 
     private LinkedHashMap<JMeterCommandLineArguments, Boolean> argumentMap = new LinkedHashMap<JMeterCommandLineArguments, Boolean>();
     private DateFormat fmt = new SimpleDateFormat("yyMMdd");
+    private String nonProxyHosts = null;
     private String proxyHost = null;
     private String proxyPort = null;
     private String proxyUsername = null;
@@ -56,6 +57,13 @@ public class JMeterArgumentsArray {
         argumentMap.put(JMeterCommandLineArguments.PROXY_PORT, false);          //Set to true if proxy port is specified
         argumentMap.put(JMeterCommandLineArguments.PROXY_USERNAME, false);      //Set to true if proxy username is specified
         argumentMap.put(JMeterCommandLineArguments.PROXY_PASSWORD, false);      //Set to true if proxy password is specified
+        argumentMap.put(JMeterCommandLineArguments.NONPROXY_HOSTS, false);      //Set to true if non-proxy hosts are specified
+    }
+
+    public void setNonProxyHosts(String value) {
+        if (util.isNotSet(value)) return;
+        this.nonProxyHosts = value;
+        this.argumentMap.put(JMeterCommandLineArguments.NONPROXY_HOSTS, true);
     }
 
     public void setProxyHostDetails(String value, int port) {
@@ -264,6 +272,10 @@ public class JMeterArgumentsArray {
                     case PROXY_PASSWORD:
                         argumentsArray.add(JMeterCommandLineArguments.PROXY_PASSWORD.getCommandLineArgument());
                         argumentsArray.add(proxyPassword);
+                        break;
+                    case NONPROXY_HOSTS:
+                        argumentsArray.add(JMeterCommandLineArguments.NONPROXY_HOSTS.getCommandLineArgument());
+                        argumentsArray.add(this.nonProxyHosts);
                         break;
                 }
             }

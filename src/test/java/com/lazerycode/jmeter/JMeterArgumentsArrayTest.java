@@ -195,4 +195,12 @@ public class JMeterArgumentsArrayTest {
         testArgs.setProxyPassword("changeme");
         assertThat(util.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()), is(equalTo("-n -t " + new File(this.testFile.toURI()).getAbsolutePath() + " -l " + testArgs.getResultsFilename() + " -d target/jmeter/ -a changeme")));
     }
+
+    @Test
+    public void validateSetNonProxyHosts() throws Exception{
+        JMeterArgumentsArray testArgs = new JMeterArgumentsArray(reportDir.getAbsolutePath());
+        testArgs.setTestFile(new File(this.testFile.toURI()));
+        testArgs.setJMeterHome("target/jmeter/");
+        testArgs.setNonProxyHosts("localhost|*.lazerycode.com");assertThat(util.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()), is(equalTo("-n -t " + new File(this.testFile.toURI()).getAbsolutePath() + " -l " + testArgs.getResultsFilename() + " -d target/jmeter/ -N localhost|*.lazerycode.com")));
+    }
 }

@@ -26,7 +26,7 @@ public class JMeterArgumentsArray {
     private String customPropertiesFile = null;
     private String jMeterGlobalPropertiesFile = null;
     private String testFile = null;
-    private String resultsFile = null;
+    private String resultsFileName = null;
     private String jMeterHome = null;
     private String reportDirectory = null;
     private String overrideRootLogLevel = null;
@@ -162,7 +162,9 @@ public class JMeterArgumentsArray {
         if (UtilityFunctions.isNotSet(value)) return;
         this.testFile = value.getAbsolutePath();
         this.argumentMap.put(JMeterCommandLineArguments.TESTFILE_OPT, true);
-        this.resultsFile = this.reportDirectory + File.separator + value.getName().substring(0, value.getName().lastIndexOf(".")) + "-" + fmt.format(new Date()) + ".xml";
+        if(resultsFileName == null) {
+            this.resultsFileName = this.reportDirectory + File.separator + value.getName().substring(0, value.getName().lastIndexOf(".")) + "-" + fmt.format(new Date()) + ".xml";
+        }
         this.argumentMap.put(JMeterCommandLineArguments.LOGFILE_OPT, true);
     }
 
@@ -171,9 +173,13 @@ public class JMeterArgumentsArray {
         this.jMeterHome = value;
         this.argumentMap.put(JMeterCommandLineArguments.JMETER_HOME_OPT, true);
     }
+    
+    public void setResultsFileName(String resultsFileName) {
+        this.resultsFileName = resultsFileName;
+    }
 
-    public String getResultsFilename() {
-        return this.resultsFile;
+    public String getResultsFileName() {
+        return this.resultsFileName;
     }
 
     public String getProxyDetails() {
@@ -214,7 +220,7 @@ public class JMeterArgumentsArray {
                         break;
                     case LOGFILE_OPT:
                         argumentsArray.add(JMeterCommandLineArguments.LOGFILE_OPT.getCommandLineArgument());
-                        argumentsArray.add(this.resultsFile);
+                        argumentsArray.add(this.resultsFileName);
                         break;
                     case JMETER_HOME_OPT:
                         argumentsArray.add(JMeterCommandLineArguments.JMETER_HOME_OPT.getCommandLineArgument());

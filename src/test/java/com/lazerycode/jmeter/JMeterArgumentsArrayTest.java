@@ -56,12 +56,12 @@ public class JMeterArgumentsArrayTest {
         testArgs.setTestFile(new File(this.testFile.toURI()));
         testArgs.setJMeterHome("target/jmeter/");
 
-        assertThat(testArgs.getResultsFilename(),
+        assertThat(testArgs.getResultsFileName(),
                 is(not(equalTo(""))));
-        assertThat(testArgs.getResultsFilename(),
+        assertThat(testArgs.getResultsFileName(),
                 is(not(equalTo(null))));
         assertThat(UtilityFunctions.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()),
-                is(equalTo("-n -t " + new File(this.testFile.toURI()).getAbsolutePath() + " -l " + testArgs.getResultsFilename() + " -d target/jmeter/")));
+                is(equalTo("-n -t " + new File(this.testFile.toURI()).getAbsolutePath() + " -l " + testArgs.getResultsFileName() + " -d target/jmeter/")));
     }
 
     @Test
@@ -74,7 +74,7 @@ public class JMeterArgumentsArrayTest {
         remoteProps.put("testIterations", "10");
         testArgs.setRemoteProperties(remoteProps);
         assertThat(UtilityFunctions.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()),
-                is(equalTo("-n -t " + new File(this.testFile.toURI()).getAbsolutePath() + " -l " + testArgs.getResultsFilename() + " -d target/jmeter/ " + argumentsMapToString(remoteProps, JMeterCommandLineArguments.JMETER_GLOBAL_PROP))));
+                is(equalTo("-n -t " + new File(this.testFile.toURI()).getAbsolutePath() + " -l " + testArgs.getResultsFileName() + " -d target/jmeter/ " + argumentsMapToString(remoteProps, JMeterCommandLineArguments.JMETER_GLOBAL_PROP))));
     }
 
     @Test
@@ -87,7 +87,7 @@ public class JMeterArgumentsArrayTest {
         globalProps.put("testIterations", "10");
         testArgs.setGlobalProperties(globalProps);
         assertThat(UtilityFunctions.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()),
-                is(equalTo("-n -t " + new File(this.testFile.toURI()).getAbsolutePath() + " -l " + testArgs.getResultsFilename() + " -d target/jmeter/ " + argumentsMapToString(globalProps, JMeterCommandLineArguments.JMETER_PROPERTY) + " " + argumentsMapToString(globalProps, JMeterCommandLineArguments.JMETER_GLOBAL_PROP))));
+                is(equalTo("-n -t " + new File(this.testFile.toURI()).getAbsolutePath() + " -l " + testArgs.getResultsFileName() + " -d target/jmeter/ " + argumentsMapToString(globalProps, JMeterCommandLineArguments.JMETER_PROPERTY) + " " + argumentsMapToString(globalProps, JMeterCommandLineArguments.JMETER_GLOBAL_PROP))));
     }
 
     @Test
@@ -98,7 +98,7 @@ public class JMeterArgumentsArrayTest {
         File testPropFile = new File("test.properties");
         testArgs.setRemotePropertiesFile(testPropFile);
         assertThat(UtilityFunctions.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()),
-                is(equalTo("-n -t " + new File(this.testFile.toURI()).getAbsolutePath() + " -l " + testArgs.getResultsFilename() + " -d target/jmeter/ -G " + testPropFile.getAbsolutePath())));
+                is(equalTo("-n -t " + new File(this.testFile.toURI()).getAbsolutePath() + " -l " + testArgs.getResultsFileName() + " -d target/jmeter/ -G " + testPropFile.getAbsolutePath())));
     }
 
     @Test
@@ -111,7 +111,7 @@ public class JMeterArgumentsArrayTest {
         localProps.put("testIterations", "10");
         testArgs.setUserProperties(localProps);
         assertThat(UtilityFunctions.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()),
-                is(equalTo("-n -t " + new File(this.testFile.toURI()).getAbsolutePath() + " -l " + testArgs.getResultsFilename() + " -d target/jmeter/ " + argumentsMapToString(localProps, JMeterCommandLineArguments.JMETER_PROPERTY))));
+                is(equalTo("-n -t " + new File(this.testFile.toURI()).getAbsolutePath() + " -l " + testArgs.getResultsFileName() + " -d target/jmeter/ " + argumentsMapToString(localProps, JMeterCommandLineArguments.JMETER_PROPERTY))));
     }
 
     @Test
@@ -124,7 +124,7 @@ public class JMeterArgumentsArrayTest {
         sysProps.put("user.home", "/home/foo");
         testArgs.setSystemProperties(sysProps);
         assertThat(UtilityFunctions.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()),
-                is(equalTo("-n -t " + new File(this.testFile.toURI()).getAbsolutePath() + " -l " + testArgs.getResultsFilename() + " -d target/jmeter/ " + argumentsMapToString(sysProps, JMeterCommandLineArguments.SYSTEM_PROPERTY))));
+                is(equalTo("-n -t " + new File(this.testFile.toURI()).getAbsolutePath() + " -l " + testArgs.getResultsFileName() + " -d target/jmeter/ " + argumentsMapToString(sysProps, JMeterCommandLineArguments.SYSTEM_PROPERTY))));
     }
 
     @Test
@@ -135,7 +135,7 @@ public class JMeterArgumentsArrayTest {
         File testPropFile = new File("test.properties");
         testArgs.setASystemPropertiesFile(testPropFile);
         assertThat(UtilityFunctions.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()),
-                is(equalTo("-n -t " + new File(this.testFile.toURI()).getAbsolutePath() + " -l " + testArgs.getResultsFilename() + " -d target/jmeter/ -S " + testPropFile.getAbsolutePath())));
+                is(equalTo("-n -t " + new File(this.testFile.toURI()).getAbsolutePath() + " -l " + testArgs.getResultsFileName() + " -d target/jmeter/ -S " + testPropFile.getAbsolutePath())));
     }
 
     @Test
@@ -146,7 +146,7 @@ public class JMeterArgumentsArrayTest {
         File testPropFile = new File("test.properties");
         testArgs.setACustomPropertiesFile(testPropFile);
         assertThat(UtilityFunctions.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()),
-                is(equalTo("-n -t " + new File(this.testFile.toURI()).getAbsolutePath() + " -l " + testArgs.getResultsFilename() + " -d target/jmeter/ -q " + testPropFile.getAbsolutePath())));
+                is(equalTo("-n -t " + new File(this.testFile.toURI()).getAbsolutePath() + " -l " + testArgs.getResultsFileName() + " -d target/jmeter/ -q " + testPropFile.getAbsolutePath())));
     }
 
     @Test
@@ -156,7 +156,7 @@ public class JMeterArgumentsArrayTest {
         testArgs.setJMeterHome("target/jmeter/");
         testArgs.setLogRootOverride("DEBUG");
         assertThat(UtilityFunctions.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()),
-                is(equalTo("-n -t " + new File(this.testFile.toURI()).getAbsolutePath() + " -l " + testArgs.getResultsFilename() + " -d target/jmeter/ -L DEBUG")));
+                is(equalTo("-n -t " + new File(this.testFile.toURI()).getAbsolutePath() + " -l " + testArgs.getResultsFileName() + " -d target/jmeter/ -L DEBUG")));
     }
 
     @Test
@@ -169,7 +169,7 @@ public class JMeterArgumentsArrayTest {
         logLevels.put("jmeter.UtilityFunctions", "DEBUG");
         testArgs.setLogCategoriesOverrides(logLevels);
         assertThat(UtilityFunctions.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()),
-                is(equalTo("-n -t " + new File(this.testFile.toURI()).getAbsolutePath() + " -l " + testArgs.getResultsFilename() + " -d target/jmeter/ " + argumentsMapToString(logLevels, JMeterCommandLineArguments.LOGLEVEL))));
+                is(equalTo("-n -t " + new File(this.testFile.toURI()).getAbsolutePath() + " -l " + testArgs.getResultsFileName() + " -d target/jmeter/ " + argumentsMapToString(logLevels, JMeterCommandLineArguments.LOGLEVEL))));
     }
 
     @Test
@@ -179,7 +179,7 @@ public class JMeterArgumentsArrayTest {
         testArgs.setJMeterHome("target/jmeter/");
         testArgs.setProxyHostDetails("http://10.10.50.43", 8080);
         assertThat(UtilityFunctions.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()),
-                is(equalTo("-n -t " + new File(this.testFile.toURI()).getAbsolutePath() + " -l " + testArgs.getResultsFilename() + " -d target/jmeter/ -H http://10.10.50.43 -P 8080")));
+                is(equalTo("-n -t " + new File(this.testFile.toURI()).getAbsolutePath() + " -l " + testArgs.getResultsFileName() + " -d target/jmeter/ -H http://10.10.50.43 -P 8080")));
     }
 
     @Test
@@ -189,7 +189,7 @@ public class JMeterArgumentsArrayTest {
         testArgs.setJMeterHome("target/jmeter/");
         testArgs.setProxyUsername("god");
         assertThat(UtilityFunctions.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()),
-                is(equalTo("-n -t " + new File(this.testFile.toURI()).getAbsolutePath() + " -l " + testArgs.getResultsFilename() + " -d target/jmeter/ -u god")));
+                is(equalTo("-n -t " + new File(this.testFile.toURI()).getAbsolutePath() + " -l " + testArgs.getResultsFileName() + " -d target/jmeter/ -u god")));
     }
 
     @Test
@@ -199,7 +199,7 @@ public class JMeterArgumentsArrayTest {
         testArgs.setJMeterHome("target/jmeter/");
         testArgs.setProxyPassword("changeme");
         assertThat(UtilityFunctions.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()),
-                is(equalTo("-n -t " + new File(this.testFile.toURI()).getAbsolutePath() + " -l " + testArgs.getResultsFilename() + " -d target/jmeter/ -a changeme")));
+                is(equalTo("-n -t " + new File(this.testFile.toURI()).getAbsolutePath() + " -l " + testArgs.getResultsFileName() + " -d target/jmeter/ -a changeme")));
     }
 
     @Test
@@ -209,7 +209,7 @@ public class JMeterArgumentsArrayTest {
         testArgs.setJMeterHome("target/jmeter/");
         testArgs.setNonProxyHosts("localhost|*.lazerycode.com");
         assertThat(UtilityFunctions.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()),
-                is(equalTo("-n -t " + new File(this.testFile.toURI()).getAbsolutePath() + " -l " + testArgs.getResultsFilename() + " -d target/jmeter/ -N localhost|*.lazerycode.com")));
+                is(equalTo("-n -t " + new File(this.testFile.toURI()).getAbsolutePath() + " -l " + testArgs.getResultsFileName() + " -d target/jmeter/ -N localhost|*.lazerycode.com")));
     }
 
     @Test
@@ -219,7 +219,7 @@ public class JMeterArgumentsArrayTest {
         testArgs.setJMeterHome("target/jmeter/");
         testArgs.setRemoteStop(true);
         assertThat(UtilityFunctions.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()),
-                is(equalTo("-n -t " + new File(this.testFile.toURI()).getAbsolutePath() + " -l " + testArgs.getResultsFilename() + " -d target/jmeter/ -X")));
+                is(equalTo("-n -t " + new File(this.testFile.toURI()).getAbsolutePath() + " -l " + testArgs.getResultsFileName() + " -d target/jmeter/ -X")));
     }
 
     @Test
@@ -229,7 +229,7 @@ public class JMeterArgumentsArrayTest {
         testArgs.setJMeterHome("target/jmeter/");
         testArgs.setRemoteStartAll(true);
         assertThat(UtilityFunctions.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()),
-                is(equalTo("-n -t " + new File(this.testFile.toURI()).getAbsolutePath() + " -l " + testArgs.getResultsFilename() + " -d target/jmeter/ -r")));
+                is(equalTo("-n -t " + new File(this.testFile.toURI()).getAbsolutePath() + " -l " + testArgs.getResultsFileName() + " -d target/jmeter/ -r")));
     }
 
     @Test
@@ -239,6 +239,6 @@ public class JMeterArgumentsArrayTest {
         testArgs.setJMeterHome("target/jmeter/");
         testArgs.setRemoteStart("server1, server2");
         assertThat(UtilityFunctions.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()),
-                is(equalTo("-n -t " + new File(this.testFile.toURI()).getAbsolutePath() + " -l " + testArgs.getResultsFilename() + " -d target/jmeter/ -R server1, server2")));
+                is(equalTo("-n -t " + new File(this.testFile.toURI()).getAbsolutePath() + " -l " + testArgs.getResultsFileName() + " -d target/jmeter/ -R server1, server2")));
     }
 }

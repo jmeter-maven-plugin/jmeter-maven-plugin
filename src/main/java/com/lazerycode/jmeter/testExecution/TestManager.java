@@ -82,7 +82,7 @@ public class TestManager {
             log.info(" ");
             testArgs.setTestFile(test);
             //Delete results file if it already exists
-            new File(testArgs.getResultsFilename()).delete();
+            new File(testArgs.getResultsFileName()).delete();
             if (log.isDebugEnabled()) {
                 log.debug("JMeter is called with the following command line arguments: " + UtilityFunctions.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()));
             }
@@ -144,7 +144,7 @@ public class TestManager {
                 System.setOut(originalOut);
                 log.info("Completed Test: " + test.getName());
             }
-            return testArgs.getResultsFilename();
+            return testArgs.getResultsFileName();
         } catch (IOException e) {
             throw new MojoExecutionException("Can't execute test", e);
         }

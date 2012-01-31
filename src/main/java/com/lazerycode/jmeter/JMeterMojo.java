@@ -1,13 +1,9 @@
 package com.lazerycode.jmeter;
 
-import com.lazerycode.jmeter.enums.JMeterPropertiesFiles;
 import com.lazerycode.jmeter.reporting.ReportGenerator;
 import com.lazerycode.jmeter.testExecution.TestManager;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -27,14 +23,6 @@ import java.util.jar.JarFile;
  * @requiresProject true
  */
 public class JMeterMojo extends AbstractMojo {
-
-
-    /**
-     * Get a list of artifacts used by this plugin
-     *
-     * @parameter default-value="${plugin.artifacts}"
-     */
-    private List<Artifact> pluginArtifacts;
 
     /**
      * Sets the list of include patterns to use in directory scan for JMX files.
@@ -97,35 +85,33 @@ public class JMeterMojo extends AbstractMojo {
     private String resultsFileName;
 
     /**
-     * Absolute path to JMeter custom (test dependent) properties file.
-     * .
+     * JMeter Properties that are merged with precedence into default JMeter file in jmeter.properties
      *
      * @parameter
      */
-    private File jmeterCustomPropertiesFile;
+    private Map<String, String> jmeterProperties;
 
     /**
-     * JMeter Properties that override those given in jmeter.properties
+     * JMeter Properties that are merged with precedence into default JMeter file in saveservice.properties
      *
      * @parameter
      */
-    @SuppressWarnings("rawtypes")
+    private Map<String, String> jmeterSaveserviceProperties;
+    
+    /**
+     * JMeter Properties that are merged with precedence into default JMeter file in upgrade.properties
+     *
+     * @parameter
+     */
+    private Map<String, String> jmeterUpgradeProperties;
+    
+    /**
+     * JMeter Properties that are merged with precedence into default JMeter file in user.properties
+     * user.properties takes precedence over jmeter.properties
+     *
+     * @parameter
+     */
     private Map<String, String> jmeterUserProperties;
-
-    /**
-     * JMeter Remote Properties that override those given in jmeterProps
-     *
-     * @parameter
-     */
-    @SuppressWarnings("rawtypes")
-    private Map<String, String> jmeterRemoteProperties;
-
-    /**
-     * JMeter Global Properties file
-     *
-     * @parameter
-     */
-    private File jmeterRemotePropertiesFile;
 
     /**
      * JMeter Global Properties that override those given in jmeterProps
@@ -134,7 +120,6 @@ public class JMeterMojo extends AbstractMojo {
      *
      * @parameter
      */
-    @SuppressWarnings("rawtypes")
     private Map<String, String> jmeterGlobalProperties;
 
     /**
@@ -147,27 +132,12 @@ public class JMeterMojo extends AbstractMojo {
     private File jmeterGlobalPropertiesFile;
 
     /**
-     * System properties set by JMeter
+     * (Java) System properties set for the test run.
+     * Properties are merged with precedence into default JMeter file system.properties
      *
      * @parameter
      */
-    @SuppressWarnings("rawtypes")
     private Map<String, String> systemProperties;
-
-    /**
-     * Override JMeter logging categories
-     *
-     * @parameter
-     */
-    @SuppressWarnings("rawtypes")
-    private Map<String, String> overrideLogCategories;
-
-    /**
-     * Override JMeter root log level
-     *
-     * @parameter
-     */
-    private String overrideRootLogLevel;
 
     /**
      * Use remote JMeter installation to run tests
@@ -194,19 +164,14 @@ public class JMeterMojo extends AbstractMojo {
      * @parameter expression="${project}"
      * @required
      */
-    @SuppressWarnings("unused")
     private MavenProject mavenProject;
 
     /**
-     * @parameter expression="${component.org.apache.maven.artifact.resolver.ArtifactResolver}"
-     * @required
+     * Get a list of artifacts used by this plugin
+     *
+     * @parameter default-value="${plugin.artifacts}"
      */
-    private ArtifactResolver artifactResolver;
-
-    /**
-     * @parameter expression="${localRepository}"
-     */
-    private ArtifactRepository localRepository;
+    private List<Artifact> pluginArtifacts;
 
     /**
      * Regex of nonproxy hosts.
@@ -306,7 +271,6 @@ public class JMeterMojo extends AbstractMojo {
         log.info(" P E R F O R M A N C E    T E S T S");
         log.info("-------------------------------------------------------");
         log.info(" ");
-        validateInput();
         generateJMeterDirectoryTree();
         configureJMeterPropertiesFiles();
         setJMeterClasspath();
@@ -321,44 +285,6 @@ public class JMeterMojo extends AbstractMojo {
     }
 
     /**
-     * Validate the data passed into this plugin by the POM file and fail early if there are any obvious problems.
-     *
-     * @throws MojoExecutionException
-     */
-    private void validateInput() throws MojoExecutionException {
-        if (!UtilityFunctions.isNotSet(this.jmeterRemotePropertiesFile)) {
-            if (!UtilityFunctions.isNotSet(this.jmeterRemoteProperties)) {
-                throw new MojoExecutionException("You cannot specify a remote properties file and individual remote properties!");
-            }
-        }
-        if (!UtilityFunctions.isNotSet(this.jmeterRemoteProperties)) {
-            if (!UtilityFunctions.isNotSet(this.jmeterRemotePropertiesFile)) {
-                throw new MojoExecutionException("You cannot specify a remote properties file and individual remote properties!");
-            }
-        }
-        if (!UtilityFunctions.isNotSet(this.jmeterGlobalPropertiesFile)) {
-            if (!UtilityFunctions.isNotSet(this.jmeterGlobalProperties)) {
-                throw new MojoExecutionException("You cannot specify a global properties file and individual global properties!");
-            }
-        }
-        if (!UtilityFunctions.isNotSet(this.jmeterGlobalProperties)) {
-            if (!UtilityFunctions.isNotSet(this.jmeterGlobalPropertiesFile)) {
-                throw new MojoExecutionException("You cannot specify a global properties file and individual global properties!");
-            }
-        }
-        if (!UtilityFunctions.isNotSet(this.overrideLogCategories)) {
-            if (!UtilityFunctions.isNotSet(this.overrideRootLogLevel)) {
-                throw new MojoExecutionException("You cannot override both the root log level and individual log categories!");
-            }
-        }
-        if (!UtilityFunctions.isNotSet(this.overrideRootLogLevel)) {
-            if (!UtilityFunctions.isNotSet(this.overrideLogCategories)) {
-                throw new MojoExecutionException("You cannot override both the root log level and individual log categories!");
-            }
-        }
-    }
-
-    /**
      * Generate the directory tree utilised by JMeter.
      */
     private void generateJMeterDirectoryTree() {
@@ -370,6 +296,8 @@ public class JMeterMojo extends AbstractMojo {
         this.binDir.mkdirs();
         this.libExt = new File(this.workDir + File.separator + "lib" + File.separator + "ext");
         this.libExt.mkdirs();
+        reportDir = new File(workDir + File.separator + "report");
+        reportDir.mkdirs();
         //JMeter expects a <workdir>/lib/junit directory and complains if it can't find it.
         new File(this.workDir + File.separator + "lib" + File.separator + "junit").mkdirs();
         //JMeter uses the system property "user.dir" to set its base working directory
@@ -378,51 +306,50 @@ public class JMeterMojo extends AbstractMojo {
 
     /**
      * Create/Copy the properties files used by JMeter into the JMeter directory tree.
-     *
+     * TODO: not really happy with handling of global.properties.
      * @throws MojoExecutionException
      */
     private void configureJMeterPropertiesFiles() throws MojoExecutionException {
-        for (JMeterPropertiesFiles propertyFile : JMeterPropertiesFiles.values()) {
-            if (!usedCustomPropertiesFile(propertyFile.getPropertiesFileName())) {
-                if (propertyFile.createFileIfItDoesntExist()) {
-                    log.warn("Custom " + propertyFile.getPropertiesFileName() + " not found, using the default version supplied with JMeter.");
-                    try {
-                        FileWriter out = new FileWriter(new File(this.binDir + File.separator + propertyFile.getPropertiesFileName()));
-                        JarFile propertyJar = new JarFile(getArtifactNamed(this.jmeterConfigArtifact).getFile());
-                        InputStream in = propertyJar.getInputStream(propertyJar.getEntry("bin/" + propertyFile.getPropertiesFileName()));
-                        IOUtils.copy(in, out);
-                        in.close();
-                        out.flush();
-                        out.close();
-                    } catch (IOException e) {
-                        throw new MojoExecutionException("Could not create temporary property file " + propertyFile.getPropertiesFileName() + " in directory " + this.workDir, e);
-                    }
-                } else {
-                    log.warn("Custom " + propertyFile.getPropertiesFileName() + " not found.");
-                }
+
+        Map<String,Map<String,String>> propertiesMapping = getJmeterPropertyFileToPropertiesMapping();
+        for (String propertyFile : propertiesMapping.keySet()) {
+            try {
+                FileOutputStream out = new FileOutputStream(new File(this.binDir + File.separator + propertyFile));
+                JarFile propertyJar = new JarFile(getArtifactNamed(this.jmeterConfigArtifact).getFile());
+                InputStream in = propertyJar.getInputStream(propertyJar.getEntry("bin/" + propertyFile));
+                PropertyFileMerger.mergePropertiesFile(in,out,propertiesMapping.get(propertyFile));
+            } catch (IOException e) {
+                throw new MojoExecutionException("Could not create temporary property file " + propertyFile + " in directory " + this.workDir, e);
             }
+        }
+
+        // handling global.properties separately because it may be configured and is also not delivered with the JMeter installation.
+        String propertyName = "global.properties";
+        try {
+            File destinationFile = new File(this.binDir + File.separator + propertyName);
+            FileOutputStream fileOutputStream = new FileOutputStream(destinationFile);
+            InputStream fileInputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(propertyName);
+            PropertyFileMerger.mergePropertiesFile(fileInputStream,fileOutputStream,jmeterGlobalProperties);
+            fileOutputStream.flush();
+            fileOutputStream.close();
+        } catch (IOException e) {
+            throw new MojoExecutionException("Could not create temporary property file " + propertyName + " in directory " + this.workDir, e);
         }
     }
 
     /**
-     * Copy a user created properties file to the JMeter bin directory
-     * (Bin dir must have been initialised before this is called)
-     *
-     * @param filename
-     * @return
+     * @return mapping from properties file to properties map
      */
-    private boolean usedCustomPropertiesFile(String filename) {
-        File propFile = new File(this.srcDir + File.separator + filename);
-        if (propFile.exists()) {
-            File destinationFile = new File(this.binDir + File.separator + filename);
-            try {
-                FileUtils.copyFile(propFile, destinationFile);
-                return true;
-            } catch (IOException ex) {
-                log.warn("Unable to copy " + filename + " to " + this.binDir);
-            }
-        }
-        return false;
+    private Map<String,Map<String,String>> getJmeterPropertyFileToPropertiesMapping() {
+        Map<String,Map<String,String>> returnMap = new HashMap<String, Map<String,String>>();
+        
+        returnMap.put("jmeter.properties",jmeterProperties);
+        returnMap.put("saveservice.properties",jmeterSaveserviceProperties);
+        returnMap.put("upgrade.properties",jmeterUpgradeProperties);
+        returnMap.put("system.properties",systemProperties);
+        returnMap.put("user.properties",jmeterUserProperties);
+
+        return returnMap;
     }
 
     /**
@@ -472,18 +399,10 @@ public class JMeterMojo extends AbstractMojo {
     private void initialiseJMeterArgumentsArray() throws MojoExecutionException {
         this.testArgs = new JMeterArgumentsArray(this.reportDir.getAbsolutePath());
         this.testArgs.setJMeterHome(this.workDir.getAbsolutePath());
-        this.testArgs.setACustomPropertiesFile(this.jmeterCustomPropertiesFile);
-        this.testArgs.setUserProperties(this.jmeterUserProperties);
-        this.testArgs.setRemoteProperties(this.jmeterRemoteProperties);
-        this.testArgs.setRemotePropertiesFile(this.jmeterRemotePropertiesFile);
-        this.testArgs.setGlobalProperties(this.jmeterGlobalProperties);
         this.testArgs.setProxyHostDetails(this.proxyHost, this.proxyPort);
         this.testArgs.setProxyUsername(this.proxyUsername);
         this.testArgs.setProxyPassword(this.proxyPassword);
         this.testArgs.setNonProxyHosts(this.nonProxyHosts);
-        this.testArgs.setSystemProperties(this.systemProperties);
-        this.testArgs.setLogCategoriesOverrides(this.overrideLogCategories);
-        this.testArgs.setLogRootOverride(this.overrideRootLogLevel);
         testArgs.setResultsFileName(resultsFileName);
     }
 

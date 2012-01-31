@@ -26,7 +26,7 @@ public class JMeterArgumentsArray {
     private String customPropertiesFile = null;
     private String jMeterGlobalPropertiesFile = null;
     private String testFile = null;
-    private String resultsFile = null;
+    private String resultsFileName = null;
     private String jMeterHome = null;
     private String reportDirectory = null;
     private String overrideRootLogLevel = null;
@@ -35,7 +35,6 @@ public class JMeterArgumentsArray {
     private Map jMeterGlobalProperties = null;
     private Map systemProperties = null;
     private Map overrideLogCategories = null;
-    private static UtilityFunctions util = new UtilityFunctions();
 
     /**
      * The argument map will define which arguments are set on the command line.
@@ -72,19 +71,19 @@ public class JMeterArgumentsArray {
     }
 
     public void setRemoteStart(String value) {
-        if (util.isNotSet(value)) return;
+        if (UtilityFunctions.isNotSet(value)) return;
         this.remoteStartList = value;
         this.argumentMap.put(JMeterCommandLineArguments.REMOTE_OPT_PARAM, true);
     }
 
     public void setNonProxyHosts(String value) {
-        if (util.isNotSet(value)) return;
+        if (UtilityFunctions.isNotSet(value)) return;
         this.nonProxyHosts = value;
         this.argumentMap.put(JMeterCommandLineArguments.NONPROXY_HOSTS, true);
     }
 
     public void setProxyHostDetails(String value, int port) {
-        if (util.isNotSet(value)) return;
+        if (UtilityFunctions.isNotSet(value)) return;
         this.proxyHost = value;
         this.proxyPort = Integer.toString(port);
         this.argumentMap.put(JMeterCommandLineArguments.PROXY_HOST, true);
@@ -92,37 +91,37 @@ public class JMeterArgumentsArray {
     }
 
     public void setProxyUsername(String value) {
-        if (util.isNotSet(value)) return;
+        if (UtilityFunctions.isNotSet(value)) return;
         this.proxyUsername = value;
         this.argumentMap.put(JMeterCommandLineArguments.PROXY_USERNAME, true);
     }
 
     public void setProxyPassword(String value) {
-        if (util.isNotSet(value)) return;
+        if (UtilityFunctions.isNotSet(value)) return;
         this.proxyPassword = value;
         this.argumentMap.put(JMeterCommandLineArguments.PROXY_PASSWORD, true);
     }
 
     public void setACustomPropertiesFile(File value) {
-        if (util.isNotSet(value)) return;
+        if (UtilityFunctions.isNotSet(value)) return;
         this.customPropertiesFile = value.getAbsolutePath();
         this.argumentMap.put(JMeterCommandLineArguments.PROPFILE2_OPT, true);
     }
 
     public void setASystemPropertiesFile(File value) {
-        if (util.isNotSet(value)) return;
+        if (UtilityFunctions.isNotSet(value)) return;
         this.systemPropertiesFile = value.getAbsolutePath();
         this.argumentMap.put(JMeterCommandLineArguments.SYSTEM_PROPFILE, true);
     }
 
     public void setUserProperties(Map value) {
-        if (util.isNotSet(value)) return;
+        if (UtilityFunctions.isNotSet(value)) return;
         this.jMeterUserProperties = value;
         this.argumentMap.put(JMeterCommandLineArguments.JMETER_PROPERTY, true);
     }
 
     public void setGlobalProperties(Map value) {
-        if (util.isNotSet(value)) return;
+        if (UtilityFunctions.isNotSet(value)) return;
         this.jMeterGlobalProperties = value;
         this.jMeterUserProperties = value;
         this.argumentMap.put(JMeterCommandLineArguments.JMETER_GLOBAL_PROP, true);
@@ -130,51 +129,57 @@ public class JMeterArgumentsArray {
     }
 
     public void setRemoteProperties(Map value) {
-        if (util.isNotSet(value)) return;
+        if (UtilityFunctions.isNotSet(value)) return;
         this.jMeterGlobalProperties = value;
         this.argumentMap.put(JMeterCommandLineArguments.JMETER_GLOBAL_PROP, true);
     }
 
     public void setRemotePropertiesFile(File value) {
-        if (util.isNotSet(value)) return;
+        if (UtilityFunctions.isNotSet(value)) return;
         this.jMeterGlobalPropertiesFile = value.getAbsolutePath();
         this.argumentMap.put(JMeterCommandLineArguments.JMETER_GLOBAL_PROP, true);
     }
 
     public void setLogCategoriesOverrides(Map value) {
-        if (util.isNotSet(value)) return;
+        if (UtilityFunctions.isNotSet(value)) return;
         this.overrideLogCategories = value;
         this.argumentMap.put(JMeterCommandLineArguments.LOGLEVEL, true);
     }
 
     public void setLogRootOverride(String value) {
-        if (util.isNotSet(value)) return;
+        if (UtilityFunctions.isNotSet(value)) return;
         this.overrideRootLogLevel = value;
         this.argumentMap.put(JMeterCommandLineArguments.LOGLEVEL, true);
     }
 
     public void setSystemProperties(Map value) {
-        if (util.isNotSet(value)) return;
+        if (UtilityFunctions.isNotSet(value)) return;
         this.systemProperties = value;
         this.argumentMap.put(JMeterCommandLineArguments.SYSTEM_PROPERTY, true);
     }
 
     public void setTestFile(File value) {
-        if (util.isNotSet(value)) return;
+        if (UtilityFunctions.isNotSet(value)) return;
         this.testFile = value.getAbsolutePath();
         this.argumentMap.put(JMeterCommandLineArguments.TESTFILE_OPT, true);
-        this.resultsFile = this.reportDirectory + File.separator + value.getName().substring(0, value.getName().lastIndexOf(".")) + "-" + fmt.format(new Date()) + ".jtl";
+        if(resultsFileName == null) {
+            this.resultsFileName = this.reportDirectory + File.separator + value.getName().substring(0, value.getName().lastIndexOf(".")) + "-" + fmt.format(new Date()) + ".jtl";
+        }
         this.argumentMap.put(JMeterCommandLineArguments.LOGFILE_OPT, true);
     }
 
     public void setJMeterHome(String value) {
-        if (util.isNotSet(value)) return;
+        if (UtilityFunctions.isNotSet(value)) return;
         this.jMeterHome = value;
         this.argumentMap.put(JMeterCommandLineArguments.JMETER_HOME_OPT, true);
     }
+    
+    public void setResultsFileName(String resultsFileName) {
+        this.resultsFileName = resultsFileName;
+    }
 
-    public String getResultsFilename() {
-        return this.resultsFile;
+    public String getResultsFileName() {
+        return this.resultsFileName;
     }
 
     public String getProxyDetails() {
@@ -215,7 +220,7 @@ public class JMeterArgumentsArray {
                         break;
                     case LOGFILE_OPT:
                         argumentsArray.add(JMeterCommandLineArguments.LOGFILE_OPT.getCommandLineArgument());
-                        argumentsArray.add(this.resultsFile);
+                        argumentsArray.add(this.resultsFileName);
                         break;
                     case JMETER_HOME_OPT:
                         argumentsArray.add(JMeterCommandLineArguments.JMETER_HOME_OPT.getCommandLineArgument());

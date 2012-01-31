@@ -18,7 +18,6 @@ import java.util.List;
 
 public class TestManager {
 
-    private static UtilityFunctions util = new UtilityFunctions();
     private JMeterArgumentsArray testArgs;
     private Log log;
     private File jmeterLog;
@@ -48,7 +47,7 @@ public class TestManager {
         this.remoteStop = remoteStop;
         this.remoteStartAll = remoteStartAll;
         this.remoteStartAndStopOnce = remoteStartAndStopOnce;
-        if (util.isNotSet(remoteStart)) return;
+        if (UtilityFunctions.isNotSet(remoteStart)) return;
         this.remoteStart = remoteStart;
     }
 
@@ -83,9 +82,9 @@ public class TestManager {
             log.info(" ");
             testArgs.setTestFile(test);
             //Delete results file if it already exists
-            new File(testArgs.getResultsFilename()).delete();
+            new File(testArgs.getResultsFileName()).delete();
             if (log.isDebugEnabled()) {
-                log.debug("JMeter is called with the following command line arguments: " + util.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()));
+                log.debug("JMeter is called with the following command line arguments: " + UtilityFunctions.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()));
             }
 
             // This mess is necessary because JMeter likes to use System.exit.
@@ -145,7 +144,7 @@ public class TestManager {
                 System.setOut(originalOut);
                 log.info("Completed Test: " + test.getName());
             }
-            return testArgs.getResultsFilename();
+            return testArgs.getResultsFileName();
         } catch (IOException e) {
             throw new MojoExecutionException("Can't execute test", e);
         }
@@ -188,9 +187,9 @@ public class TestManager {
         List<String> jmeterTestFiles = new ArrayList<String>();
         DirectoryScanner scanner = new DirectoryScanner();
         scanner.setBasedir(this.srcDir);
-        scanner.setIncludes(this.jMeterTestFiles == null ? new String[]{"**/*.jmx"} : this.jMeterTestFiles.toArray(new String[]{}));
+        scanner.setIncludes(this.jMeterTestFiles == null ? new String[]{"**/*.jmx"} : this.jMeterTestFiles.toArray(new String[jmeterTestFiles.size()]));
         if (this.excludeJMeterTestFiles != null) {
-            scanner.setExcludes(this.excludeJMeterTestFiles.toArray(new String[]{}));
+            scanner.setExcludes(this.excludeJMeterTestFiles.toArray(new String[excludeJMeterTestFiles.size()]));
         }
         scanner.scan();
         final List<String> includedFiles = Arrays.asList(scanner.getIncludedFiles());

@@ -13,9 +13,9 @@ import java.io.IOException;
  */
 public class ErrorScanner {
 
-    private static final String PAT_ERROR = "<error>true</error>";
-    private static final String PAT_FAILURE_REQUEST = "s=\"false\"";
-    private static final String PAT_FAILURE = "<failure>true</failure>";
+    private static final String ERROR_ELEMENT = "<error>true</error>";
+    private static final String REQUEST_FAILURE_ELEMENT = "s=\"false\"";
+    private static final String FAILURE_ELEMENT = "<failure>true</failure>";
 
     private boolean ignoreErrors;
     private boolean ignoreFailures;
@@ -31,11 +31,6 @@ public class ErrorScanner {
         this.ignoreFailures = ignoreFailures;
     }
 
-    private void resetErrorAndFailureCount() {
-        this.failureCount = 0;
-        this.errorCount = 0;
-    }
-
     public boolean hasTestPassed(File file) throws IOException {
         resetErrorAndFailureCount();
         BufferedReader in = null;
@@ -43,10 +38,12 @@ public class ErrorScanner {
             in = new BufferedReader(new FileReader(file));
             String line;
             while ((line = in.readLine()) != null) {
-                this.lineContainsForErrors(line);
+                this.checkLineForErrors(line);
             }
         } finally {
-            in.close();
+            if (in != null) {
+                in.close();
+            }
         }
         if (this.errorCount == 0 && this.failureCount == 0) {
             return true;
@@ -55,6 +52,16 @@ public class ErrorScanner {
         }
     }
 
+    public int getFailureCount() {
+        return this.failureCount;
+    }
+
+    public int getErrorCount() {
+        return this.errorCount;
+    }
+
+    // ---------------------------------------------------------
+
     /**
      * protected for testing
      *
@@ -62,28 +69,27 @@ public class ErrorScanner {
      * @return
      * @throws MojoFailureException
      */
-    protected boolean lineContainsForErrors(String line) {
-        boolean lineHasProblems = false;
-        if (line.contains(PAT_ERROR)) {
+    protected boolean checkLineForErrors(String line) {
+        boolean lineContainsError = false;
+        if (line.contains(ERROR_ELEMENT)) {
             if (!this.ignoreErrors) {
                 this.errorCount++;
-                lineHasProblems = true;
+                lineContainsError = true;
             }
         }
-        if (line.contains(PAT_FAILURE) || line.contains(PAT_FAILURE_REQUEST)) {
+        if (line.contains(FAILURE_ELEMENT) || line.contains(REQUEST_FAILURE_ELEMENT)) {
             if (!this.ignoreFailures) {
                 this.failureCount++;
-                lineHasProblems = true;
+                lineContainsError = true;
             }
         }
-        return lineHasProblems;
+        return lineContainsError;
     }
 
-    public int getFailureCount() {
-        return this.failureCount;
-    }
+    // =========================================================
 
-    public int getErrorCount() {
-        return this.errorCount;
+    private void resetErrorAndFailureCount() {
+        this.failureCount = 0;
+        this.errorCount = 0;
     }
 }

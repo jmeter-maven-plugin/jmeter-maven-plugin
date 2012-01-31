@@ -370,6 +370,8 @@ public class JMeterMojo extends AbstractMojo {
         this.binDir.mkdirs();
         this.libExt = new File(this.workDir + File.separator + "lib" + File.separator + "ext");
         this.libExt.mkdirs();
+        reportDir = new File(workDir + File.separator + "report");
+        reportDir.mkdirs();
         //JMeter expects a <workdir>/lib/junit directory and complains if it can't find it.
         new File(this.workDir + File.separator + "lib" + File.separator + "junit").mkdirs();
         //JMeter uses the system property "user.dir" to set its base working directory

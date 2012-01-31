@@ -13,15 +13,15 @@ import java.util.Set;
  */
 public class UtilityFunctions {
 
-    public String humanReadableCommandLineOutput(String[] arguments) {
+    public static String humanReadableCommandLineOutput(String[] arguments) {
         String debugOutput = "";
-        for (int i = 0; i < arguments.length; i++) {
-            debugOutput += arguments[i] + " ";
+        for (String argument : arguments) {
+            debugOutput += argument + " ";
         }
         return debugOutput.trim();
     }
 
-    public Boolean isNotSet(Map<?, ?> value) {
+    public static Boolean isNotSet(Map<?, ?> value) {
         if (value == null || value.isEmpty()) {
             return true;
         } else {
@@ -29,7 +29,7 @@ public class UtilityFunctions {
         }
     }
 
-    public Boolean isNotSet(String value) {
+    public static Boolean isNotSet(String value) {
         if (value == null || value.isEmpty() || value.trim().length() == 0) {
             return true;
         } else {
@@ -37,7 +37,7 @@ public class UtilityFunctions {
         }
     }
 
-    public Boolean isNotSet(File value) {
+    public static Boolean isNotSet(File value) {
         if (value == null || value.toString().isEmpty()) {
             return true;
         } else {

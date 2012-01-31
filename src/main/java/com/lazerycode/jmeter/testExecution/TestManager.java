@@ -18,7 +18,6 @@ import java.util.List;
 
 public class TestManager {
 
-    private static UtilityFunctions util = new UtilityFunctions();
     private JMeterArgumentsArray testArgs;
     private Log log;
     private File jmeterLog;
@@ -48,7 +47,7 @@ public class TestManager {
         this.remoteStop = remoteStop;
         this.remoteStartAll = remoteStartAll;
         this.remoteStartAndStopOnce = remoteStartAndStopOnce;
-        if (util.isNotSet(remoteStart)) return;
+        if (UtilityFunctions.isNotSet(remoteStart)) return;
         this.remoteStart = remoteStart;
     }
 
@@ -85,7 +84,7 @@ public class TestManager {
             //Delete results file if it already exists
             new File(testArgs.getResultsFilename()).delete();
             if (log.isDebugEnabled()) {
-                log.debug("JMeter is called with the following command line arguments: " + util.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()));
+                log.debug("JMeter is called with the following command line arguments: " + UtilityFunctions.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()));
             }
 
             // This mess is necessary because JMeter likes to use System.exit.

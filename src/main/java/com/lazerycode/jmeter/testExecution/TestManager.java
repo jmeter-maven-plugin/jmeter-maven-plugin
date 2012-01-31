@@ -187,9 +187,9 @@ public class TestManager {
         List<String> jmeterTestFiles = new ArrayList<String>();
         DirectoryScanner scanner = new DirectoryScanner();
         scanner.setBasedir(this.srcDir);
-        scanner.setIncludes(this.jMeterTestFiles == null ? new String[]{"**/*.jmx"} : this.jMeterTestFiles.toArray(new String[]{}));
+        scanner.setIncludes(this.jMeterTestFiles == null ? new String[]{"**/*.jmx"} : this.jMeterTestFiles.toArray(new String[jmeterTestFiles.size()]));
         if (this.excludeJMeterTestFiles != null) {
-            scanner.setExcludes(this.excludeJMeterTestFiles.toArray(new String[]{}));
+            scanner.setExcludes(this.excludeJMeterTestFiles.toArray(new String[excludeJMeterTestFiles.size()]));
         }
         scanner.scan();
         final List<String> includedFiles = Arrays.asList(scanner.getIncludedFiles());

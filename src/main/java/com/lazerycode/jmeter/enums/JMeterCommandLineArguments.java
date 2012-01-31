@@ -10,8 +10,8 @@ public enum JMeterCommandLineArguments {
     PROXY_PASSWORD("a"),        //DOCUMENTED
     JMETER_HOME_OPT("d"),       //ALWAYS_SET - The JMeter dir structure is created by the plugin.
     HELP_OPT("h"),              //NOT_USED - Prints help information and exits.
-    JMLOGFILE_OPT("j"),         //TODO
-    LOGFILE_OPT("l"),           //ALWAYS_SET - Test name is used for logfile name.
+    JMLOGFILE_OPT("j"),         //ALWAYS_SET - Test name is used for logfile name (<testname>.log).
+    LOGFILE_OPT("l"),           //ALWAYS_SET - Test name is used for logfile name (<testname>.jtl).
     NONGUI_OPT("n"),            //ALWAYS_SET - This plugin always runs JMeter in non-gui mode.
     PROPFILE_OPT("p"),          //NOT_USED - We place the jmeter.properties in the correct place on the filesystem.
     PROPFILE2_OPT("q"),         //DOCUMENTED

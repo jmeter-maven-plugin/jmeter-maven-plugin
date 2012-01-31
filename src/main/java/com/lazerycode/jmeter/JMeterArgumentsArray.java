@@ -163,7 +163,7 @@ public class JMeterArgumentsArray {
         if (util.isNotSet(value)) return;
         this.testFile = value.getAbsolutePath();
         this.argumentMap.put(JMeterCommandLineArguments.TESTFILE_OPT, true);
-        this.resultsFile = this.reportDirectory + File.separator + value.getName().substring(0, value.getName().lastIndexOf(".")) + "-" + fmt.format(new Date()) + ".xml";
+        this.resultsFile = this.reportDirectory + File.separator + value.getName().substring(0, value.getName().lastIndexOf(".")) + "-" + fmt.format(new Date()) + ".jtl";
         this.argumentMap.put(JMeterCommandLineArguments.LOGFILE_OPT, true);
     }
 

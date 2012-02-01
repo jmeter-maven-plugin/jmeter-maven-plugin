@@ -300,7 +300,7 @@ public class JMeterMojo extends AbstractMojo {
 
     /**
      * Create/Copy the properties files used by JMeter into the JMeter directory tree.
-     * TODO: not really happy with handling of global.properties.
+     *
      * @throws MojoExecutionException
      */
     private void configureJMeterPropertiesFiles() throws MojoExecutionException {
@@ -312,21 +312,9 @@ public class JMeterMojo extends AbstractMojo {
 
                 InputStream in = getPropertyFileInputStream(propertyFileName);
                 PropertyFileMerger.mergePropertiesFile(in,out,propertiesMapping.get(propertyFileName));
-            } catch (IOException e) {
+            } catch (Exception e) {
                 throw new MojoExecutionException("Could not create temporary property file " + propertyFileName + " in directory " + this.workDir, e);
             }
-        }
-
-        // handling global.properties separately because it is not delivered with the JMeter installation.
-        //TODO: maybe the JMeter guys would be willing to put global.properties into the JMeter_config artifact for us since it is officially a way to configure JMeter?
-        String propertyFileName = "global.properties";
-        try {
-            OutputStream out = getPropertyFileOutputStream(propertyFileName);
-
-            InputStream in = getPropertyFileInputStream(propertyFileName);
-            PropertyFileMerger.mergePropertiesFile(in,out,jmeterGlobalProperties);
-        } catch (IOException e) {
-            throw new MojoExecutionException("Could not create temporary property file " + propertyFileName + " in directory " + this.workDir, e);
         }
     }
     
@@ -334,30 +322,31 @@ public class JMeterMojo extends AbstractMojo {
         return new FileOutputStream(new File(this.binDir + File.separator + propertyFileName));
     }
     
-    private InputStream getPropertyFileInputStream(String propertyFileName) throws MojoExecutionException {
-        InputStream returnValue = null;
+    private InputStream getPropertyFileInputStream(String propertyFileName) throws Exception {
+        InputStream returnValue;
 
-        try {
-            //find out if propertyFile is provided in src/test/jmeter
-            File propertyFile = new File(this.srcDir + File.separator + propertyFileName);
-            if (propertyFile.exists()) {
-                    returnValue = new FileInputStream(propertyFile);
-            }
-            else if("global.properties".equals(propertyFileName)) {
-                returnValue = Thread.currentThread().getContextClassLoader().getResourceAsStream(propertyFileName);
-            }
-            else {
-                JarFile propertyJar = new JarFile(getArtifactNamed(this.jmeterConfigArtifact).getFile());
-                returnValue = propertyJar.getInputStream(propertyJar.getEntry("bin/" + propertyFileName));
-            }
-        } catch (IOException ex) {
-            log.warn("Unable to copy " + propertyFileName + " to " + this.binDir);
+        //find out if propertyFile is provided in src/test/jmeter
+        File propertyFile = new File(this.srcDir + File.separator + propertyFileName);
+        if (propertyFile.exists()) {
+                returnValue = new FileInputStream(propertyFile);
         }
-        
+        // TODO: handling global.properties separately because it is not delivered with the JMeter installation. There probably is a better way to handle this.
+        // TODO: maybe the JMeter guys would be willing to put global.properties into the JMeter_config artifact for us since it is officially a way to configure JMeter?
+        else if("global.properties".equals(propertyFileName)) {
+            returnValue = Thread.currentThread().getContextClassLoader().getResourceAsStream(propertyFileName);
+        }
+        else {
+            JarFile propertyJar = new JarFile(getArtifactNamed(this.jmeterConfigArtifact).getFile());
+            returnValue = propertyJar.getInputStream(propertyJar.getEntry("bin/" + propertyFileName));
+        }
+
         return returnValue;
     }
 
     /**
+     * TODO: not very happy with this solution, but we have to describe the mapping somehow.
+     * TODO: Using an Enum like JMeterPropertiesFiles is no option since Enum instantiation is static and the Maps are not...
+     *
      * @return mapping from properties file to properties map
      */
     private Map<String,Map<String,String>> getJmeterPropertyFileToPropertiesMapping() {
@@ -368,6 +357,7 @@ public class JMeterMojo extends AbstractMojo {
         returnMap.put("upgrade.properties",jmeterUpgradeProperties);
         returnMap.put("system.properties",systemProperties);
         returnMap.put("user.properties",jmeterUserProperties);
+        returnMap.put("global.properties",jmeterGlobalProperties);
 
         return returnMap;
     }

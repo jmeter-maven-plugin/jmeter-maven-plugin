@@ -11,11 +11,12 @@ import java.util.List;
  */
 public enum JMeterPropertiesFiles {
 
-    JMETER("jmeter.properties", true),
-    SAVESERVICE("saveservice.properties", true),
-    UPGRADE("upgrade.properties", true),
-    SYSTEM("system.properties", false),
-    USER("user.properties", false);
+    JMETER_PROPERTIES("jmeter.properties", true),
+    SAVE_SERVICE_PROPERTIES("saveservice.properties", true),
+    UPGRADE_PROPERTIES("upgrade.properties", true),
+    SYSTEM_PROPERTIES("system.properties", false),
+    USER_PROPERTIES("user.properties", false),
+    GLOBAL_PROPERTIES("global.properties", false);             //Does this exist in JMeter world?  Don't think so
 
     private final Object[] propertiesData;
 

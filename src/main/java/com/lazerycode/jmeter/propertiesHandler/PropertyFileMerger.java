@@ -12,28 +12,33 @@ import java.util.Properties;
 public class PropertyFileMerger {
 
     /**
-     * Merge properties from inputFile and customProperties into the given outputFile
+     * Merge properties from sourceFile and customProperties into the given outputDirectory
      *
-     * @param inputFile        File to read properties from
-     * @param outputFile       File to write properties to
-     * @param customProperties Map to merge properties from
-     * @throws org.apache.maven.plugin.MojoExecutionException
-     *
+     * @param sourceFile
+     * @param outputDirectory
+     * @param propertiesFilename
+     * @param propertiesMap
+     * @throws MojoExecutionException
      */
-    public static void mergePropertiesFile(InputStream inputFile, OutputStream outputFile, Map<String, String> customProperties) throws MojoExecutionException {
-
-        // Read properties file.
-        Properties properties = new Properties();
+    public static void mergePropertiesFile(InputStream sourceFile, File outputDirectory, String propertiesFilename, Map<String, String> propertiesMap) throws MojoExecutionException {
+        //Drop out right away if there is nothing to create, source file will never be null if the properties file is required.
+        if(sourceFile == null && propertiesMap == null) return;
+        Properties baseProperties = new Properties();
         try {
-            properties.load(inputFile);
-            Properties modifiedProperties = mergeProperties(properties, customProperties);
-            // Write properties file.
-            modifiedProperties.store(outputFile, null);
-            //cleanup
-            outputFile.flush();
-            outputFile.close();
+            if (sourceFile != null) {
+                //Read in base properties
+                baseProperties.load(sourceFile);
+                sourceFile.close();
+            }
+            //Create final properties set
+            Properties modifiedProperties = mergeProperties(baseProperties, propertiesMap);
+            //Write out final properties file.
+            FileOutputStream writeOutFinalPropertiesFile = new FileOutputStream(new File(outputDirectory.getCanonicalFile() + File.separator + propertiesFilename));
+            modifiedProperties.store(writeOutFinalPropertiesFile, null);
+            writeOutFinalPropertiesFile.flush();
+            writeOutFinalPropertiesFile.close();
         } catch (IOException e) {
-            throw new MojoExecutionException("Error merging properties file" + e);
+            throw new MojoExecutionException("Error creating consolidated properties file " + propertiesFilename + ": " + e);
         }
     }
 
@@ -48,6 +53,8 @@ public class PropertyFileMerger {
 
         if (customProperties != null && !customProperties.isEmpty()) {
             for (String key : customProperties.keySet()) {
+                //TODO check to see if property being set is a close match to an existing property and warn user if it is e.g. have they set User.dir instead of user.dir
+                //TODO remove any reserved properties
                 properties.setProperty(key, customProperties.get(key));
             }
         }

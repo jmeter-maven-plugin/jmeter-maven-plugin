@@ -300,7 +300,7 @@ public class JMeterMojo extends AbstractMojo {
     }
 
     private void propertyConfiguration() throws MojoExecutionException {
-        this.pluginProperties = new PropertyHandler(this.srcDir, this.binDir, getArtifactNamed(this.jmeterConfigArtifact));
+        this.pluginProperties = new PropertyHandler(this.srcDir, this.binDir, getArtifactNamed(this.jmeterConfigArtifact), log);
         this.pluginProperties.setJMeterProperties(this.propertiesJMeter);
         this.pluginProperties.setJMeterGlobalProperties(this.propertiesGlobal);
         this.pluginProperties.setJMeterSaveServiceProperties(this.propertiesSaveService);
@@ -308,6 +308,7 @@ public class JMeterMojo extends AbstractMojo {
         this.pluginProperties.setJmeterUserProperties(this.propertiesUser);
         this.pluginProperties.setJMeterSystemProperties(this.propertiesSystem);
         //TODO user.dir and java.class.path are explicitly set by this plugin we should suppress any attempt to set these properties
+        this.pluginProperties.configureJMeterPropertiesFiles();
     }
 
 

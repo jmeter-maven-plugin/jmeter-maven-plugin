@@ -1,7 +1,10 @@
 package com.lazerycode.jmeter.propertiesHandler;
 
+import com.lazerycode.jmeter.UtilityFunctions;
+import com.lazerycode.jmeter.enums.JMeterPropertiesFiles;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.logging.Log;
 
 import java.io.*;
 import java.util.HashMap;
@@ -9,30 +12,35 @@ import java.util.Map;
 import java.util.jar.JarFile;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Mark Collin
- * Date: 01/02/12
- * Time: 18:15
- * To change this template use File | Settings | File Templates.
+ * Handler to deal with properties file creation.
  */
 public class PropertyHandler {
 
+    private Log log;
+    private Map<JMeterPropertiesFiles, Map<String, String>> masterPropertiesMap = new HashMap<JMeterPropertiesFiles, Map<String, String>>();
     private Map<String, String> jMeterProperties = null;
     private Map<String, String> jMeterSaveServiceProperties = null;
     private Map<String, String> jMeterSystemProperties = null;
     private Map<String, String> jMeterUpgradeProperties = null;
     private Map<String, String> jMeterUserProperties = null;
     private Map<String, String> jMeterGlobalProperties = null;
-    private Artifact jmeterConfigArtifact;
+    private Artifact jMeterConfigArtifact;
     private File propertySourceDirectory;
     private File propertyOutputDirectory;
 
-    public PropertyHandler(File sourceDirectory, File outputDirectory, Artifact jmeterConfigArtifact) throws MojoExecutionException {
+    public PropertyHandler(File sourceDirectory, File outputDirectory, Artifact jMeterConfigArtifact, Log log) throws MojoExecutionException {
         setSourceDirectory(sourceDirectory);
-        this.propertyOutputDirectory = outputDirectory;
-        this.jmeterConfigArtifact = jmeterConfigArtifact;
+        setOutputDirectory(outputDirectory);
+        this.jMeterConfigArtifact = jMeterConfigArtifact;
+        this.log = log;
     }
 
+    /**
+     * Check that the source directory exists, throw an error if it does not
+     *
+     * @param value
+     * @throws MojoExecutionException
+     */
     private void setSourceDirectory(File value) throws MojoExecutionException {
         if (value.exists()) {
             this.propertySourceDirectory = value;
@@ -41,6 +49,12 @@ public class PropertyHandler {
         }
     }
 
+    /**
+     * Create the output directory, throw an error if we can't
+     *
+     * @param value
+     * @throws MojoExecutionException
+     */
     private void setOutputDirectory(File value) throws MojoExecutionException {
         if (!value.exists()) {
             if (!value.mkdirs()) {
@@ -51,32 +65,32 @@ public class PropertyHandler {
     }
 
     public void setJMeterProperties(Map<String, String> value) {
-        if (value.size() == 0) return;
+        if (UtilityFunctions.isNotSet(value)) return;
         this.jMeterProperties = value;
     }
 
     public void setJMeterSaveServiceProperties(Map<String, String> value) {
-        if (value.size() == 0) return;
+        if (UtilityFunctions.isNotSet(value)) return;
         this.jMeterSaveServiceProperties = value;
     }
 
     public void setJMeterSystemProperties(Map<String, String> value) {
-        if (value.size() == 0) return;
+        if (UtilityFunctions.isNotSet(value)) return;
         this.jMeterSystemProperties = value;
     }
 
     public void setJMeterUpgradeProperties(Map<String, String> value) {
-        if (value.size() == 0) return;
+        if (UtilityFunctions.isNotSet(value)) return;
         this.jMeterUpgradeProperties = value;
     }
 
     public void setJmeterUserProperties(Map<String, String> value) {
-        if (value.size() == 0) return;
+        if (UtilityFunctions.isNotSet(value)) return;
         this.jMeterUserProperties = value;
     }
 
     public void setJMeterGlobalProperties(Map<String, String> value) {
-        if (value.size() == 0) return;
+        if (UtilityFunctions.isNotSet(value)) return;
         this.jMeterGlobalProperties = value;
     }
 
@@ -86,62 +100,49 @@ public class PropertyHandler {
      * @throws org.apache.maven.plugin.MojoExecutionException
      *
      */
-    private void configureJMeterPropertiesFiles() throws MojoExecutionException {
-
-        Map<String, Map<String, String>> propertiesMapping = getJmeterPropertyFileToPropertiesMapping();
-        for (String propertyFileName : propertiesMapping.keySet()) {
+    public void configureJMeterPropertiesFiles() throws MojoExecutionException {
+        setMasterPropertiesMap();
+        for (JMeterPropertiesFiles propertyFile : JMeterPropertiesFiles.values()) {
             try {
-                OutputStream out = getPropertyFileOutputStream(propertyFileName);
-
-                InputStream in = getPropertyFileInputStream(propertyFileName);
-                PropertyFileMerger.mergePropertiesFile(in, out, propertiesMapping.get(propertyFileName));
+                PropertyFileMerger.mergePropertiesFile(getSourcePropertyFile(propertyFile), this.propertyOutputDirectory, propertyFile.getPropertiesFileName(), masterPropertiesMap.get(propertyFile));
             } catch (Exception e) {
-                throw new MojoExecutionException("Could not create temporary property file: " + propertyFileName + " in directory ", e);
+                throw new MojoExecutionException("Could not create temporary property file: " + propertyFile.getPropertiesFileName() + " in directory ", e);
             }
         }
     }
 
-    private OutputStream getPropertyFileOutputStream(String propertyFileName) throws FileNotFoundException {
-        return new FileOutputStream(new File(this.propertyOutputDirectory + File.separator + propertyFileName));
-    }
-
-    private InputStream getPropertyFileInputStream(String propertyFileName) throws Exception {
-        InputStream returnValue;
-
-        //find out if propertyFile is provided in src/test/jmeter
-        File propertyFile = new File(this.propertySourceDirectory + File.separator + propertyFileName);
-        if (propertyFile.exists()) {
-            returnValue = new FileInputStream(propertyFile);
-        }
-        // TODO: handling global.properties separately because it is not delivered with the JMeter installation. There probably is a better way to handle this.
-        // TODO: maybe the JMeter guys would be willing to put global.properties into the JMeter_config artifact for us since it is officially a way to configure JMeter?
-        else if ("global.properties".equals(propertyFileName)) {
-            returnValue = Thread.currentThread().getContextClassLoader().getResourceAsStream(propertyFileName);
-        } else {
-            JarFile propertyJar = new JarFile(this.jmeterConfigArtifact.getFile());
-            returnValue = propertyJar.getInputStream(propertyJar.getEntry("bin/" + propertyFileName));
-        }
-
-        return returnValue;
+    /**
+     * Load the individual properties maps into the master map
+     */
+    private void setMasterPropertiesMap() {
+        masterPropertiesMap.put(JMeterPropertiesFiles.JMETER_PROPERTIES, this.jMeterProperties);
+        masterPropertiesMap.put(JMeterPropertiesFiles.SAVE_SERVICE_PROPERTIES, this.jMeterSaveServiceProperties);
+        masterPropertiesMap.put(JMeterPropertiesFiles.UPGRADE_PROPERTIES, this.jMeterUpgradeProperties);
+        masterPropertiesMap.put(JMeterPropertiesFiles.SYSTEM_PROPERTIES, this.jMeterSystemProperties);
+        masterPropertiesMap.put(JMeterPropertiesFiles.USER_PROPERTIES, this.jMeterUserProperties);
+        masterPropertiesMap.put(JMeterPropertiesFiles.GLOBAL_PROPERTIES, this.jMeterGlobalProperties);
     }
 
     /**
-     * TODO: not very happy with this solution, but we have to describe the mapping somehow.
-     * TODO: Using an Enum like JMeterPropertiesFiles is no option since Enum instantiation is static and the Maps are not...
+     * This will load in a custom properties file and return an InputStream.
+     * If it does not exist it will drop back to the default JMeter properties file (if populated).
+     * If the default JMeter properties file is not populated it will return a null.
      *
-     * @return mapping from properties file to properties map
+     * @param value
+     * @return
+     * @throws IOException
      */
-    private Map<String, Map<String, String>> getJmeterPropertyFileToPropertiesMapping() {
-
-        Map<String, Map<String, String>> returnMap = new HashMap<String, Map<String, String>>();
-
-        returnMap.put("jmeter.properties", this.jMeterProperties);
-        returnMap.put("saveservice.properties", this.jMeterSaveServiceProperties);
-        returnMap.put("upgrade.properties", this.jMeterUpgradeProperties);
-        returnMap.put("system.properties", this.jMeterSystemProperties);
-        returnMap.put("user.properties", this.jMeterUserProperties);
-        returnMap.put("global.properties", this.jMeterGlobalProperties);
-
-        return returnMap;
+    private InputStream getSourcePropertyFile(JMeterPropertiesFiles value) throws IOException {
+        File sourcePropertyFile = new File(this.propertySourceDirectory.getCanonicalFile() + File.separator + value.getPropertiesFileName());
+        if (!sourcePropertyFile.exists()) {
+            log.warn("Unable to find " + value.getPropertiesFileName() + "...");
+            if (value.createFileIfItDoesntExist()) {
+                log.warn("Using default JMeter version of " + value.getPropertiesFileName() + "...");
+                JarFile propertyJar = new JarFile(this.jMeterConfigArtifact.getFile());
+                return propertyJar.getInputStream(propertyJar.getEntry("bin/" + value.getPropertiesFileName()));
+            }
+            return null;
+        }
+        return new FileInputStream(sourcePropertyFile);
     }
 }

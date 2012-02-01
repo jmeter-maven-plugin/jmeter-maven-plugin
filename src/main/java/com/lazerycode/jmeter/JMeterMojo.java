@@ -1,6 +1,5 @@
 package com.lazerycode.jmeter;
 
-import com.lazerycode.jmeter.propertiesHandler.PropertyFileMerger;
 import com.lazerycode.jmeter.propertiesHandler.PropertyHandler;
 import com.lazerycode.jmeter.reporting.ReportGenerator;
 import com.lazerycode.jmeter.testExecution.TestManager;
@@ -15,7 +14,6 @@ import org.codehaus.plexus.util.StringUtils;
 
 import java.io.*;
 import java.util.*;
-import java.util.jar.JarFile;
 
 /**
  * JMeter Maven plugin.
@@ -85,21 +83,21 @@ public class JMeterMojo extends AbstractMojo {
      *
      * @parameter
      */
-    private Map<String, String> jmeterProperties;
+    private Map<String, String> propertiesJMeter;
 
     /**
      * JMeter Properties that are merged with precedence into default JMeter file in saveservice.properties
      *
      * @parameter
      */
-    private Map<String, String> jmeterSaveserviceProperties;
+    private Map<String, String> propertiesSaveService;
 
     /**
      * JMeter Properties that are merged with precedence into default JMeter file in upgrade.properties
      *
      * @parameter
      */
-    private Map<String, String> jmeterUpgradeProperties;
+    private Map<String, String> propertiesUpgrade;
 
     /**
      * JMeter Properties that are merged with precedence into default JMeter file in user.properties
@@ -107,7 +105,7 @@ public class JMeterMojo extends AbstractMojo {
      *
      * @parameter
      */
-    private Map<String, String> jmeterUserProperties;
+    private Map<String, String> propertiesUser;
 
     /**
      * JMeter Global Properties that override those given in jmeterProps
@@ -116,16 +114,16 @@ public class JMeterMojo extends AbstractMojo {
      *
      * @parameter
      */
-    private Map<String, String> jmeterGlobalProperties;
+    private Map<String, String> propertiesGlobal;
 
-    /**
-     * JMeter Global Properties file
-     * This sets local and remote properties (JMeter's definition of global properties is actually remote properties)
-     * This will override any local/remote properties already set
-     *
-     * @parameter
-     */
-    private File jmeterGlobalPropertiesFile;
+//    /**
+//     * JMeter Global Properties file
+//     * This sets local and remote properties (JMeter's definition of global properties is actually remote properties)
+//     * This will override any local/remote properties already set
+//     *
+//     * @parameter
+//     */
+//    private File jmeterGlobalPropertiesFile;
 
     /**
      * (Java) System properties set for the test run.
@@ -133,7 +131,7 @@ public class JMeterMojo extends AbstractMojo {
      *
      * @parameter
      */
-    private Map<String, String> systemProperties;
+    private Map<String, String> propertiesSystem;
 
     /**
      * Use remote JMeter installation to run tests
@@ -303,12 +301,12 @@ public class JMeterMojo extends AbstractMojo {
 
     private void propertyConfiguration() throws MojoExecutionException {
         this.pluginProperties = new PropertyHandler(this.srcDir, this.binDir, getArtifactNamed(this.jmeterConfigArtifact));
-        this.pluginProperties.setJMeterProperties(this.jmeterProperties);
-        this.pluginProperties.setJMeterGlobalProperties(this.jmeterGlobalProperties);
-        this.pluginProperties.setJMeterSaveServiceProperties(this.jmeterSaveserviceProperties);
-        this.pluginProperties.setJMeterUpgradeProperties(this.jmeterUpgradeProperties);
-        this.pluginProperties.setJmeterUserProperties(this.jmeterUserProperties);
-        this.pluginProperties.setJMeterSystemProperties(this.systemProperties);
+        this.pluginProperties.setJMeterProperties(this.propertiesJMeter);
+        this.pluginProperties.setJMeterGlobalProperties(this.propertiesGlobal);
+        this.pluginProperties.setJMeterSaveServiceProperties(this.propertiesSaveService);
+        this.pluginProperties.setJMeterUpgradeProperties(this.propertiesUpgrade);
+        this.pluginProperties.setJmeterUserProperties(this.propertiesUser);
+        this.pluginProperties.setJMeterSystemProperties(this.propertiesSystem);
         //TODO user.dir and java.class.path are explicitly set by this plugin we should suppress any attempt to set these properties
     }
 

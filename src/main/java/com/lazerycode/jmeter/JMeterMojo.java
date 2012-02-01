@@ -90,13 +90,6 @@ public class JMeterMojo extends AbstractMojo {
     private File reportXslt;
 
     /**
-     * Absolute path to File to log results to.
-     *
-     * @parameter
-     */
-    private String resultsFileName;
-
-    /**
      * Absolute path to JMeter custom (test dependent) properties file.
      * .
      *
@@ -486,7 +479,6 @@ public class JMeterMojo extends AbstractMojo {
         this.testArgs.setSystemProperties(this.systemProperties);
         this.testArgs.setLogCategoriesOverrides(this.overrideLogCategories);
         this.testArgs.setLogRootOverride(this.overrideRootLogLevel);
-        testArgs.setResultsFileName(resultsFileName);
     }
 
     /**

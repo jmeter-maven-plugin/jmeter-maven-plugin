@@ -1,5 +1,7 @@
 package com.lazerycode.jmeter;
 
+import com.lazerycode.jmeter.propertiesHandler.PropertyFileMerger;
+import com.lazerycode.jmeter.propertiesHandler.PropertyHandler;
 import com.lazerycode.jmeter.reporting.ReportGenerator;
 import com.lazerycode.jmeter.testExecution.TestManager;
 import org.apache.commons.io.FileUtils;
@@ -91,14 +93,14 @@ public class JMeterMojo extends AbstractMojo {
      * @parameter
      */
     private Map<String, String> jmeterSaveserviceProperties;
-    
+
     /**
      * JMeter Properties that are merged with precedence into default JMeter file in upgrade.properties
      *
      * @parameter
      */
     private Map<String, String> jmeterUpgradeProperties;
-    
+
     /**
      * JMeter Properties that are merged with precedence into default JMeter file in user.properties
      * user.properties takes precedence over jmeter.properties
@@ -252,6 +254,7 @@ public class JMeterMojo extends AbstractMojo {
     private File logsDir;
     private String jmeterConfigArtifact = "ApacheJMeter_config";
     private JMeterArgumentsArray testArgs;
+    private PropertyHandler pluginProperties;
 
     /**
      * Run all the JMeter tests.
@@ -266,7 +269,7 @@ public class JMeterMojo extends AbstractMojo {
         log.info("-------------------------------------------------------");
         log.info(" ");
         generateJMeterDirectoryTree();
-        configureJMeterPropertiesFiles();
+        propertyConfiguration();
         setJMeterClasspath();
         initialiseJMeterArgumentsArray();
         TestManager jMeterTestManager = new TestManager(this.testArgs, this.logsDir, this.srcDir, this.log, this.jmeterPreserveIncludeOrder, this.jMeterTestFiles, this.excludeJMeterTestFiles, this.suppressJMeterOutput);
@@ -298,69 +301,17 @@ public class JMeterMojo extends AbstractMojo {
         System.setProperty("user.dir", this.binDir.getAbsolutePath());
     }
 
-    /**
-     * Create/Copy the properties files used by JMeter into the JMeter directory tree.
-     *
-     * @throws MojoExecutionException
-     */
-    private void configureJMeterPropertiesFiles() throws MojoExecutionException {
-
-        Map<String,Map<String,String>> propertiesMapping = getJmeterPropertyFileToPropertiesMapping();
-        for (String propertyFileName : propertiesMapping.keySet()) {
-            try {
-                OutputStream out = getPropertyFileOutputStream(propertyFileName);
-
-                InputStream in = getPropertyFileInputStream(propertyFileName);
-                PropertyFileMerger.mergePropertiesFile(in,out,propertiesMapping.get(propertyFileName));
-            } catch (Exception e) {
-                throw new MojoExecutionException("Could not create temporary property file " + propertyFileName + " in directory " + this.workDir, e);
-            }
-        }
-    }
-    
-    private OutputStream getPropertyFileOutputStream (String propertyFileName) throws FileNotFoundException {
-        return new FileOutputStream(new File(this.binDir + File.separator + propertyFileName));
-    }
-    
-    private InputStream getPropertyFileInputStream(String propertyFileName) throws Exception {
-        InputStream returnValue;
-
-        //find out if propertyFile is provided in src/test/jmeter
-        File propertyFile = new File(this.srcDir + File.separator + propertyFileName);
-        if (propertyFile.exists()) {
-                returnValue = new FileInputStream(propertyFile);
-        }
-        // TODO: handling global.properties separately because it is not delivered with the JMeter installation. There probably is a better way to handle this.
-        // TODO: maybe the JMeter guys would be willing to put global.properties into the JMeter_config artifact for us since it is officially a way to configure JMeter?
-        else if("global.properties".equals(propertyFileName)) {
-            returnValue = Thread.currentThread().getContextClassLoader().getResourceAsStream(propertyFileName);
-        }
-        else {
-            JarFile propertyJar = new JarFile(getArtifactNamed(this.jmeterConfigArtifact).getFile());
-            returnValue = propertyJar.getInputStream(propertyJar.getEntry("bin/" + propertyFileName));
-        }
-
-        return returnValue;
+    private void propertyConfiguration() throws MojoExecutionException {
+        this.pluginProperties = new PropertyHandler(this.srcDir, this.binDir, getArtifactNamed(this.jmeterConfigArtifact));
+        this.pluginProperties.setJMeterProperties(this.jmeterProperties);
+        this.pluginProperties.setJMeterGlobalProperties(this.jmeterGlobalProperties);
+        this.pluginProperties.setJMeterSaveServiceProperties(this.jmeterSaveserviceProperties);
+        this.pluginProperties.setJMeterUpgradeProperties(this.jmeterUpgradeProperties);
+        this.pluginProperties.setJmeterUserProperties(this.jmeterUserProperties);
+        this.pluginProperties.setJMeterSystemProperties(this.systemProperties);
+        //TODO user.dir and java.class.path are explicitly set by this plugin we should suppress any attempt to set these properties
     }
 
-    /**
-     * TODO: not very happy with this solution, but we have to describe the mapping somehow.
-     * TODO: Using an Enum like JMeterPropertiesFiles is no option since Enum instantiation is static and the Maps are not...
-     *
-     * @return mapping from properties file to properties map
-     */
-    private Map<String,Map<String,String>> getJmeterPropertyFileToPropertiesMapping() {
-        Map<String,Map<String,String>> returnMap = new HashMap<String, Map<String,String>>();
-        
-        returnMap.put("jmeter.properties",jmeterProperties);
-        returnMap.put("saveservice.properties",jmeterSaveserviceProperties);
-        returnMap.put("upgrade.properties",jmeterUpgradeProperties);
-        returnMap.put("system.properties",systemProperties);
-        returnMap.put("user.properties",jmeterUserProperties);
-        returnMap.put("global.properties",jmeterGlobalProperties);
-
-        return returnMap;
-    }
 
     /**
      * Copy jars to JMeter ext dir for JMeter function search and set the classpath.

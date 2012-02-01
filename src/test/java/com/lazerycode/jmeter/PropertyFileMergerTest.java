@@ -1,5 +1,6 @@
 package com.lazerycode.jmeter;
 
+import com.lazerycode.jmeter.propertiesHandler.PropertyFileMerger;
 import junit.framework.TestCase;
 
 import java.io.FileInputStream;

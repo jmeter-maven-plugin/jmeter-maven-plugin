@@ -29,6 +29,10 @@ public class PropertyFileMerger {
             
             // Write properties file.
             modifiedProperties.store(outputFile, null);
+
+            //cleanup
+            outputFile.flush();
+            outputFile.close();
         }
         catch (IOException e) {
             throw new MojoExecutionException("Error merging properties file"+e);

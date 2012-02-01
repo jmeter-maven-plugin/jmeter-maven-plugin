@@ -306,29 +306,55 @@ public class JMeterMojo extends AbstractMojo {
     private void configureJMeterPropertiesFiles() throws MojoExecutionException {
 
         Map<String,Map<String,String>> propertiesMapping = getJmeterPropertyFileToPropertiesMapping();
-        for (String propertyFile : propertiesMapping.keySet()) {
+        for (String propertyFileName : propertiesMapping.keySet()) {
             try {
-                FileOutputStream out = new FileOutputStream(new File(this.binDir + File.separator + propertyFile));
-                JarFile propertyJar = new JarFile(getArtifactNamed(this.jmeterConfigArtifact).getFile());
-                InputStream in = propertyJar.getInputStream(propertyJar.getEntry("bin/" + propertyFile));
-                PropertyFileMerger.mergePropertiesFile(in,out,propertiesMapping.get(propertyFile));
+                OutputStream out = getPropertyFileOutputStream(propertyFileName);
+
+                InputStream in = getPropertyFileInputStream(propertyFileName);
+                PropertyFileMerger.mergePropertiesFile(in,out,propertiesMapping.get(propertyFileName));
             } catch (IOException e) {
-                throw new MojoExecutionException("Could not create temporary property file " + propertyFile + " in directory " + this.workDir, e);
+                throw new MojoExecutionException("Could not create temporary property file " + propertyFileName + " in directory " + this.workDir, e);
             }
         }
 
-        // handling global.properties separately because it may be configured and is also not delivered with the JMeter installation.
-        String propertyName = "global.properties";
+        // handling global.properties separately because it is not delivered with the JMeter installation.
+        //TODO: maybe the JMeter guys would be willing to put global.properties into the JMeter_config artifact for us since it is officially a way to configure JMeter?
+        String propertyFileName = "global.properties";
         try {
-            File destinationFile = new File(this.binDir + File.separator + propertyName);
-            FileOutputStream fileOutputStream = new FileOutputStream(destinationFile);
-            InputStream fileInputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(propertyName);
-            PropertyFileMerger.mergePropertiesFile(fileInputStream,fileOutputStream,jmeterGlobalProperties);
-            fileOutputStream.flush();
-            fileOutputStream.close();
+            OutputStream out = getPropertyFileOutputStream(propertyFileName);
+
+            InputStream in = getPropertyFileInputStream(propertyFileName);
+            PropertyFileMerger.mergePropertiesFile(in,out,jmeterGlobalProperties);
         } catch (IOException e) {
-            throw new MojoExecutionException("Could not create temporary property file " + propertyName + " in directory " + this.workDir, e);
+            throw new MojoExecutionException("Could not create temporary property file " + propertyFileName + " in directory " + this.workDir, e);
         }
+    }
+    
+    private OutputStream getPropertyFileOutputStream (String propertyFileName) throws FileNotFoundException {
+        return new FileOutputStream(new File(this.binDir + File.separator + propertyFileName));
+    }
+    
+    private InputStream getPropertyFileInputStream(String propertyFileName) throws MojoExecutionException {
+        InputStream returnValue = null;
+
+        try {
+            //find out if propertyFile is provided in src/test/jmeter
+            File propertyFile = new File(this.srcDir + File.separator + propertyFileName);
+            if (propertyFile.exists()) {
+                    returnValue = new FileInputStream(propertyFile);
+            }
+            else if("global.properties".equals(propertyFileName)) {
+                returnValue = Thread.currentThread().getContextClassLoader().getResourceAsStream(propertyFileName);
+            }
+            else {
+                JarFile propertyJar = new JarFile(getArtifactNamed(this.jmeterConfigArtifact).getFile());
+                returnValue = propertyJar.getInputStream(propertyJar.getEntry("bin/" + propertyFileName));
+            }
+        } catch (IOException ex) {
+            log.warn("Unable to copy " + propertyFileName + " to " + this.binDir);
+        }
+        
+        return returnValue;
     }
 
     /**

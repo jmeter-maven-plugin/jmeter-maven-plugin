@@ -162,9 +162,7 @@ public class JMeterArgumentsArray {
         if (UtilityFunctions.isNotSet(value)) return;
         this.testFile = value.getAbsolutePath();
         this.argumentMap.put(JMeterCommandLineArguments.TESTFILE_OPT, true);
-        if(resultsFileName == null) {
-            this.resultsFileName = this.reportDirectory + File.separator + value.getName().substring(0, value.getName().lastIndexOf(".")) + "-" + fmt.format(new Date()) + ".xml";
-        }
+        this.resultsFileName = this.reportDirectory + File.separator + value.getName().substring(0, value.getName().lastIndexOf(".")) + "-" + fmt.format(new Date()) + ".jtl";
         this.argumentMap.put(JMeterCommandLineArguments.LOGFILE_OPT, true);
     }
 
@@ -172,10 +170,6 @@ public class JMeterArgumentsArray {
         if (UtilityFunctions.isNotSet(value)) return;
         this.jMeterHome = value;
         this.argumentMap.put(JMeterCommandLineArguments.JMETER_HOME_OPT, true);
-    }
-    
-    public void setResultsFileName(String resultsFileName) {
-        this.resultsFileName = resultsFileName;
     }
 
     public String getResultsFileName() {

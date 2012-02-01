@@ -78,14 +78,8 @@ public class JMeterMojo extends AbstractMojo {
     private File reportXslt;
 
     /**
-     * Absolute path to File to log results to.
-     *
-     * @parameter
-     */
-    private String resultsFileName;
-
-    /**
-     * JMeter Properties that are merged with precedence into default JMeter file in jmeter.properties
+     * Absolute path to JMeter custom (test dependent) properties file.
+     * .
      *
      * @parameter
      */
@@ -403,7 +397,6 @@ public class JMeterMojo extends AbstractMojo {
         this.testArgs.setProxyUsername(this.proxyUsername);
         this.testArgs.setProxyPassword(this.proxyPassword);
         this.testArgs.setNonProxyHosts(this.nonProxyHosts);
-        testArgs.setResultsFileName(resultsFileName);
     }
 
     /**

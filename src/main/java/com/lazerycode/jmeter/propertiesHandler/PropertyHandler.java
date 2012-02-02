@@ -9,6 +9,7 @@ import org.apache.maven.plugin.logging.Log;
 import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 import java.util.jar.JarFile;
 
 /**
@@ -103,11 +104,7 @@ public class PropertyHandler {
     public void configureJMeterPropertiesFiles() throws MojoExecutionException {
         setMasterPropertiesMap();
         for (JMeterPropertiesFiles propertyFile : JMeterPropertiesFiles.values()) {
-            try {
-                PropertyFileMerger.mergePropertiesFile(getSourcePropertyFile(propertyFile), this.propertyOutputDirectory, propertyFile.getPropertiesFileName(), masterPropertiesMap.get(propertyFile));
-            } catch (Exception e) {
-                throw new MojoExecutionException("Could not create temporary property file: " + propertyFile.getPropertiesFileName() + " in directory ", e);
-            }
+            mergePropertiesFile(propertyFile, this.propertyOutputDirectory);
         }
     }
 
@@ -121,6 +118,37 @@ public class PropertyHandler {
         masterPropertiesMap.put(JMeterPropertiesFiles.SYSTEM_PROPERTIES, this.jMeterSystemProperties);
         masterPropertiesMap.put(JMeterPropertiesFiles.USER_PROPERTIES, this.jMeterUserProperties);
         masterPropertiesMap.put(JMeterPropertiesFiles.GLOBAL_PROPERTIES, this.jMeterGlobalProperties);
+    }
+
+    /**
+     * Merge properties from sourceFile and customProperties into the given outputDirectory
+     */
+    public void mergePropertiesFile(JMeterPropertiesFiles propertyFile, File outputDirectory) throws MojoExecutionException {
+        InputStream sourceFile = null;
+        try {
+            sourceFile = getSourcePropertyFile(propertyFile);
+        } catch (IOException ex) {
+            throw new MojoExecutionException("Error setting source file InputStream: " + ex);
+        }
+        //Drop out right away if there is nothing to create, source file will never be null if the properties file is required.
+        if (sourceFile == null && this.masterPropertiesMap.get(propertyFile) == null) return;
+        Properties baseProperties = new Properties();
+        try {
+            //Only read in base properties if there are some
+            if (sourceFile != null) {
+                baseProperties.load(sourceFile);
+                sourceFile.close();
+            }
+            //Create final properties set
+            Properties modifiedProperties = mergeProperties(baseProperties, this.masterPropertiesMap.get(propertyFile));
+            //Write out final properties file.
+            FileOutputStream writeOutFinalPropertiesFile = new FileOutputStream(new File(outputDirectory.getCanonicalFile() + File.separator + propertyFile.getPropertiesFileName()));
+            modifiedProperties.store(writeOutFinalPropertiesFile, null);
+            writeOutFinalPropertiesFile.flush();
+            writeOutFinalPropertiesFile.close();
+        } catch (IOException e) {
+            throw new MojoExecutionException("Error creating consolidated properties file " + propertyFile.getPropertiesFileName() + ": " + e);
+        }
     }
 
     /**
@@ -144,5 +172,24 @@ public class PropertyHandler {
             return null;
         }
         return new FileInputStream(sourcePropertyFile);
+    }
+
+    /**
+     * Merge given Map into given Properties object
+     *
+     * @param properties       object to merge the Map into
+     * @param customProperties Map to merge into the Properties object
+     * @return merged Properties object
+     */
+    protected static Properties mergeProperties(Properties properties, Map<String, String> customProperties) {
+
+        if (customProperties != null && !customProperties.isEmpty()) {
+            for (String key : customProperties.keySet()) {
+                //TODO check to see if property being set is a close match to an existing property and warn user if it is e.g. have they set User.dir instead of user.dir
+                //TODO remove any reserved properties
+                properties.setProperty(key, customProperties.get(key));
+            }
+        }
+        return properties;
     }
 }

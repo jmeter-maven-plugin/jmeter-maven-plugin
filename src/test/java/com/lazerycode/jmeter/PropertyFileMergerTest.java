@@ -1,6 +1,6 @@
 package com.lazerycode.jmeter;
 
-import com.lazerycode.jmeter.propertiesHandler.PropertyFileMerger;
+import com.lazerycode.jmeter.propertiesHandler.PropertyHandler;
 import junit.framework.TestCase;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -12,23 +12,26 @@ import java.util.Map;
 import java.util.Properties;
 
 /**
- * Test utility class {@link PropertyFileMerger}
+ * Test utility class {@link PropertyHandler}
  */
 public class PropertyFileMergerTest extends TestCase {
+
+    URL testFile = this.getClass().getResource("/jmeter.properties");
 
     @Ignore
     @Test
     public void testMergeProperties() throws Exception {
 
-        URL testFile = getClass().getResource("/jmeter.properties");
+
 
         Map<String,String> customProperties = new HashMap<String, String>();
         customProperties.put("log_level.jmeter.control","INFO");
         customProperties.put("log_level.jmeter","DEBUG");
         
         Properties properties = new Properties();
-        properties.load(new FileInputStream(testFile.getFile()));
+        properties.load(new FileInputStream(this.testFile.getFile()));
 
+//        PropertyHandler.mergePropertiesFile(getSourcePropertyFile(propertyFile), this.propertyOutputDirectory, propertyFile.getPropertiesFileName(), masterPropertiesMap.get(propertyFile));
 //        Properties modifiedProperties = PropertyFileMerger.mergeProperties(properties, customProperties);
 
 //        assertEquals("property was not overwritten","DEBUG",modifiedProperties.get("log_level.jmeter"));

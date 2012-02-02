@@ -1,7 +1,7 @@
-package com.lazerycode.jmeter.testExecution;
+package com.lazerycode.jmeter.testrunner;
 
 import com.lazerycode.jmeter.IncludesComparator;
-import com.lazerycode.jmeter.JMeterArgumentsArray;
+import com.lazerycode.jmeter.configuration.JMeterArgumentsArray;
 import com.lazerycode.jmeter.UtilityFunctions;
 import org.apache.commons.io.output.NullOutputStream;
 import org.apache.jmeter.JMeter;

@@ -1,8 +1,9 @@
 package com.lazerycode.jmeter;
 
-import com.lazerycode.jmeter.propertiesHandler.PropertyHandler;
+import com.lazerycode.jmeter.configuration.JMeterArgumentsArray;
+import com.lazerycode.jmeter.properties.PropertyHandler;
 import com.lazerycode.jmeter.reporting.ReportGenerator;
-import com.lazerycode.jmeter.testExecution.TestManager;
+import com.lazerycode.jmeter.testrunner.TestManager;
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;

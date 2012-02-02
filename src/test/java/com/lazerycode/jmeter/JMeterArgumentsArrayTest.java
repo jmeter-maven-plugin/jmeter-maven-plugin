@@ -1,6 +1,7 @@
 package com.lazerycode.jmeter;
 
-import com.lazerycode.jmeter.enums.JMeterCommandLineArguments;
+import com.lazerycode.jmeter.configuration.JMeterArgumentsArray;
+import com.lazerycode.jmeter.configuration.JMeterCommandLineArguments;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.junit.Test;
 

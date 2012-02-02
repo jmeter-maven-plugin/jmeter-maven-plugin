@@ -1,6 +1,6 @@
 package com.lazerycode.jmeter;
 
-import com.lazerycode.jmeter.propertiesHandler.PropertyHandler;
+import com.lazerycode.jmeter.properties.PropertyHandler;
 import org.junit.Test;
 
 import java.io.File;

@@ -1,10 +1,7 @@
 package com.lazerycode.jmeter;
 
-import com.lazerycode.jmeter.enums.JMeterCommandLineArguments;
-
 import java.io.File;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Series of useful utility functions to make life easy

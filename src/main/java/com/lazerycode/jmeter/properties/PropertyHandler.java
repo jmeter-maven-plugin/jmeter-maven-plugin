@@ -1,7 +1,6 @@
-package com.lazerycode.jmeter.propertiesHandler;
+package com.lazerycode.jmeter.properties;
 
 import com.lazerycode.jmeter.UtilityFunctions;
-import com.lazerycode.jmeter.enums.JMeterPropertiesFiles;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;

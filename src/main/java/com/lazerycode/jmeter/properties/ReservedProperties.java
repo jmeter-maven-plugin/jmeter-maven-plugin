@@ -13,13 +13,13 @@ public enum ReservedProperties {
     JAVA_CLASS_PATH("java.class.path"),
     USER_DIR("user.dir");
 
-    private final String propertyValue;
+    private final String propertyKey;
 
-    ReservedProperties(String propertyValue) {
-        this.propertyValue = propertyValue;
+    ReservedProperties(String propertyKey) {
+        this.propertyKey = propertyKey;
     }
 
-    public String getPropertyValue() {
-        return propertyValue;
+    public String getPropertyKey() {
+        return propertyKey;
     }
 }

@@ -139,7 +139,7 @@ public class PropertyHandler {
                 sourceFile.close();
             }
             //Create final properties set
-            Properties modifiedProperties = mergeProperties(baseProperties, this.masterPropertiesMap.get(propertyFile));
+            Properties modifiedProperties = new PropertyFileMerger(log, baseProperties).mergeProperties(this.masterPropertiesMap.get(propertyFile));
             //Write out final properties file.
             FileOutputStream writeOutFinalPropertiesFile = new FileOutputStream(new File(outputDirectory.getCanonicalFile() + File.separator + propertyFile.getPropertiesFileName()));
             modifiedProperties.store(writeOutFinalPropertiesFile, null);
@@ -171,23 +171,5 @@ public class PropertyHandler {
             return null;
         }
         return new FileInputStream(sourcePropertyFile);
-    }
-
-    /**
-     * Merge given Map into given Properties object
-     *
-     * @param properties       object to merge the Map into
-     * @param customProperties Map to merge into the Properties object
-     * @return merged Properties object
-     */
-    private static Properties mergeProperties(Properties properties, Map<String, String> customProperties) {
-        if (customProperties != null && !customProperties.isEmpty()) {
-            for (String key : customProperties.keySet()) {
-                //TODO check to see if property being set is a close match to an existing property and warn user if it is e.g. have they set User.dir instead of user.dir
-                //TODO remove any reserved properties
-                properties.setProperty(key, customProperties.get(key));
-            }
-        }
-        return properties;
     }
 }

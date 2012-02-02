@@ -1,7 +1,6 @@
 package com.lazerycode.jmeter.properties;
 
 import com.lazerycode.jmeter.JMeterMojo;
-import org.apache.maven.plugin.logging.Log;
 
 import java.util.Map;
 import java.util.Properties;

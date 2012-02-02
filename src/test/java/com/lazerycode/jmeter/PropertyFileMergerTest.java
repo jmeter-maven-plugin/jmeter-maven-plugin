@@ -1,17 +1,12 @@
 package com.lazerycode.jmeter;
 
 import com.lazerycode.jmeter.properties.PropertyFileMerger;
-import com.lazerycode.jmeter.properties.PropertyHandler;
-import org.apache.maven.plugin.logging.Log;
 import org.junit.Test;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.lang.reflect.Method;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Properties;
 
 import static junit.framework.Assert.assertEquals;

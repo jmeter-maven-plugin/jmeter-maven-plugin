@@ -1,7 +1,6 @@
 package com.lazerycode.jmeter.configuration;
 
 import com.lazerycode.jmeter.UtilityFunctions;
-import com.lazerycode.jmeter.configuration.JMeterCommandLineArguments;
 import org.apache.maven.plugin.MojoExecutionException;
 
 import java.io.File;

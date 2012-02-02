@@ -1,8 +1,5 @@
 package com.lazerycode.jmeter.properties;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * An Enum holding a list of JMeter properties files.
  * If it is set to true JMeter expects it to be in the bin dir.

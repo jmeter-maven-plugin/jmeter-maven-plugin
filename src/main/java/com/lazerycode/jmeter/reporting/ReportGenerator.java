@@ -3,7 +3,6 @@ package com.lazerycode.jmeter.reporting;
 import com.lazerycode.jmeter.JMeterMojo;
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.logging.Log;
 
 import javax.xml.transform.TransformerException;
 import java.io.*;

@@ -55,7 +55,7 @@ public class PropertyFileMergerTest {
     @Test
     public void showWarningWithSimilarProperty() throws Exception {
         HashMap<String, String> customProperties = new HashMap<String, String>();
-        customProperties.put("log_level.Jmeter.control", "INFO");
+        customProperties.put("log_level.Jmeter", "INFO");
 
         Properties propertiesFile = new Properties();
         propertiesFile.load(new FileInputStream(new File(this.testFile.toURI())));
@@ -65,6 +65,7 @@ public class PropertyFileMergerTest {
 
         assertThat(modifiedProperties.size(),
                 is(equalTo(3)));
+        //TODO capture the logged warning and assert on it
     }
 
 }

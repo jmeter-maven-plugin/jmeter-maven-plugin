@@ -56,7 +56,6 @@ public class PropertyFileMerger extends JMeterMojo {
         for (String key : this.baseProperties.stringPropertyNames()) {
             if (!key.equals(value) && key.toLowerCase().equals(value.toLowerCase())) {
                 getLog().warn("You have set a property called '" + value + "' which is very similar to '" + key + "'!");
-                System.out.println("You have set a property called '" + value + "' which is very similar to '" + key + "'!");
             }
         }
     }

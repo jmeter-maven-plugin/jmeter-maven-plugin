@@ -181,8 +181,7 @@ public class PropertyHandler {
      * @param customProperties Map to merge into the Properties object
      * @return merged Properties object
      */
-    //TODO should be protected, quickly switched to public until tests rewritten
-    public static Properties mergeProperties(Properties properties, Map<String, String> customProperties) {
+    private static Properties mergeProperties(Properties properties, Map<String, String> customProperties) {
         if (customProperties != null && !customProperties.isEmpty()) {
             for (String key : customProperties.keySet()) {
                 //TODO check to see if property being set is a close match to an existing property and warn user if it is e.g. have they set User.dir instead of user.dir

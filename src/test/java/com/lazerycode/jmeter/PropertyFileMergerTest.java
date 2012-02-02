@@ -22,7 +22,6 @@ import static org.junit.Assert.assertThat;
 public class PropertyFileMergerTest {
 
     private URL testFile = this.getClass().getResource("/jmeter.properties");
-    private Log log;
 
     @Test
     public void validMergeProperties() throws Exception {
@@ -33,7 +32,7 @@ public class PropertyFileMergerTest {
         Properties propertiesFile = new Properties();
         propertiesFile.load(new FileInputStream(new File(this.testFile.toURI())));
 
-        PropertyFileMerger merger = new PropertyFileMerger(log, propertiesFile);
+        PropertyFileMerger merger = new PropertyFileMerger(propertiesFile);
         Properties modifiedProperties = merger.mergeProperties(customProperties);
 
         assertEquals("property was not overwritten", "DEBUG", modifiedProperties.get("log_level.jmeter"));
@@ -49,7 +48,7 @@ public class PropertyFileMergerTest {
         Properties propertiesFile = new Properties();
         propertiesFile.load(new FileInputStream(new File(this.testFile.toURI())));
 
-        PropertyFileMerger merger = new PropertyFileMerger(log, propertiesFile);
+        PropertyFileMerger merger = new PropertyFileMerger(propertiesFile);
         Properties modifiedProperties = merger.mergeProperties(customProperties);
 
         assertThat(modifiedProperties.containsKey("user.dir"),
@@ -66,7 +65,7 @@ public class PropertyFileMergerTest {
         Properties propertiesFile = new Properties();
         propertiesFile.load(new FileInputStream(new File(this.testFile.toURI())));
 
-        PropertyFileMerger merger = new PropertyFileMerger(log, propertiesFile);
+        PropertyFileMerger merger = new PropertyFileMerger(propertiesFile);
         Properties modifiedProperties = merger.mergeProperties(customProperties);
 
         assertThat(modifiedProperties.size(),

@@ -246,7 +246,6 @@ public class JMeterMojo extends AbstractMojo {
      */
     private boolean remoteStartAndStopOnce;
 
-    private Log log = getLog();
     private File workDir;
     private File binDir;
     private File libExt;
@@ -262,21 +261,21 @@ public class JMeterMojo extends AbstractMojo {
      * @throws MojoFailureException
      */
     public void execute() throws MojoExecutionException, MojoFailureException {
-        log.info(" ");
-        log.info("-------------------------------------------------------");
-        log.info(" P E R F O R M A N C E    T E S T S");
-        log.info("-------------------------------------------------------");
-        log.info(" ");
+        getLog().info(" ");
+        getLog().info("-------------------------------------------------------");
+        getLog().info(" P E R F O R M A N C E    T E S T S");
+        getLog().info("-------------------------------------------------------");
+        getLog().info(" ");
         generateJMeterDirectoryTree();
         propertyConfiguration();
         setJMeterClasspath();
         initialiseJMeterArgumentsArray();
-        TestManager jMeterTestManager = new TestManager(this.testArgs, this.logsDir, this.srcDir, this.log, this.jmeterPreserveIncludeOrder, this.jMeterTestFiles, this.excludeJMeterTestFiles, this.suppressJMeterOutput);
+        TestManager jMeterTestManager = new TestManager(this.testArgs, this.logsDir, this.srcDir, this.getLog(), this.jmeterPreserveIncludeOrder, this.jMeterTestFiles, this.excludeJMeterTestFiles, this.suppressJMeterOutput);
         jMeterTestManager.setRemoteStartOptions(this.remoteStop, this.remoteStartAll, this.remoteStartAndStopOnce, this.remoteStart);
-        log.info(" ");
-        log.info(testArgs.getProxyDetails());
+        getLog().info(" ");
+        getLog().info(testArgs.getProxyDetails());
         List<String> testResults = jMeterTestManager.executeTests();
-        new ReportGenerator(this.reportPostfix, this.reportXslt, this.reportDir, this.enableReports, this.log).makeReport(testResults);
+        new ReportGenerator(this.reportPostfix, this.reportXslt, this.reportDir, this.enableReports).makeReport(testResults);
         checkForErrors(testResults);
     }
 
@@ -301,7 +300,7 @@ public class JMeterMojo extends AbstractMojo {
     }
 
     private void propertyConfiguration() throws MojoExecutionException {
-        this.pluginProperties = new PropertyHandler(this.srcDir, this.binDir, getArtifactNamed(this.jmeterConfigArtifact), log);
+        this.pluginProperties = new PropertyHandler(this.srcDir, this.binDir, getArtifactNamed(this.jmeterConfigArtifact), getLog());
         this.pluginProperties.setJMeterProperties(this.propertiesJMeter);
         this.pluginProperties.setJMeterGlobalProperties(this.propertiesGlobal);
         this.pluginProperties.setJMeterSaveServiceProperties(this.propertiesSaveService);
@@ -386,11 +385,11 @@ public class JMeterMojo extends AbstractMojo {
                     failed = true;
                 }
             }
-            log.info(" ");
-            log.info("Test Results:");
-            log.info(" ");
-            log.info("Tests Run: " + results.size() + ", Failures: " + totalFailureCount + ", Errors: " + totalErrorCount + "");
-            log.info(" ");
+            getLog().info(" ");
+            getLog().info("Test Results:");
+            getLog().info(" ");
+            getLog().info("Tests Run: " + results.size() + ", Failures: " + totalFailureCount + ", Errors: " + totalErrorCount + "");
+            getLog().info(" ");
         } catch (IOException e) {
             throw new MojoExecutionException("Can't read log file", e);
         }

@@ -1,5 +1,6 @@
 package com.lazerycode.jmeter.reporting;
 
+import com.lazerycode.jmeter.JMeterMojo;
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
@@ -8,20 +9,18 @@ import javax.xml.transform.TransformerException;
 import java.io.*;
 import java.util.List;
 
-public class ReportGenerator {
+public class ReportGenerator extends JMeterMojo{
 
     private String reportPostfix;
     private File reportXslt;
     private File reportDir;
     private boolean createReports;
-    private Log log;
 
-    public ReportGenerator(String reportPostfix, File reportXslt, File reportDir, boolean createReports, Log logger) {
+    public ReportGenerator(String reportPostfix, File reportXslt, File reportDir, boolean createReports) {
         this.reportPostfix = reportPostfix;
         this.reportXslt = reportXslt;
         this.reportDir = reportDir;
         this.createReports = createReports;
-        this.log = logger;
     }
 
     public void makeReport(List<String> results) throws MojoExecutionException {
@@ -29,14 +28,14 @@ public class ReportGenerator {
             try {
                 ReportTransformer transformer;
                 transformer = new ReportTransformer(getXslt());
-                log.info(" ");
-                log.info("Building JMeter Report(s)...");
+                getLog().info(" ");
+                getLog().info("Building JMeter Report(s)...");
                 for (String resultFile : results) {
                     final String outputFile = toOutputFileName(resultFile);
                     transformer.transform(resultFile, outputFile);
-                    log.info(" ");
-                    log.info("Raw results: " + resultFile);
-                    log.info("Test report: " + outputFile);
+                    getLog().info(" ");
+                    getLog().info("Raw results: " + resultFile);
+                    getLog().info("Test report: " + outputFile);
                 }
             } catch (FileNotFoundException e) {
                 throw new MojoExecutionException("Error writing report file jmeter file.", e);
@@ -46,7 +45,7 @@ public class ReportGenerator {
                 throw new MojoExecutionException("Error copying resources to jmeter results", e);
             }
         } else {
-            log.info("Report generation disabled.");
+            getLog().info("Report generation disabled.");
         }
     }
 

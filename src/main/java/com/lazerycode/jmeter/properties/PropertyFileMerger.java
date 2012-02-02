@@ -1,17 +1,16 @@
 package com.lazerycode.jmeter.properties;
 
+import com.lazerycode.jmeter.JMeterMojo;
 import org.apache.maven.plugin.logging.Log;
 
 import java.util.Map;
 import java.util.Properties;
 
-public class PropertyFileMerger {
+public class PropertyFileMerger extends JMeterMojo {
 
-    private Log log;
     private Properties baseProperties;
 
-    public PropertyFileMerger(Log log, Properties baseProperties) {
-        this.log = log;
+    public PropertyFileMerger(Properties baseProperties) {
         this.baseProperties = stripReservedProperties(baseProperties);
     }
 
@@ -27,8 +26,7 @@ public class PropertyFileMerger {
                 if (!isReservedProperty(key)) {
                     this.baseProperties.setProperty(key, customProperties.get(key));
                 } else {
-//                    log.warn("Unable to set '" + key + "', it is a reserved property in the jmeter-maven-plugin");
-                    System.out.println("Unable to set '" + key + "', it is a reserved property in the jmeter-maven-plugin");
+                    getLog().warn("Unable to set '" + key + "', it is a reserved property in the jmeter-maven-plugin");
                 }
                 warnUserOfPossibleErrors(key);
             }
@@ -40,8 +38,7 @@ public class PropertyFileMerger {
         for (ReservedProperties reservedProperty : ReservedProperties.values()) {
             if (propertyFile.containsKey(reservedProperty.getPropertyKey())) {
                 propertyFile.remove(reservedProperty.getPropertyKey());
-//                log.warn("Unable to set '" + reservedProperty.getPropertyKey() + "', it is a reserved property in the jmeter-maven-plugin");
-                System.out.println("Unable to set '" + reservedProperty.getPropertyKey() + "', it is a reserved property in the jmeter-maven-plugin");
+                getLog().warn("Unable to set '" + reservedProperty.getPropertyKey() + "', it is a reserved property in the jmeter-maven-plugin");
             }
         }
         return propertyFile;
@@ -59,11 +56,10 @@ public class PropertyFileMerger {
     private void warnUserOfPossibleErrors(String value) {
         for (String key : this.baseProperties.stringPropertyNames()) {
             if (!key.equals(value) && key.toLowerCase().equals(value.toLowerCase())) {
-//                log.warn("You have set a property called '" + value + "' which is very similar to '" + key + "'!");
+                getLog().warn("You have set a property called '" + value + "' which is very similar to '" + key + "'!");
                 System.out.println("You have set a property called '" + value + "' which is very similar to '" + key + "'!");
             }
         }
     }
-
 }
 

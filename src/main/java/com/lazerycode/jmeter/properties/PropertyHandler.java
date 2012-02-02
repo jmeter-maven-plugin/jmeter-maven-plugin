@@ -1,5 +1,6 @@
 package com.lazerycode.jmeter.properties;
 
+import com.lazerycode.jmeter.JMeterMojo;
 import com.lazerycode.jmeter.UtilityFunctions;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -14,9 +15,8 @@ import java.util.jar.JarFile;
 /**
  * Handler to deal with properties file creation.
  */
-public class PropertyHandler {
+public class PropertyHandler extends JMeterMojo {
 
-    private Log log;
     private Map<JMeterPropertiesFiles, Map<String, String>> masterPropertiesMap = new HashMap<JMeterPropertiesFiles, Map<String, String>>();
     private Map<String, String> jMeterProperties = null;
     private Map<String, String> jMeterSaveServiceProperties = null;
@@ -32,7 +32,6 @@ public class PropertyHandler {
         setSourceDirectory(sourceDirectory);
         setOutputDirectory(outputDirectory);
         this.jMeterConfigArtifact = jMeterConfigArtifact;
-        this.log = log;
     }
 
     /**
@@ -139,7 +138,7 @@ public class PropertyHandler {
                 sourceFile.close();
             }
             //Create final properties set
-            Properties modifiedProperties = new PropertyFileMerger(log, baseProperties).mergeProperties(this.masterPropertiesMap.get(propertyFile));
+            Properties modifiedProperties = new PropertyFileMerger(baseProperties).mergeProperties(this.masterPropertiesMap.get(propertyFile));
             //Write out final properties file.
             FileOutputStream writeOutFinalPropertiesFile = new FileOutputStream(new File(outputDirectory.getCanonicalFile() + File.separator + propertyFile.getPropertiesFileName()));
             modifiedProperties.store(writeOutFinalPropertiesFile, null);
@@ -162,9 +161,9 @@ public class PropertyHandler {
     private InputStream getSourcePropertyFile(JMeterPropertiesFiles value) throws IOException {
         File sourcePropertyFile = new File(this.propertySourceDirectory.getCanonicalFile() + File.separator + value.getPropertiesFileName());
         if (!sourcePropertyFile.exists()) {
-            log.warn("Unable to find " + value.getPropertiesFileName() + "...");
+            getLog().warn("Unable to find " + value.getPropertiesFileName() + "...");
             if (value.createFileIfItDoesntExist()) {
-                log.warn("Using default JMeter version of " + value.getPropertiesFileName() + "...");
+                getLog().warn("Using default JMeter version of " + value.getPropertiesFileName() + "...");
                 JarFile propertyJar = new JarFile(this.jMeterConfigArtifact.getFile());
                 return propertyJar.getInputStream(propertyJar.getEntry("bin/" + value.getPropertiesFileName()));
             }

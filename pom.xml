@@ -102,6 +102,16 @@
             <id>Apache JMeter Repository</id>
             <url>https://repository.apache.org/content/repositories/snapshots</url>
         </repository>
+        <repository>
+            <!--Required for bsh 2.0b5 -->
+            <id>JBoss</id>
+            <url>https://repository.jboss.org/nexus/content/repositories/thirdparty-releases/</url>
+        </repository>
+        <repository>
+            <!-- Required for jCharts 0.7.5 -->
+            <id>MVN Search</id>
+            <url>http://www.mvnsearch.org/maven2</url>
+        </repository>
     </repositories>
 
     <dependencies>

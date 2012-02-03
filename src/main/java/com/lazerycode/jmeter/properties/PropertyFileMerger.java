@@ -33,6 +33,8 @@ public class PropertyFileMerger extends JMeterMojo {
         return this.baseProperties;
     }
 
+    //==================================================================================================================
+
     private Properties stripReservedProperties(Properties propertyFile) {
         for (ReservedProperties reservedProperty : ReservedProperties.values()) {
             if (propertyFile.containsKey(reservedProperty.getPropertyKey())) {

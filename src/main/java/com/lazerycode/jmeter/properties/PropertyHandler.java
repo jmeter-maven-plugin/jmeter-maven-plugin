@@ -115,6 +115,7 @@ public class PropertyHandler extends JMeterMojo {
         masterPropertiesMap.put(JMeterPropertiesFiles.UPGRADE_PROPERTIES, this.jMeterUpgradeProperties);
         masterPropertiesMap.put(JMeterPropertiesFiles.SYSTEM_PROPERTIES, this.jMeterSystemProperties);
         masterPropertiesMap.put(JMeterPropertiesFiles.USER_PROPERTIES, this.jMeterUserProperties);
+        //TODO: now, global properties are "real" global properties, meaning properties have to be defined twice if they should be used locally and on remote servers.
         masterPropertiesMap.put(JMeterPropertiesFiles.GLOBAL_PROPERTIES, this.jMeterGlobalProperties);
     }
 
@@ -161,9 +162,10 @@ public class PropertyHandler extends JMeterMojo {
     private InputStream getSourcePropertyFile(JMeterPropertiesFiles value) throws IOException {
         File sourcePropertyFile = new File(this.propertySourceDirectory.getCanonicalFile() + File.separator + value.getPropertiesFileName());
         if (!sourcePropertyFile.exists()) {
-            getLog().warn("Unable to find " + value.getPropertiesFileName() + "...");
+            //TODO: why do we log on warn that there is no custom properties file? Changed to info for now. Maybe remove?
+            getLog().info("No custom file " + value.getPropertiesFileName() + " found ...");
             if (value.createFileIfItDoesntExist()) {
-                getLog().warn("Using default JMeter version of " + value.getPropertiesFileName() + "...");
+                getLog().info("Using default JMeter version of " + value.getPropertiesFileName() + "...");
                 JarFile propertyJar = new JarFile(this.jMeterConfigArtifact.getFile());
                 return propertyJar.getInputStream(propertyJar.getEntry("bin/" + value.getPropertiesFileName()));
             }

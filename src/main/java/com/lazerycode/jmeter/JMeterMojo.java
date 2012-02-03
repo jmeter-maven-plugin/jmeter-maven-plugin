@@ -29,7 +29,7 @@ public class JMeterMojo extends AbstractMojo {
 
     /**
      * Sets the list of include patterns to use in directory scan for JMX files.
-     * Relative to srcDir.
+     * Relative to testfileDirectory.
      *
      * @parameter
      */
@@ -37,7 +37,7 @@ public class JMeterMojo extends AbstractMojo {
 
     /**
      * Sets the list of exclude patterns to use in directory scan for Test files.
-     * Relative to srcDir.
+     * Relative to testfileDirectory.
      *
      * @parameter
      */
@@ -49,7 +49,14 @@ public class JMeterMojo extends AbstractMojo {
      * @parameter expression="${jmeter.testfiles.basedir}"
      * default-value="${basedir}/src/test/jmeter"
      */
-    private File srcDir;
+    private File testfileDirectory;
+
+    /**
+     * Sets whether the test execution shall preserve the order of tests in jMeterTestFiles clauses.
+     * TODO: shouldn't preserved order be the default? Or rather: would it hurt to always preserve order and not make this configurable?
+     * @parameter expression="${jmeter.preserve.includeOrder}" default-value=false
+     */
+    private boolean jmeterPreserveIncludeOrder;
 
     /**
      * Directory in which the reports are stored.
@@ -119,15 +126,6 @@ public class JMeterMojo extends AbstractMojo {
      */
     private Map<String, String> propertiesGlobal;
 
-//    /**
-//     * JMeter Global Properties file
-//     * This sets local and remote properties (JMeter's definition of global properties is actually remote properties)
-//     * This will override any local/remote properties already set
-//     *
-//     * @parameter
-//     */
-//    private File jmeterGlobalPropertiesFile;
-
     /**
      * (Java) System properties set for the test run.
      * Properties are merged with precedence into default JMeter file system.properties
@@ -135,13 +133,6 @@ public class JMeterMojo extends AbstractMojo {
      * @parameter
      */
     private Map<String, String> propertiesSystem;
-
-    /**
-     * Use remote JMeter installation to run tests
-     *
-     * @parameter default-value=false
-     */
-    private boolean remote;
 
     /**
      * Sets whether ErrorScanner should ignore failures in JMeter result file.
@@ -156,19 +147,6 @@ public class JMeterMojo extends AbstractMojo {
      * @parameter expression="${jmeter.ignore.error}" default-value=false
      */
     private boolean jmeterIgnoreError;
-
-    /**
-     * @parameter expression="${project}"
-     * @required
-     */
-    private MavenProject mavenProject;
-
-    /**
-     * Get a list of artifacts used by this plugin
-     *
-     * @parameter default-value="${plugin.artifacts}"
-     */
-    private List<Artifact> pluginArtifacts;
 
     /**
      * Regex of nonproxy hosts.
@@ -206,18 +184,18 @@ public class JMeterMojo extends AbstractMojo {
     private String proxyPassword;
 
     /**
-     * Sets whether the test execution shall preserve the order of tests in jMeterTestFiles clauses.
-     *
-     * @parameter expression="${jmeter.preserve.includeOrder}" default-value=false
-     */
-    private boolean jmeterPreserveIncludeOrder;
-
-    /**
      * Suppress JMeter output
      *
      * @parameter default-value="true"
      */
     private boolean suppressJMeterOutput;
+
+    /**
+     * Use remote JMeter installation to run tests
+     *
+     * @parameter default-value=false
+     */
+    private boolean remote;
 
     /**
      * Stop remote servers when the test finishes
@@ -248,6 +226,19 @@ public class JMeterMojo extends AbstractMojo {
      */
     private boolean remoteStartAndStopOnce;
 
+    /**
+     * @parameter expression="${project}"
+     * @required
+     */
+    private MavenProject mavenProject;
+
+    /**
+     * Get a list of artifacts used by this plugin
+     *
+     * @parameter default-value="${plugin.artifacts}"
+     */
+    private List<Artifact> pluginArtifacts;
+
     private File workDir;
     private File binDir;
     private File libExt;
@@ -272,7 +263,7 @@ public class JMeterMojo extends AbstractMojo {
         propertyConfiguration();
         setJMeterClasspath();
         initialiseJMeterArgumentsArray();
-        TestManager jMeterTestManager = new TestManager(this.testArgs, this.logsDir, this.srcDir, this.getLog(), this.jmeterPreserveIncludeOrder, this.jMeterTestFiles, this.excludeJMeterTestFiles, this.suppressJMeterOutput);
+        TestManager jMeterTestManager = new TestManager(this.testArgs, this.logsDir, this.testfileDirectory, this.getLog(), this.jmeterPreserveIncludeOrder, this.jMeterTestFiles, this.excludeJMeterTestFiles, this.suppressJMeterOutput);
         jMeterTestManager.setRemoteStartOptions(this.remoteStop, this.remoteStartAll, this.remoteStartAndStopOnce, this.remoteStart);
         getLog().info(" ");
         getLog().info(testArgs.getProxyDetails());
@@ -280,6 +271,8 @@ public class JMeterMojo extends AbstractMojo {
         new ReportGenerator(this.reportPostfix, this.reportXslt, this.reportDir, this.enableReports).makeReport(testResults);
         checkForErrors(testResults);
     }
+
+    //==================================================================================================================
 
     /**
      * Generate the directory tree utilised by JMeter.
@@ -302,14 +295,13 @@ public class JMeterMojo extends AbstractMojo {
     }
 
     private void propertyConfiguration() throws MojoExecutionException {
-        this.pluginProperties = new PropertyHandler(this.srcDir, this.binDir, getArtifactNamed(this.jmeterConfigArtifact), getLog());
+        this.pluginProperties = new PropertyHandler(this.testfileDirectory, this.binDir, getArtifactNamed(this.jmeterConfigArtifact), getLog());
         this.pluginProperties.setJMeterProperties(this.propertiesJMeter);
         this.pluginProperties.setJMeterGlobalProperties(this.propertiesGlobal);
         this.pluginProperties.setJMeterSaveServiceProperties(this.propertiesSaveService);
         this.pluginProperties.setJMeterUpgradeProperties(this.propertiesUpgrade);
         this.pluginProperties.setJmeterUserProperties(this.propertiesUser);
         this.pluginProperties.setJMeterSystemProperties(this.propertiesSystem);
-        //TODO user.dir and java.class.path are explicitly set by this plugin we should suppress any attempt to set these properties
         this.pluginProperties.configureJMeterPropertiesFiles();
     }
 

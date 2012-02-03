@@ -1,0 +1,14 @@
+Release Notes
+
+TODO: finish list.
+
+* Version 1.4
+
+  * now available in sonatype maven repository
+
+  * new project.id <<<comment.lazerycode.jmeter>>>
+
+  * incompatible configuration element changes
+    TODO: at least a short description of what was done (no more jmeterCustomProperties, ...)
+
+  * ...

@@ -1,9 +1,8 @@
-Setting User Properties
+Setting Upgrade Properties
 
-    JMeter user properties are properties supplied to JMeter that can be used in JMeter tests.
-
-    To set user properties you will need to specify each property in your <<<pom.xml>>> in the config element <<propertiesUser>> (The example below shows a property called <<threads>> and a propery called <<testIterations>> being set).
-    The properties are merged into the JMeter properties file <<<user.properties>>> and overwrite identical properties within the file.
+    It's possible to set properties that are used in the oldValue to newValue upgrade mapping of the main JMeter library.
+    To set those properties you will need to specify each property in your <<<pom.xml>>> in the config element <<propertiesUpgrade>>. (The example below shows a property called <<my.old.ClassName>> being set).
+        The properties are merged into the JMeter properties file <<<upgrade.properties>>> and overwrite identical properties within the file.
 
 +---+
 <project>
@@ -25,10 +24,9 @@ Setting User Properties
                         </execution>
                     </executions>
                     <configuration>
-                        <propertiesUser>
-                            <threads>10</threads>
-                            <testIterations>5</testIterations>
-                        </propertiesUser>
+                        <propertiesUpgrade>
+                            <my.old.ClassName>my.new.ClassName</my.old.ClassName>
+                        </propertiesUpgrade>
                     </configuration>
                 </plugin>
             </plugins>

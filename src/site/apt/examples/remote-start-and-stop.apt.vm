@@ -1,10 +1,10 @@
 Remote Start And Stop
 
-    Remote stopping and starting will only happen once at the start of the suite and once at the end of the suite by default.  You can configure the plugin to perform a remote starts and stops for each individual test by setting the remoteStartAndStopOnce variable to false.
+    Remote stopping and starting will only happen once at the start of the suite and once at the end of the suite by default.  You can configure the plugin to perform a remote starts and stops for each individual test by setting the <<remoteStartAndStopOnce>> variable to false.
 
-    Setting the remoteStartAll option will result in a --runremote command being send to jmeter which will start up any remote servers you have defined in jmeter.properties.
+    Setting the <<remoteStartAll>> option will result in a --runremote command being send to JMeter which will start up any remote servers you have defined in <<<jmeter.properties>>>.
 
-    Setting the remoteStop option will result in a --remoteexit command being send to jmeter which will shut down all remote servers.
+    Setting the <<remoteStop>> option will result in a --remoteexit command being send to JMeter which will shut down all remote servers.
 
 +---+
 <project>
@@ -38,7 +38,7 @@ Remote Start And Stop
 </project>
 +---+
 
-    Instead of starting all remote servers, you can specify which ones to start by using the remoteStart option, this will accept a comma separated list of servers for JMeter to start (these should be defined in your jmeter.properties).
+    Instead of starting all remote servers, you can specify which ones to start by using the <<remoteStart>> option, this will accept a comma separated list of servers for JMeter to start (these should be defined in your <<<jmeter.properties>>>).
 
 +---+
 <project>

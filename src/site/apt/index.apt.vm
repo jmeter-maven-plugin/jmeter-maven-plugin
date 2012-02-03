@@ -40,9 +40,26 @@ Basic Usage
 </project>
 +---+
 
-    By default the plugin will use the jmeter.properties supplied with JMeter, if you want to use a custom one you will need to create it in the folder <<$\{project.base.directory\}/src/test/jmeter>>.
+    By default the plugin uses the default properties files supplied with JMeter.
+    If you want to override any of these files completely you simply need to create it in <<$\{project.base.directory\}/src/test/jmeter>>.
 
-    This plugin will automatically run all of the JMX test files held in the <<$\{project.base.directory\}/src/test/jmeter>> directory.
+    The following files will be used if they are found in <<$\{project.base.directory\}/src/test/jmeter>>:
+
+        * jmeter.properties
+
+        * saveservice.properties
+
+        * upgrade.properties
+
+        * system.properties
+
+        * user.properties
+
+        * global.properties
+
+    If you want to override some properties only, you may do so by using the corresponding configuration elements.
+
+    The plugin will automatically run all of the JMX test files held in the <<$\{project.base.directory\}/src/test/jmeter>> directory.
     To run the tests:
 
     * Open a terminal/command prompt

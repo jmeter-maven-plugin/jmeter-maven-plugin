@@ -1,8 +1,9 @@
-System Properties
+Setting System Properties
 
-    JMeter can also set system properties, these are global environment properties accessible by all applications running in the same JVM (They are not accessible outside the JVM).
+    JMeter can set system properties, these are global environment properties accessible by all applications running in the same JVM (They are not accessible outside the JVM).
 
-    To set system properties you will need to specify each property in your <<<pom.xml>>> (The example below shows a property called <<user.dir>> being set):
+    To set system properties you will need to specify each property in your <<<pom.xml>>> in the config element <<propertiesSystem>>. (The example below shows a property called <<my.system.property>> being set).
+    The properties are merged into the JMeter properties file "system.properties" and overwrite identical properties within the file.
 
 +---+
 <project>
@@ -24,9 +25,9 @@ System Properties
                         </execution>
                     </executions>
                     <configuration>
-                        <systemProperties>
-                            <user.dir>/home/jmeter</user.dir>
-                        </systemProperties>
+                        <propertiesSystem>
+                            <my.system.property>my.system.property.value</my.system.property>
+                        </propertiesSystem>
                     </configuration>
                 </plugin>
             </plugins>

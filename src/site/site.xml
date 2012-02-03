@@ -29,14 +29,17 @@
         </menu>
         <menu name="Configuration">
             <item name="Selecting Tests" href="./examples/running-tests.html"/>
+            <item name="JMeter Properties" href="./examples/setting-jmeter-properties.html"/>
             <item name="User Properties" href="./examples/setting-user-properties.html"/>
-            <item name="Remote Properties" href="./examples/setting-remote-properties.html"/>
             <item name="Global Properties" href="./examples/setting-global-properties.html"/>
             <item name="System Properties" href="./examples/setting-system-properties.html"/>
-            <item name="Overriding Log Levels" href="./examples/overriding-log-levels.html"/>
+            <item name="Saveservice Properties" href="./examples/setting-saveservice-properties.html"/>
+            <item name="Upgrade Properties" href="./examples/setting-upgrade-properties.html"/>
             <item name="Proxy Settings" href="./examples/proxy-settings.html"/>
             <item name="Remote Start And Stop" href="./examples/remote-start-and-stop.html"/>
-            <item name="JMeter Properties Files" href="./examples/setting-jmeter-properties.html"/>
+        </menu>
+        <menu name="Notes">
+            <item name="Release Notes" href="./notes/release-notes.html"/>
         </menu>
     </body>
 </project>

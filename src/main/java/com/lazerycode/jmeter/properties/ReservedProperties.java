@@ -1,13 +1,9 @@
 package com.lazerycode.jmeter.properties;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Mark Collin
- * Date: 01/02/12
- * Time: 21:35
- * To change this template use File | Settings | File Templates.
+ * An Enum holding a list of reserved properties.
+ * Properties configured here may not be set by client configuration.
  */
-
 public enum ReservedProperties {
 
     JAVA_CLASS_PATH("java.class.path"),

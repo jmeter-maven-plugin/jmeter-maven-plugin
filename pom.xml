@@ -94,7 +94,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <jmeter.version>2.6-SNAPSHOT</jmeter.version>
+        <jmeter.version>2.6</jmeter.version>
     </properties>
 
     <repositories>

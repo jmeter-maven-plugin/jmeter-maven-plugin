@@ -115,7 +115,7 @@ Selecting Tests To Run
 
 * Specifying Tests That Should Not Be Run
 
-    Rather than specifying which tests should be run, you could alternativly specify which tests in the <<$\{project.base.directory\}/src/test/jmeter>> you do not wish to run by using the <<\<excludeJMeterTestFiles\>>> tag:
+    Rather than specifying which tests should be run, you could alternatively specify which tests in the <<$\{project.base.directory\}/src/test/jmeter>> you do not wish to run by using the <<\<excludeJMeterTestFiles\>>> tag:
 
 +---+
 <project>

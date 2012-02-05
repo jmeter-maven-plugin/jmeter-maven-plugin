@@ -2,32 +2,38 @@ Release Notes
 
 * Version 1.4
 
-  * now available in Sonatype maven repository
+  * New <<group.id>> <<<com.lazerycode.jmeter>>>
 
-  * new <<group.id>> <<<com.lazerycode.jmeter>>>
+  * New <<artifact.id>> <<<jmeter-maven-plugin>>>
 
-  * depends on JMeter 2.6
+  * Depends on the official Apache JMeter 2.6 artifacts (now available at {{{http://repo1.maven.org/maven2/org/apache/jmeter/}repo1.maven.org/maven2/org/apache/jmeter/}})
 
-  * incompatible configuration element changes
+  * Incompatible configuration element changes
 
-      * custom property files can't be configured directly any more, they have to be put into <<src/test/jmeter/>>
+      * Custom property files can't be configured directly any more, they have to be put into <<src/test/jmeter/>>
 
-      * renamed properties:
+      * Renamed properties:
 
-        * includes -> jMeterTestFiles
+        * includes -> testFilesIncluded
 
-        * excludes -> excludeJMeterTestFiles
+        * excludes -> testFilesExcluded
+
+        * srcDir -> testfileDirectory
+
+        * enableReports -> reportEnable
 
         * jmeterIgnoreFailure -> ignoreResultFailures
 
         * jmeterIgnoreError -> ignoreResultErrors
 
-        * srcDir -> testfileDirectory
+        * jmeterUserProperties -> propertiesUser
 
-  * new properties
+        * jmeterDefaultPropertiesFile -> propertiesJMeter
+
+  * New properties
 
     * proxyHost, proxyPort, proxyUsername, proxyPassword, nonProxyHosts used to configure a proxy used by JMeter
 
-    * suppressJMeterOutput suppress JMeter output to standard out
+    * suppressJMeterOutput suppress JMeter output to standard out (Default: true)
 
-    * remote, remoteStart, remoteStop, remoteStartAll, remoteStartAndStopOnce used to configure handling of remote testing
+    * remoteStart, remoteStop, remoteStartAll, remoteStartAndStopOnce used to configure handling of remote testing

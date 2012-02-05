@@ -1,14 +1,33 @@
 Release Notes
 
-TODO: finish list.
-
 * Version 1.4
 
-  * now available in sonatype maven repository
+  * now available in Sonatype maven repository
 
-  * new project.id <<<comment.lazerycode.jmeter>>>
+  * new <<group.id>> <<<com.lazerycode.jmeter>>>
+
+  * depends on JMeter 2.6
 
   * incompatible configuration element changes
-    TODO: at least a short description of what was done (no more jmeterCustomProperties, ...)
 
-  * ...
+      * custom property files can't be configured directly any more, they have to be put into <<src/test/jmeter/>>
+
+      * renamed properties:
+
+        * includes -> jMeterTestFiles
+
+        * excludes -> excludeJMeterTestFiles
+
+        * jmeterIgnoreFailure -> ignoreResultFailures
+
+        * jmeterIgnoreError -> ignoreResultErrors
+
+        * srcDir -> testfileDirectory
+
+  * new properties
+
+    * proxyHost, proxyPort, proxyUsername, proxyPassword, nonProxyHosts used to configure a proxy used by JMeter
+
+    * suppressJMeterOutput suppress JMeter output to standard out
+
+    * remote, remoteStart, remoteStop, remoteStartAll, remoteStartAndStopOnce used to configure handling of remote testing

@@ -6,7 +6,7 @@ Proxy Settings
 
     <<ProxyUsername>> and <<ProxyPassword>> are optional settings that are set independently, you can set a <<ProxyUsername>> and/or a <<ProxyPassword>> without setting a <<ProxyHost>> and they will be sent to JMeter.
 
-    You can also set an optional <<nonProxyHosts>> element to notify JMeter of hosts that should no be proxied.  This setting is a regex.
+    You can also set an optional <<proxyHostExclusions>> element to notify JMeter of hosts that should not be proxied.  This setting is a regex.
 
 +---+
 <project>
@@ -32,7 +32,7 @@ Proxy Settings
                         <proxyPort>80</proxyPort>
                         <proxyUsername>jimbob</proxyUsername>
                         <proxyPassword>correct horse battery staple</proxyPassword>
-                        <nonProxyHosts>localhost|*.lazerycode.com</nonProxyHosts>
+                        <proxyHostExclusions>localhost|*.lazerycode.com</proxyHostExclusions>
                     </configuration>
                 </plugin>
             </plugins>

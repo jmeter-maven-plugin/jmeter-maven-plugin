@@ -24,10 +24,10 @@ Remote Properties
                         </execution>
                     </executions>
                     <configuration>
-                        <jmeterRemoteProperties>
+                        <propertiesRemote>
                             <threads>10</threads>
                             <testIterations>5</testIterations>
-                        </jmeterRemoteProperties>
+                        </propertiesRemote>
                     </configuration>
                 </plugin>
             </plugins>

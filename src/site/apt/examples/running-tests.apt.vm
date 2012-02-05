@@ -60,10 +60,10 @@ Selecting Tests To Run
                     </executions>
                     <configuration>
                         <reportDir>${project.build.directory}/jmeter-reports</reportDir>
-                        <jMeterTestFiles>
+                        <testFilesIncluded>
                             <jMeterTestFile>test1.jmx</jMeterTestFile>
                             <jMeterTestFile>test2.jmx</jMeterTestFile>
-                        </jMeterTestFiles>
+                        </testFilesIncluded>
                     </configuration>
                 </plugin>
             </plugins>
@@ -100,9 +100,9 @@ Selecting Tests To Run
                     </executions>
                     <configuration>
                         <reportDir>${project.build.directory}/jmeter-reports</reportDir>
-                        <jMeterTestFiles>
+                        <testFilesIncluded>
                             <jMeterTestFile>foo*.jmx</jMeterTestFile>
-                        </jMeterTestFiles>
+                        </testFilesIncluded>
                     </configuration>
                 </plugin>
             </plugins>
@@ -128,10 +128,10 @@ Selecting Tests To Run
                     <artifactId>${project.artifactId}</artifactId>
                     <version>${project.version}</version>
                     <configuration>
-                        <excludeJMeterTestFiles>
+                        <testFilesExcluded>
                             <excludeJMeterTestFile>test3.jmx</excludeJMeterTestFile>
                             <excludeJMeterTestFile>test4.jmx</excludeJMeterTestFile>
-                        </excludeJMeterTestFiles>
+                        </testFilesExcluded>
                     </configuration>
                 </plugin>
             </plugins>
@@ -158,9 +158,9 @@ Selecting Tests To Run
                     <artifactId>${project.artifactId}</artifactId>
                     <version>${project.version}</version>
                     <configuration>
-                        <excludeJMeterTestFiles>
+                        <testFilesExcluded>
                             <excludeJMeterTestFile>*bar.jmx</excludeJMeterTestFile>
-                        </excludeJMeterTestFiles>
+                        </testFilesExcluded>
                     </configuration>
                 </plugin>
             </plugins>

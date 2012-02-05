@@ -24,9 +24,9 @@ Setting Saveservice Properties
                         </execution>
                     </executions>
                     <configuration>
-                        <propertiesSaveservice>
+                        <propertiesSaveService>
                             <HTTPSampler2>org.apache.jmeter.protocol.http.sampler.HTTPSampler2</HTTPSampler2>
-                        </propertiesSaveservice>
+                        </propertiesSaveService>
                     </configuration>
                 </plugin>
             </plugins>

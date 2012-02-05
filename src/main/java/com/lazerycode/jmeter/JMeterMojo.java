@@ -184,13 +184,6 @@ public class JMeterMojo extends AbstractMojo {
     private boolean suppressJMeterOutput;
 
     /**
-     * Use remote JMeter installation to run tests
-     *
-     * @parameter default-value=false
-     */
-    private boolean remote;
-
-    /**
      * Stop remote servers when the test finishes
      *
      * @parameter default-value="false"

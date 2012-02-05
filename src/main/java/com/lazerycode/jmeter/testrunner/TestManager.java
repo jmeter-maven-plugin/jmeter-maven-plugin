@@ -25,19 +25,17 @@ public class TestManager {
     private File srcDir;
     private List<String> jMeterTestFiles;
     private List<String> excludeJMeterTestFiles;
-    private boolean jmeterPreserveIncludeOrder;
     private boolean suppressJMeterOutput;
     private boolean remoteStop = false;
     private boolean remoteStartAll = false;
     private boolean remoteStartAndStopOnce = true;
     private String remoteStart = null;
 
-    public TestManager(JMeterArgumentsArray testArgs, File logsDir, File srcDir, Log log, boolean preserveTestOrder, List<String> testFiles, List<String> excludeTestFiles, boolean suppressJMeterOutput) {
+    public TestManager(JMeterArgumentsArray testArgs, File logsDir, File srcDir, Log log, List<String> testFiles, List<String> excludeTestFiles, boolean suppressJMeterOutput) {
         this.testArgs = testArgs;
         this.logsDir = logsDir;
         this.srcDir = srcDir;
         this.log = log;
-        this.jmeterPreserveIncludeOrder = preserveTestOrder;
         this.jMeterTestFiles = testFiles;
         this.excludeJMeterTestFiles = excludeTestFiles;
         this.suppressJMeterOutput = suppressJMeterOutput;
@@ -193,9 +191,7 @@ public class TestManager {
         }
         scanner.scan();
         final List<String> includedFiles = Arrays.asList(scanner.getIncludedFiles());
-        if (this.jmeterPreserveIncludeOrder) {
-            Collections.sort(includedFiles, new IncludesComparator(this.jMeterTestFiles));
-        }
+        Collections.sort(includedFiles, new IncludesComparator(this.jMeterTestFiles));
         jmeterTestFiles.addAll(includedFiles);
         return jmeterTestFiles;
     }

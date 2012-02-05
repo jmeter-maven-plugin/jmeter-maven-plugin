@@ -29,19 +29,19 @@ public class JMeterMojo extends AbstractMojo {
 
     /**
      * Sets the list of include patterns to use in directory scan for JMX files.
-     * Relative to testfileDirectory.
+     * Relative to testFilesDirectory.
      *
      * @parameter
      */
-    private List<String> jMeterTestFiles;
+    private List<String> testFilesIncluded;
 
     /**
      * Sets the list of exclude patterns to use in directory scan for Test files.
-     * Relative to testfileDirectory.
+     * Relative to testFilesDirectory.
      *
      * @parameter
      */
-    private List<String> excludeJMeterTestFiles;
+    private List<String> testFilesExcluded;
 
     /**
      * Path under which JMX files are stored.
@@ -49,14 +49,7 @@ public class JMeterMojo extends AbstractMojo {
      * @parameter expression="${jmeter.testfiles.basedir}"
      * default-value="${basedir}/src/test/jmeter"
      */
-    private File testfileDirectory;
-
-    /**
-     * Sets whether the test execution shall preserve the order of tests in jMeterTestFiles clauses.
-     * TODO: shouldn't preserved order be the default? Or rather: would it hurt to always preserve order and not make this configurable?
-     * @parameter expression="${jmeter.preserve.includeOrder}" default-value=false
-     */
-    private boolean preserveTestFileIncludeOrder;
+    private File testFilesDirectory;
 
     /**
      * Directory in which the reports are stored.
@@ -78,7 +71,7 @@ public class JMeterMojo extends AbstractMojo {
      *
      * @parameter default-value="true"
      */
-    private boolean enableReports;
+    private boolean reportEnable;
 
     /**
      * Custom Xslt which is used to create the report.
@@ -149,11 +142,11 @@ public class JMeterMojo extends AbstractMojo {
     private boolean ignoreResultErrors;
 
     /**
-     * Regex of nonproxy hosts.
+     * Regex of hosts that will not be proxied
      *
      * @parameter
      */
-    private String nonProxyHosts;
+    private String proxyHostExclusions;
 
     /**
      * HTTP proxy host name.
@@ -265,12 +258,12 @@ public class JMeterMojo extends AbstractMojo {
         propertyConfiguration();
         setJMeterClasspath();
         initialiseJMeterArgumentsArray();
-        TestManager jMeterTestManager = new TestManager(this.testArgs, this.logsDir, this.testfileDirectory, this.getLog(), this.preserveTestFileIncludeOrder, this.jMeterTestFiles, this.excludeJMeterTestFiles, this.suppressJMeterOutput);
+        TestManager jMeterTestManager = new TestManager(this.testArgs, this.logsDir, this.testFilesDirectory, this.getLog(), this.testFilesIncluded, this.testFilesExcluded, this.suppressJMeterOutput);
         jMeterTestManager.setRemoteStartOptions(this.remoteStop, this.remoteStartAll, this.remoteStartAndStopOnce, this.remoteStart);
         getLog().info(" ");
         getLog().info(testArgs.getProxyDetails());
         List<String> testResults = jMeterTestManager.executeTests();
-        new ReportGenerator(this.reportPostfix, this.reportXslt, this.reportDir, this.enableReports).makeReport(testResults);
+        new ReportGenerator(this.reportPostfix, this.reportXslt, this.reportDir, this.reportEnable).makeReport(testResults);
         checkForErrors(testResults);
     }
 
@@ -297,7 +290,7 @@ public class JMeterMojo extends AbstractMojo {
     }
 
     private void propertyConfiguration() throws MojoExecutionException {
-        this.pluginProperties = new PropertyHandler(this.testfileDirectory, this.binDir, getArtifactNamed(this.jmeterConfigArtifact), getLog());
+        this.pluginProperties = new PropertyHandler(this.testFilesDirectory, this.binDir, getArtifactNamed(this.jmeterConfigArtifact), getLog());
         this.pluginProperties.setJMeterProperties(this.propertiesJMeter);
         this.pluginProperties.setJMeterGlobalProperties(this.propertiesGlobal);
         this.pluginProperties.setJMeterSaveServiceProperties(this.propertiesSaveService);
@@ -358,7 +351,7 @@ public class JMeterMojo extends AbstractMojo {
         this.testArgs.setProxyHostDetails(this.proxyHost, this.proxyPort);
         this.testArgs.setProxyUsername(this.proxyUsername);
         this.testArgs.setProxyPassword(this.proxyPassword);
-        this.testArgs.setNonProxyHosts(this.nonProxyHosts);
+        this.testArgs.setNonProxyHosts(this.proxyHostExclusions);
     }
 
     /**

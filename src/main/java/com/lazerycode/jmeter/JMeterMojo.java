@@ -56,7 +56,7 @@ public class JMeterMojo extends AbstractMojo {
      * TODO: shouldn't preserved order be the default? Or rather: would it hurt to always preserve order and not make this configurable?
      * @parameter expression="${jmeter.preserve.includeOrder}" default-value=false
      */
-    private boolean jmeterPreserveIncludeOrder;
+    private boolean preserveTestFileIncludeOrder;
 
     /**
      * Directory in which the reports are stored.
@@ -139,14 +139,14 @@ public class JMeterMojo extends AbstractMojo {
      *
      * @parameter expression="${jmeter.ignore.failure}" default-value=false
      */
-    private boolean jmeterIgnoreFailure;
+    private boolean ignoreResultFailures;
 
     /**
      * Sets whether ErrorScanner should ignore errors in JMeter result file.
      *
      * @parameter expression="${jmeter.ignore.error}" default-value=false
      */
-    private boolean jmeterIgnoreError;
+    private boolean ignoreResultErrors;
 
     /**
      * Regex of nonproxy hosts.
@@ -229,6 +229,7 @@ public class JMeterMojo extends AbstractMojo {
     /**
      * @parameter expression="${project}"
      * @required
+     * @readonly
      */
     private MavenProject mavenProject;
 
@@ -236,6 +237,7 @@ public class JMeterMojo extends AbstractMojo {
      * Get a list of artifacts used by this plugin
      *
      * @parameter default-value="${plugin.artifacts}"
+     * @readonly
      */
     private List<Artifact> pluginArtifacts;
 
@@ -263,7 +265,7 @@ public class JMeterMojo extends AbstractMojo {
         propertyConfiguration();
         setJMeterClasspath();
         initialiseJMeterArgumentsArray();
-        TestManager jMeterTestManager = new TestManager(this.testArgs, this.logsDir, this.testfileDirectory, this.getLog(), this.jmeterPreserveIncludeOrder, this.jMeterTestFiles, this.excludeJMeterTestFiles, this.suppressJMeterOutput);
+        TestManager jMeterTestManager = new TestManager(this.testArgs, this.logsDir, this.testfileDirectory, this.getLog(), this.preserveTestFileIncludeOrder, this.jMeterTestFiles, this.excludeJMeterTestFiles, this.suppressJMeterOutput);
         jMeterTestManager.setRemoteStartOptions(this.remoteStop, this.remoteStartAll, this.remoteStartAndStopOnce, this.remoteStart);
         getLog().info(" ");
         getLog().info(testArgs.getProxyDetails());
@@ -367,7 +369,7 @@ public class JMeterMojo extends AbstractMojo {
      * @throws MojoFailureException
      */
     private void checkForErrors(List<String> results) throws MojoExecutionException, MojoFailureException {
-        ErrorScanner scanner = new ErrorScanner(this.jmeterIgnoreError, this.jmeterIgnoreFailure);
+        ErrorScanner scanner = new ErrorScanner(this.ignoreResultErrors, this.ignoreResultFailures);
         int totalErrorCount = 0;
         int totalFailureCount = 0;
         boolean failed = false;

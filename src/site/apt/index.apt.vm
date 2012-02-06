@@ -1,3 +1,7 @@
+~~
+~~TODO: index.html is an "about" page, this content should be moved
+~~
+
 Basic Usage
 
     First of all add the Sonatype Maven repository to your project:

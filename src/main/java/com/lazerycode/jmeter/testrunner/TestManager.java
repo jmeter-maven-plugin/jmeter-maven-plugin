@@ -30,6 +30,7 @@ public class TestManager {
     private boolean remoteStartAll = false;
     private boolean remoteStartAndStopOnce = true;
     private String remoteStart = null;
+    private int exitCheckPause = 2000;
 
     public TestManager(JMeterArgumentsArray testArgs, File logsDir, File srcDir, Log log, List<String> testFiles, List<String> excludeTestFiles, boolean suppressJMeterOutput) {
         this.testArgs = testArgs;
@@ -47,6 +48,11 @@ public class TestManager {
         this.remoteStartAndStopOnce = remoteStartAndStopOnce;
         if (UtilityFunctions.isNotSet(remoteStart)) return;
         this.remoteStart = remoteStart;
+    }
+
+    public void setExitCheckPause(int value) {
+        if (value < 2000) return;
+        this.exitCheckPause = value;
     }
 
     public List<String> executeTests() throws MojoExecutionException {
@@ -137,6 +143,11 @@ public class TestManager {
                     throw new MojoExecutionException("Test failed", e);
                 }
             } finally {
+                try {
+                    //Wait for JMeter to clean up threads.
+                    Thread.sleep(this.exitCheckPause);
+                } catch (InterruptedException e) {
+                }
                 System.setSecurityManager(oldManager);
                 Thread.setDefaultUncaughtExceptionHandler(oldHandler);
                 System.setOut(originalOut);

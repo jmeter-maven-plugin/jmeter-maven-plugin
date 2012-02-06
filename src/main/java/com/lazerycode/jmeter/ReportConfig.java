@@ -17,6 +17,8 @@ import java.io.File;
  * </reportConfig>
  * }
  * </pre>
+ *
+ * @author Arne Franken
  */
 public class ReportConfig {
 

@@ -13,7 +13,10 @@ import java.util.jar.JarFile;
 
 /**
  * Handler to deal with properties file creation.
+ *
+ * @author Arne Franken, Mark Collin
  */
+//TODO: should PropertyHandler really extend JMeterMojo just for using getLog()?
 public class PropertyHandler extends JMeterMojo {
 
     private Map<JMeterPropertiesFiles, Map<String, String>> masterPropertiesMap = new HashMap<JMeterPropertiesFiles, Map<String, String>>();
@@ -31,35 +34,6 @@ public class PropertyHandler extends JMeterMojo {
         setSourceDirectory(sourceDirectory);
         setOutputDirectory(outputDirectory);
         this.jMeterConfigArtifact = jMeterConfigArtifact;
-    }
-
-    /**
-     * Check that the source directory exists, throw an error if it does not
-     *
-     * @param value
-     * @throws MojoExecutionException
-     */
-    private void setSourceDirectory(File value) throws MojoExecutionException {
-        if (value.exists()) {
-            this.propertySourceDirectory = value;
-        } else {
-            throw new MojoExecutionException("Property source directory '" + value.getAbsolutePath() + "' does not exist!");
-        }
-    }
-
-    /**
-     * Create the output directory, throw an error if we can't
-     *
-     * @param value
-     * @throws MojoExecutionException
-     */
-    private void setOutputDirectory(File value) throws MojoExecutionException {
-        if (!value.exists()) {
-            if (!value.mkdirs()) {
-                throw new MojoExecutionException("Property output directory '" + value.getAbsolutePath() + "' cannot be created!");
-            }
-        }
-        this.propertyOutputDirectory = value;
     }
 
     public void setJMeterProperties(Map<String, String> value) {
@@ -106,19 +80,6 @@ public class PropertyHandler extends JMeterMojo {
     }
 
     /**
-     * Load the individual properties maps into the master map
-     */
-    private void setMasterPropertiesMap() {
-        masterPropertiesMap.put(JMeterPropertiesFiles.JMETER_PROPERTIES, this.jMeterProperties);
-        masterPropertiesMap.put(JMeterPropertiesFiles.SAVE_SERVICE_PROPERTIES, this.jMeterSaveServiceProperties);
-        masterPropertiesMap.put(JMeterPropertiesFiles.UPGRADE_PROPERTIES, this.jMeterUpgradeProperties);
-        masterPropertiesMap.put(JMeterPropertiesFiles.SYSTEM_PROPERTIES, this.jMeterSystemProperties);
-        masterPropertiesMap.put(JMeterPropertiesFiles.USER_PROPERTIES, this.jMeterUserProperties);
-        //TODO: now, global properties are "real" global properties, meaning properties have to be defined twice if they should be used locally and on remote servers.
-        masterPropertiesMap.put(JMeterPropertiesFiles.GLOBAL_PROPERTIES, this.jMeterGlobalProperties);
-    }
-
-    /**
      * Merge properties from sourceFile and customProperties into the given outputDirectory
      *
      * @param propertyFile
@@ -151,6 +112,50 @@ public class PropertyHandler extends JMeterMojo {
         } catch (IOException e) {
             throw new MojoExecutionException("Error creating consolidated properties file " + propertyFile.getPropertiesFileName() + ": " + e);
         }
+    }
+
+    //=======================================================================================================
+
+    /**
+     * Load the individual properties maps into the master map
+     */
+    private void setMasterPropertiesMap() {
+        masterPropertiesMap.put(JMeterPropertiesFiles.JMETER_PROPERTIES, this.jMeterProperties);
+        masterPropertiesMap.put(JMeterPropertiesFiles.SAVE_SERVICE_PROPERTIES, this.jMeterSaveServiceProperties);
+        masterPropertiesMap.put(JMeterPropertiesFiles.UPGRADE_PROPERTIES, this.jMeterUpgradeProperties);
+        masterPropertiesMap.put(JMeterPropertiesFiles.SYSTEM_PROPERTIES, this.jMeterSystemProperties);
+        masterPropertiesMap.put(JMeterPropertiesFiles.USER_PROPERTIES, this.jMeterUserProperties);
+        //TODO: now, global properties are "real" global properties, meaning properties have to be defined twice if they should be used locally and on remote servers.
+        masterPropertiesMap.put(JMeterPropertiesFiles.GLOBAL_PROPERTIES, this.jMeterGlobalProperties);
+    }
+
+    /**
+     * Check that the source directory exists, throw an error if it does not
+     *
+     * @param value
+     * @throws MojoExecutionException
+     */
+    private void setSourceDirectory(File value) throws MojoExecutionException {
+        if (value.exists()) {
+            this.propertySourceDirectory = value;
+        } else {
+            throw new MojoExecutionException("Property source directory '" + value.getAbsolutePath() + "' does not exist!");
+        }
+    }
+
+    /**
+     * Create the output directory, throw an error if we can't
+     *
+     * @param value
+     * @throws MojoExecutionException
+     */
+    private void setOutputDirectory(File value) throws MojoExecutionException {
+        if (!value.exists()) {
+            if (!value.mkdirs()) {
+                throw new MojoExecutionException("Property output directory '" + value.getAbsolutePath() + "' cannot be created!");
+            }
+        }
+        this.propertyOutputDirectory = value;
     }
 
     /**

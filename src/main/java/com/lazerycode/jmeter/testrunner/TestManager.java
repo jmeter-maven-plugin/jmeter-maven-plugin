@@ -17,14 +17,18 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * TestManager encapsules functions that gather JMeter Test files and execute the tests
+ */
+//TODO: should TestManager really extend JMeterMojo just for using getLog()?
 public class TestManager extends JMeterMojo {
 
     private JMeterArgumentsArray testArgs;
     private File jmeterLog;
     private File logsDir;
-    private File srcDir;
-    private List<String> jMeterTestFiles;
-    private List<String> excludeJMeterTestFiles;
+    private File testFilesDirectory;
+    private List<String> testFilesIncluded;
+    private List<String> testFilesExcluded;
     private boolean suppressJMeterOutput;
     private boolean remoteStop = false;
     private boolean remoteStartAll = false;
@@ -32,31 +36,20 @@ public class TestManager extends JMeterMojo {
     private String remoteStart = null;
     private int exitCheckPause = 2000;
 
-    public TestManager(JMeterArgumentsArray testArgs, File logsDir, File srcDir, List<String> testFiles, List<String> excludeTestFiles, boolean suppressJMeterOutput) {
+    public TestManager(JMeterArgumentsArray testArgs, File logsDir, File testFilesDirectory, List<String> testFiles, List<String> excludeTestFiles, boolean suppressJMeterOutput) {
         this.testArgs = testArgs;
         this.logsDir = logsDir;
-        this.srcDir = srcDir;
-        this.jMeterTestFiles = testFiles;
-        this.excludeJMeterTestFiles = excludeTestFiles;
+        this.testFilesDirectory = testFilesDirectory;
+        this.testFilesIncluded = testFiles;
+        this.testFilesExcluded = excludeTestFiles;
         this.suppressJMeterOutput = suppressJMeterOutput;
     }
 
-    //TODO: clean up RemoteConfig by using this getter
-    public void setRemoteConfig(RemoteConfig remoteConfig) {
-        if(remoteConfig == null) {
-            remoteConfig = new RemoteConfig();
-        }
-        setRemoteStartOptions(remoteConfig.isStop(), remoteConfig.isStartAll(), remoteConfig.isStartAndStopOnce(), remoteConfig.getStart());
-    }
-
-    private void setRemoteStartOptions(boolean remoteStop, boolean remoteStartAll, boolean remoteStartAndStopOnce, String remoteStart) {
-        this.remoteStop = remoteStop;
-        this.remoteStartAll = remoteStartAll;
-        this.remoteStartAndStopOnce = remoteStartAndStopOnce;
-        if (UtilityFunctions.isNotSet(remoteStart)) return;
-        this.remoteStart = remoteStart;
-    }
-
+    /**
+     * Set how long to wait for JMeter to clean up it's threads after a test run.
+     * Default: 2000 milliseconds.
+     * @param value int
+     */
     public void setExitCheckPause(int value) {
         if (value < 2000) {
             getLog().warn("Minimum value for jmeter.exit.check.pause is 2000 (2 Seconds), setting minimum value.");
@@ -65,20 +58,47 @@ public class TestManager extends JMeterMojo {
         this.exitCheckPause = value;
     }
 
+    /**
+     * Executes all tests and returns the resultFile names
+     * @return the list of resultFile names
+     * @throws MojoExecutionException
+     */
     public List<String> executeTests() throws MojoExecutionException {
         List<String> tests = generateTestList();
         List<String> results = new ArrayList<String>();
         for (String file : tests) {
-            if (this.remoteStartAndStopOnce == false || tests.get(tests.size() - 1).equals(file)) {
+            if (!this.remoteStartAndStopOnce || tests.get(tests.size() - 1).equals(file)) {
                 testArgs.setRemoteStop(this.remoteStop);
             }
-            if (this.remoteStartAndStopOnce == false || tests.get(0).equals(file)) {
+            if (!this.remoteStartAndStopOnce || tests.get(0).equals(file)) {
                 testArgs.setRemoteStartAll(this.remoteStartAll);
                 testArgs.setRemoteStart(this.remoteStart);
             }
-            results.add(executeSingleTest(new File(srcDir, file)));
+            results.add(executeSingleTest(new File(testFilesDirectory, file)));
         }
         return results;
+    }
+
+    /**
+     * Set remote configuration
+     * @param remoteConfig
+     */
+    //TODO: clean up RemoteConfig by using this getter
+    public void setRemoteConfig(RemoteConfig remoteConfig) {
+        if(remoteConfig == null) {
+            remoteConfig = new RemoteConfig();
+        }
+        setRemoteStartOptions(remoteConfig.isStop(), remoteConfig.isStartAll(), remoteConfig.isStartAndStopOnce(), remoteConfig.getStart());
+    }
+
+    //=============================================================================================
+
+    private void setRemoteStartOptions(boolean remoteStop, boolean remoteStartAll, boolean remoteStartAndStopOnce, String remoteStart) {
+        this.remoteStop = remoteStop;
+        this.remoteStartAll = remoteStartAll;
+        this.remoteStartAndStopOnce = remoteStartAndStopOnce;
+        if (UtilityFunctions.isNotSet(remoteStart)) return;
+        this.remoteStart = remoteStart;
     }
 
     /**
@@ -203,17 +223,21 @@ public class TestManager extends JMeterMojo {
         System.setProperty("log_file", this.jmeterLog.getAbsolutePath());
     }
 
+    /**
+     * Scan Project directories for JMeter Test Files according to includes and excludes
+     * @return found JMeter tests
+     */
     private List<String> generateTestList() {
         List<String> jmeterTestFiles = new ArrayList<String>();
         DirectoryScanner scanner = new DirectoryScanner();
-        scanner.setBasedir(this.srcDir);
-        scanner.setIncludes(this.jMeterTestFiles == null ? new String[]{"**/*.jmx"} : this.jMeterTestFiles.toArray(new String[jmeterTestFiles.size()]));
-        if (this.excludeJMeterTestFiles != null) {
-            scanner.setExcludes(this.excludeJMeterTestFiles.toArray(new String[excludeJMeterTestFiles.size()]));
+        scanner.setBasedir(this.testFilesDirectory);
+        scanner.setIncludes(this.testFilesIncluded == null ? new String[]{"**/*.jmx"} : this.testFilesIncluded.toArray(new String[jmeterTestFiles.size()]));
+        if (this.testFilesExcluded != null) {
+            scanner.setExcludes(this.testFilesExcluded.toArray(new String[testFilesExcluded.size()]));
         }
         scanner.scan();
         final List<String> includedFiles = Arrays.asList(scanner.getIncludedFiles());
-        Collections.sort(includedFiles, new IncludesComparator(this.jMeterTestFiles));
+        Collections.sort(includedFiles, new IncludesComparator(this.testFilesIncluded));
         jmeterTestFiles.addAll(includedFiles);
         return jmeterTestFiles;
     }

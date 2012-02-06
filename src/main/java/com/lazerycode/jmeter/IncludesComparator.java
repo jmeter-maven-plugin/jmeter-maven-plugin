@@ -22,6 +22,7 @@ public class IncludesComparator implements Comparator<String> {
      * that matches them in the given list. If the index is equal, the actual
      * filename lexicographical order is used to ensure a total order.
      */
+    @Override
     public int compare(String s1, String s2) {
         final int i1 = includesIndex(s1);
         final int i2 = includesIndex(s2);

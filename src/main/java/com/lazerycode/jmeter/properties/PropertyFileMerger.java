@@ -5,6 +5,11 @@ import com.lazerycode.jmeter.JMeterMojo;
 import java.util.Map;
 import java.util.Properties;
 
+/**
+ * Handler that can merge Properties objects and Maps
+ *
+ * @author Arne Franken, Mark Collin
+ */
 public class PropertyFileMerger extends JMeterMojo {
 
     private Properties baseProperties;

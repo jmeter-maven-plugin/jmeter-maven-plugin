@@ -16,6 +16,8 @@ package com.lazerycode.jmeter;
  * </proxyConfig>
  * }
  * </pre>
+ *
+ * @author Arne Franken
  */
 public class ProxyConfig {
 

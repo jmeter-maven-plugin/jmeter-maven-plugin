@@ -22,15 +22,17 @@ public class ErrorScanner {
     private int failureCount = 0;
     private int errorCount = 0;
 
-    /**
-     * @param ignoreErrors
-     * @param ignoreFailures
-     */
     public ErrorScanner(boolean ignoreErrors, boolean ignoreFailures) {
         this.ignoreErrors = ignoreErrors;
         this.ignoreFailures = ignoreFailures;
     }
 
+    /**
+     * Check given file for errors
+     * @param file
+     * @return true of file doesn't contain errors
+     * @throws IOException
+     */
     public boolean hasTestPassed(File file) throws IOException {
         resetErrorAndFailureCount();
         BufferedReader in = null;
@@ -52,10 +54,16 @@ public class ErrorScanner {
         }
     }
 
+    /**
+     * @return failureCount
+     */
     public int getFailureCount() {
         return this.failureCount;
     }
 
+    /**
+     * @return errorCount
+     */
     public int getErrorCount() {
         return this.errorCount;
     }

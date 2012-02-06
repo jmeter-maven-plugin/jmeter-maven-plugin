@@ -26,12 +26,14 @@ public class ReportTransformer {
 		}
 		this.transformer = tFactory.newTransformer(new StreamSource(xsl));
 	}
-	
-	public void transform(String inputFile, String outputFile) throws FileNotFoundException, TransformerException {
+
+	public void transform(String inputFile, String outputFile)
+            throws FileNotFoundException, TransformerException {
+
         transformer.transform(
-        new StreamSource(inputFile), 
-        new StreamResult(new FileOutputStream(outputFile)));        	
+            new StreamSource(inputFile),
+            new StreamResult(new FileOutputStream(outputFile))
+        );
 	}
-	 
-	
+
 }

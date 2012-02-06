@@ -15,6 +15,8 @@ package com.lazerycode.jmeter;
  * </remoteConfig>
  * }
  * </pre>
+ *
+ * @author Arne Franken
  */
 public class RemoteConfig {
 

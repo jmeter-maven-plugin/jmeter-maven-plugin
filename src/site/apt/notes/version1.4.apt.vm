@@ -10,7 +10,7 @@ Version 1.4.0 Release Notes
 
       * Custom property file locations cannnot be configured directly any more, they have to be put into <<src/test/jmeter/>>
 
-      * Renamed properties:
+      * Renamed/moved properties:
 
         * includes -> testFilesIncluded
 
@@ -19,6 +19,12 @@ Version 1.4.0 Release Notes
         * srcDir -> testFilesDirectory
 
         * enableReports -> reportConfig->enable
+
+        * reportDir -> reportConfig->outputDirectory
+
+        * reportPostfix -> reportConfig->postfix
+
+        * reportXslt -> reportConfig->xsltFile
 
         * jmeterIgnoreFailure -> ignoreResultFailures
 

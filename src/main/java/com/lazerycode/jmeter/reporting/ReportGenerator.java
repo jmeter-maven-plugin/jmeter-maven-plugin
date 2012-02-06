@@ -9,33 +9,32 @@ import javax.xml.transform.TransformerException;
 import java.io.*;
 import java.util.List;
 
-public class ReportGenerator extends JMeterMojo{
+/**
+ * ReportGenerator encapsules functions for generating reports
+ */
+//TODO: should ReportGenerator really extend JMeterMojo just for using getLog()?
+public class ReportGenerator extends JMeterMojo {
 
-    private String reportPostfix;
-    private File reportXslt;
-    private File reportDir;
-    private boolean createReports;
     private ReportConfig reportConfig;
-
-    public ReportGenerator(String reportPostfix, File reportXslt, File reportDir, boolean createReports) {
-        this.reportPostfix = reportPostfix;
-        this.reportXslt = reportXslt;
-        this.reportDir = reportDir;
-        this.createReports = createReports;
-    }
 
     public ReportGenerator(ReportConfig reportConfig) {
         this.reportConfig = reportConfig;
     }
 
-    public void makeReport(List<String> results) throws MojoExecutionException {
+    /**
+     * Create a report for every resultfile in the given list
+     *
+     * @param resultFiles list of resultfiles
+     * @throws MojoExecutionException
+     */
+    public void makeReport(List<String> resultFiles) throws MojoExecutionException {
         if (reportConfig.isEnable()) {
             try {
                 ReportTransformer transformer;
                 transformer = new ReportTransformer(getXslt());
                 getLog().info(" ");
                 getLog().info("Building JMeter Report(s)...");
-                for (String resultFile : results) {
+                for (String resultFile : resultFiles) {
                     final String outputFile = toOutputFileName(resultFile);
                     transformer.transform(resultFile, outputFile);
                     getLog().info(" ");
@@ -53,6 +52,8 @@ public class ReportGenerator extends JMeterMojo{
             getLog().info("Report generation disabled.");
         }
     }
+
+    //=======================================================================================================
 
     private InputStream getXslt() throws IOException {
         if (reportConfig.getXsltFile() == null) {

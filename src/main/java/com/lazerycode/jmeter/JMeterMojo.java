@@ -52,6 +52,13 @@ public class JMeterMojo extends AbstractMojo {
     private File testFilesDirectory;
 
     /**
+     * Timestamp the test results.
+     *
+     * @parameter default-value="true"
+     */
+    private boolean testResultsTimestamp;
+
+    /**
      * Directory in which the reports are stored.
      *
      * @parameter expression="${jmeter.reports.dir}"
@@ -340,6 +347,7 @@ public class JMeterMojo extends AbstractMojo {
      */
     private void initialiseJMeterArgumentsArray() throws MojoExecutionException {
         this.testArgs = new JMeterArgumentsArray(this.reportDir.getAbsolutePath());
+        this.testArgs.setResultsTimestamp(this.testResultsTimestamp);
         this.testArgs.setJMeterHome(this.workDir.getAbsolutePath());
         this.testArgs.setProxyHostDetails(this.proxyHost, this.proxyPort);
         this.testArgs.setProxyUsername(this.proxyUsername);

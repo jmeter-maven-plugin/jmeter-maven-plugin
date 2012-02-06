@@ -17,6 +17,7 @@ public class JMeterArgumentsArray {
 
     private LinkedHashMap<JMeterCommandLineArguments, Boolean> argumentMap = new LinkedHashMap<JMeterCommandLineArguments, Boolean>();
     private DateFormat fmt = new SimpleDateFormat("yyMMdd");
+    private boolean timestampResults = true;
     private String remoteStartList = null;
     private String nonProxyHosts = null;
     private String proxyHost = null;
@@ -162,7 +163,11 @@ public class JMeterArgumentsArray {
         if (UtilityFunctions.isNotSet(value)) return;
         this.testFile = value.getAbsolutePath();
         this.argumentMap.put(JMeterCommandLineArguments.TESTFILE_OPT, true);
-        this.resultsFileName = this.reportDirectory + File.separator + value.getName().substring(0, value.getName().lastIndexOf(".")) + "-" + fmt.format(new Date()) + ".jtl";
+        if (this.timestampResults) {
+            this.resultsFileName = this.reportDirectory + File.separator + value.getName().substring(0, value.getName().lastIndexOf(".")) + "-" + fmt.format(new Date()) + ".jtl";
+        } else {
+            this.resultsFileName = this.reportDirectory + File.separator + value.getName().substring(0, value.getName().lastIndexOf(".")) + ".jtl";
+        }
         this.argumentMap.put(JMeterCommandLineArguments.LOGFILE_OPT, true);
     }
 
@@ -170,6 +175,10 @@ public class JMeterArgumentsArray {
         if (UtilityFunctions.isNotSet(value)) return;
         this.jMeterHome = value;
         this.argumentMap.put(JMeterCommandLineArguments.JMETER_HOME_OPT, true);
+    }
+
+    public void setResultsTimestamp(boolean value) {
+        this.timestampResults = value;
     }
 
     public String getResultsFileName() {
@@ -295,7 +304,8 @@ public class JMeterArgumentsArray {
                     case REMOTE_OPT_PARAM:
                         argumentsArray.add(JMeterCommandLineArguments.REMOTE_OPT_PARAM.getCommandLineArgument());
                         argumentsArray.add(this.remoteStartList);
-                        break;}
+                        break;
+                }
             }
         }
         return argumentsArray.toArray(new String[]{});

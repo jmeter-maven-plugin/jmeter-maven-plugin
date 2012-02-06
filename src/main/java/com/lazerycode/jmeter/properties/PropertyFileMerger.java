@@ -35,6 +35,13 @@ public class PropertyFileMerger extends JMeterMojo {
 
     //==================================================================================================================
 
+    /**
+     * This will strip all reserved properties from a Properties object.
+     * (Used to ensure that restricted properties haven't been set in custom properties files)
+     *
+     * @param propertyFile
+     * @return
+     */
     private Properties stripReservedProperties(Properties propertyFile) {
         for (ReservedProperties reservedProperty : ReservedProperties.values()) {
             if (propertyFile.containsKey(reservedProperty.getPropertyKey())) {
@@ -45,6 +52,13 @@ public class PropertyFileMerger extends JMeterMojo {
         return propertyFile;
     }
 
+    /**
+     * Check to see if a property is restricted or not.
+     * (Used to check if properties set via the POM are restricted before merging them into the final properties file)
+     *
+     * @param value
+     * @return
+     */
     private boolean isReservedProperty(String value) {
         for (ReservedProperties reservedProperty : ReservedProperties.values()) {
             if (reservedProperty.getPropertyKey().equals(value)) {
@@ -54,6 +68,11 @@ public class PropertyFileMerger extends JMeterMojo {
         return false;
     }
 
+    /**
+     * Print a warning out to the user to highlight potential typos in the properties they have set.
+     *
+     * @param value
+     */
     private void warnUserOfPossibleErrors(String value) {
         for (String key : this.baseProperties.stringPropertyNames()) {
             if (!key.equals(value) && key.toLowerCase().equals(value.toLowerCase())) {

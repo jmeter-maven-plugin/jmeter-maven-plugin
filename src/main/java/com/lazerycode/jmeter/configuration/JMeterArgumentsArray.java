@@ -103,24 +103,28 @@ public class JMeterArgumentsArray {
         this.argumentMap.put(JMeterCommandLineArguments.PROXY_PASSWORD, true);
     }
 
+    //TODO enable this?  There is no defined name for this file so we can't automatically pick it up.
     public void setACustomPropertiesFile(File value) {
         if (UtilityFunctions.isNotSet(value)) return;
         this.customPropertiesFile = value.getAbsolutePath();
         this.argumentMap.put(JMeterCommandLineArguments.PROPFILE2_OPT, true);
     }
 
+    @Deprecated
     public void setASystemPropertiesFile(File value) {
         if (UtilityFunctions.isNotSet(value)) return;
         this.systemPropertiesFile = value.getAbsolutePath();
         this.argumentMap.put(JMeterCommandLineArguments.SYSTEM_PROPFILE, true);
     }
 
+    @Deprecated
     public void setUserProperties(Map value) {
         if (UtilityFunctions.isNotSet(value)) return;
         this.jMeterUserProperties = value;
         this.argumentMap.put(JMeterCommandLineArguments.JMETER_PROPERTY, true);
     }
 
+    @Deprecated
     public void setGlobalProperties(Map value) {
         if (UtilityFunctions.isNotSet(value)) return;
         this.jMeterGlobalProperties = value;
@@ -129,30 +133,35 @@ public class JMeterArgumentsArray {
         this.argumentMap.put(JMeterCommandLineArguments.JMETER_PROPERTY, true);
     }
 
+    @Deprecated
     public void setRemoteProperties(Map value) {
         if (UtilityFunctions.isNotSet(value)) return;
         this.jMeterGlobalProperties = value;
         this.argumentMap.put(JMeterCommandLineArguments.JMETER_GLOBAL_PROP, true);
     }
 
+    @Deprecated
     public void setRemotePropertiesFile(File value) {
         if (UtilityFunctions.isNotSet(value)) return;
         this.jMeterGlobalPropertiesFile = value.getAbsolutePath();
         this.argumentMap.put(JMeterCommandLineArguments.JMETER_GLOBAL_PROP, true);
     }
 
+    //TODO we should support this rather than expecting people to modify thier jmeter.properties
     public void setLogCategoriesOverrides(Map value) {
         if (UtilityFunctions.isNotSet(value)) return;
         this.overrideLogCategories = value;
         this.argumentMap.put(JMeterCommandLineArguments.LOGLEVEL, true);
     }
 
+    //TODO we should support this rather than expecting people to modify thier jmeter.properties
     public void setLogRootOverride(String value) {
         if (UtilityFunctions.isNotSet(value)) return;
         this.overrideRootLogLevel = value;
         this.argumentMap.put(JMeterCommandLineArguments.LOGLEVEL, true);
     }
 
+    @Deprecated
     public void setSystemProperties(Map value) {
         if (UtilityFunctions.isNotSet(value)) return;
         this.systemProperties = value;

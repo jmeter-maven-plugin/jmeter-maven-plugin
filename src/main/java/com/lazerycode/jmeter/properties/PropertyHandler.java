@@ -121,6 +121,10 @@ public class PropertyHandler extends JMeterMojo {
 
     /**
      * Merge properties from sourceFile and customProperties into the given outputDirectory
+     *
+     * @param propertyFile
+     * @param outputDirectory
+     * @throws MojoExecutionException
      */
     public void mergePropertiesFile(JMeterPropertiesFiles propertyFile, File outputDirectory) throws MojoExecutionException {
         InputStream sourceFile = null;

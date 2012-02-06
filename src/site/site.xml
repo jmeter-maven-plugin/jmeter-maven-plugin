@@ -41,5 +41,6 @@
             <item name="Proxy Settings" href="./examples/proxy-settings.html"/>
             <item name="Remote Start And Stop" href="./examples/remote-start-and-stop.html"/>
         </menu>
+        <menu ref="reports"/>
     </body>
 </project>

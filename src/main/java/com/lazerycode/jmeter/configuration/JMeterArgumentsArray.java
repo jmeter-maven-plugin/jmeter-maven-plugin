@@ -32,10 +32,10 @@ public class JMeterArgumentsArray {
     private String reportDirectory = null;
     private String overrideRootLogLevel = null;
     private String systemPropertiesFile = null;
-    private Map jMeterUserProperties = null;
-    private Map jMeterGlobalProperties = null;
-    private Map systemProperties = null;
-    private Map overrideLogCategories = null;
+    private Map<String,String> jMeterUserProperties = null;
+    private Map<String,String> jMeterGlobalProperties = null;
+    private Map<String,String> systemProperties = null;
+    private Map<String,String> overrideLogCategories = null;
 
     /**
      * The argument map will define which arguments are set on the command line.
@@ -118,14 +118,14 @@ public class JMeterArgumentsArray {
     }
 
     @Deprecated
-    public void setUserProperties(Map value) {
+    public void setUserProperties(Map<String,String> value) {
         if (UtilityFunctions.isNotSet(value)) return;
         this.jMeterUserProperties = value;
         this.argumentMap.put(JMeterCommandLineArguments.JMETER_PROPERTY, true);
     }
 
     @Deprecated
-    public void setGlobalProperties(Map value) {
+    public void setGlobalProperties(Map<String,String> value) {
         if (UtilityFunctions.isNotSet(value)) return;
         this.jMeterGlobalProperties = value;
         this.jMeterUserProperties = value;
@@ -134,7 +134,7 @@ public class JMeterArgumentsArray {
     }
 
     @Deprecated
-    public void setRemoteProperties(Map value) {
+    public void setRemoteProperties(Map<String,String> value) {
         if (UtilityFunctions.isNotSet(value)) return;
         this.jMeterGlobalProperties = value;
         this.argumentMap.put(JMeterCommandLineArguments.JMETER_GLOBAL_PROP, true);
@@ -148,7 +148,7 @@ public class JMeterArgumentsArray {
     }
 
     //TODO we should support this rather than expecting people to modify thier jmeter.properties
-    public void setLogCategoriesOverrides(Map value) {
+    public void setLogCategoriesOverrides(Map<String,String> value) {
         if (UtilityFunctions.isNotSet(value)) return;
         this.overrideLogCategories = value;
         this.argumentMap.put(JMeterCommandLineArguments.LOGLEVEL, true);
@@ -162,7 +162,7 @@ public class JMeterArgumentsArray {
     }
 
     @Deprecated
-    public void setSystemProperties(Map value) {
+    public void setSystemProperties(Map<String,String> value) {
         if (UtilityFunctions.isNotSet(value)) return;
         this.systemProperties = value;
         this.argumentMap.put(JMeterCommandLineArguments.SYSTEM_PROPERTY, true);
@@ -218,9 +218,9 @@ public class JMeterArgumentsArray {
             throw new MojoExecutionException("JMETER_HOME not set!");
         }
         ArrayList<String> argumentsArray = new ArrayList<String>();
-        Iterator mapIterator = argumentMap.entrySet().iterator();
+        Iterator<Map.Entry<JMeterCommandLineArguments, Boolean>> mapIterator = argumentMap.entrySet().iterator();
         while (mapIterator.hasNext()) {
-            Map.Entry<JMeterCommandLineArguments, Boolean> argument = (Map.Entry<JMeterCommandLineArguments, Boolean>) mapIterator.next();
+            Map.Entry<JMeterCommandLineArguments, Boolean> argument = mapIterator.next();
             if (argument.getValue()) {
                 switch (argument.getKey()) {
                     case NONGUI_OPT:
@@ -239,7 +239,7 @@ public class JMeterArgumentsArray {
                         argumentsArray.add(this.jMeterHome);
                         break;
                     case JMETER_PROPERTY:
-                        Set<String> userPropertySet = (Set<String>) this.jMeterUserProperties.keySet();
+                        Set<String> userPropertySet = this.jMeterUserProperties.keySet();
                         for (String property : userPropertySet) {
                             argumentsArray.add(JMeterCommandLineArguments.JMETER_PROPERTY.getCommandLineArgument());
                             argumentsArray.add(property + "=" + this.jMeterUserProperties.get(property));
@@ -247,7 +247,7 @@ public class JMeterArgumentsArray {
                         break;
                     case JMETER_GLOBAL_PROP:
                         if (this.jMeterGlobalPropertiesFile == null) {
-                            Set<String> globalPropertySet = (Set<String>) this.jMeterGlobalProperties.keySet();
+                            Set<String> globalPropertySet = this.jMeterGlobalProperties.keySet();
                             for (String property : globalPropertySet) {
                                 argumentsArray.add(JMeterCommandLineArguments.JMETER_GLOBAL_PROP.getCommandLineArgument());
                                 argumentsArray.add(property + "=" + this.jMeterGlobalProperties.get(property));
@@ -259,7 +259,7 @@ public class JMeterArgumentsArray {
                         break;
                     case LOGLEVEL:
                         if (this.overrideRootLogLevel == null) {
-                            Set<String> logCategorySet = (Set<String>) this.overrideLogCategories.keySet();
+                            Set<String> logCategorySet = this.overrideLogCategories.keySet();
                             for (String category : logCategorySet) {
                                 argumentsArray.add(JMeterCommandLineArguments.LOGLEVEL.getCommandLineArgument());
                                 argumentsArray.add(category + "=" + this.overrideLogCategories.get(category));
@@ -270,7 +270,7 @@ public class JMeterArgumentsArray {
                         }
                         break;
                     case SYSTEM_PROPERTY:
-                        Set<String> systemPropertySet = (Set<String>) this.systemProperties.keySet();
+                        Set<String> systemPropertySet = this.systemProperties.keySet();
                         for (String property : systemPropertySet) {
                             argumentsArray.add(JMeterCommandLineArguments.SYSTEM_PROPERTY.getCommandLineArgument());
                             argumentsArray.add(property + "=" + this.systemProperties.get(property));
@@ -313,10 +313,9 @@ public class JMeterArgumentsArray {
                     case REMOTE_OPT_PARAM:
                         argumentsArray.add(JMeterCommandLineArguments.REMOTE_OPT_PARAM.getCommandLineArgument());
                         argumentsArray.add(this.remoteStartList);
-                        break;
-                }
+                        break;}
             }
         }
-        return argumentsArray.toArray(new String[]{});
+        return argumentsArray.toArray(new String[argumentsArray.size()]);
     }
 }

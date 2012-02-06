@@ -258,7 +258,7 @@ public class JMeterMojo extends AbstractMojo {
         propertyConfiguration();
         setJMeterClasspath();
         initialiseJMeterArgumentsArray();
-        TestManager jMeterTestManager = new TestManager(this.testArgs, this.logsDir, this.testFilesDirectory, this.getLog(), this.testFilesIncluded, this.testFilesExcluded, this.suppressJMeterOutput);
+        TestManager jMeterTestManager = new TestManager(this.testArgs, this.logsDir, this.testFilesDirectory, this.testFilesIncluded, this.testFilesExcluded, this.suppressJMeterOutput);
         jMeterTestManager.setRemoteStartOptions(this.remoteStop, this.remoteStartAll, this.remoteStartAndStopOnce, this.remoteStart);
         getLog().info(" ");
         getLog().info(testArgs.getProxyDetails());

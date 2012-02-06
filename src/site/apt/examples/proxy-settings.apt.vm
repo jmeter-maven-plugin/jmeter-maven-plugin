@@ -4,9 +4,9 @@ Proxy Settings
 
     The proxy port will always default to 80 if it is not set.  If you do not set a proxy host any port setting will be ignored, the host is blank by default.
 
-    <<ProxyUsername>> and <<ProxyPassword>> are optional settings that are set independently, you can set a <<ProxyUsername>> and/or a <<ProxyPassword>> without setting a <<ProxyHost>> and they will be sent to JMeter.
+    <<username>> and <<password>> are optional settings that are set independently, you can set a <<username>> and/or a <<password>> without setting a <<host>> and they will be sent to JMeter.
 
-    You can also set an optional <<proxyHostExclusions>> element to notify JMeter of hosts that should not be proxied.  This setting is a regex.
+    You can also set an optional <<hostExclusions>> element to notify JMeter of hosts that should not be proxied.  This setting is a regex.
 
 +---+
 <project>
@@ -28,11 +28,13 @@ Proxy Settings
                         </execution>
                     </executions>
                     <configuration>
-                        <proxyHost>10.10.10.53</proxyHost>
-                        <proxyPort>80</proxyPort>
-                        <proxyUsername>jimbob</proxyUsername>
-                        <proxyPassword>correct horse battery staple</proxyPassword>
-                        <proxyHostExclusions>localhost|*.lazerycode.com</proxyHostExclusions>
+                        <proxyConfig>
+                            <host>10.10.10.53</host>
+                            <port>80</port>
+                            <username>jimbob</username>
+                            <password>correct horse battery staple</password>
+                            <hostExclusions>localhost|*.lazerycode.com</hostExclusions>
+                        </proxyConfig>
                     </configuration>
                 </plugin>
             </plugins>

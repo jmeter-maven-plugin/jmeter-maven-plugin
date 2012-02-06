@@ -59,35 +59,6 @@ public class JMeterMojo extends AbstractMojo {
     private boolean testResultsTimestamp;
 
     /**
-     * Directory in which the reports are stored.
-     *
-     * @parameter expression="${jmeter.reports.dir}"
-     * default-value="${basedir}/target/jmeter-reports"
-     */
-    private File reportDir;
-
-    /**
-     * Postfix to add to report file.
-     *
-     * @parameter default-value="-report.html"
-     */
-    private String reportPostfix;
-
-    /**
-     * Whether or not to generate reports after measurement.
-     *
-     * @parameter default-value="true"
-     */
-    private boolean reportEnable;
-
-    /**
-     * Custom Xslt which is used to create the report.
-     *
-     * @parameter
-     */
-    private File reportXslt;
-
-    /**
      * Absolute path to JMeter custom (test dependent) properties file.
      * .
      *
@@ -149,75 +120,32 @@ public class JMeterMojo extends AbstractMojo {
     private boolean ignoreResultErrors;
 
     /**
-     * Regex of hosts that will not be proxied
+     * Value class that wraps all proxy configurations.
      *
      * @parameter
      */
-    private String proxyHostExclusions;
+    private ProxyConfig proxyConfig;
 
     /**
-     * HTTP proxy host name.
+     * Value class that wraps all remote configurations.
      *
      * @parameter
      */
-    private String proxyHost;
+    private RemoteConfig remoteConfig;
 
     /**
-     * HTTP proxy port.
-     *
-     * @parameter expression="80"
+     * Value class that wraps all report configuration.
+     * 
+     * @parameter 
      */
-    private Integer proxyPort;
-
-    /**
-     * HTTP proxy username.
-     *
-     * @parameter
-     */
-    private String proxyUsername;
-
-    /**
-     * HTTP proxy user password.
-     *
-     * @parameter
-     */
-    private String proxyPassword;
-
+    private ReportConfig reportConfig;
+    
     /**
      * Suppress JMeter output
      *
      * @parameter default-value="true"
      */
     private boolean suppressJMeterOutput;
-
-    /**
-     * Stop remote servers when the test finishes
-     *
-     * @parameter default-value="false"
-     */
-    private boolean remoteStop;
-
-    /**
-     * Start all remote servers as defined in jmeter.properties when the test starts
-     *
-     * @parameter default-value="false"
-     */
-    private boolean remoteStartAll;
-
-    /**
-     * Comma separated list of servers to start when starting tests
-     *
-     * @parameter
-     */
-    private String remoteStart;
-
-    /**
-     * Remote start and stop for every test, or once for the entire test suite of tests.
-     * (Defaults to once for the entire suite of tests)
-     *
-     * @parameter default-value="true"
-     */
-    private boolean remoteStartAndStopOnce;
 
     /**
      * @parameter expression="${project}"
@@ -260,11 +188,11 @@ public class JMeterMojo extends AbstractMojo {
         setJMeterClasspath();
         initialiseJMeterArgumentsArray();
         TestManager jMeterTestManager = new TestManager(this.testArgs, this.logsDir, this.testFilesDirectory, this.testFilesIncluded, this.testFilesExcluded, this.suppressJMeterOutput);
-        jMeterTestManager.setRemoteStartOptions(this.remoteStop, this.remoteStartAll, this.remoteStartAndStopOnce, this.remoteStart);
+        jMeterTestManager.setRemoteConfig(remoteConfig);
         getLog().info(" ");
         getLog().info(testArgs.getProxyDetails());
         List<String> testResults = jMeterTestManager.executeTests();
-        new ReportGenerator(this.reportPostfix, this.reportXslt, this.reportDir, this.reportEnable).makeReport(testResults);
+        new ReportGenerator(reportConfig).makeReport(testResults);
         checkForErrors(testResults);
     }
 
@@ -282,8 +210,14 @@ public class JMeterMojo extends AbstractMojo {
         this.binDir.mkdirs();
         this.libExt = new File(this.workDir + File.separator + "lib" + File.separator + "ext");
         this.libExt.mkdirs();
-        reportDir = new File(workDir + File.separator + "report");
+        File reportDir = new File(workDir + File.separator + "report");
         reportDir.mkdirs();
+
+        //TODO: hack. Should be refactored.
+        if(reportConfig == null) {
+            reportConfig = new ReportConfig();
+        }
+        reportConfig.setOutputDirectory(reportDir);
         //JMeter expects a <workdir>/lib/junit directory and complains if it can't find it.
         new File(this.workDir + File.separator + "lib" + File.separator + "junit").mkdirs();
         //JMeter uses the system property "user.dir" to set its base working directory
@@ -347,13 +281,15 @@ public class JMeterMojo extends AbstractMojo {
      * @throws MojoExecutionException
      */
     private void initialiseJMeterArgumentsArray() throws MojoExecutionException {
-        this.testArgs = new JMeterArgumentsArray(this.reportDir.getAbsolutePath());
+        this.testArgs = new JMeterArgumentsArray(reportConfig.getOutputDirectory().getAbsolutePath());
         this.testArgs.setResultsTimestamp(this.testResultsTimestamp);
         this.testArgs.setJMeterHome(this.workDir.getAbsolutePath());
-        this.testArgs.setProxyHostDetails(this.proxyHost, this.proxyPort);
-        this.testArgs.setProxyUsername(this.proxyUsername);
-        this.testArgs.setProxyPassword(this.proxyPassword);
-        this.testArgs.setNonProxyHosts(this.proxyHostExclusions);
+        if(proxyConfig != null ) {
+            this.testArgs.setProxyHostDetails(proxyConfig.getHost(), proxyConfig.getPort());
+            this.testArgs.setProxyUsername(proxyConfig.getUsername());
+            this.testArgs.setProxyPassword(proxyConfig.getPassword());
+            this.testArgs.setNonProxyHosts(proxyConfig.getHostExclusions());
+        }
     }
 
     /**

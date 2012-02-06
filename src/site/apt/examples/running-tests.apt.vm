@@ -59,7 +59,6 @@ Selecting Tests To Run
                         </execution>
                     </executions>
                     <configuration>
-                        <reportDir>${project.build.directory}/jmeter-reports</reportDir>
                         <testFilesIncluded>
                             <jMeterTestFile>test1.jmx</jMeterTestFile>
                             <jMeterTestFile>test2.jmx</jMeterTestFile>
@@ -99,7 +98,6 @@ Selecting Tests To Run
                         </execution>
                     </executions>
                     <configuration>
-                        <reportDir>${project.build.directory}/jmeter-reports</reportDir>
                         <testFilesIncluded>
                             <jMeterTestFile>foo*.jmx</jMeterTestFile>
                         </testFilesIncluded>

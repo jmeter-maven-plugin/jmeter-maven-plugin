@@ -1,6 +1,7 @@
 package com.lazerycode.jmeter.reporting;
 
 import com.lazerycode.jmeter.JMeterMojo;
+import com.lazerycode.jmeter.ReportConfig;
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 
@@ -14,6 +15,7 @@ public class ReportGenerator extends JMeterMojo{
     private File reportXslt;
     private File reportDir;
     private boolean createReports;
+    private ReportConfig reportConfig;
 
     public ReportGenerator(String reportPostfix, File reportXslt, File reportDir, boolean createReports) {
         this.reportPostfix = reportPostfix;
@@ -22,8 +24,12 @@ public class ReportGenerator extends JMeterMojo{
         this.createReports = createReports;
     }
 
+    public ReportGenerator(ReportConfig reportConfig) {
+        this.reportConfig = reportConfig;
+    }
+
     public void makeReport(List<String> results) throws MojoExecutionException {
-        if (this.createReports) {
+        if (reportConfig.isEnable()) {
             try {
                 ReportTransformer transformer;
                 transformer = new ReportTransformer(getXslt());
@@ -49,13 +55,13 @@ public class ReportGenerator extends JMeterMojo{
     }
 
     private InputStream getXslt() throws IOException {
-        if (this.reportXslt == null) {
+        if (reportConfig.getXsltFile() == null) {
             //if we are using the default report, also copy the images out.
-            IOUtils.copy(Thread.currentThread().getContextClassLoader().getResourceAsStream("reports/collapse.jpg"), new FileOutputStream(this.reportDir.getPath() + File.separator + "collapse.jpg"));
-            IOUtils.copy(Thread.currentThread().getContextClassLoader().getResourceAsStream("reports/expand.jpg"), new FileOutputStream(this.reportDir.getPath() + File.separator + "expand.jpg"));
+            IOUtils.copy(Thread.currentThread().getContextClassLoader().getResourceAsStream("reports/collapse.jpg"), new FileOutputStream(reportConfig.getOutputDirectory().getPath() + File.separator + "collapse.jpg"));
+            IOUtils.copy(Thread.currentThread().getContextClassLoader().getResourceAsStream("reports/expand.jpg"), new FileOutputStream(reportConfig.getOutputDirectory().getPath() + File.separator + "expand.jpg"));
             return Thread.currentThread().getContextClassLoader().getResourceAsStream("reports/jmeter-results-detail-report_21.xsl");
         } else {
-            return new FileInputStream(this.reportXslt);
+            return new FileInputStream(reportConfig.getXsltFile());
         }
     }
 
@@ -67,9 +73,9 @@ public class ReportGenerator extends JMeterMojo{
      */
     private String toOutputFileName(String fileName) {
         if (fileName.endsWith(".xml")) {
-            return fileName.replace(".xml", this.reportPostfix);
+            return fileName.replace(".xml", reportConfig.getPostfix());
         } else {
-            return fileName + this.reportPostfix;
+            return fileName + reportConfig.getPostfix();
         }
     }
 }

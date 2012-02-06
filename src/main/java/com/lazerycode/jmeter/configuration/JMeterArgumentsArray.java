@@ -1,5 +1,6 @@
 package com.lazerycode.jmeter.configuration;
 
+import com.lazerycode.jmeter.ProxyConfig;
 import com.lazerycode.jmeter.UtilityFunctions;
 import org.apache.maven.plugin.MojoExecutionException;
 
@@ -83,6 +84,11 @@ public class JMeterArgumentsArray {
         this.argumentMap.put(JMeterCommandLineArguments.NONPROXY_HOSTS, true);
     }
 
+    //TODO: clean up ProxyConfig, consolidate other setters into this one
+    public void setProxyConfig(ProxyConfig proxyConfig) {
+
+    }
+    
     public void setProxyHostDetails(String value, int port) {
         if (UtilityFunctions.isNotSet(value)) return;
         this.proxyHost = value;

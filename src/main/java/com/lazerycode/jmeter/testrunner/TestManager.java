@@ -2,6 +2,7 @@ package com.lazerycode.jmeter.testrunner;
 
 import com.lazerycode.jmeter.IncludesComparator;
 import com.lazerycode.jmeter.JMeterMojo;
+import com.lazerycode.jmeter.RemoteConfig;
 import com.lazerycode.jmeter.UtilityFunctions;
 import com.lazerycode.jmeter.configuration.JMeterArgumentsArray;
 import org.apache.commons.io.output.NullOutputStream;
@@ -40,7 +41,15 @@ public class TestManager extends JMeterMojo {
         this.suppressJMeterOutput = suppressJMeterOutput;
     }
 
-    public void setRemoteStartOptions(boolean remoteStop, boolean remoteStartAll, boolean remoteStartAndStopOnce, String remoteStart) {
+    //TODO: clean up RemoteConfig by using this getter
+    public void setRemoteConfig(RemoteConfig remoteConfig) {
+        if(remoteConfig == null) {
+            remoteConfig = new RemoteConfig();
+        }
+        setRemoteStartOptions(remoteConfig.isStop(), remoteConfig.isStartAll(), remoteConfig.isStartAndStopOnce(), remoteConfig.getStart());
+    }
+
+    private void setRemoteStartOptions(boolean remoteStop, boolean remoteStartAll, boolean remoteStartAndStopOnce, String remoteStart) {
         this.remoteStop = remoteStop;
         this.remoteStartAll = remoteStartAll;
         this.remoteStartAndStopOnce = remoteStartAndStopOnce;
@@ -88,9 +97,10 @@ public class TestManager extends JMeterMojo {
             testArgs.setTestFile(test);
             //Delete results file if it already exists
             new File(testArgs.getResultsFileName()).delete();
-            if (getLog().isDebugEnabled()) {
+            //TODO: for some reason, if running mvn with "-X", this log message does not appear if DebugEnabled is checked first.
+            //if (getLog().isDebugEnabled()) {
                 getLog().debug("JMeter is called with the following command line arguments: " + UtilityFunctions.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()));
-            }
+            //}
 
             // This mess is necessary because JMeter likes to use System.exit.
             // We need to trap the exit call.

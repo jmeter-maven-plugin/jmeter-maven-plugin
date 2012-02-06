@@ -66,7 +66,7 @@ public class ErrorScanner {
      * protected for testing
      *
      * @param line
-     * @return
+     * @return boolean
      * @throws MojoFailureException
      */
     protected boolean checkLineForErrors(String line) {

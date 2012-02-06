@@ -166,8 +166,7 @@ public class PropertyHandler extends JMeterMojo {
     private InputStream getSourcePropertyFile(JMeterPropertiesFiles value) throws IOException {
         File sourcePropertyFile = new File(this.propertySourceDirectory.getCanonicalFile() + File.separator + value.getPropertiesFileName());
         if (!sourcePropertyFile.exists()) {
-            //TODO: why do we log on warn that there is no custom properties file? Changed to info for now. Maybe remove?
-            getLog().info("No custom file " + value.getPropertiesFileName() + " found ...");
+            getLog().debug("No custom file " + value.getPropertiesFileName() + " found ...");
             if (value.createFileIfItDoesntExist()) {
                 getLog().info("Using default JMeter version of " + value.getPropertiesFileName() + "...");
                 JarFile propertyJar = new JarFile(this.jMeterConfigArtifact.getFile());

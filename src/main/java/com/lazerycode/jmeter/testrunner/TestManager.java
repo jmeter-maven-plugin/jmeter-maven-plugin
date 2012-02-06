@@ -1,12 +1,12 @@
 package com.lazerycode.jmeter.testrunner;
 
 import com.lazerycode.jmeter.IncludesComparator;
+import com.lazerycode.jmeter.JMeterMojo;
 import com.lazerycode.jmeter.UtilityFunctions;
 import com.lazerycode.jmeter.configuration.JMeterArgumentsArray;
 import org.apache.commons.io.output.NullOutputStream;
 import org.apache.jmeter.JMeter;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.logging.Log;
 import org.apache.tools.ant.DirectoryScanner;
 
 import java.io.*;
@@ -16,10 +16,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class TestManager {
+public class TestManager extends JMeterMojo {
 
     private JMeterArgumentsArray testArgs;
-    private Log log;
     private File jmeterLog;
     private File logsDir;
     private File srcDir;
@@ -32,11 +31,10 @@ public class TestManager {
     private String remoteStart = null;
     private int exitCheckPause = 2000;
 
-    public TestManager(JMeterArgumentsArray testArgs, File logsDir, File srcDir, Log log, List<String> testFiles, List<String> excludeTestFiles, boolean suppressJMeterOutput) {
+    public TestManager(JMeterArgumentsArray testArgs, File logsDir, File srcDir, List<String> testFiles, List<String> excludeTestFiles, boolean suppressJMeterOutput) {
         this.testArgs = testArgs;
         this.logsDir = logsDir;
         this.srcDir = srcDir;
-        this.log = log;
         this.jMeterTestFiles = testFiles;
         this.excludeJMeterTestFiles = excludeTestFiles;
         this.suppressJMeterOutput = suppressJMeterOutput;
@@ -51,7 +49,10 @@ public class TestManager {
     }
 
     public void setExitCheckPause(int value) {
-        if (value < 2000) return;
+        if (value < 2000) {
+            getLog().warn("Minimum value for jmeter.exit.check.pause is 2000 (2 Seconds), setting minimum value.");
+            return;
+        }
         this.exitCheckPause = value;
     }
 
@@ -83,12 +84,12 @@ public class TestManager {
     private String executeSingleTest(File test) throws MojoExecutionException {
 
         try {
-            log.info(" ");
+            getLog().info(" ");
             testArgs.setTestFile(test);
             //Delete results file if it already exists
             new File(testArgs.getResultsFileName()).delete();
-            if (log.isDebugEnabled()) {
-                log.debug("JMeter is called with the following command line arguments: " + UtilityFunctions.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()));
+            if (getLog().isDebugEnabled()) {
+                getLog().debug("JMeter is called with the following command line arguments: " + UtilityFunctions.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()));
             }
 
             // This mess is necessary because JMeter likes to use System.exit.
@@ -118,7 +119,7 @@ public class TestManager {
                     if (e instanceof ExitException && ((ExitException) e).getCode() == 0) {
                         return; // Ignore
                     }
-                    log.error("Error in thread " + t.getName());
+                    getLog().error("Error in thread " + t.getName());
                 }
             });
             PrintStream originalOut = System.out;
@@ -126,7 +127,7 @@ public class TestManager {
                 // This mess is necessary because the only way to know when
                 // JMeter is done is to wait for its test end message!                
                 setJMeterLogFile(test.getName() + ".log");
-                log.info("Executing test: " + test.getName());
+                getLog().info("Executing test: " + test.getName());
                 //Suppress JMeter's annoying System.out messages
                 if (suppressJMeterOutput) System.setOut(new PrintStream(new NullOutputStream()));
                 new JMeter().start(testArgs.buildArgumentsArray());
@@ -151,7 +152,7 @@ public class TestManager {
                 System.setSecurityManager(oldManager);
                 Thread.setDefaultUncaughtExceptionHandler(oldHandler);
                 System.setOut(originalOut);
-                log.info("Completed Test: " + test.getName());
+                getLog().info("Completed Test: " + test.getName());
             }
             return testArgs.getResultsFileName();
         } catch (IOException e) {

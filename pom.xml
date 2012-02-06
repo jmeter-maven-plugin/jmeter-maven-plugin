@@ -30,7 +30,7 @@
     <scm>
         <connection>scm:git:git@github.com:Ronnie76er/jmeter-maven-plugin.git</connection>
         <developerConnection>scm:git:git@github.com:Ronnie76er/jmeter-maven-plugin.git</developerConnection>
-        <url>git@github.com:Ronnie76er/jmeter-maven-plugin.git</url>
+        <url>https://github.com/Ronnie76er/jmeter-maven-plugin</url>
     </scm>
 
     <developers>

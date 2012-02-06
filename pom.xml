@@ -236,6 +236,43 @@
                     <version>3.0</version>
                     <configuration>
                         <locales>en</locales>
+                        <inputEncoding>UTF-8</inputEncoding>
+                        <outputEncoding>UTF-8</outputEncoding>
+                        <reportPlugins>
+                            <reportPlugin>
+                                <groupId>org.apache.maven.plugins</groupId>
+                                <artifactId>maven-project-info-reports-plugin</artifactId>
+                                <configuration>
+                                    <dependencyDetailsEnabled>false</dependencyDetailsEnabled>
+                                    <dependencyLocationsEnabled>false</dependencyLocationsEnabled>
+                                </configuration>
+                                <reportSets>
+                                    <reportSet>
+                                        <reports>
+                                            <!-- TODO: move content from "index" to "basic usage" and write new text for index/about page -->
+                                            <!--<report>index</report>-->
+                                            <report>summary</report>
+                                            <report>dependency-management</report>
+                                            <!-- TODO: add <issueManagement> configuration to POM, then re-enable -->
+                                            <!--<report>issue-tracking</report>-->
+                                            <report>help</report>
+                                            <report>modules</report>
+                                            <report>dependencies</report>
+                                            <report>plugins</report>
+                                            <!-- TODO: add <ciManagement> configuration to POM, then re-enable -->
+                                            <!--<report>cim</report>-->
+                                            <report>license</report>
+                                            <!-- TODO: add <mailingLists> configuration to POM, then re-enable -->
+                                            <!--<report>mailing-list</report>-->
+                                            <report>project-team</report>
+                                            <report>scm</report>
+                                            <report>dependencies</report>
+                                            <report>distribution-management</report>
+                                        </reports>
+                                    </reportSet>
+                                </reportSets>
+                            </reportPlugin>
+                        </reportPlugins>
                     </configuration>
                 </plugin>
                 <plugin>

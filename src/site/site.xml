@@ -27,6 +27,9 @@
         <menu name="Overview">
             <item name="Basic Usage" href="index.html"/>
         </menu>
+        <menu name="Release Information">
+            <item name="Version 1.4.0" href="./notes/version1.4.html"/>
+        </menu>
         <menu name="Configuration">
             <item name="Selecting Tests" href="./examples/running-tests.html"/>
             <item name="JMeter Properties" href="./examples/setting-jmeter-properties.html"/>
@@ -37,9 +40,6 @@
             <item name="Upgrade Properties" href="./examples/setting-upgrade-properties.html"/>
             <item name="Proxy Settings" href="./examples/proxy-settings.html"/>
             <item name="Remote Start And Stop" href="./examples/remote-start-and-stop.html"/>
-        </menu>
-        <menu name="Notes">
-            <item name="Release Notes" href="./notes/release-notes.html"/>
         </menu>
     </body>
 </project>

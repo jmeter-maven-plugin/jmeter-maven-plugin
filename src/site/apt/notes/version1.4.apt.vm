@@ -1,6 +1,4 @@
-Release Notes
-
-* Version 1.4
+Version 1.4.0 Release Notes
 
   * New <<group.id>> <<<com.lazerycode.jmeter>>>
 
@@ -10,7 +8,7 @@ Release Notes
 
   * Incompatible configuration element changes
 
-      * Custom property files can't be configured directly any more, they have to be put into <<src/test/jmeter/>>
+      * Custom property file locations cannnot be configured directly any more, they have to be put into <<src/test/jmeter/>>
 
       * Renamed properties:
 
@@ -18,7 +16,7 @@ Release Notes
 
         * excludes -> testFilesExcluded
 
-        * srcDir -> testfileDirectory
+        * srcDir -> testFilesDirectory
 
         * enableReports -> reportEnable
 
@@ -32,8 +30,10 @@ Release Notes
 
   * New properties
 
-    * proxyHost, proxyPort, proxyUsername, proxyPassword, nonProxyHosts used to configure a proxy used by JMeter
+    * proxyHost, proxyPort, proxyUsername, proxyPassword, nonProxyHosts - used to configure a proxy used by JMeter
 
-    * suppressJMeterOutput suppress JMeter output to standard out (Default: true)
+    * suppressJMeterOutput(Default: true) - suppress JMeter output to standard out.
 
-    * remoteStart, remoteStop, remoteStartAll, remoteStartAndStopOnce used to configure handling of remote testing
+    * remoteStart, remoteStop, remoteStartAll, remoteStartAndStopOnce - used to configure handling of remote testing.
+
+    * testResultsTimestamp(Default: true) - enable/disable timestamping of the results filename(s).

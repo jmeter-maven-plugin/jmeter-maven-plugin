@@ -49,48 +49,34 @@
             </roles>
         </developer>
         <developer>
-            <id>yciabaud</id>
-            <name>Yoann Ciabaud</name>
-            <roles>
-                <role>Comitter</role>
-            </roles>
-        </developer>
-        <developer>
-            <id>ascheman</id>
-            <name>Gerd Aschemann</name>
-            <roles>
-                <role>Comitter</role>
-            </roles>
-        </developer>
-        <developer>
             <id>Ronnie76er</id>
             <name>Ron Alleva</name>
             <roles>
                 <role>Comitter</role>
             </roles>
         </developer>
-        <developer>
-            <id>captrespect</id>
-            <name>Jonathon Roberts</name>
-            <roles>
-                <role>Comitter</role>
-            </roles>
-        </developer>
-        <developer>
-            <id>dyokomizo</id>
-            <name>Daniel Yokomizo</name>
-            <roles>
-                <role>Comitter</role>
-            </roles>
-        </developer>
-        <developer>
-            <id>mantree</id>
-            <name>Tom Coupland</name>
-            <roles>
-                <role>Comitter</role>
-            </roles>
-        </developer>
     </developers>
+
+    <contributors>
+        <contributor>
+            <name>Tom Coupland</name>
+        </contributor>
+        <contributor>
+            <name>Daniel Yokomizo</name>
+        </contributor>
+        <contributor>
+            <name>Gerd Aschemann</name>
+        </contributor>
+        <contributor>
+            <name>Yoann Ciabaud</name>
+        </contributor>
+        <contributor>
+            <name>Tim McCune</name>
+        </contributor>
+        <contributor>
+            <name>Jon Roberts</name>
+        </contributor>
+    </contributors>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -274,20 +260,6 @@
                             </reportPlugin>
                         </reportPlugins>
                     </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-source-plugin</artifactId>
-                    <version>2.1.2</version>
-                    <executions>
-                        <execution>
-                            <id>attach-sources</id>
-                            <phase>verify</phase>
-                            <goals>
-                                <goal>jar</goal>
-                            </goals>
-                        </execution>
-                    </executions>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>

@@ -230,6 +230,7 @@ public class JMeterMojo extends AbstractMojo {
      * Get a list of artifacts used by this plugin
      *
      * @parameter default-value="${plugin.artifacts}"
+     * @required
      * @readonly
      */
     private List<Artifact> pluginArtifacts;
@@ -290,7 +291,7 @@ public class JMeterMojo extends AbstractMojo {
     }
 
     private void propertyConfiguration() throws MojoExecutionException {
-        this.pluginProperties = new PropertyHandler(this.testFilesDirectory, this.binDir, getArtifactNamed(this.jmeterConfigArtifact), getLog());
+        this.pluginProperties = new PropertyHandler(this.testFilesDirectory, this.binDir, getArtifactNamed(this.jmeterConfigArtifact));
         this.pluginProperties.setJMeterProperties(this.propertiesJMeter);
         this.pluginProperties.setJMeterGlobalProperties(this.propertiesGlobal);
         this.pluginProperties.setJMeterSaveServiceProperties(this.propertiesSaveService);

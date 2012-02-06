@@ -4,7 +4,6 @@ import com.lazerycode.jmeter.JMeterMojo;
 import com.lazerycode.jmeter.UtilityFunctions;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.logging.Log;
 
 import java.io.*;
 import java.util.HashMap;
@@ -28,7 +27,7 @@ public class PropertyHandler extends JMeterMojo {
     private File propertySourceDirectory;
     private File propertyOutputDirectory;
 
-    public PropertyHandler(File sourceDirectory, File outputDirectory, Artifact jMeterConfigArtifact, Log log) throws MojoExecutionException {
+    public PropertyHandler(File sourceDirectory, File outputDirectory, Artifact jMeterConfigArtifact) throws MojoExecutionException {
         setSourceDirectory(sourceDirectory);
         setOutputDirectory(outputDirectory);
         this.jMeterConfigArtifact = jMeterConfigArtifact;

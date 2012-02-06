@@ -1,71 +1,102 @@
 package com.lazerycode.jmeter;
 
 /**
- * Value class that contains all proxy related configuration
+ * Is used for configuration of all proxy related configuration.
+ * <p>
+ * Configuration in pom.xml:
+ * <p>
+ * <pre>
+ * {@code
+ * <proxyConfig>
+ *     <host></host>
+ *     <port></port>
+ *     <username></username>
+ *     <password></password>
+ *     <hostExclusions></hostExclusions>
+ * </proxyConfig>
+ * }
+ * </pre>
  */
 public class ProxyConfig {
 
-    /**
-     * Regex of hosts that will not be proxied
-     */
     private String hostExclusions = "";
-
-    /**
-     * HTTP proxy host name.
-     */
     private String host = "";
-
-    /**
-     * HTTP proxy port.
-     */
     private Integer port = 80;
+    private String username = "";
+    private String password = "";
 
     /**
-     * HTTP proxy username.
+     * @return Regex of hosts that will not be proxied
      */
-    private String username;
-
-    /**
-     * HTTP proxy user password.
-     */
-    private String password;
-
     public String getHostExclusions() {
-        return hostExclusions == null ? "" : hostExclusions;
+        return hostExclusions;
     }
 
+    /**
+     * Regex of hosts that will not be proxied
+     * @param hostExclusions
+     */
     public void setHostExclusions(String hostExclusions) {
         this.hostExclusions = hostExclusions;
     }
 
+    /**
+     * @return HTTP proxy host name
+     */
     public String getHost() {
         return host;
     }
 
+    /**
+     * HTTP proxy host name
+     * @param host
+     */
     public void setHost(String host) {
         this.host = host;
     }
 
+    /**
+     * @return HTTP proxy port
+     */
     public Integer getPort() {
-        return port == null ? 80 : port;
+        return port;
     }
 
+    /**
+     * HTTP proxy port
+     * Default: 80
+     * @param port
+     */
     public void setPort(Integer port) {
         this.port = port;
     }
 
+    /**
+     * @return HTTP proxy username
+     */
     public String getUsername() {
-        return username == null ? "" : username;
+        return username;
     }
 
+    /**
+     * HTTP proxy username
+     * @param username
+     */
     public void setUsername(String username) {
         this.username = username;
     }
 
+    /**
+     * @return HTTP proxy user password
+     */
     public String getPassword() {
-        return password == null ? "" : password;
+        return password;
     }
 
+    /**
+     * HTTP proxy user password
+     * @param password
+     */
     public void setPassword(String password) {
         this.password = password;
     }

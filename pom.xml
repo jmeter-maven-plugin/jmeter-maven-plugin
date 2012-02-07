@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.lazerycode.jmeter</groupId>
     <artifactId>jmeter-maven-plugin</artifactId>
-    <version>1.5-SNAPSHOT</version>
+    <version>DEV-SNAPSHOT</version>
     <packaging>maven-plugin</packaging>
 
     <name>JMeter Maven Plugin</name>
@@ -308,14 +308,6 @@
                                 </reportSets>
                             </reportPlugin>
                         </reportPlugins>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <artifactId>maven-release-plugin</artifactId>
-                    <version>2.2.2</version>
-                    <configuration>
-                        <releaseProfiles>release</releaseProfiles>
-                        <goals>deploy assembly:assembly</goals>
                     </configuration>
                 </plugin>
             </plugins>

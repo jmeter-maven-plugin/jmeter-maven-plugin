@@ -48,21 +48,14 @@ Basic Usage
 
 ### Add the plugin to your project
 
-* Add this projects Maven repository to your project (or personal maven repo):
-
-        <pluginRepositories>
-		    <pluginRepository>
-            	<id>Sonatype Repository</id>
-            	<url>https://oss.sonatype.org/content/groups/staging</url>
-            </pluginRepository>
-		</pluginRepositories>
+The plugin is now in the central maven repository so you should no longer specify a repository.
 
 * Add the plugin to the build section of your pom's project :
 
 		<plugin>
 			<groupId>com.lazerycode.jmeter</groupId>
 			<artifactId>jmeter-maven-plugin</artifactId>
-			<version>1.4-SNAPSHOT</version>
+			<version>1.4</version>
 			<executions>
 				<execution>
 					<id>jmeter-tests</id>

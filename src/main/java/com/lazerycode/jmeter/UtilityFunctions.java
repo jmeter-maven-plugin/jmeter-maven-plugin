@@ -10,6 +10,11 @@ import java.util.Map;
  */
 public class UtilityFunctions {
 
+    /**
+     * private constructor for non-instantiable helper classes
+     */
+    private UtilityFunctions() {}
+
     public static String humanReadableCommandLineOutput(String[] arguments) {
         String debugOutput = "";
         for (String argument : arguments) {

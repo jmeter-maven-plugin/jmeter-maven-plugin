@@ -15,7 +15,7 @@ public class PropertyFileMerger extends JMeterMojo {
     private Properties baseProperties;
 
     public PropertyFileMerger(Properties baseProperties) {
-        this.baseProperties = stripReservedProperties(baseProperties);
+        this.baseProperties = baseProperties;
     }
 
     /**
@@ -27,14 +27,11 @@ public class PropertyFileMerger extends JMeterMojo {
     public Properties mergeProperties(Map<String, String> customProperties) {
         if (customProperties != null && !customProperties.isEmpty()) {
             for (String key : customProperties.keySet()) {
-                if (!isReservedProperty(key)) {
-                    this.baseProperties.setProperty(key, customProperties.get(key));
-                } else {
-                    getLog().warn("Unable to set '" + key + "', it is a reserved property in the jmeter-maven-plugin");
-                }
+                this.baseProperties.setProperty(key, customProperties.get(key));
                 warnUserOfPossibleErrors(key);
             }
         }
+        this.baseProperties = stripReservedProperties(this.baseProperties);
         return this.baseProperties;
     }
 
@@ -58,22 +55,6 @@ public class PropertyFileMerger extends JMeterMojo {
     }
 
     /**
-     * Check to see if a property is restricted or not.
-     * (Used to check if properties set via the POM are restricted before merging them into the final properties file)
-     *
-     * @param value
-     * @return
-     */
-    private boolean isReservedProperty(String value) {
-        for (ReservedProperties reservedProperty : ReservedProperties.values()) {
-            if (reservedProperty.getPropertyKey().equals(value)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
      * Print a warning out to the user to highlight potential typos in the properties they have set.
      *
      * @param value
@@ -86,4 +67,3 @@ public class PropertyFileMerger extends JMeterMojo {
         }
     }
 }
-

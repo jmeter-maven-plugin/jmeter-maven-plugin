@@ -135,17 +135,26 @@ public class JMeterMojo extends AbstractMojo {
 
     /**
      * Value class that wraps all report configuration.
-     * 
-     * @parameter 
+     *
+     * @parameter
      */
     private ReportConfig reportConfig;
-    
+
     /**
      * Suppress JMeter output
      *
      * @parameter default-value="true"
      */
     private boolean suppressJMeterOutput;
+
+    /**
+     * set the pause time after a test to allow JMeter to clean up threads.
+     * If you see errors stating that threads have not been shut down cleanly you may need to increase the pause time.
+     * JMeter default is 2000 (2 seconds).
+     *
+     * @parameter
+     */
+    private int setExitCheckPause;
 
     /**
      * @parameter expression="${project}"
@@ -188,11 +197,12 @@ public class JMeterMojo extends AbstractMojo {
         setJMeterClasspath();
         initialiseJMeterArgumentsArray();
         TestManager jMeterTestManager = new TestManager(this.testArgs, this.logsDir, this.testFilesDirectory, this.testFilesIncluded, this.testFilesExcluded, this.suppressJMeterOutput);
-        jMeterTestManager.setRemoteConfig(remoteConfig);
+        jMeterTestManager.setRemoteConfig(this.remoteConfig);
+        jMeterTestManager.setExitCheckPause(this.setExitCheckPause);
         getLog().info(" ");
-        getLog().info(testArgs.getProxyDetails());
+        getLog().info(this.testArgs.getProxyDetails());
         List<String> testResults = jMeterTestManager.executeTests();
-        new ReportGenerator(reportConfig).makeReport(testResults);
+        new ReportGenerator(this.reportConfig).makeReport(testResults);
         checkForErrors(testResults);
     }
 
@@ -202,7 +212,7 @@ public class JMeterMojo extends AbstractMojo {
      * Generate the directory tree utilised by JMeter.
      */
     private void generateJMeterDirectoryTree() {
-        this.workDir = new File(mavenProject.getBasedir() + File.separator + "target" + File.separator + "jmeter");
+        this.workDir = new File(this.mavenProject.getBasedir() + File.separator + "target" + File.separator + "jmeter");
         this.workDir.mkdirs();
         this.logsDir = new File(this.workDir + File.separator + "jmeter-logs");
         this.logsDir.mkdirs();
@@ -234,7 +244,6 @@ public class JMeterMojo extends AbstractMojo {
         this.pluginProperties.setJMeterSystemProperties(this.propertiesSystem);
         this.pluginProperties.configureJMeterPropertiesFiles();
     }
-
 
     /**
      * Copy jars to JMeter ext dir for JMeter function search and set the classpath.

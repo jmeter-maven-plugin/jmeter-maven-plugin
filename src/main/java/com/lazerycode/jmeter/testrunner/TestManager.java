@@ -117,10 +117,7 @@ public class TestManager extends JMeterMojo {
             testArgs.setTestFile(test);
             //Delete results file if it already exists
             new File(testArgs.getResultsFileName()).delete();
-            //TODO: for some reason, if running mvn with "-X", this log message does not appear if DebugEnabled is checked first.
-            //if (getLog().isDebugEnabled()) {
-                getLog().debug("JMeter is called with the following command line arguments: " + UtilityFunctions.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()));
-            //}
+            getLog().debug("JMeter is called with the following command line arguments: " + UtilityFunctions.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()));
 
             // This mess is necessary because JMeter likes to use System.exit.
             // We need to trap the exit call.

@@ -12,27 +12,45 @@ import java.util.Properties;
  */
 public class PropertyFileMerger extends JMeterMojo {
 
-    private Properties baseProperties;
-
-    public PropertyFileMerger(Properties baseProperties) {
-        this.baseProperties = baseProperties;
+    public PropertyFileMerger() {
     }
 
+    /**
+     * Merge two properties files together.
+     * The additions will overwrite any existing properties in source if required.
+     *
+     * @param source
+     * @param additions
+     * @return
+     */
+    public Properties mergePropertiesFiles(Properties source, Properties additions) {
+        if (source == null && additions == null) {
+            return new Properties();
+        } else if (source == null) {
+            return additions;
+        } else if (additions == null) {
+            return source;
+        }
+        Properties merged = source;
+        merged.putAll(additions);
+        return merged;
+    }
+    
     /**
      * Merge given Map into given Properties object
      *
      * @param customProperties Map to merge into the Properties object
      * @return merged Properties object
      */
-    public Properties mergeProperties(Map<String, String> customProperties) {
+    public Properties mergeProperties(Map<String, String> customProperties, Properties baseProperties) {
         if (customProperties != null && !customProperties.isEmpty()) {
             for (String key : customProperties.keySet()) {
-                this.baseProperties.setProperty(key, customProperties.get(key));
-                warnUserOfPossibleErrors(key);
+                baseProperties.setProperty(key, customProperties.get(key));
+                warnUserOfPossibleErrors(key, baseProperties);
             }
         }
-        this.baseProperties = stripReservedProperties(this.baseProperties);
-        return this.baseProperties;
+        baseProperties = stripReservedProperties(baseProperties);
+        return baseProperties;
     }
 
     //==================================================================================================================
@@ -59,8 +77,8 @@ public class PropertyFileMerger extends JMeterMojo {
      *
      * @param value
      */
-    private void warnUserOfPossibleErrors(String value) {
-        for (String key : this.baseProperties.stringPropertyNames()) {
+    private void warnUserOfPossibleErrors(String value, Properties baseProperties) {
+        for (String key : baseProperties.stringPropertyNames()) {
             if (!key.equals(value) && key.toLowerCase().equals(value.toLowerCase())) {
                 getLog().warn("You have set a property called '" + value + "' which is very similar to '" + key + "'!");
             }

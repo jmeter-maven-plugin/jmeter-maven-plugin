@@ -106,6 +106,14 @@ public class JMeterMojo extends AbstractMojo {
     private Map<String, String> propertiesSystem;
 
     /**
+     * Replace the default JMeter properties with any custom properties files supplied.
+     * (If set to false any custom properties files will be merged with the default JMeter properties files, custom properties will overwrite default ones)
+     *
+     * @parameter default-value="true"
+     */
+    private boolean propertiesReplacedByCustomFiles;
+
+    /**
      * Sets whether ErrorScanner should ignore failures in JMeter result file.
      *
      * @parameter expression="${jmeter.ignore.failure}" default-value=false
@@ -235,7 +243,7 @@ public class JMeterMojo extends AbstractMojo {
     }
 
     private void propertyConfiguration() throws MojoExecutionException {
-        this.pluginProperties = new PropertyHandler(this.testFilesDirectory, this.binDir, getArtifactNamed(this.jmeterConfigArtifact));
+        this.pluginProperties = new PropertyHandler(this.testFilesDirectory, this.binDir, getArtifactNamed(this.jmeterConfigArtifact), this.propertiesReplacedByCustomFiles);
         this.pluginProperties.setJMeterProperties(this.propertiesJMeter);
         this.pluginProperties.setJMeterGlobalProperties(this.propertiesGlobal);
         this.pluginProperties.setJMeterSaveServiceProperties(this.propertiesSaveService);

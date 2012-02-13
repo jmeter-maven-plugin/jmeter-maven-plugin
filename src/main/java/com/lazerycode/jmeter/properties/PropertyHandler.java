@@ -6,7 +6,7 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 
 import java.io.*;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.jar.JarFile;
@@ -19,114 +19,58 @@ import java.util.jar.JarFile;
 //TODO: should PropertyHandler really extend JMeterMojo just for using getLog()?
 public class PropertyHandler extends JMeterMojo {
 
-    private Map<JMeterPropertiesFiles, Map<String, String>> masterPropertiesMap = new HashMap<JMeterPropertiesFiles, Map<String, String>>();
-    private Map<String, String> jMeterProperties = null;
-    private Map<String, String> jMeterSaveServiceProperties = null;
-    private Map<String, String> jMeterSystemProperties = null;
-    private Map<String, String> jMeterUpgradeProperties = null;
-    private Map<String, String> jMeterUserProperties = null;
-    private Map<String, String> jMeterGlobalProperties = null;
-    private Artifact jMeterConfigArtifact;
+    private static EnumMap<JMeterPropertiesFiles, PropertyContainer> masterPropertiesMap = new EnumMap<JMeterPropertiesFiles, PropertyContainer> (JMeterPropertiesFiles.class);
     private File propertySourceDirectory;
     private File propertyOutputDirectory;
+    private boolean replaceDefaultProperties;
 
-    public PropertyHandler(File sourceDirectory, File outputDirectory, Artifact jMeterConfigArtifact) throws MojoExecutionException {
+    public PropertyHandler(File sourceDirectory, File outputDirectory, Artifact jMeterConfigArtifact, boolean replaceDefaultProperties) throws MojoExecutionException {
         setSourceDirectory(sourceDirectory);
         setOutputDirectory(outputDirectory);
-        this.jMeterConfigArtifact = jMeterConfigArtifact;
-    }
-
-    public void setJMeterProperties(Map<String, String> value) {
-        if (UtilityFunctions.isNotSet(value)) return;
-        this.jMeterProperties = value;
-    }
-
-    public void setJMeterSaveServiceProperties(Map<String, String> value) {
-        if (UtilityFunctions.isNotSet(value)) return;
-        this.jMeterSaveServiceProperties = value;
-    }
-
-    public void setJMeterSystemProperties(Map<String, String> value) {
-        if (UtilityFunctions.isNotSet(value)) return;
-        this.jMeterSystemProperties = value;
-    }
-
-    public void setJMeterUpgradeProperties(Map<String, String> value) {
-        if (UtilityFunctions.isNotSet(value)) return;
-        this.jMeterUpgradeProperties = value;
-    }
-
-    public void setJmeterUserProperties(Map<String, String> value) {
-        if (UtilityFunctions.isNotSet(value)) return;
-        this.jMeterUserProperties = value;
-    }
-
-    public void setJMeterGlobalProperties(Map<String, String> value) {
-        if (UtilityFunctions.isNotSet(value)) return;
-        this.jMeterGlobalProperties = value;
-    }
-
-    /**
-     * Create/Copy the properties files used by JMeter into the JMeter directory tree.
-     *
-     * @throws org.apache.maven.plugin.MojoExecutionException
-     *
-     */
-    public void configureJMeterPropertiesFiles() throws MojoExecutionException {
-        setMasterPropertiesMap();
-        for (JMeterPropertiesFiles propertyFile : JMeterPropertiesFiles.values()) {
-            mergePropertiesFile(propertyFile, this.propertyOutputDirectory);
+        this.replaceDefaultProperties = replaceDefaultProperties;
+        try {
+            this.loadDefaultProperties(jMeterConfigArtifact);
+            this.loadCustomProperties();
+        } catch (Exception ex) {
+            getLog().error("Error loading properties: " + ex);
         }
     }
 
     /**
-     * Merge properties from sourceFile and customProperties into the given outputDirectory
+     * Load in the default properties held in the JMeter artifact
      *
-     * @param propertyFile
-     * @param outputDirectory
+     * @param jMeterConfigArtifact
      * @throws MojoExecutionException
      */
-    public void mergePropertiesFile(JMeterPropertiesFiles propertyFile, File outputDirectory) throws MojoExecutionException {
-        InputStream sourceFile = null;
-        try {
-            sourceFile = getSourcePropertyFile(propertyFile);
-        } catch (IOException ex) {
-            throw new MojoExecutionException("Error setting source file InputStream: " + ex);
-        }
-        //Drop out right away if there is nothing to create, source file will never be null if the properties file is required.
-        if (sourceFile == null && this.masterPropertiesMap.get(propertyFile) == null) return;
-        Properties baseProperties = new Properties();
-        try {
-            //Only read in base properties if there are some
-            if (sourceFile != null) {
-                baseProperties.load(sourceFile);
+    private void loadDefaultProperties(Artifact jMeterConfigArtifact) throws IOException {
+        for (JMeterPropertiesFiles propertyFile : JMeterPropertiesFiles.values()) {
+            if (propertyFile.createFileIfItDoesntExist()) {
+                JarFile propertyJar = new JarFile(jMeterConfigArtifact.getFile());
+                InputStream sourceFile = propertyJar.getInputStream(propertyJar.getEntry("bin/" + propertyFile.getPropertiesFileName()));
+                Properties defaultPropertySet = new Properties();
+                defaultPropertySet.load(sourceFile);
                 sourceFile.close();
+                getPropertyContainer(propertyFile).setDefaultPropertyObject(defaultPropertySet);
             }
-            //Create final properties set
-            Properties modifiedProperties = new PropertyFileMerger(baseProperties).mergeProperties(this.masterPropertiesMap.get(propertyFile));
-            //Write out final properties file.
-            FileOutputStream writeOutFinalPropertiesFile = new FileOutputStream(new File(outputDirectory.getCanonicalFile() + File.separator + propertyFile.getPropertiesFileName()));
-            modifiedProperties.store(writeOutFinalPropertiesFile, null);
-            writeOutFinalPropertiesFile.flush();
-            writeOutFinalPropertiesFile.close();
-        } catch (IOException e) {
-            throw new MojoExecutionException("Error creating consolidated properties file " + propertyFile.getPropertiesFileName() + ": " + e);
         }
     }
 
-    //=======================================================================================================
-
     /**
-     * Load the individual properties maps into the master map
+     * Load in any custom properties that are available in the propertySourceDirectory
+     *
+     * @throws IOException
      */
-    private void setMasterPropertiesMap() {
-        masterPropertiesMap.put(JMeterPropertiesFiles.JMETER_PROPERTIES, this.jMeterProperties);
-        masterPropertiesMap.put(JMeterPropertiesFiles.SAVE_SERVICE_PROPERTIES, this.jMeterSaveServiceProperties);
-        masterPropertiesMap.put(JMeterPropertiesFiles.UPGRADE_PROPERTIES, this.jMeterUpgradeProperties);
-        masterPropertiesMap.put(JMeterPropertiesFiles.SYSTEM_PROPERTIES, this.jMeterSystemProperties);
-        masterPropertiesMap.put(JMeterPropertiesFiles.USER_PROPERTIES, this.jMeterUserProperties);
-        //TODO: now, global properties are "real" global properties, meaning properties have to be defined twice if they should be used locally and on remote servers.
-        masterPropertiesMap.put(JMeterPropertiesFiles.GLOBAL_PROPERTIES, this.jMeterGlobalProperties);
+    private void loadCustomProperties() throws IOException {
+        for (JMeterPropertiesFiles propertyFile : JMeterPropertiesFiles.values()) {
+            File sourceFile = new File(this.propertySourceDirectory.getCanonicalFile() + File.separator + propertyFile.getPropertiesFileName());
+            if (sourceFile.exists()) {
+                InputStream sourceInputStream = new FileInputStream(sourceFile);
+                Properties sourcePropertySet = new Properties();
+                sourcePropertySet.load(sourceInputStream);
+                sourceInputStream.close();
+                getPropertyContainer(propertyFile).setCustomPropertyObject(sourcePropertySet);
+            }
+        }
     }
 
     /**
@@ -158,26 +102,63 @@ public class PropertyHandler extends JMeterMojo {
         this.propertyOutputDirectory = value;
     }
 
+    public void setJMeterProperties(Map<String, String> value) {
+        if (UtilityFunctions.isNotSet(value)) return;
+        this.getPropertyContainer(JMeterPropertiesFiles.JMETER_PROPERTIES).setCustomPropertyMap(value);
+    }
+
+    public void setJMeterSaveServiceProperties(Map<String, String> value) {
+        if (UtilityFunctions.isNotSet(value)) return;
+        this.getPropertyContainer(JMeterPropertiesFiles.SAVE_SERVICE_PROPERTIES).setCustomPropertyMap(value);
+    }
+
+    public void setJMeterSystemProperties(Map<String, String> value) {
+        if (UtilityFunctions.isNotSet(value)) return;
+        this.getPropertyContainer(JMeterPropertiesFiles.SYSTEM_PROPERTIES).setCustomPropertyMap(value);
+    }
+
+    public void setJMeterUpgradeProperties(Map<String, String> value) {
+        if (UtilityFunctions.isNotSet(value)) return;
+        this.getPropertyContainer(JMeterPropertiesFiles.UPGRADE_PROPERTIES).setCustomPropertyMap(value);
+    }
+
+    public void setJmeterUserProperties(Map<String, String> value) {
+        if (UtilityFunctions.isNotSet(value)) return;
+        this.getPropertyContainer(JMeterPropertiesFiles.USER_PROPERTIES).setCustomPropertyMap(value);
+    }
+
+    public void setJMeterGlobalProperties(Map<String, String> value) {
+        if (UtilityFunctions.isNotSet(value)) return;
+        this.getPropertyContainer(JMeterPropertiesFiles.GLOBAL_PROPERTIES).setCustomPropertyMap(value);
+    }
+
+    private PropertyContainer getPropertyContainer(JMeterPropertiesFiles value){
+        return this.masterPropertiesMap.get(value);
+    }
+
     /**
-     * This will load in a custom properties file and return an InputStream.
-     * If it does not exist it will drop back to the default JMeter properties file (if populated).
-     * If the default JMeter properties file is not populated it will return a null.
+     * Create/Copy the properties files used by JMeter into the JMeter directory tree.
      *
-     * @param value
-     * @return
-     * @throws IOException
+     * @throws org.apache.maven.plugin.MojoExecutionException
+     *
      */
-    private InputStream getSourcePropertyFile(JMeterPropertiesFiles value) throws IOException {
-        File sourcePropertyFile = new File(this.propertySourceDirectory.getCanonicalFile() + File.separator + value.getPropertiesFileName());
-        if (!sourcePropertyFile.exists()) {
-            getLog().debug("No custom file " + value.getPropertiesFileName() + " found ...");
-            if (value.createFileIfItDoesntExist()) {
-                getLog().info("Using default JMeter version of " + value.getPropertiesFileName() + "...");
-                JarFile propertyJar = new JarFile(this.jMeterConfigArtifact.getFile());
-                return propertyJar.getInputStream(propertyJar.getEntry("bin/" + value.getPropertiesFileName()));
+    public void configureJMeterPropertiesFiles() throws MojoExecutionException {
+        for (JMeterPropertiesFiles propertyFile : JMeterPropertiesFiles.values()) {
+            Properties modifiedProperties;
+            if (this.replaceDefaultProperties) {
+                modifiedProperties = new PropertyFileMerger().mergeProperties(getPropertyContainer(propertyFile).getCustomPropertyMap(), getPropertyContainer(propertyFile).getBasePropertiesObject());
+            } else {
+                modifiedProperties = new PropertyFileMerger().mergeProperties(getPropertyContainer(propertyFile).getCustomPropertyMap(), getPropertyContainer(propertyFile).getMergedPropertiesObject());
             }
-            return null;
+            try {
+                //Write out final properties file.
+                FileOutputStream writeOutFinalPropertiesFile = new FileOutputStream(new File(this.propertyOutputDirectory.getCanonicalFile() + File.separator + propertyFile.getPropertiesFileName()));
+                modifiedProperties.store(writeOutFinalPropertiesFile, null);
+                writeOutFinalPropertiesFile.flush();
+                writeOutFinalPropertiesFile.close();
+            } catch (IOException e) {
+                throw new MojoExecutionException("Error creating consolidated properties file " + propertyFile.getPropertiesFileName() + ": " + e);
+            }
         }
-        return new FileInputStream(sourcePropertyFile);
     }
 }

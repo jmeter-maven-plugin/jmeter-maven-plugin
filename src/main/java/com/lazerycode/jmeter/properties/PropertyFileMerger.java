@@ -27,13 +27,13 @@ public class PropertyFileMerger extends JMeterMojo {
         if (source == null && additions == null) {
             return new Properties();
         } else if (source == null) {
-            return additions;
+            return stripReservedProperties(additions);
         } else if (additions == null) {
-            return source;
+            return stripReservedProperties(source);
         }
         Properties merged = source;
         merged.putAll(additions);
-        return merged;
+        return stripReservedProperties(merged);
     }
     
     /**

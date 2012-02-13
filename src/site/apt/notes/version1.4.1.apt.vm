@@ -1,0 +1,3 @@
+Version 1.4.1 Release Notes
+
+    * issue #34 - plugin now uses the jmeter.exit.check.pause set in the final jmeter.properties used by the plugin and is no longer hard coded to 2000.

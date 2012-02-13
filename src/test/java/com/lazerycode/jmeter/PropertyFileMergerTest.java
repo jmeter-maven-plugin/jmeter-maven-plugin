@@ -17,6 +17,7 @@ import static org.junit.Assert.assertThat;
 public class PropertyFileMergerTest {
 
     private URL testFile = this.getClass().getResource("/jmeter.properties");
+    private URL testFileAdditional = this.getClass().getResource("/custom.properties");
 
     @Test
     public void validMergeProperties() throws Exception {
@@ -65,4 +66,21 @@ public class PropertyFileMergerTest {
         //TODO capture the logged warning and assert on it
     }
 
+    @Test
+    public void mergeTwoPropertiesFiles() throws Exception {        
+
+        Properties propertiesFile = new Properties();
+        propertiesFile.load(new FileInputStream(new File(this.testFile.toURI())));
+
+        Properties customProperties = new Properties();
+        propertiesFile.load(new FileInputStream(new File(this.testFileAdditional.toURI())));
+
+        Properties modifiedProperties = new PropertyFileMerger().mergePropertiesFiles(propertiesFile, customProperties);
+
+        assertThat(modifiedProperties.getProperty("log_level.jmeter"), is(equalTo("INFO")));
+        assertThat(modifiedProperties.getProperty("log_level.jmeter.junit"), is(equalTo("INFO")));
+        assertThat(modifiedProperties.getProperty("log_level.jmeter.control"), is(equalTo("DEBUG")));
+        assertThat(modifiedProperties.containsKey("log_level.jmeter.engine"), is(equalTo(false)));
+    }
+    
 }

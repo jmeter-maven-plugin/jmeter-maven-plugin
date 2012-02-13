@@ -77,10 +77,14 @@ public class PropertyFileMergerTest {
 
         Properties modifiedProperties = new PropertyFileMerger().mergePropertiesFiles(propertiesFile, customProperties);
 
-        assertThat(modifiedProperties.getProperty("log_level.jmeter"), is(equalTo("INFO")));
-        assertThat(modifiedProperties.getProperty("log_level.jmeter.junit"), is(equalTo("INFO")));
-        assertThat(modifiedProperties.getProperty("log_level.jmeter.control"), is(equalTo("DEBUG")));
-        assertThat(modifiedProperties.containsKey("log_level.jmeter.engine"), is(equalTo(false)));
+        assertThat(modifiedProperties.getProperty("log_level.jmeter"),
+                is(equalTo("INFO")));
+        assertThat(modifiedProperties.getProperty("log_level.jmeter.junit"),
+                is(equalTo("INFO")));
+        assertThat(modifiedProperties.getProperty("log_level.jmeter.control"),
+                is(equalTo("DEBUG")));
+        assertThat(modifiedProperties.containsKey("log_level.jmeter.engine"),
+                is(equalTo(false)));
     }
     
 }

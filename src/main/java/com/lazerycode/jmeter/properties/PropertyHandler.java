@@ -50,7 +50,7 @@ public class PropertyHandler extends JMeterMojo {
                 Properties defaultPropertySet = new Properties();
                 defaultPropertySet.load(sourceFile);
                 sourceFile.close();
-                getPropertyContainer(propertyFile).setDefaultPropertyObject(defaultPropertySet);
+                getPropertyObject(propertyFile).setDefaultPropertyObject(defaultPropertySet);
             }
         }
     }
@@ -68,7 +68,7 @@ public class PropertyHandler extends JMeterMojo {
                 Properties sourcePropertySet = new Properties();
                 sourcePropertySet.load(sourceInputStream);
                 sourceInputStream.close();
-                getPropertyContainer(propertyFile).setCustomPropertyObject(sourcePropertySet);
+                getPropertyObject(propertyFile).setCustomPropertyObject(sourcePropertySet);
             }
         }
     }
@@ -104,35 +104,35 @@ public class PropertyHandler extends JMeterMojo {
 
     public void setJMeterProperties(Map<String, String> value) {
         if (UtilityFunctions.isNotSet(value)) return;
-        this.getPropertyContainer(JMeterPropertiesFiles.JMETER_PROPERTIES).setCustomPropertyMap(value);
+        this.getPropertyObject(JMeterPropertiesFiles.JMETER_PROPERTIES).setCustomPropertyMap(value);
     }
 
     public void setJMeterSaveServiceProperties(Map<String, String> value) {
         if (UtilityFunctions.isNotSet(value)) return;
-        this.getPropertyContainer(JMeterPropertiesFiles.SAVE_SERVICE_PROPERTIES).setCustomPropertyMap(value);
+        this.getPropertyObject(JMeterPropertiesFiles.SAVE_SERVICE_PROPERTIES).setCustomPropertyMap(value);
     }
 
     public void setJMeterSystemProperties(Map<String, String> value) {
         if (UtilityFunctions.isNotSet(value)) return;
-        this.getPropertyContainer(JMeterPropertiesFiles.SYSTEM_PROPERTIES).setCustomPropertyMap(value);
+        this.getPropertyObject(JMeterPropertiesFiles.SYSTEM_PROPERTIES).setCustomPropertyMap(value);
     }
 
     public void setJMeterUpgradeProperties(Map<String, String> value) {
         if (UtilityFunctions.isNotSet(value)) return;
-        this.getPropertyContainer(JMeterPropertiesFiles.UPGRADE_PROPERTIES).setCustomPropertyMap(value);
+        this.getPropertyObject(JMeterPropertiesFiles.UPGRADE_PROPERTIES).setCustomPropertyMap(value);
     }
 
     public void setJmeterUserProperties(Map<String, String> value) {
         if (UtilityFunctions.isNotSet(value)) return;
-        this.getPropertyContainer(JMeterPropertiesFiles.USER_PROPERTIES).setCustomPropertyMap(value);
+        this.getPropertyObject(JMeterPropertiesFiles.USER_PROPERTIES).setCustomPropertyMap(value);
     }
 
     public void setJMeterGlobalProperties(Map<String, String> value) {
         if (UtilityFunctions.isNotSet(value)) return;
-        this.getPropertyContainer(JMeterPropertiesFiles.GLOBAL_PROPERTIES).setCustomPropertyMap(value);
+        this.getPropertyObject(JMeterPropertiesFiles.GLOBAL_PROPERTIES).setCustomPropertyMap(value);
     }
 
-    private PropertyContainer getPropertyContainer(JMeterPropertiesFiles value){
+    public PropertyContainer getPropertyObject(JMeterPropertiesFiles value){
         return this.masterPropertiesMap.get(value);
     }
 
@@ -144,16 +144,15 @@ public class PropertyHandler extends JMeterMojo {
      */
     public void configureJMeterPropertiesFiles() throws MojoExecutionException {
         for (JMeterPropertiesFiles propertyFile : JMeterPropertiesFiles.values()) {
-            Properties modifiedProperties;
             if (this.replaceDefaultProperties) {
-                modifiedProperties = new PropertyFileMerger().mergeProperties(getPropertyContainer(propertyFile).getCustomPropertyMap(), getPropertyContainer(propertyFile).getBasePropertiesObject());
+                getPropertyObject(propertyFile).setFinalPropertyObject(new PropertyFileMerger().mergeProperties(getPropertyObject(propertyFile).getCustomPropertyMap(), getPropertyObject(propertyFile).getBasePropertiesObject()));
             } else {
-                modifiedProperties = new PropertyFileMerger().mergeProperties(getPropertyContainer(propertyFile).getCustomPropertyMap(), getPropertyContainer(propertyFile).getMergedPropertiesObject());
+                getPropertyObject(propertyFile).setFinalPropertyObject(new PropertyFileMerger().mergeProperties(getPropertyObject(propertyFile).getCustomPropertyMap(), getPropertyObject(propertyFile).getMergedPropertiesObject()));
             }
             try {
                 //Write out final properties file.
                 FileOutputStream writeOutFinalPropertiesFile = new FileOutputStream(new File(this.propertyOutputDirectory.getCanonicalFile() + File.separator + propertyFile.getPropertiesFileName()));
-                modifiedProperties.store(writeOutFinalPropertiesFile, null);
+                getPropertyObject(propertyFile).getFinalPropertyObject().store(writeOutFinalPropertiesFile, null);
                 writeOutFinalPropertiesFile.flush();
                 writeOutFinalPropertiesFile.close();
             } catch (IOException e) {

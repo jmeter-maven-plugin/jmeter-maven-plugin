@@ -65,4 +65,8 @@ public class PropertyContainer {
     public Properties getMergedPropertiesObject() {
         return new PropertyFileMerger().mergePropertiesFiles(this.defaultPropertyObject, this.customPropertyObject);
     }
+
+    public String getProperty(String value) {
+        return this.finalPropertyObject.getProperty(value);
+    }
 }

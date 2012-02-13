@@ -1,6 +1,7 @@
 package com.lazerycode.jmeter;
 
 import com.lazerycode.jmeter.configuration.JMeterArgumentsArray;
+import com.lazerycode.jmeter.properties.JMeterPropertiesFiles;
 import com.lazerycode.jmeter.properties.PropertyHandler;
 import com.lazerycode.jmeter.reporting.ReportGenerator;
 import com.lazerycode.jmeter.testrunner.TestManager;
@@ -156,15 +157,6 @@ public class JMeterMojo extends AbstractMojo {
     private boolean suppressJMeterOutput;
 
     /**
-     * set the pause time after a test to allow JMeter to clean up threads.
-     * If you see errors stating that threads have not been shut down cleanly you may need to increase the pause time.
-     * JMeter default is 2000 (2 seconds).
-     *
-     * @parameter
-     */
-    private int setExitCheckPause;
-
-    /**
      * @parameter expression="${project}"
      * @required
      * @readonly
@@ -206,7 +198,8 @@ public class JMeterMojo extends AbstractMojo {
         initialiseJMeterArgumentsArray();
         TestManager jMeterTestManager = new TestManager(this.testArgs, this.logsDir, this.testFilesDirectory, this.testFilesIncluded, this.testFilesExcluded, this.suppressJMeterOutput);
         jMeterTestManager.setRemoteConfig(this.remoteConfig);
-        jMeterTestManager.setExitCheckPause(this.setExitCheckPause);
+        //Get the jmeter.exit.check.pause value from jmeter.properties and add an extra 500ms to it to ensure thread cleanup has been able to complete
+        jMeterTestManager.setExitCheckPause(Integer.parseInt(this.pluginProperties.getPropertyObject(JMeterPropertiesFiles.JMETER_PROPERTIES).getProperty("jmeter.exit.check.pause")) + 500);
         getLog().info(" ");
         getLog().info(this.testArgs.getProxyDetails());
         List<String> testResults = jMeterTestManager.executeTests();

@@ -51,10 +51,6 @@ public class TestManager extends JMeterMojo {
      * @param value int
      */
     public void setExitCheckPause(int value) {
-        if (value < 2000) {
-            getLog().warn("Minimum value for jmeter.exit.check.pause is 2000 (2 Seconds), setting minimum value.");
-            return;
-        }
         this.exitCheckPause = value;
     }
 

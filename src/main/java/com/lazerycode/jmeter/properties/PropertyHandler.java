@@ -54,7 +54,9 @@ public class PropertyHandler extends JMeterMojo {
                 Properties defaultPropertySet = new Properties();
                 defaultPropertySet.load(sourceFile);
                 sourceFile.close();
-                getPropertyObject(propertyFile).setDefaultPropertyObject(defaultPropertySet);
+                this.getPropertyObject(propertyFile).setDefaultPropertyObject(defaultPropertySet);
+            } else {
+                this.getPropertyObject(propertyFile).setDefaultPropertyObject(new Properties());
             }
         }
     }
@@ -151,7 +153,7 @@ public class PropertyHandler extends JMeterMojo {
             if (this.replaceDefaultProperties) {
                 getPropertyObject(propertyFile).setFinalPropertyObject(new PropertyFileMerger().mergeProperties(getPropertyObject(propertyFile).getCustomPropertyMap(), getPropertyObject(propertyFile).getBasePropertiesObject()));
             } else {
-                getPropertyObject(propertyFile).setFinalPropertyObject(new PropertyFileMerger().mergeProperties(getPropertyObject(propertyFile).getCustomPropertyMap(), getPropertyObject(propertyFile).getMergedPropertiesObject()));
+                getPropertyObject(propertyFile).setFinalPropertyObject(new PropertyFileMerger().mergeProperties(getPropertyObject(propertyFile).getCustomPropertyMap(), new PropertyFileMerger().mergePropertiesFiles(getPropertyObject(propertyFile).getDefaultPropertyObject(), getPropertyObject(propertyFile).getCustomPropertyObject())));
             }
             try {
                 //Write out final properties file.

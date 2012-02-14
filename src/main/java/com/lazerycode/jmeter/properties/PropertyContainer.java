@@ -1,5 +1,7 @@
 package com.lazerycode.jmeter.properties;
 
+import org.apache.maven.plugin.MojoExecutionException;
+
 import java.util.Map;
 import java.util.Properties;
 
@@ -7,19 +9,11 @@ public class PropertyContainer {
 
     private Map<String, String> customPropertyMap = null;
     private Properties customPropertyObject = null;
-    private Properties defaultPropertyObject = null;
-    private Properties finalPropertyObject = null;
+    private Properties defaultPropertyObject = new Properties();
+    private Properties finalPropertyObject = new Properties();
 
     public PropertyContainer() {
 
-    }
-
-    public PropertyContainer(Map<String, String> value) {
-        this.setCustomPropertyMap(value);
-    }
-
-    public PropertyContainer(Properties value) {
-        this.setCustomPropertyObject(value);
     }
 
     public void setCustomPropertyMap(Map<String, String> value) {
@@ -54,16 +48,19 @@ public class PropertyContainer {
         return this.finalPropertyObject;
     }
 
-    public Properties getBasePropertiesObject() {
+    /**
+     * This will return the custom properties object if it is set.
+     * If it is not set it will return the default properties object (this may be empty)
+     *
+     * @return
+     * @throws MojoExecutionException
+     */
+    public Properties getBasePropertiesObject() throws MojoExecutionException {
         if (this.customPropertyObject == null) {
-            return this.defaultPropertyObject;
+            return this.getDefaultPropertyObject();
         } else {
-            return this.customPropertyObject;
+            return this.getCustomPropertyObject();
         }
-    }
-
-    public Properties getMergedPropertiesObject() {
-        return new PropertyFileMerger().mergePropertiesFiles(this.defaultPropertyObject, this.customPropertyObject);
     }
 
     public String getProperty(String value) {

@@ -25,6 +25,10 @@ public class PropertyHandler extends JMeterMojo {
     private boolean replaceDefaultProperties;
 
     public PropertyHandler(File sourceDirectory, File outputDirectory, Artifact jMeterConfigArtifact, boolean replaceDefaultProperties) throws MojoExecutionException {
+        //Initialise the enum map
+        for (JMeterPropertiesFiles propertyFile : JMeterPropertiesFiles.values()) {
+            this.masterPropertiesMap.put(propertyFile, new PropertyContainer());
+        }
         setSourceDirectory(sourceDirectory);
         setOutputDirectory(outputDirectory);
         this.replaceDefaultProperties = replaceDefaultProperties;

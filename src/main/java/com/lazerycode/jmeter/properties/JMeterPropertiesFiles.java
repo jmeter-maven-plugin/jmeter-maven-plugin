@@ -13,7 +13,7 @@ public enum JMeterPropertiesFiles {
     UPGRADE_PROPERTIES("upgrade.properties", true),
     SYSTEM_PROPERTIES("system.properties", false),
     USER_PROPERTIES("user.properties", false),
-    GLOBAL_PROPERTIES("global.properties", false);             //Does this exist in JMeter world?  Don't think so
+    GLOBAL_PROPERTIES("global.properties", false);
 
     private final Object[] propertiesData;
 

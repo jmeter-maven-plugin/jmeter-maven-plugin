@@ -179,6 +179,7 @@ public class JMeterMojo extends AbstractMojo {
     private String jmeterConfigArtifact = "ApacheJMeter_config";
     private JMeterArgumentsArray testArgs;
     private PropertyHandler pluginProperties;
+    private int jmeterExitCheckPause = 2500;
 
     /**
      * Run all the JMeter tests.
@@ -199,7 +200,12 @@ public class JMeterMojo extends AbstractMojo {
         TestManager jMeterTestManager = new TestManager(this.testArgs, this.logsDir, this.testFilesDirectory, this.testFilesIncluded, this.testFilesExcluded, this.suppressJMeterOutput);
         jMeterTestManager.setRemoteConfig(this.remoteConfig);
         //Get the jmeter.exit.check.pause value from jmeter.properties and add an extra 500ms to it to ensure thread cleanup has been able to complete
-        jMeterTestManager.setExitCheckPause(Integer.parseInt(this.pluginProperties.getPropertyObject(JMeterPropertiesFiles.JMETER_PROPERTIES).getProperty("jmeter.exit.check.pause")) + 500);
+        try {
+            this.jmeterExitCheckPause = Integer.parseInt(this.pluginProperties.getPropertyObject(JMeterPropertiesFiles.JMETER_PROPERTIES).getProperty("jmeter.exit.check.pause") + 500);
+        } catch (Exception ex) {
+            getLog().warn("Unable to parse the 'jmeter.exit.check.pause' entry in jmeter.properties!  Falling back to a default value of '" + this.jmeterExitCheckPause + "'.");
+        }
+        jMeterTestManager.setExitCheckPause(this.jmeterExitCheckPause);
         getLog().info(" ");
         getLog().info(this.testArgs.getProxyDetails());
         List<String> testResults = jMeterTestManager.executeTests();

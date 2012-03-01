@@ -131,7 +131,7 @@ public class JMeterMojo extends AbstractMojo {
     /**
      * Value class that wraps all proxy configurations.
      *
-     * @parameter
+     * @parameter default-value="${proxyConfig}"
      */
     private ProxyConfig proxyConfig;
 
@@ -145,7 +145,7 @@ public class JMeterMojo extends AbstractMojo {
     /**
      * Value class that wraps all report configuration.
      *
-     * @parameter
+     * @parameter default-value="${reportConfig}"
      */
     private ReportConfig reportConfig;
 
@@ -229,11 +229,6 @@ public class JMeterMojo extends AbstractMojo {
         this.libExt.mkdirs();
         File reportDir = new File(workDir + File.separator + "report");
         reportDir.mkdirs();
-
-        //TODO: hack. Should be refactored.
-        if(reportConfig == null) {
-            reportConfig = new ReportConfig();
-        }
         reportConfig.setOutputDirectory(reportDir);
         //JMeter expects a <workdir>/lib/junit directory and complains if it can't find it.
         new File(this.workDir + File.separator + "lib" + File.separator + "junit").mkdirs();
@@ -300,12 +295,10 @@ public class JMeterMojo extends AbstractMojo {
         this.testArgs = new JMeterArgumentsArray(reportConfig.getOutputDirectory().getAbsolutePath());
         this.testArgs.setResultsTimestamp(this.testResultsTimestamp);
         this.testArgs.setJMeterHome(this.workDir.getAbsolutePath());
-        if(proxyConfig != null ) {
-            this.testArgs.setProxyHostDetails(proxyConfig.getHost(), proxyConfig.getPort());
-            this.testArgs.setProxyUsername(proxyConfig.getUsername());
-            this.testArgs.setProxyPassword(proxyConfig.getPassword());
-            this.testArgs.setNonProxyHosts(proxyConfig.getHostExclusions());
-        }
+        this.testArgs.setProxyHostDetails(proxyConfig.getHost(), proxyConfig.getPort());
+        this.testArgs.setProxyUsername(proxyConfig.getUsername());
+        this.testArgs.setProxyPassword(proxyConfig.getPassword());
+        this.testArgs.setNonProxyHosts(proxyConfig.getHostExclusions());
     }
 
     /**

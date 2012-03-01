@@ -21,11 +21,11 @@ package com.lazerycode.jmeter;
  */
 public class ProxyConfig {
 
-    private String hostExclusions = "";
-    private String host = "";
+    private String hostExclusions = null;
+    private String host = null;
     private Integer port = 80;
-    private String username = "";
-    private String password = "";
+    private String username = null;
+    private String password = null;
 
     /**
      * @return Regex of hosts that will not be proxied

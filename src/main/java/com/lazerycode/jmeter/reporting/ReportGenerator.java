@@ -12,7 +12,6 @@ import java.util.List;
 /**
  * ReportGenerator encapsules functions for generating reports
  */
-//TODO: should ReportGenerator really extend JMeterMojo just for using getLog()?
 public class ReportGenerator extends JMeterMojo {
 
     private ReportConfig reportConfig;

@@ -16,7 +16,6 @@ import java.util.jar.JarFile;
  *
  * @author Arne Franken, Mark Collin
  */
-//TODO: should PropertyHandler really extend JMeterMojo just for using getLog()?
 public class PropertyHandler extends JMeterMojo {
 
     private static EnumMap<JMeterPropertiesFiles, PropertyContainer> masterPropertiesMap = new EnumMap<JMeterPropertiesFiles, PropertyContainer> (JMeterPropertiesFiles.class);

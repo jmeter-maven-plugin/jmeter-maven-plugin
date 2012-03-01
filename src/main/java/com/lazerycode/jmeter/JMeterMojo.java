@@ -295,10 +295,7 @@ public class JMeterMojo extends AbstractMojo {
         this.testArgs = new JMeterArgumentsArray(reportConfig.getOutputDirectory().getAbsolutePath());
         this.testArgs.setResultsTimestamp(this.testResultsTimestamp);
         this.testArgs.setJMeterHome(this.workDir.getAbsolutePath());
-        this.testArgs.setProxyHostDetails(proxyConfig.getHost(), proxyConfig.getPort());
-        this.testArgs.setProxyUsername(proxyConfig.getUsername());
-        this.testArgs.setProxyPassword(proxyConfig.getPassword());
-        this.testArgs.setNonProxyHosts(proxyConfig.getHostExclusions());
+        this.testArgs.setProxyConfig(this.proxyConfig);
     }
 
     /**

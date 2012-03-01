@@ -78,18 +78,15 @@ public class JMeterArgumentsArray {
         this.argumentMap.put(JMeterCommandLineArguments.REMOTE_OPT_PARAM, true);
     }
 
-    public void setNonProxyHosts(String value) {
-        if (UtilityFunctions.isNotSet(value)) return;
-        this.nonProxyHosts = value;
-        this.argumentMap.put(JMeterCommandLineArguments.NONPROXY_HOSTS, true);
-    }
-
-    //TODO: clean up ProxyConfig, consolidate other setters into this one
     public void setProxyConfig(ProxyConfig proxyConfig) {
+        this.setProxyHostDetails(proxyConfig.getHost(), proxyConfig.getPort());
+        this.setProxyUsername(proxyConfig.getUsername());
+        this.setProxyPassword(proxyConfig.getPassword());
+        this.setNonProxyHosts(proxyConfig.getHostExclusions());
 
     }
-    
-    public void setProxyHostDetails(String value, int port) {
+
+    private void setProxyHostDetails(String value, int port) {
         if (UtilityFunctions.isNotSet(value)) return;
         this.proxyHost = value;
         this.proxyPort = Integer.toString(port);
@@ -97,16 +94,22 @@ public class JMeterArgumentsArray {
         this.argumentMap.put(JMeterCommandLineArguments.PROXY_PORT, true);
     }
 
-    public void setProxyUsername(String value) {
+    private void setProxyUsername(String value) {
         if (UtilityFunctions.isNotSet(value)) return;
         this.proxyUsername = value;
         this.argumentMap.put(JMeterCommandLineArguments.PROXY_USERNAME, true);
     }
 
-    public void setProxyPassword(String value) {
+    private void setProxyPassword(String value) {
         if (UtilityFunctions.isNotSet(value)) return;
         this.proxyPassword = value;
         this.argumentMap.put(JMeterCommandLineArguments.PROXY_PASSWORD, true);
+    }
+
+    private void setNonProxyHosts(String value) {
+        if (UtilityFunctions.isNotSet(value)) return;
+        this.nonProxyHosts = value;
+        this.argumentMap.put(JMeterCommandLineArguments.NONPROXY_HOSTS, true);
     }
 
     //TODO enable this?  There is no defined name for this file so we can't automatically pick it up.

@@ -48,6 +48,7 @@ public class TestManager extends JMeterMojo {
     /**
      * Set how long to wait for JMeter to clean up it's threads after a test run.
      * Default: 2000 milliseconds.
+     *
      * @param value int
      */
     public void setExitCheckPause(int value) {
@@ -56,6 +57,7 @@ public class TestManager extends JMeterMojo {
 
     /**
      * Executes all tests and returns the resultFile names
+     *
      * @return the list of resultFile names
      * @throws MojoExecutionException
      */
@@ -77,11 +79,12 @@ public class TestManager extends JMeterMojo {
 
     /**
      * Set remote configuration
+     *
      * @param remoteConfig
      */
     //TODO: clean up RemoteConfig by using this getter
     public void setRemoteConfig(RemoteConfig remoteConfig) {
-        if(remoteConfig == null) {
+        if (remoteConfig == null) {
             remoteConfig = new RemoteConfig();
         }
         setRemoteStartOptions(remoteConfig.isStop(), remoteConfig.isStartAll(), remoteConfig.isStartAndStopOnce(), remoteConfig.getStart());
@@ -195,7 +198,7 @@ public class TestManager extends JMeterMojo {
         try {
             String line;
             while ((line = in.readLine()) != null) {
-                if (line.contains("Test has ended")) {
+                if (line.contains("Test has ended") || line.contains("Interrupting RMI Reaper")) {
                     testEnded = true;
                     break;
                 }
@@ -218,6 +221,7 @@ public class TestManager extends JMeterMojo {
 
     /**
      * Scan Project directories for JMeter Test Files according to includes and excludes
+     *
      * @return found JMeter tests
      */
     private List<String> generateTestList() {

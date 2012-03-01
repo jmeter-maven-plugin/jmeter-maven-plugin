@@ -22,7 +22,7 @@ public class RemoteConfig {
 
     private boolean stop = false;
     private boolean startAll = false;
-    private String start = "";
+    private String start = null;
     private boolean startAndStopOnce = true;
 
     /**

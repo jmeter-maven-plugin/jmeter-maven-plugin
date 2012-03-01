@@ -138,7 +138,7 @@ public class JMeterMojo extends AbstractMojo {
     /**
      * Value class that wraps all remote configurations.
      *
-     * @parameter
+     * @parameter default-value="${remoteConfig}"
      */
     private RemoteConfig remoteConfig;
 

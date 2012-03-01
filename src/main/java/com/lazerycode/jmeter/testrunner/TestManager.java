@@ -20,7 +20,6 @@ import java.util.List;
 /**
  * TestManager encapsules functions that gather JMeter Test files and execute the tests
  */
-//TODO: should TestManager really extend JMeterMojo just for using getLog()?
 public class TestManager extends JMeterMojo {
 
     private JMeterArgumentsArray testArgs;
@@ -82,22 +81,34 @@ public class TestManager extends JMeterMojo {
      *
      * @param remoteConfig
      */
-    //TODO: clean up RemoteConfig by using this getter
     public void setRemoteConfig(RemoteConfig remoteConfig) {
-        if (remoteConfig == null) {
-            remoteConfig = new RemoteConfig();
-        }
         setRemoteStartOptions(remoteConfig.isStop(), remoteConfig.isStartAll(), remoteConfig.isStartAndStopOnce(), remoteConfig.getStart());
     }
 
     //=============================================================================================
 
     private void setRemoteStartOptions(boolean remoteStop, boolean remoteStartAll, boolean remoteStartAndStopOnce, String remoteStart) {
-        this.remoteStop = remoteStop;
-        this.remoteStartAll = remoteStartAll;
-        this.remoteStartAndStopOnce = remoteStartAndStopOnce;
-        if (UtilityFunctions.isNotSet(remoteStart)) return;
-        this.remoteStart = remoteStart;
+        setRemoteStop(remoteStop);
+        setRemoteStartAll(remoteStartAll);
+        setRemoteStartAndStopOnce(remoteStartAndStopOnce);
+        setRemoteStart(remoteStart);
+    }
+
+    public void setRemoteStop(boolean value) {
+        this.remoteStop = value;
+    }
+
+    public void setRemoteStart(String value) {
+        if (UtilityFunctions.isNotSet(value)) return;
+        this.remoteStart = value;
+    }
+
+    public void setRemoteStartAndStopOnce(boolean value) {
+        this.remoteStartAndStopOnce = value;
+    }
+
+    public void setRemoteStartAll(boolean value) {
+        this.remoteStartAll = value;
     }
 
     /**

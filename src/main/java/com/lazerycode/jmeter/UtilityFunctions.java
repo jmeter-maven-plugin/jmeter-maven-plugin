@@ -24,7 +24,7 @@ public class UtilityFunctions {
     }
 
     public static Boolean isNotSet(Map<?, ?> value) {
-        if (value == null || value.isEmpty()) {
+        if (null == value || value.isEmpty()) {
             return true;
         } else {
             return false;
@@ -32,7 +32,7 @@ public class UtilityFunctions {
     }
 
     public static Boolean isNotSet(String value) {
-        if (value == null || value.isEmpty() || value.trim().length() == 0) {
+        if (null == value || value.isEmpty() || value.trim().length() == 0) {
             return true;
         } else {
             return false;
@@ -41,7 +41,7 @@ public class UtilityFunctions {
 
     public static Boolean isNotSet(File value) {
         //TODO: value#toString() can't ever return null if value != null
-        if (value == null || value.toString().isEmpty()) {
+        if (null == value || value.toString().isEmpty()) {
             return true;
         } else {
             return false;

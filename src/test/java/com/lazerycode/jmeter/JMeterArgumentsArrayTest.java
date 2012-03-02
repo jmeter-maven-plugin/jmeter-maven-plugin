@@ -175,40 +175,49 @@ public class JMeterArgumentsArrayTest {
 
     @Test
     public void validateJMeterSetProxyHost() throws Exception {
+        ProxyConfig proxyConfig = new ProxyConfig();
+        proxyConfig.setHost("http://10.10.50.43");
+        proxyConfig.setPort(8080);
         JMeterArgumentsArray testArgs = new JMeterArgumentsArray(reportDir.getAbsolutePath());
         testArgs.setTestFile(new File(this.testFile.toURI()));
         testArgs.setJMeterHome("target/jmeter/");
-        testArgs.setProxyHostDetails("http://10.10.50.43", 8080);
+        testArgs.setProxyConfig(proxyConfig);
         assertThat(UtilityFunctions.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()),
                 is(equalTo("-n -t " + new File(this.testFile.toURI()).getAbsolutePath() + " -l " + testArgs.getResultsFileName() + " -d target/jmeter/ -H http://10.10.50.43 -P 8080")));
     }
 
     @Test
     public void validateJMeterSetProxyUsername() throws Exception {
+        ProxyConfig proxyConfig = new ProxyConfig();
+        proxyConfig.setUsername("god");
         JMeterArgumentsArray testArgs = new JMeterArgumentsArray(reportDir.getAbsolutePath());
         testArgs.setTestFile(new File(this.testFile.toURI()));
         testArgs.setJMeterHome("target/jmeter/");
-        testArgs.setProxyUsername("god");
+        testArgs.setProxyConfig(proxyConfig);
         assertThat(UtilityFunctions.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()),
                 is(equalTo("-n -t " + new File(this.testFile.toURI()).getAbsolutePath() + " -l " + testArgs.getResultsFileName() + " -d target/jmeter/ -u god")));
     }
 
     @Test
     public void validateJMeterSetProxyPassword() throws Exception {
+        ProxyConfig proxyConfig = new ProxyConfig();
+        proxyConfig.setPassword("changeme");
         JMeterArgumentsArray testArgs = new JMeterArgumentsArray(reportDir.getAbsolutePath());
         testArgs.setTestFile(new File(this.testFile.toURI()));
         testArgs.setJMeterHome("target/jmeter/");
-        testArgs.setProxyPassword("changeme");
+        testArgs.setProxyConfig(proxyConfig);
         assertThat(UtilityFunctions.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()),
                 is(equalTo("-n -t " + new File(this.testFile.toURI()).getAbsolutePath() + " -l " + testArgs.getResultsFileName() + " -d target/jmeter/ -a changeme")));
     }
 
     @Test
     public void validateSetNonProxyHosts() throws Exception {
+        ProxyConfig proxyConfig = new ProxyConfig();
+        proxyConfig.setHostExclusions("localhost|*.lazerycode.com");
         JMeterArgumentsArray testArgs = new JMeterArgumentsArray(reportDir.getAbsolutePath());
         testArgs.setTestFile(new File(this.testFile.toURI()));
         testArgs.setJMeterHome("target/jmeter/");
-        testArgs.setNonProxyHosts("localhost|*.lazerycode.com");
+        testArgs.setProxyConfig(proxyConfig);
         assertThat(UtilityFunctions.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()),
                 is(equalTo("-n -t " + new File(this.testFile.toURI()).getAbsolutePath() + " -l " + testArgs.getResultsFileName() + " -d target/jmeter/ -N localhost|*.lazerycode.com")));
     }

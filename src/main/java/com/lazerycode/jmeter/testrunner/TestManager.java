@@ -46,7 +46,6 @@ public class TestManager extends JMeterMojo {
 
     /**
      * Set how long to wait for JMeter to clean up it's threads after a test run.
-     * Default: 2000 milliseconds.
      *
      * @param value int
      */
@@ -112,6 +111,50 @@ public class TestManager extends JMeterMojo {
     }
 
     /**
+     * Capture System.exit commands so that we can check to see if JMeter is trying to kill us without warning.
+     *
+     * @return old SecurityManager so that we can switch back to normal behaviour.
+     */
+    public SecurityManager overrideSecurityManager() {
+        SecurityManager oldManager = System.getSecurityManager();
+        System.setSecurityManager(new SecurityManager() {
+
+            @Override
+            public void checkExit(int status) {
+                throw new ExitException(status);
+            }
+
+            @Override
+            public void checkPermission(Permission perm, Object context) {
+            }
+
+            @Override
+            public void checkPermission(Permission perm) {
+            }
+        });
+        return oldManager;
+    }
+
+    /**
+     * Override System.exit(0) to ensure JMeter doesn't kill us without warning.
+     *
+     * @return old UncaughtExceptionHandler so that we can switch back to normal behaviour.
+     */
+    private Thread.UncaughtExceptionHandler overrideUncaughtExceptionHandler() {
+        Thread.UncaughtExceptionHandler oldHandler = Thread.getDefaultUncaughtExceptionHandler();
+        Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+
+            public void uncaughtException(Thread t, Throwable e) {
+                if (e instanceof ExitException && ((ExitException) e).getCode() == 0) {
+                    return; // Ignore
+                }
+                getLog().error("Error in thread " + t.getName());
+            }
+        });
+        return oldHandler;
+    }
+
+    /**
      * Executes a single JMeter test by building up a list of command line
      * parameters to pass to JMeter.start().
      *
@@ -128,37 +171,8 @@ public class TestManager extends JMeterMojo {
             //Delete results file if it already exists
             new File(testArgs.getResultsFileName()).delete();
             getLog().debug("JMeter is called with the following command line arguments: " + UtilityFunctions.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()));
-
-            // This mess is necessary because JMeter likes to use System.exit.
-            // We need to trap the exit call.
-
-            //TODO Investigate the use of a listener here (Looks like JMeter reports startup and shutdown to a listener when it finishes a test...
-            SecurityManager oldManager = System.getSecurityManager();
-            System.setSecurityManager(new SecurityManager() {
-
-                @Override
-                public void checkExit(int status) {
-                    throw new ExitException(status);
-                }
-
-                @Override
-                public void checkPermission(Permission perm, Object context) {
-                }
-
-                @Override
-                public void checkPermission(Permission perm) {
-                }
-            });
-            Thread.UncaughtExceptionHandler oldHandler = Thread.getDefaultUncaughtExceptionHandler();
-            Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
-
-                public void uncaughtException(Thread t, Throwable e) {
-                    if (e instanceof ExitException && ((ExitException) e).getCode() == 0) {
-                        return; // Ignore
-                    }
-                    getLog().error("Error in thread " + t.getName());
-                }
-            });
+            SecurityManager oldSecurityManager = overrideSecurityManager();
+            Thread.UncaughtExceptionHandler oldExceptionHandler = overrideUncaughtExceptionHandler();
             PrintStream originalOut = System.out;
             try {
                 // This mess is necessary because the only way to know when
@@ -168,6 +182,8 @@ public class TestManager extends JMeterMojo {
                 //Suppress JMeter's annoying System.out messages
                 if (suppressJMeterOutput) System.setOut(new PrintStream(new NullOutputStream()));
                 new JMeter().start(testArgs.buildArgumentsArray());
+
+                //TODO Investigate the use of a listener here (Looks like JMeter reports startup and shutdown to a listener when it finishes a test...
                 BufferedReader in = new BufferedReader(new FileReader(jmeterLog));
                 while (!checkForEndOfTest(in)) {
                     try {
@@ -176,6 +192,8 @@ public class TestManager extends JMeterMojo {
                         break;
                     }
                 }
+
+
             } catch (ExitException e) {
                 if (e.getCode() != 0) {
                     throw new MojoExecutionException("Test failed", e);
@@ -185,9 +203,10 @@ public class TestManager extends JMeterMojo {
                     //Wait for JMeter to clean up threads.
                     Thread.sleep(this.exitCheckPause);
                 } catch (InterruptedException e) {
+                    getLog().warn("Something went wrong during Thread cleanup, we may be leaving something running...");
                 }
-                System.setSecurityManager(oldManager);
-                Thread.setDefaultUncaughtExceptionHandler(oldHandler);
+                System.setSecurityManager(oldSecurityManager);
+                Thread.setDefaultUncaughtExceptionHandler(oldExceptionHandler);
                 System.setOut(originalOut);
                 getLog().info("Completed Test: " + test.getName());
             }

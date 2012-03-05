@@ -81,34 +81,14 @@ public class TestManager extends JMeterMojo {
      * @param remoteConfig
      */
     public void setRemoteConfig(RemoteConfig remoteConfig) {
-        setRemoteStartOptions(remoteConfig.isStop(), remoteConfig.isStartAll(), remoteConfig.isStartAndStopOnce(), remoteConfig.getStart());
+        this.remoteStop = remoteConfig.isStop();
+        this.remoteStartAll = remoteConfig.isStartAll();
+        this.remoteStartAndStopOnce = remoteConfig.isStartAndStopOnce();
+        if (UtilityFunctions.isNotSet(remoteConfig.getStart())) return;
+        this.remoteStart = remoteConfig.getStart();
     }
 
     //=============================================================================================
-
-    private void setRemoteStartOptions(boolean remoteStop, boolean remoteStartAll, boolean remoteStartAndStopOnce, String remoteStart) {
-        setRemoteStop(remoteStop);
-        setRemoteStartAll(remoteStartAll);
-        setRemoteStartAndStopOnce(remoteStartAndStopOnce);
-        setRemoteStart(remoteStart);
-    }
-
-    public void setRemoteStop(boolean value) {
-        this.remoteStop = value;
-    }
-
-    public void setRemoteStart(String value) {
-        if (UtilityFunctions.isNotSet(value)) return;
-        this.remoteStart = value;
-    }
-
-    public void setRemoteStartAndStopOnce(boolean value) {
-        this.remoteStartAndStopOnce = value;
-    }
-
-    public void setRemoteStartAll(boolean value) {
-        this.remoteStartAll = value;
-    }
 
     /**
      * Capture System.exit commands so that we can check to see if JMeter is trying to kill us without warning.
@@ -184,8 +164,7 @@ public class TestManager extends JMeterMojo {
                 new JMeter().start(testArgs.buildArgumentsArray());
 
                 //TODO Investigate the use of a listener here (Looks like JMeter reports startup and shutdown to a listener when it finishes a test...
-                BufferedReader in = new BufferedReader(new FileReader(jmeterLog));
-                while (!checkForEndOfTest(in)) {
+                while (!checkForEndOfTest(new BufferedReader(new FileReader(jmeterLog)))) {
                     try {
                         Thread.sleep(1000);
                     } catch (InterruptedException e) {

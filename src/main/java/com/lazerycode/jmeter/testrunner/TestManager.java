@@ -54,6 +54,20 @@ public class TestManager extends JMeterMojo {
     }
 
     /**
+     * Set remote configuration
+     *
+     * @param remoteConfig
+     */
+    public void setRemoteConfig(RemoteConfig remoteConfig) {
+        this.remoteStop = remoteConfig.isStop();
+        this.remoteStartAll = remoteConfig.isStartAll();
+        this.remoteStartAndStopOnce = remoteConfig.isStartAndStopOnce();
+        if (!UtilityFunctions.isNotSet(remoteConfig.getStart())) {
+            this.remoteStart = remoteConfig.getStart();
+        }
+    }
+
+    /**
      * Executes all tests and returns the resultFile names
      *
      * @return the list of resultFile names
@@ -75,19 +89,6 @@ public class TestManager extends JMeterMojo {
         return results;
     }
 
-    /**
-     * Set remote configuration
-     *
-     * @param remoteConfig
-     */
-    public void setRemoteConfig(RemoteConfig remoteConfig) {
-        this.remoteStop = remoteConfig.isStop();
-        this.remoteStartAll = remoteConfig.isStartAll();
-        this.remoteStartAndStopOnce = remoteConfig.isStartAndStopOnce();
-        if (UtilityFunctions.isNotSet(remoteConfig.getStart())) return;
-        this.remoteStart = remoteConfig.getStart();
-    }
-
     //=============================================================================================
 
     /**
@@ -95,7 +96,7 @@ public class TestManager extends JMeterMojo {
      *
      * @return old SecurityManager so that we can switch back to normal behaviour.
      */
-    public SecurityManager overrideSecurityManager() {
+    private SecurityManager overrideSecurityManager() {
         SecurityManager oldManager = System.getSecurityManager();
         System.setSecurityManager(new SecurityManager() {
 

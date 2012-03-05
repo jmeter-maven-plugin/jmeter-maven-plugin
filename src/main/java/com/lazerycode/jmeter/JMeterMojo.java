@@ -157,6 +157,14 @@ public class JMeterMojo extends AbstractMojo {
     private boolean suppressJMeterOutput;
 
     /**
+     * Use log file scanning instead of listener to detect test end.
+     * 
+     * @parameter default-value="true"
+     */
+    @Deprecated
+    private boolean useOldTestEndDetection;
+
+    /**
      * @parameter expression="${project}"
      * @required
      * @readonly
@@ -206,6 +214,7 @@ public class JMeterMojo extends AbstractMojo {
             getLog().warn("Unable to parse the 'jmeter.exit.check.pause' entry in jmeter.properties!  Falling back to a default value of '" + this.jmeterExitCheckPause + "'.");
         }
         jMeterTestManager.setExitCheckPause(this.jmeterExitCheckPause);
+        jMeterTestManager.setTestEndDetection(this.useOldTestEndDetection);
         getLog().info(" ");
         getLog().info(this.testArgs.getProxyDetails());
         List<String> testResults = jMeterTestManager.executeTests();

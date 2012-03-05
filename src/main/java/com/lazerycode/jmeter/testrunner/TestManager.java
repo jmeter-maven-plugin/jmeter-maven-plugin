@@ -34,6 +34,7 @@ public class TestManager extends JMeterMojo {
     private boolean remoteStartAndStopOnce = true;
     private String remoteStart = null;
     private int exitCheckPause = 2000;
+    private boolean useOldTestEndDetection = false;
 
     public TestManager(JMeterArgumentsArray testArgs, File logsDir, File testFilesDirectory, List<String> testFiles, List<String> excludeTestFiles, boolean suppressJMeterOutput) {
         this.testArgs = testArgs;
@@ -51,6 +52,10 @@ public class TestManager extends JMeterMojo {
      */
     public void setExitCheckPause(int value) {
         this.exitCheckPause = value;
+    }
+
+    public void setTestEndDetection(boolean value){
+        this.useOldTestEndDetection = value;
     }
 
     /**
@@ -165,11 +170,21 @@ public class TestManager extends JMeterMojo {
                 new JMeter().start(testArgs.buildArgumentsArray());
 
                 //TODO Investigate the use of a listener here (Looks like JMeter reports startup and shutdown to a listener when it finishes a test...
-                while (!checkForEndOfTest(new BufferedReader(new FileReader(jmeterLog)))) {
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        break;
+                if (this.useOldTestEndDetection) {
+                    while (!checkForEndOfTest(new BufferedReader(new FileReader(jmeterLog)))) {
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            break;
+                        }
+                    }
+                } else {
+                    while (hasTestFinished()) {
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            break;
+                        }
                     }
                 }
 
@@ -196,6 +211,17 @@ public class TestManager extends JMeterMojo {
         }
     }
 
+    private boolean hasTestFinished(){
+        // TODO Put listener check here
+        try {
+            //Temp for testing purposes
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+
+        }
+        return false;
+    }
+
     /**
      * Check JMeter logfile (provided as a BufferedReader) for End message.
      *
@@ -203,6 +229,7 @@ public class TestManager extends JMeterMojo {
      * @return true if test ended
      * @throws MojoExecutionException exception
      */
+    @Deprecated
     private boolean checkForEndOfTest(BufferedReader in) throws MojoExecutionException {
         boolean testEnded = false;
         try {

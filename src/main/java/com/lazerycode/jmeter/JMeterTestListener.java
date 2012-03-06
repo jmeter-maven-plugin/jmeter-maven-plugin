@@ -4,14 +4,13 @@ import org.apache.jmeter.engine.event.LoopIterationEvent;
 import org.apache.jmeter.reporters.AbstractListenerElement;
 import org.apache.jmeter.testelement.TestListener;
 
-public class JMeterTestListener extends AbstractListenerElement
-        implements TestListener {
+public class JMeterTestListener extends AbstractListenerElement implements TestListener {
 
-    boolean hasTestEnded = false;
+    private boolean isTestStillRunning = true;
 
     @Override
     public void testStarted() {
-
+        this.isTestStillRunning = true;
     }
 
     @Override
@@ -21,8 +20,7 @@ public class JMeterTestListener extends AbstractListenerElement
 
     @Override
     public void testEnded() {
-        this.hasTestEnded = true;
-        System.out.println("***DETECTED END OF TEST***");
+        this.isTestStillRunning = false;
     }
 
     @Override
@@ -34,7 +32,7 @@ public class JMeterTestListener extends AbstractListenerElement
     public void testIterationStart(LoopIterationEvent lie) {
     }
 
-    public boolean hasTestEnded(){
-        return this.hasTestEnded;
+    public boolean isTestStillRunning(){
+        return this.isTestStillRunning;
     }
 }

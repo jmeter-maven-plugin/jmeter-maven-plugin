@@ -1,12 +1,10 @@
 package com.lazerycode.jmeter.testrunner;
 
-import com.lazerycode.jmeter.IncludesComparator;
-import com.lazerycode.jmeter.JMeterMojo;
-import com.lazerycode.jmeter.RemoteConfig;
-import com.lazerycode.jmeter.UtilityFunctions;
+import com.lazerycode.jmeter.*;
 import com.lazerycode.jmeter.configuration.JMeterArgumentsArray;
 import org.apache.commons.io.output.NullOutputStream;
 import org.apache.jmeter.JMeter;
+import org.apache.jmeter.engine.StandardJMeterEngine;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.tools.ant.DirectoryScanner;
 
@@ -35,6 +33,7 @@ public class TestManager extends JMeterMojo {
     private String remoteStart = null;
     private int exitCheckPause = 2000;
     private boolean useOldTestEndDetection = false;
+    private JMeterTestListener testListener = new JMeterTestListener();
 
     public TestManager(JMeterArgumentsArray testArgs, File logsDir, File testFilesDirectory, List<String> testFiles, List<String> excludeTestFiles, boolean suppressJMeterOutput) {
         this.testArgs = testArgs;
@@ -161,15 +160,13 @@ public class TestManager extends JMeterMojo {
             Thread.UncaughtExceptionHandler oldExceptionHandler = overrideUncaughtExceptionHandler();
             PrintStream originalOut = System.out;
             try {
-                // This mess is necessary because the only way to know when
-                // JMeter is done is to wait for its test end message!                
                 setJMeterLogFile(test.getName() + ".log");
                 getLog().info("Executing test: " + test.getName());
                 //Suppress JMeter's annoying System.out messages
                 if (suppressJMeterOutput) System.setOut(new PrintStream(new NullOutputStream()));
+                new StandardJMeterEngine().register(this.testListener);
                 new JMeter().start(testArgs.buildArgumentsArray());
-
-                //TODO Investigate the use of a listener here (Looks like JMeter reports startup and shutdown to a listener when it finishes a test...
+                //TODO Remove this IF/Else statement when we remove the ability to use the old log file scanning method.
                 if (this.useOldTestEndDetection) {
                     while (!checkForEndOfTest(new BufferedReader(new FileReader(jmeterLog)))) {
                         try {
@@ -179,16 +176,8 @@ public class TestManager extends JMeterMojo {
                         }
                     }
                 } else {
-                    while (hasTestFinished()) {
-                        try {
-                            Thread.sleep(1000);
-                        } catch (InterruptedException e) {
-                            break;
-                        }
-                    }
+                    waitForTestToFinish();
                 }
-
-
             } catch (ExitException e) {
                 if (e.getCode() != 0) {
                     throw new MojoExecutionException("Test failed", e);
@@ -211,15 +200,17 @@ public class TestManager extends JMeterMojo {
         }
     }
 
-    private boolean hasTestFinished(){
-        // TODO Put listener check here
-        try {
-            //Temp for testing purposes
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-
+    /**
+     * Wait for the TestListener to tell us that the test has finished.
+     */
+    private void waitForTestToFinish(){
+        while (this.testListener.isTestStillRunning()) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                break;
+            }
         }
-        return false;
     }
 
     /**

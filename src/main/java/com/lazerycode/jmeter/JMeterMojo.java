@@ -159,9 +159,9 @@ public class JMeterMojo extends AbstractMojo {
     /**
      * Use log file scanning instead of listener to detect test end.
      * 
-     * @parameter default-value="true"
+     * @parameter default-value="false"
+     * @deprecated
      */
-    @Deprecated
     private boolean useOldTestEndDetection;
 
     /**

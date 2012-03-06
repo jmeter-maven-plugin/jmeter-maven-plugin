@@ -53,6 +53,12 @@ public class TestManager extends JMeterMojo {
         this.exitCheckPause = value;
     }
 
+    /**
+     * Should we use old test end detection method (log file scanning)
+     * TODO remove this option in 1.4.2?
+     *
+     * @param value
+     */
     public void setTestEndDetection(boolean value){
         this.useOldTestEndDetection = value;
     }
@@ -159,15 +165,18 @@ public class TestManager extends JMeterMojo {
             SecurityManager oldSecurityManager = overrideSecurityManager();
             Thread.UncaughtExceptionHandler oldExceptionHandler = overrideUncaughtExceptionHandler();
             PrintStream originalOut = System.out;
+            setJMeterLogFile(test.getName() + ".log");
+            getLog().info("Executing test: " + test.getName());
             try {
-                setJMeterLogFile(test.getName() + ".log");
-                getLog().info("Executing test: " + test.getName());
-                //Suppress JMeter's annoying System.out messages
+                //Suppress JMeter's annoying System.out messages.
                 if (suppressJMeterOutput) System.setOut(new PrintStream(new NullOutputStream()));
+                //Register Test Listener to track state of test.
                 new StandardJMeterEngine().register(this.testListener);
+                //Start the test.
                 new JMeter().start(testArgs.buildArgumentsArray());
-                //TODO Remove this IF/Else statement when we remove the ability to use the old log file scanning method.
+                //TODO Remove this IF/Else statement when we remove the ability to use the old log file scanning method (1.4.2?).
                 if (this.useOldTestEndDetection) {
+                    //TODO don't need to capture IOException when this has gone?
                     while (!checkForEndOfTest(new BufferedReader(new FileReader(jmeterLog)))) {
                         try {
                             Thread.sleep(1000);
@@ -189,6 +198,7 @@ public class TestManager extends JMeterMojo {
                 } catch (InterruptedException e) {
                     getLog().warn("Something went wrong during Thread cleanup, we may be leaving something running...");
                 }
+                //Reset everything back to normal
                 System.setSecurityManager(oldSecurityManager);
                 Thread.setDefaultUncaughtExceptionHandler(oldExceptionHandler);
                 System.setOut(originalOut);
@@ -215,6 +225,7 @@ public class TestManager extends JMeterMojo {
 
     /**
      * Check JMeter logfile (provided as a BufferedReader) for End message.
+     * TODO Remove in 1.4.2?
      *
      * @param in JMeter logfile
      * @return true if test ended

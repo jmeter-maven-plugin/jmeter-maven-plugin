@@ -1,7 +1,7 @@
 package com.lazerycode.jmeter.reporting;
 
 import com.lazerycode.jmeter.JMeterMojo;
-import com.lazerycode.jmeter.ReportConfig;
+import com.lazerycode.jmeter.configuration.ReportConfig;
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 

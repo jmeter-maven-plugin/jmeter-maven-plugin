@@ -1,6 +1,9 @@
 package com.lazerycode.jmeter;
 
 import com.lazerycode.jmeter.configuration.JMeterArgumentsArray;
+import com.lazerycode.jmeter.configuration.ProxyConfig;
+import com.lazerycode.jmeter.configuration.RemoteConfig;
+import com.lazerycode.jmeter.configuration.ReportConfig;
 import com.lazerycode.jmeter.properties.JMeterPropertiesFiles;
 import com.lazerycode.jmeter.properties.PropertyHandler;
 import com.lazerycode.jmeter.reporting.ReportGenerator;
@@ -215,7 +218,7 @@ public class JMeterMojo extends AbstractMojo {
         jMeterTestManager.setExitCheckPause(this.jmeterExitCheckPause);
         jMeterTestManager.setTestEndDetection(this.useOldTestEndDetection);
         getLog().info(" ");
-        getLog().info(this.testArgs.getProxyDetails());
+        getLog().info(this.proxyConfig.toString());
         List<String> testResults = jMeterTestManager.executeTests();
         new ReportGenerator(this.reportConfig).makeReport(testResults);
         checkForErrors(testResults);

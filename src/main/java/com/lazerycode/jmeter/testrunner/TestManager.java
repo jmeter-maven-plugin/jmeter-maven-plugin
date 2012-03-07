@@ -2,6 +2,7 @@ package com.lazerycode.jmeter.testrunner;
 
 import com.lazerycode.jmeter.*;
 import com.lazerycode.jmeter.configuration.JMeterArgumentsArray;
+import com.lazerycode.jmeter.configuration.RemoteConfig;
 import org.apache.commons.io.output.NullOutputStream;
 import org.apache.jmeter.JMeter;
 import org.apache.jmeter.engine.StandardJMeterEngine;
@@ -16,7 +17,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * TestManager encapsules functions that gather JMeter Test files and execute the tests
+ * TestManager encapsulates functions that gather JMeter Test files and execute the tests
  */
 public class TestManager extends JMeterMojo {
 
@@ -31,7 +32,7 @@ public class TestManager extends JMeterMojo {
     private boolean remoteStartAll = false;
     private boolean remoteStartAndStopOnce = true;
     private String remoteStart = null;
-    private int exitCheckPause = 2000;
+    private int exitCheckPause = 7500;
     private boolean useOldTestEndDetection = false;
     private JMeterTestListener testListener = new JMeterTestListener();
 
@@ -61,6 +62,7 @@ public class TestManager extends JMeterMojo {
      * TODO remove this option in 1.4.2?
      *
      * @param value
+     * @deprecated
      */
     public void setTestEndDetection(boolean value){
         this.useOldTestEndDetection = value;

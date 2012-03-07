@@ -1,4 +1,4 @@
-package com.lazerycode.jmeter;
+package com.lazerycode.jmeter.configuration;
 
 /**
  * Is used for configuration of all proxy related configuration.
@@ -105,7 +105,19 @@ public class ProxyConfig {
 
     @Override
     public String toString() {
-        return "ProxyConfig: [" +" Host="+ getHost()+", Port="+ getPort()+
-                ", Username="+ getUsername()+", Password="+ getPassword()+", HostExclusions="+ getHostExclusions()+" ]";
+        String proxyDetails = "Proxy server is not being used.";
+        if (null != this.host) {
+            proxyDetails = "Proxy Details:\n\nHost: " + this.host + ":" + this.port + "\n";
+            if (null != this.username) {
+                proxyDetails += "Username:" + this.username + "\n";
+            }
+            if (null != this.password) {
+                proxyDetails += "Password:" + this.password + "\n";
+            }
+            if (null != this.hostExclusions) {
+                proxyDetails += "Host Exclusions:" + this.hostExclusions + "\n";
+            }
+        }
+        return proxyDetails + "\n";
     }
 }

@@ -2,6 +2,7 @@ package com.lazerycode.jmeter;
 
 import com.lazerycode.jmeter.configuration.JMeterArgumentsArray;
 import com.lazerycode.jmeter.configuration.JMeterCommandLineArguments;
+import com.lazerycode.jmeter.configuration.ProxyConfig;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.junit.Test;
 

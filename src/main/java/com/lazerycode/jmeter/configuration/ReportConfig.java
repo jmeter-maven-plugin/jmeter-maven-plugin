@@ -1,4 +1,4 @@
-package com.lazerycode.jmeter;
+package com.lazerycode.jmeter.configuration;
 
 import java.io.File;
 

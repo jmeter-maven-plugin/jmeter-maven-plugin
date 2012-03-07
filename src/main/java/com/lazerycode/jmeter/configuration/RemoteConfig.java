@@ -1,4 +1,4 @@
-package com.lazerycode.jmeter;
+package com.lazerycode.jmeter.configuration;
 
 /**
  * Is used for configuration of all remote related configuration.

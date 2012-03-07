@@ -1,6 +1,5 @@
 package com.lazerycode.jmeter.configuration;
 
-import com.lazerycode.jmeter.ProxyConfig;
 import com.lazerycode.jmeter.UtilityFunctions;
 import org.apache.maven.plugin.MojoExecutionException;
 
@@ -201,21 +200,6 @@ public class JMeterArgumentsArray {
 
     public String getResultsFileName() {
         return this.resultsFileName;
-    }
-
-    public String getProxyDetails() {
-        String proxyDetails = "Proxy server is not being used.";
-        if (!this.argumentMap.get(JMeterCommandLineArguments.PROXY_HOST)) {
-            return proxyDetails;
-        }
-        proxyDetails = "Proxy Details:\n\nHost: " + this.proxyHost + ":" + this.proxyPort + "\n";
-        if (this.argumentMap.get(JMeterCommandLineArguments.PROXY_USERNAME)) {
-            proxyDetails += "Username:" + this.proxyUsername + "\n";
-        }
-        if (this.argumentMap.get(JMeterCommandLineArguments.PROXY_PASSWORD)) {
-            proxyDetails += "Password:" + this.proxyPassword + "\n";
-        }
-        return proxyDetails + "\n";
     }
 
     public String[] buildArgumentsArray() throws MojoExecutionException {

@@ -50,7 +50,10 @@ public class TestManager extends JMeterMojo {
      * @param value int
      */
     public void setExitCheckPause(int value) {
-        this.exitCheckPause = value;
+        //JMeter.java line 966 has an arbitrary 5000ms wait for thread cleanup.
+        //This happens after the listeners have been told that the test finishes.
+        //Replicate that here to ensure that the JMeter log writer has a chance to finish before we start another test/process logs.
+        this.exitCheckPause = value + 5000;
     }
 
     /**

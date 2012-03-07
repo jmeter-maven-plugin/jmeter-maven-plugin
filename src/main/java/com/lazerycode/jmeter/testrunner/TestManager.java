@@ -58,17 +58,6 @@ public class TestManager extends JMeterMojo {
     }
 
     /**
-     * Should we use old test end detection method (log file scanning)
-     * TODO remove this option in 1.4.2?
-     *
-     * @param value
-     * @deprecated
-     */
-    public void setTestEndDetection(boolean value){
-        this.useOldTestEndDetection = value;
-    }
-
-    /**
      * Set remote configuration
      *
      * @param remoteConfig
@@ -160,59 +149,42 @@ public class TestManager extends JMeterMojo {
      *          Exception
      */
     private String executeSingleTest(File test) throws MojoExecutionException {
-
+        getLog().info(" ");
+        testArgs.setTestFile(test);
+        //Delete results file if it already exists
+        new File(testArgs.getResultsFileName()).delete();
+        getLog().debug("JMeter is called with the following command line arguments: " + UtilityFunctions.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()));
+        SecurityManager oldSecurityManager = overrideSecurityManager();
+        Thread.UncaughtExceptionHandler oldExceptionHandler = overrideUncaughtExceptionHandler();
+        PrintStream originalOut = System.out;
+        setJMeterLogFile(test.getName() + ".log");
+        getLog().info("Executing test: " + test.getName());
         try {
-            getLog().info(" ");
-            testArgs.setTestFile(test);
-            //Delete results file if it already exists
-            new File(testArgs.getResultsFileName()).delete();
-            getLog().debug("JMeter is called with the following command line arguments: " + UtilityFunctions.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()));
-            SecurityManager oldSecurityManager = overrideSecurityManager();
-            Thread.UncaughtExceptionHandler oldExceptionHandler = overrideUncaughtExceptionHandler();
-            PrintStream originalOut = System.out;
-            setJMeterLogFile(test.getName() + ".log");
-            getLog().info("Executing test: " + test.getName());
-            try {
-                //Suppress JMeter's annoying System.out messages.
-                if (suppressJMeterOutput) System.setOut(new PrintStream(new NullOutputStream()));
-                //Register Test Listener to track state of test.
-                new StandardJMeterEngine().register(this.testListener);
-                //Start the test.
-                new JMeter().start(testArgs.buildArgumentsArray());
-                //TODO Remove this IF/Else statement when we remove the ability to use the old log file scanning method (1.4.2?).
-                if (this.useOldTestEndDetection) {
-                    //TODO don't need to capture IOException when this has gone?
-                    while (!checkForEndOfTest(new BufferedReader(new FileReader(jmeterLog)))) {
-                        try {
-                            Thread.sleep(1000);
-                        } catch (InterruptedException e) {
-                            break;
-                        }
-                    }
-                } else {
-                    waitForTestToFinish();
-                }
-            } catch (ExitException e) {
-                if (e.getCode() != 0) {
-                    throw new MojoExecutionException("Test failed", e);
-                }
-            } finally {
-                try {
-                    //Wait for JMeter to clean up threads.
-                    Thread.sleep(this.exitCheckPause);
-                } catch (InterruptedException e) {
-                    getLog().warn("Something went wrong during Thread cleanup, we may be leaving something running...");
-                }
-                //Reset everything back to normal
-                System.setSecurityManager(oldSecurityManager);
-                Thread.setDefaultUncaughtExceptionHandler(oldExceptionHandler);
-                System.setOut(originalOut);
-                getLog().info("Completed Test: " + test.getName());
+            //Suppress JMeter's annoying System.out messages.
+            if (suppressJMeterOutput) System.setOut(new PrintStream(new NullOutputStream()));
+            //Register Test Listener to track state of test.
+            new StandardJMeterEngine().register(this.testListener);
+            //Start the test.
+            new JMeter().start(testArgs.buildArgumentsArray());
+            waitForTestToFinish();
+        } catch (ExitException e) {
+            if (e.getCode() != 0) {
+                throw new MojoExecutionException("Test failed", e);
             }
-            return testArgs.getResultsFileName();
-        } catch (IOException e) {
-            throw new MojoExecutionException("Can't execute test", e);
+        } finally {
+            try {
+                //Wait for JMeter to clean up threads.
+                Thread.sleep(this.exitCheckPause);
+            } catch (InterruptedException e) {
+                getLog().warn("Something went wrong during Thread cleanup, we may be leaving something running...");
+            }
+            //Reset everything back to normal
+            System.setSecurityManager(oldSecurityManager);
+            Thread.setDefaultUncaughtExceptionHandler(oldExceptionHandler);
+            System.setOut(originalOut);
+            getLog().info("Completed Test: " + test.getName());
         }
+        return testArgs.getResultsFileName();
     }
 
     /**
@@ -226,31 +198,6 @@ public class TestManager extends JMeterMojo {
                 break;
             }
         }
-    }
-
-    /**
-     * Check JMeter logfile (provided as a BufferedReader) for End message.
-     * TODO Remove in 1.4.2?
-     *
-     * @param in JMeter logfile
-     * @return true if test ended
-     * @throws MojoExecutionException exception
-     */
-    @Deprecated
-    private boolean checkForEndOfTest(BufferedReader in) throws MojoExecutionException {
-        boolean testEnded = false;
-        try {
-            String line;
-            while ((line = in.readLine()) != null) {
-                if (line.contains("Test has ended") || line.contains("Interrupting RMI Reaper")) {
-                    testEnded = true;
-                    break;
-                }
-            }
-        } catch (IOException e) {
-            throw new MojoExecutionException("Can't read log file", e);
-        }
-        return testEnded;
     }
 
     /**

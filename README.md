@@ -55,7 +55,7 @@ The plugin is now in the central maven repository so you should no longer specif
 		<plugin>
 			<groupId>com.lazerycode.jmeter</groupId>
 			<artifactId>jmeter-maven-plugin</artifactId>
-			<version>1.4</version>
+			<version>1.4.1</version>
 			<executions>
 				<execution>
 					<id>jmeter-tests</id>

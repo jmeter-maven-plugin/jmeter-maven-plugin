@@ -6,7 +6,7 @@ The Maven JMeter Plugin allows you to automate JMeter tests in Maven.
 *PLEASE NOTE: The Group ID and Artifact ID have changed!*
 -----
 
-This is to bring the project in line with maven naming practice for non-maven plugins and to enable us to upload to the Sonatype OSS repos.  This means the next release of this project will be promoted to the maven central repo.
+This is to bring the project in line with maven naming practice for non-maven plugins and to enableReports us to upload to the Sonatype OSS repos.  This means the next release of this project will be promoted to the maven central repo.
 
 Community
 -----

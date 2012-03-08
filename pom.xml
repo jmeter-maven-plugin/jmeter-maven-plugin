@@ -247,16 +247,16 @@
                                             <!--<report>index</report>-->
                                             <report>summary</report>
                                             <report>dependency-management</report>
-                                            <!-- TODO: add <issueManagement> configuration to POM, then re-enable -->
+                                            <!-- TODO: add <issueManagement> configuration to POM, then re-enableReports -->
                                             <!--<report>issue-tracking</report>-->
                                             <report>help</report>
                                             <report>modules</report>
                                             <report>dependencies</report>
                                             <report>plugins</report>
-                                            <!-- TODO: add <ciManagement> configuration to POM, then re-enable -->
+                                            <!-- TODO: add <ciManagement> configuration to POM, then re-enableReports -->
                                             <!--<report>cim</report>-->
                                             <report>license</report>
-                                            <!-- TODO: add <mailingLists> configuration to POM, then re-enable -->
+                                            <!-- TODO: add <mailingLists> configuration to POM, then re-enableReports -->
                                             <!--<report>mailing-list</report>-->
                                             <report>project-team</report>
                                             <report>scm</report>

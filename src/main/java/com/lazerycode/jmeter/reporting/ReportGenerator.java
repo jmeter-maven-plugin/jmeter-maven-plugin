@@ -27,7 +27,7 @@ public class ReportGenerator extends JMeterMojo {
      * @throws MojoExecutionException
      */
     public void makeReport(List<String> resultFiles) throws MojoExecutionException {
-        if (reportConfig.isEnable()) {
+        if (reportConfig.areReportsEnabled()) {
             try {
                 ReportTransformer transformer;
                 transformer = new ReportTransformer(getXslt());
@@ -57,8 +57,8 @@ public class ReportGenerator extends JMeterMojo {
     private InputStream getXslt() throws IOException {
         if (reportConfig.getXsltFile() == null) {
             //if we are using the default report, also copy the images out.
-            IOUtils.copy(Thread.currentThread().getContextClassLoader().getResourceAsStream("reports/collapse.jpg"), new FileOutputStream(reportConfig.getOutputDirectory().getPath() + File.separator + "collapse.jpg"));
-            IOUtils.copy(Thread.currentThread().getContextClassLoader().getResourceAsStream("reports/expand.jpg"), new FileOutputStream(reportConfig.getOutputDirectory().getPath() + File.separator + "expand.jpg"));
+            IOUtils.copy(Thread.currentThread().getContextClassLoader().getResourceAsStream("reports/collapse.jpg"), new FileOutputStream(reportConfig.getOutputDirectoryAbsolutePath() + File.separator + "collapse.jpg"));
+            IOUtils.copy(Thread.currentThread().getContextClassLoader().getResourceAsStream("reports/expand.jpg"), new FileOutputStream(reportConfig.getOutputDirectoryAbsolutePath() + File.separator + "expand.jpg"));
             return Thread.currentThread().getContextClassLoader().getResourceAsStream("reports/jmeter-results-detail-report_21.xsl");
         } else {
             return new FileInputStream(reportConfig.getXsltFile());

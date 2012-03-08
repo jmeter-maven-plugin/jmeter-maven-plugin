@@ -229,9 +229,9 @@ public class JMeterMojo extends AbstractMojo {
         this.binDir.mkdirs();
         this.libExt = new File(this.workDir + File.separator + "lib" + File.separator + "ext");
         this.libExt.mkdirs();
-        File reportDir = new File(workDir + File.separator + "report");
-        reportDir.mkdirs();
-        reportConfig.setOutputDirectory(reportDir);
+        if (!this.reportConfig.isOutputDirectorySet()) {
+            this.reportConfig.createOutputDirectory(new File(workDir + File.separator + "report"));
+        }
         //JMeter expects a <workdir>/lib/junit directory and complains if it can't find it.
         new File(this.workDir + File.separator + "lib" + File.separator + "junit").mkdirs();
         //JMeter uses the system property "user.dir" to set its base working directory
@@ -294,7 +294,7 @@ public class JMeterMojo extends AbstractMojo {
      * @throws MojoExecutionException
      */
     private void initialiseJMeterArgumentsArray() throws MojoExecutionException {
-        this.testArgs = new JMeterArgumentsArray(reportConfig.getOutputDirectory().getAbsolutePath());
+        this.testArgs = new JMeterArgumentsArray(this.reportConfig.getOutputDirectoryAbsolutePath());
         this.testArgs.setResultsTimestamp(this.testResultsTimestamp);
         this.testArgs.setJMeterHome(this.workDir.getAbsolutePath());
         this.testArgs.setProxyConfig(this.proxyConfig);

@@ -18,7 +18,7 @@ Version 1.4.0 Release Notes
 
         * srcDir -> testFilesDirectory
 
-        * enableReports -> reportConfig->enable
+        * enableReports -> reportConfig->enableReports
 
         * reportDir -> reportConfig->outputDirectory
 
@@ -42,4 +42,4 @@ Version 1.4.0 Release Notes
 
     * remoteConfiguration->start, remoteConfiguration->stop, remoteConfiguration->startAll, remoteConfiguration->startAndStopOnce - used to configure handling of remote testing.
 
-    * testResultsTimestamp(Default: true) - enable/disable timestamping of the results filename(s).
+    * testResultsTimestamp(Default: true) - enableReports/disable timestamping of the results filename(s).

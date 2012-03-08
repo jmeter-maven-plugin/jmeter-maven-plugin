@@ -10,7 +10,7 @@ import java.io.File;
  * <pre>
  * {@code
  * <reportConfig>
- *     <enable></enable>
+ *     <enableReports></enableReports>
  *     <outputDirectory></outputDirectory>
  *     <postFix></postFix>
  *     <xsltFile></xsltFile>
@@ -23,31 +23,37 @@ import java.io.File;
 public class ReportConfiguration {
 
     private File outputDirectory;
+    private boolean outputDirectorySet = false;
     private String postfix = "-report.html";
-    private boolean enable = true;
+    private boolean enableReports = true;
     private File xsltFile;
 
     /**
-     * @return Directory in which the reports are stored.
+     * @return Absolute path of directory in which the reports are stored.
      */
-    //TODO: currently #setOutputDirectory is called in JMeterMojo#generateJMeterDirectoryTree().
-    public File getOutputDirectory() {
-        return outputDirectory;
+    public String getOutputDirectoryAbsolutePath() {
+        return this.outputDirectory.getAbsolutePath();
     }
 
     /**
      * Directory in which the reports are stored.
      * @param outputDirectory
      */
-    public void setOutputDirectory(File outputDirectory) {
+    public void createOutputDirectory(File outputDirectory) {
         this.outputDirectory = outputDirectory;
+        this.outputDirectory.mkdirs();
+        this.outputDirectorySet = true;
+    }
+
+    public boolean isOutputDirectorySet(){
+        return this.outputDirectorySet;
     }
 
     /**
      * @return Postfix to add to report file.
      */
     public String getPostfix() {
-        return postfix;
+        return this.postfix;
     }
 
     /**
@@ -62,24 +68,24 @@ public class ReportConfiguration {
     /**
      * @return Whether or not to generate reports after measurement.
      */
-    public boolean isEnable() {
-        return enable;
+    public boolean areReportsEnabled() {
+        return this.enableReports;
     }
 
     /**
      * Whether or not to generate reports after measurement.
      * Default: {@link true Boolean.TRUE}
-     * @param enable
+     * @param enableReports
      */
-    public void setEnable(boolean enable) {
-        this.enable = enable;
+    public void enableReports(boolean enableReports) {
+        this.enableReports = enableReports;
     }
 
     /**
      * @return Custom Xslt which is used to create the report.
      */
     public File getXsltFile() {
-        return xsltFile;
+        return this.xsltFile;
     }
 
     /**
@@ -92,7 +98,7 @@ public class ReportConfiguration {
 
     @Override
     public String toString() {
-        return "ReportConfiguration [ Enable=" + isEnable() + "OutputDirectory=" + getOutputDirectory() + ", PostFix=" + getPostfix() +
+        return "ReportConfiguration [ Enable=" + areReportsEnabled() + "OutputDirectory=" + getOutputDirectoryAbsolutePath() + ", PostFix=" + getPostfix() +
                 ", XsltFile=" + getXsltFile() + " ]";
     }
 }

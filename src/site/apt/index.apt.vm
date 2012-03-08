@@ -4,7 +4,7 @@
 
 Basic Usage
 
-    First of all add the Sonatype Maven repository to your project:
+    If you want to use the latest snapshot you will need to add the Sonatype Maven repository to your project:
 
 +---+
 <pluginRepositories>

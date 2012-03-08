@@ -1,7 +1,7 @@
 package com.lazerycode.jmeter.reporting;
 
 import com.lazerycode.jmeter.JMeterMojo;
-import com.lazerycode.jmeter.configuration.ReportConfig;
+import com.lazerycode.jmeter.configuration.ReportConfiguration;
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 
@@ -14,9 +14,9 @@ import java.util.List;
  */
 public class ReportGenerator extends JMeterMojo {
 
-    private ReportConfig reportConfig;
+    private ReportConfiguration reportConfig;
 
-    public ReportGenerator(ReportConfig reportConfig) {
+    public ReportGenerator(ReportConfiguration reportConfig) {
         this.reportConfig = reportConfig;
     }
 

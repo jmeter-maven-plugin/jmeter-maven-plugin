@@ -2,7 +2,7 @@ package com.lazerycode.jmeter.testrunner;
 
 import com.lazerycode.jmeter.*;
 import com.lazerycode.jmeter.configuration.JMeterArgumentsArray;
-import com.lazerycode.jmeter.configuration.RemoteConfig;
+import com.lazerycode.jmeter.configuration.RemoteConfiguration;
 import org.apache.commons.io.output.NullOutputStream;
 import org.apache.jmeter.JMeter;
 import org.apache.jmeter.engine.StandardJMeterEngine;
@@ -62,7 +62,7 @@ public class TestManager extends JMeterMojo {
      *
      * @param remoteConfig
      */
-    public void setRemoteConfig(RemoteConfig remoteConfig) {
+    public void setRemoteConfig(RemoteConfiguration remoteConfig) {
         this.remoteStop = remoteConfig.isStop();
         this.remoteStartAll = remoteConfig.isStartAll();
         this.remoteStartAndStopOnce = remoteConfig.isStartAndStopOnce();
@@ -154,8 +154,8 @@ public class TestManager extends JMeterMojo {
         //Delete results file if it already exists
         new File(testArgs.getResultsFileName()).delete();
         getLog().debug("JMeter is called with the following command line arguments: " + UtilityFunctions.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()));
-        SecurityManager oldSecurityManager = overrideSecurityManager();
-        Thread.UncaughtExceptionHandler oldExceptionHandler = overrideUncaughtExceptionHandler();
+        SecurityManager originalSecurityManager = overrideSecurityManager();
+        Thread.UncaughtExceptionHandler originalExceptionHandler = overrideUncaughtExceptionHandler();
         PrintStream originalOut = System.out;
         setJMeterLogFile(test.getName() + ".log");
         getLog().info("Executing test: " + test.getName());
@@ -179,8 +179,8 @@ public class TestManager extends JMeterMojo {
                 getLog().warn("Something went wrong during Thread cleanup, we may be leaving something running...");
             }
             //Reset everything back to normal
-            System.setSecurityManager(oldSecurityManager);
-            Thread.setDefaultUncaughtExceptionHandler(oldExceptionHandler);
+            System.setSecurityManager(originalSecurityManager);
+            Thread.setDefaultUncaughtExceptionHandler(originalExceptionHandler);
             System.setOut(originalOut);
             getLog().info("Completed Test: " + test.getName());
         }

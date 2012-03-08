@@ -19,7 +19,7 @@ package com.lazerycode.jmeter.configuration;
  *
  * @author Arne Franken
  */
-public class ProxyConfig {
+public class ProxyConfiguration {
 
     private String hostExclusions = null;
     private String host = null;

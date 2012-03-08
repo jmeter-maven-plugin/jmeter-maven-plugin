@@ -26,11 +26,11 @@ Remote Start And Stop
                         </execution>
                     </executions>
                     <configuration>
-                        <remoteConfig>
+                        <remoteConfiguration>
                             <startAndStopOnce>false</startAndStopOnce>
                             <startAll>true</startAll>
                             <stop>true</stop>
-                        </remoteConfig>
+                        </remoteConfiguration>
                     </configuration>
                 </plugin>
             </plugins>
@@ -62,10 +62,10 @@ Remote Start And Stop
                         </execution>
                     </executions>
                     <configuration>
-                        <remoteConfig>
+                        <remoteConfiguration>
                             <start>server1,server2</start>
                             <stop>true</stop>
-                        </remoteConfig>
+                        </remoteConfiguration>
                     </configuration>
                 </plugin>
             </plugins>

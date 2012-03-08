@@ -28,13 +28,13 @@ Proxy Settings
                         </execution>
                     </executions>
                     <configuration>
-                        <proxyConfig>
+                        <proxyConfiguration>
                             <host>10.10.10.53</host>
                             <port>80</port>
                             <username>jimbob</username>
                             <password>correct horse battery staple</password>
                             <hostExclusions>localhost|*.lazerycode.com</hostExclusions>
-                        </proxyConfig>
+                        </proxyConfiguration>
                     </configuration>
                 </plugin>
             </plugins>

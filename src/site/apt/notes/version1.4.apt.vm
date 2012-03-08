@@ -36,10 +36,10 @@ Version 1.4.0 Release Notes
 
   * New properties
 
-    * proxyConfig->host, proxyConfig->port, proxyConfig->username, proxyConfig->password, proxyConfig->nonProxyHosts - used to configure a proxy used by JMeter
+    * proxyConfiguration->host, proxyConfiguration->port, proxyConfiguration->username, proxyConfiguration->password, proxyConfiguration->nonProxyHosts - used to configure a proxy used by JMeter
 
     * suppressJMeterOutput(Default: true) - suppress JMeter output to standard out.
 
-    * remoteConfig->start, remoteConfig->stop, remoteConfig->startAll, remoteConfig->startAndStopOnce - used to configure handling of remote testing.
+    * remoteConfiguration->start, remoteConfiguration->stop, remoteConfiguration->startAll, remoteConfiguration->startAndStopOnce - used to configure handling of remote testing.
 
     * testResultsTimestamp(Default: true) - enable/disable timestamping of the results filename(s).

@@ -18,7 +18,7 @@ package com.lazerycode.jmeter.configuration;
  *
  * @author Arne Franken
  */
-public class RemoteConfig {
+public class RemoteConfiguration {
 
     private boolean stop = false;
     private boolean startAll = false;
@@ -90,7 +90,7 @@ public class RemoteConfig {
 
     @Override
     public String toString() {
-        return "RemoteConfig [ "+"Start="+ getStart()+", Stop="+ isStop()+
+        return "RemoteConfiguration [ "+"Start="+ getStart()+", Stop="+ isStop()+
                 ", StartAndStopOnce="+ isStartAndStopOnce()+", StartAll="+ isStartAll()+" ]";
     }
 }

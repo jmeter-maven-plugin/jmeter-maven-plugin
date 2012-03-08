@@ -2,7 +2,7 @@ package com.lazerycode.jmeter;
 
 import com.lazerycode.jmeter.configuration.JMeterArgumentsArray;
 import com.lazerycode.jmeter.configuration.JMeterCommandLineArguments;
-import com.lazerycode.jmeter.configuration.ProxyConfig;
+import com.lazerycode.jmeter.configuration.ProxyConfiguration;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.junit.Test;
 
@@ -176,49 +176,49 @@ public class JMeterArgumentsArrayTest {
 
     @Test
     public void validateJMeterSetProxyHost() throws Exception {
-        ProxyConfig proxyConfig = new ProxyConfig();
-        proxyConfig.setHost("http://10.10.50.43");
-        proxyConfig.setPort(8080);
+        ProxyConfiguration proxyConfiguration = new ProxyConfiguration();
+        proxyConfiguration.setHost("http://10.10.50.43");
+        proxyConfiguration.setPort(8080);
         JMeterArgumentsArray testArgs = new JMeterArgumentsArray(reportDir.getAbsolutePath());
         testArgs.setTestFile(new File(this.testFile.toURI()));
         testArgs.setJMeterHome("target/jmeter/");
-        testArgs.setProxyConfig(proxyConfig);
+        testArgs.setProxyConfig(proxyConfiguration);
         assertThat(UtilityFunctions.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()),
                 is(equalTo("-n -t " + new File(this.testFile.toURI()).getAbsolutePath() + " -l " + testArgs.getResultsFileName() + " -d target/jmeter/ -H http://10.10.50.43 -P 8080")));
     }
 
     @Test
     public void validateJMeterSetProxyUsername() throws Exception {
-        ProxyConfig proxyConfig = new ProxyConfig();
-        proxyConfig.setUsername("god");
+        ProxyConfiguration proxyConfiguration = new ProxyConfiguration();
+        proxyConfiguration.setUsername("god");
         JMeterArgumentsArray testArgs = new JMeterArgumentsArray(reportDir.getAbsolutePath());
         testArgs.setTestFile(new File(this.testFile.toURI()));
         testArgs.setJMeterHome("target/jmeter/");
-        testArgs.setProxyConfig(proxyConfig);
+        testArgs.setProxyConfig(proxyConfiguration);
         assertThat(UtilityFunctions.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()),
                 is(equalTo("-n -t " + new File(this.testFile.toURI()).getAbsolutePath() + " -l " + testArgs.getResultsFileName() + " -d target/jmeter/ -u god")));
     }
 
     @Test
     public void validateJMeterSetProxyPassword() throws Exception {
-        ProxyConfig proxyConfig = new ProxyConfig();
-        proxyConfig.setPassword("changeme");
+        ProxyConfiguration proxyConfiguration = new ProxyConfiguration();
+        proxyConfiguration.setPassword("changeme");
         JMeterArgumentsArray testArgs = new JMeterArgumentsArray(reportDir.getAbsolutePath());
         testArgs.setTestFile(new File(this.testFile.toURI()));
         testArgs.setJMeterHome("target/jmeter/");
-        testArgs.setProxyConfig(proxyConfig);
+        testArgs.setProxyConfig(proxyConfiguration);
         assertThat(UtilityFunctions.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()),
                 is(equalTo("-n -t " + new File(this.testFile.toURI()).getAbsolutePath() + " -l " + testArgs.getResultsFileName() + " -d target/jmeter/ -a changeme")));
     }
 
     @Test
     public void validateSetNonProxyHosts() throws Exception {
-        ProxyConfig proxyConfig = new ProxyConfig();
-        proxyConfig.setHostExclusions("localhost|*.lazerycode.com");
+        ProxyConfiguration proxyConfiguration = new ProxyConfiguration();
+        proxyConfiguration.setHostExclusions("localhost|*.lazerycode.com");
         JMeterArgumentsArray testArgs = new JMeterArgumentsArray(reportDir.getAbsolutePath());
         testArgs.setTestFile(new File(this.testFile.toURI()));
         testArgs.setJMeterHome("target/jmeter/");
-        testArgs.setProxyConfig(proxyConfig);
+        testArgs.setProxyConfig(proxyConfiguration);
         assertThat(UtilityFunctions.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()),
                 is(equalTo("-n -t " + new File(this.testFile.toURI()).getAbsolutePath() + " -l " + testArgs.getResultsFileName() + " -d target/jmeter/ -N localhost|*.lazerycode.com")));
     }

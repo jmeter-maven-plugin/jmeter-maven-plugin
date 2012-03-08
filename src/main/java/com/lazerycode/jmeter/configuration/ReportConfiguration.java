@@ -20,7 +20,7 @@ import java.io.File;
  *
  * @author Arne Franken
  */
-public class ReportConfig {
+public class ReportConfiguration {
 
     private File outputDirectory;
     private String postfix = "-report.html";
@@ -92,7 +92,7 @@ public class ReportConfig {
 
     @Override
     public String toString() {
-        return "ReportConfig [ Enable=" + isEnable() + "OutputDirectory=" + getOutputDirectory() + ", PostFix=" + getPostfix() +
+        return "ReportConfiguration [ Enable=" + isEnable() + "OutputDirectory=" + getOutputDirectory() + ", PostFix=" + getPostfix() +
                 ", XsltFile=" + getXsltFile() + " ]";
     }
 }

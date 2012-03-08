@@ -77,11 +77,11 @@ public class JMeterArgumentsArray {
         this.argumentMap.put(JMeterCommandLineArguments.REMOTE_OPT_PARAM, true);
     }
 
-    public void setProxyConfig(ProxyConfig proxyConfig) {
-        this.setProxyHostDetails(proxyConfig.getHost(), proxyConfig.getPort());
-        this.setProxyUsername(proxyConfig.getUsername());
-        this.setProxyPassword(proxyConfig.getPassword());
-        this.setNonProxyHosts(proxyConfig.getHostExclusions());
+    public void setProxyConfig(ProxyConfiguration proxyConfiguration) {
+        this.setProxyHostDetails(proxyConfiguration.getHost(), proxyConfiguration.getPort());
+        this.setProxyUsername(proxyConfiguration.getUsername());
+        this.setProxyPassword(proxyConfiguration.getPassword());
+        this.setNonProxyHosts(proxyConfiguration.getHostExclusions());
 
     }
 

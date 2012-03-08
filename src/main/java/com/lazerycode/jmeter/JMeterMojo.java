@@ -1,9 +1,9 @@
 package com.lazerycode.jmeter;
 
 import com.lazerycode.jmeter.configuration.JMeterArgumentsArray;
-import com.lazerycode.jmeter.configuration.ProxyConfig;
-import com.lazerycode.jmeter.configuration.RemoteConfig;
-import com.lazerycode.jmeter.configuration.ReportConfig;
+import com.lazerycode.jmeter.configuration.ProxyConfiguration;
+import com.lazerycode.jmeter.configuration.RemoteConfiguration;
+import com.lazerycode.jmeter.configuration.ReportConfiguration;
 import com.lazerycode.jmeter.properties.JMeterPropertiesFiles;
 import com.lazerycode.jmeter.properties.PropertyHandler;
 import com.lazerycode.jmeter.reporting.ReportGenerator;
@@ -136,21 +136,21 @@ public class JMeterMojo extends AbstractMojo {
      *
      * @parameter default-value="${proxyConfig}"
      */
-    private ProxyConfig proxyConfig;
+    private ProxyConfiguration proxyConfig;
 
     /**
      * Value class that wraps all remote configurations.
      *
      * @parameter default-value="${remoteConfig}"
      */
-    private RemoteConfig remoteConfig;
+    private RemoteConfiguration remoteConfig;
 
     /**
      * Value class that wraps all report configuration.
      *
      * @parameter default-value="${reportConfig}"
      */
-    private ReportConfig reportConfig;
+    private ReportConfiguration reportConfig;
 
     /**
      * Suppress JMeter output

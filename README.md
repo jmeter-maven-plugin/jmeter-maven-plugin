@@ -84,5 +84,5 @@ Contributing
 2. Create a branch (`git checkout -b my_plugin`)
 3. Commit your changes (`git commit -am "Added feature"`)
 4. Push to the branch (`git push origin my_plugin`)
-5. Create an [Issue][1] with a link to your branch
+5. Create a new [Issue](https://github.com/Ronnie76er/jmeter-maven-plugin/issues/new) with a link to your branch, or just make a Pull Request.
 6. Enjoy a refreshing Diet Coke and wait

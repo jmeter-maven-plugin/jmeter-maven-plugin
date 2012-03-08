@@ -40,8 +40,7 @@ public class UtilityFunctions {
     }
 
     public static Boolean isNotSet(File value) {
-        //TODO: value#toString() can't ever return null if value != null
-        if (null == value || value.toString().isEmpty()) {
+        if (null == value || value.toString().isEmpty() || value.toString().trim().length() == 0) {
             return true;
         } else {
             return false;

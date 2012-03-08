@@ -34,10 +34,19 @@ public class UtilityFunctionsTest extends TestCase {
 
         String testString2 = "";
         assertTrue("empty value returns false",UtilityFunctions.isNotSet(testString2));
+
+        String testString3 = "    ";
+        assertTrue("blank value returns false",UtilityFunctions.isNotSet(testString3));
     }
 
     public void testIsNotSetFile() throws Exception {
         File testFile = null;
         assertTrue("null value returns false",UtilityFunctions.isNotSet(testFile));
+
+        File testFile2 = new File("   ");
+        assertTrue("blank value returns false",UtilityFunctions.isNotSet(testFile2));
+
+        File testFile3 = new File("");
+        assertTrue("empty value returns false",UtilityFunctions.isNotSet(testFile3));
     }
 }

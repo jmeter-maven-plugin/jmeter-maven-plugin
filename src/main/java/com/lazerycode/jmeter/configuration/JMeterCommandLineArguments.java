@@ -16,7 +16,7 @@ public enum JMeterCommandLineArguments {
     PROPFILE_OPT("p"),          //NOT_USED - We place the jmeter.properties in the correct place on the filesystem.
     PROPFILE2_OPT("q"),         //DOCUMENTED
     REMOTE_OPT("r"),            //DOCUMENTED
-    SERVER_OPT("s"),            //TODO
+    SERVER_OPT("s"),            //NOT_USED - We are never going to start up a server instance on the command line, we are only running tests.
     TESTFILE_OPT("t"),          //ALWAYS_SET - This is how we pass our test file list over to JMeter.
     PROXY_USERNAME("u"),        //DOCUMENTED
     VERSION_OPT("v"),           //NOT_USED - Prints version information and exits.

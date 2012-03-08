@@ -58,6 +58,14 @@ public class TestManager extends JMeterMojo {
     }
 
     /**
+     * Return the value of jmeter.exit.check.pause used by the Test Manager.
+     */
+    public int getExitCheckPause() {
+        //The arbitrary 5000ms wait for thread cleanup is removed from the value we set.
+        return this.exitCheckPause - 5000;
+    }
+
+    /**
      * Set remote configuration
      *
      * @param remoteConfig

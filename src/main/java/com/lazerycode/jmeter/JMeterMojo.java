@@ -182,7 +182,6 @@ public class JMeterMojo extends AbstractMojo {
     private String jmeterConfigArtifact = "ApacheJMeter_config";
     private JMeterArgumentsArray testArgs;
     private PropertyHandler pluginProperties;
-    private int jmeterExitCheckPause = 2500;
 
     /**
      * Run all the JMeter tests.
@@ -203,16 +202,15 @@ public class JMeterMojo extends AbstractMojo {
         TestManager jMeterTestManager = new TestManager(this.testArgs, this.logsDir, this.testFilesDirectory, this.testFilesIncluded, this.testFilesExcluded, this.suppressJMeterOutput);
         jMeterTestManager.setRemoteConfig(this.remoteConfig);
         try {
-            this.jmeterExitCheckPause = Integer.parseInt(this.pluginProperties.getPropertyObject(JMeterPropertiesFiles.JMETER_PROPERTIES).getProperty("jmeter.exit.check.pause"));
+            jMeterTestManager.setExitCheckPause(Integer.parseInt(this.pluginProperties.getPropertyObject(JMeterPropertiesFiles.JMETER_PROPERTIES).getProperty("jmeter.exit.check.pause")));
         } catch (Exception ex) {
-            getLog().warn("Unable to parse the 'jmeter.exit.check.pause' entry in jmeter.properties!  Falling back to a default value of '" + this.jmeterExitCheckPause + "'.");
+            getLog().warn("Unable to parse the 'jmeter.exit.check.pause' entry in jmeter.properties!  Falling back to a default value of '" + jMeterTestManager.getExitCheckPause() + "'.");
         }
-        jMeterTestManager.setExitCheckPause(this.jmeterExitCheckPause);
         getLog().info(" ");
         getLog().info(this.proxyConfig.toString());
         List<String> testResults = jMeterTestManager.executeTests();
         new ReportGenerator(this.reportConfig).makeReport(testResults);
-        checkForErrors(testResults);
+        parseTestResults(testResults);
     }
 
     //==================================================================================================================
@@ -307,7 +305,7 @@ public class JMeterMojo extends AbstractMojo {
      * @throws MojoExecutionException
      * @throws MojoFailureException
      */
-    private void checkForErrors(List<String> results) throws MojoExecutionException, MojoFailureException {
+    private void parseTestResults(List<String> results) throws MojoExecutionException, MojoFailureException {
         ErrorScanner scanner = new ErrorScanner(this.ignoreResultErrors, this.ignoreResultFailures);
         int totalErrorCount = 0;
         int totalFailureCount = 0;

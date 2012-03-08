@@ -70,6 +70,29 @@
         </contributor>
     </contributors>
 
+    <issueManagement>
+        <system>GitHub</system>
+        <url>https://github.com/Ronnie76er/jmeter-maven-plugin/issues</url>
+    </issueManagement>
+
+    <ciManagement>
+        <system>Jenkins CI</system>
+        <url>http://ci.lazerycode.com</url>
+    </ciManagement>
+
+    <mailingLists>
+        <mailingList>
+            <name>JMeter Maven Plugin Users</name>
+            <post>maven-jmeter-plugin-users@googlegroups.com</post>
+            <archive>https://groups.google.com/forum/?fromgroups#!forum/maven-jmeter-plugin-users</archive>
+        </mailingList>
+        <mailingList>
+            <name>JMeter Maven Plugin Devs</name>
+            <post>maven-jmeter-plugin-devs@googlegroups.com</post>
+            <archive>https://groups.google.com/forum/?fromgroups#!forum/maven-jmeter-plugin-devs</archive>
+        </mailingList>
+    </mailingLists>
+
     <scm>
         <connection>scm:git:git@github.com:Ronnie76er/jmeter-maven-plugin.git</connection>
         <developerConnection>scm:git:git@github.com:Ronnie76er/jmeter-maven-plugin.git</developerConnection>
@@ -247,17 +270,14 @@
                                             <!--<report>index</report>-->
                                             <report>summary</report>
                                             <report>dependency-management</report>
-                                            <!-- TODO: add <issueManagement> configuration to POM, then re-enableReports -->
-                                            <!--<report>issue-tracking</report>-->
+                                            <report>issue-tracking</report>
                                             <report>help</report>
                                             <report>modules</report>
                                             <report>dependencies</report>
                                             <report>plugins</report>
-                                            <!-- TODO: add <ciManagement> configuration to POM, then re-enableReports -->
-                                            <!--<report>cim</report>-->
+                                            <report>cim</report>
                                             <report>license</report>
-                                            <!-- TODO: add <mailingLists> configuration to POM, then re-enableReports -->
-                                            <!--<report>mailing-list</report>-->
+                                            <report>mailing-list</report>
                                             <report>project-team</report>
                                             <report>scm</report>
                                             <report>dependencies</report>

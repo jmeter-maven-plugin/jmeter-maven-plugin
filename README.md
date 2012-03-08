@@ -3,10 +3,10 @@ Maven JMeter Plugin
 
 The Maven JMeter Plugin allows you to automate JMeter tests in Maven.
 
-*PLEASE NOTE: The Group ID and Artifact ID have changed!*
+*PLEASE NOTE: The Group ID and Artifact ID have changed since version 1.4!*
 -----
 
-This is to bring the project in line with maven naming practice for non-maven plugins and to enableReports us to upload to the Sonatype OSS repos.  This means the next release of this project will be promoted to the maven central repo.
+This is to bring the project in line with maven naming practice for non-maven plugins and to enable us to upload to the Sonatype OSS repository.  This project is now in the maven central repository.
 
 Community
 -----
@@ -48,8 +48,6 @@ Basic Usage
 
 ### Add the plugin to your project
 
-The plugin is now in the central maven repository so you should no longer specify a repository.
-
 * Add the plugin to the build section of your pom's project :
 
 		<plugin>
@@ -69,15 +67,13 @@ The plugin is now in the central maven repository so you should no longer specif
 
 ### Reference JMX files
 
-This one should be simple enough, unless you don't know about JMeter.  It can be a bit daunting and counterintuitive at first, but once you start to get the hang of it, it will be like second nature, and you will realize how powerful the tool can be.
-
-Once you create your JMeter tests, you'll want to copy them to : `<Project Dir>/src/test/jmeter`
+Once you have created your JMeter tests, you'll need to copy them to `<Project Dir>/src/test/jmeter`.  By default this plugin will pick up all the .jmx files in that directory, to specify which tests should be run please see the project documentation.
 
 ### Run the tests
 
 	`mvn verify`
 
-All your tests should run in maven now!
+All your tests will run in maven!
 
 See the full documentation for information on how to configure the plugin.
 

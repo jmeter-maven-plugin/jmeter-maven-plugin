@@ -266,8 +266,7 @@
                                 <reportSets>
                                     <reportSet>
                                         <reports>
-                                            <!-- TODO: move content from "index" to "basic usage" and write new text for index/about page -->
-                                            <!--<report>index</report>-->
+                                            <report>index</report>
                                             <report>summary</report>
                                             <report>dependency-management</report>
                                             <report>issue-tracking</report>
@@ -287,25 +286,6 @@
                                 </reportSets>
                             </reportPlugin>
                         </reportPlugins>
-                    </configuration>
-                </plugin>
-
-                <plugin>
-                    <!--
-                        run "mvn com.google.code.sortpom:maven-sortpom-plugin:sort"
-                        to sort current POM according to Maven documentation.
-                    -->
-                    <groupId>com.google.code.sortpom</groupId>
-                    <artifactId>maven-sortpom-plugin</artifactId>
-                    <version>1.1.0</version>
-                    <configuration>
-                        <createBackupFile>false</createBackupFile>
-                        <!-- Danger: Activate Dependency Sorting at your own risk, dependency order is not irrelevant-->
-                        <sortDependencies>false</sortDependencies>
-                        <!-- Danger: Activate Plugin Sorting at your own risk, plugin order is not irrelevant -->
-                        <sortPlugins>false</sortPlugins>
-
-                        <nrOfIndentSpace>4</nrOfIndentSpace>
                     </configuration>
                 </plugin>
             </plugins>

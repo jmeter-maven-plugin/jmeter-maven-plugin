@@ -25,6 +25,7 @@
     <body>
         <head/>
         <menu name="Overview">
+            <!-- TODO: move content from "index" to "basic usage" and write new text for index/about page -->
             <item name="Basic Usage" href="index.html"/>
         </menu>
         <menu name="Release Information">

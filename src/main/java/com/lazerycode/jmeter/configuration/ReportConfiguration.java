@@ -25,7 +25,7 @@ public class ReportConfiguration {
     private File outputDirectory;
     private boolean outputDirectorySet = false;
     private String postfix = "-report.html";
-    private boolean enableReports = true;
+    private boolean enableReports = false;
     private File xsltFile;
 
     /**

@@ -22,6 +22,10 @@ public class UtilityFunctions {
         }
         return debugOutput.trim();
     }
+    
+    public static String stripCarriageReturns(String value) {
+        return value.replaceAll("[\n\r]", "");
+    }
 
     public static Boolean isNotSet(Map<?, ?> value) {
         if (null == value || value.isEmpty()) {

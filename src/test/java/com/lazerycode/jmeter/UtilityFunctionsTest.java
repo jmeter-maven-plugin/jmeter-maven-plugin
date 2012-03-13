@@ -1,15 +1,23 @@
 package com.lazerycode.jmeter;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
 import java.io.File;
 import java.util.Collections;
 import java.util.Map;
 
+import static junit.framework.Assert.assertTrue;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+
 /**
  * Tests {@link UtilityFunctions} class
  */
-public class UtilityFunctionsTest extends TestCase {
+public class UtilityFunctionsTest{
+
+    @Test
     public void testHumanReadableCommandLineOutput() throws Exception {
         String[] testArray = new String[]{"a","b","c","d"};
         
@@ -20,6 +28,7 @@ public class UtilityFunctionsTest extends TestCase {
         assertEquals("string does not match array input",expected,returnValue);
     }
 
+    @Test
     public void testIsNotSetMap() throws Exception {
         Map testMap = null;
         assertTrue("null value returns false", UtilityFunctions.isNotSet(testMap));
@@ -28,6 +37,7 @@ public class UtilityFunctionsTest extends TestCase {
         assertTrue("empty value returns false", UtilityFunctions.isNotSet(testMap2));
     }
 
+    @Test
     public void testIsNotSetString() throws Exception {
         String testString = null;
         assertTrue("null value returns false",UtilityFunctions.isNotSet(testString));
@@ -39,6 +49,7 @@ public class UtilityFunctionsTest extends TestCase {
         assertTrue("blank value returns false",UtilityFunctions.isNotSet(testString3));
     }
 
+    @Test
     public void testIsNotSetFile() throws Exception {
         File testFile = null;
         assertTrue("null value returns false",UtilityFunctions.isNotSet(testFile));
@@ -48,5 +59,15 @@ public class UtilityFunctionsTest extends TestCase {
 
         File testFile3 = new File("");
         assertTrue("empty value returns false",UtilityFunctions.isNotSet(testFile3));
+    }
+
+    @Test
+    public void removeCarriageReturnsTest() throws Exception {
+        assertThat(UtilityFunctions.stripCarriageReturns("foo\n"),
+                is(equalTo("foo")));
+        assertThat(UtilityFunctions.stripCarriageReturns("bar\r"),
+                is(equalTo("bar")));
+        assertThat(UtilityFunctions.stripCarriageReturns("foo\nbar\r"),
+                is(equalTo("foobar")));
     }
 }

@@ -1,10 +1,12 @@
 package com.lazerycode.jmeter.properties;
 
-import com.lazerycode.jmeter.properties.PropertyFileMerger;
+import com.lazerycode.jmeter.UtilityFunctions;
 import org.junit.Test;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.PrintStream;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Properties;
@@ -18,9 +20,10 @@ public class PropertyFileMergerTest {
 
     private URL testFile = this.getClass().getResource("/jmeter.properties");
     private URL testFileAdditional = this.getClass().getResource("/custom.properties");
+    private PrintStream originalOut = System.out;
 
     @Test
-    public void validMergeProperties() throws Exception {
+    public void validMergePropertiesTest() throws Exception {
         HashMap<String, String> customProperties = new HashMap<String, String>();
         customProperties.put("log_level.jmeter.control", "INFO");
         customProperties.put("log_level.jmeter", "DEBUG");
@@ -43,12 +46,20 @@ public class PropertyFileMergerTest {
         Properties propertiesFile = new Properties();
         propertiesFile.load(new FileInputStream(new File(this.testFile.toURI())));
 
+        ByteArrayOutputStream logCapture = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(logCapture));
+
         Properties modifiedProperties = new PropertyFileMerger().mergeProperties(customProperties, propertiesFile);
+
+        String loggedMessage = UtilityFunctions.stripCarriageReturns(logCapture.toString());
+        System.setOut(this.originalOut);
 
         assertThat(modifiedProperties.containsKey("user.dir"),
                 is(equalTo(false)));
         assertThat(modifiedProperties.size(),
                 is(equalTo(2)));
+        assertThat(loggedMessage,
+                is(equalTo("[warn] Unable to set 'user.dir', it is a reserved property in the jmeter-maven-plugin")));
     }
 
     @Test
@@ -59,15 +70,22 @@ public class PropertyFileMergerTest {
         Properties propertiesFile = new Properties();
         propertiesFile.load(new FileInputStream(new File(this.testFile.toURI())));
 
+        ByteArrayOutputStream logCapture = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(logCapture));
+
         Properties modifiedProperties = new PropertyFileMerger().mergeProperties(customProperties, propertiesFile);
+
+        String loggedMessage = UtilityFunctions.stripCarriageReturns(logCapture.toString());
+        System.setOut(this.originalOut);
 
         assertThat(modifiedProperties.size(),
                 is(equalTo(3)));
-        //TODO capture the logged warning and assert on it
+        assertThat(loggedMessage,
+                is(equalTo("[warn] You have set a property called 'log_level.Jmeter' which is very similar to 'log_level.jmeter'!")));
     }
 
     @Test
-    public void mergeTwoPropertiesFiles() throws Exception {        
+    public void mergeTwoPropertiesFiles() throws Exception {
 
         Properties propertiesFile = new Properties();
         propertiesFile.load(new FileInputStream(new File(this.testFile.toURI())));

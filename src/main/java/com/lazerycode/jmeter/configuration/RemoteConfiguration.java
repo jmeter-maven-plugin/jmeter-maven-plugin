@@ -1,7 +1,7 @@
 package com.lazerycode.jmeter.configuration;
 
 /**
- * Is used for configuration of all remote related configuration.
+ * This is used by the TestManager to configure remote start and stop settings for each test run.
  * <p>
  * Configuration in pom.xml:
  * <p>

@@ -25,16 +25,11 @@ public class JMeterArgumentsArray {
     private String proxyUsername = null;
     private String proxyPassword = null;
     private String customPropertiesFile = null;
-    private String jMeterGlobalPropertiesFile = null;
     private String testFile = null;
     private String resultsFileName = null;
     private String jMeterHome = null;
     private String reportDirectory = null;
     private String overrideRootLogLevel = null;
-    private String systemPropertiesFile = null;
-    private Map<String,String> jMeterUserProperties = null;
-    private Map<String,String> jMeterGlobalProperties = null;
-    private Map<String,String> systemProperties = null;
     private Map<String,String> overrideLogCategories = null;
 
     /**
@@ -118,43 +113,6 @@ public class JMeterArgumentsArray {
         this.argumentMap.put(JMeterCommandLineArguments.PROPFILE2_OPT, true);
     }
 
-    @Deprecated
-    public void setASystemPropertiesFile(File value) {
-        if (UtilityFunctions.isNotSet(value)) return;
-        this.systemPropertiesFile = value.getAbsolutePath();
-        this.argumentMap.put(JMeterCommandLineArguments.SYSTEM_PROPFILE, true);
-    }
-
-    @Deprecated
-    public void setUserProperties(Map<String,String> value) {
-        if (UtilityFunctions.isNotSet(value)) return;
-        this.jMeterUserProperties = value;
-        this.argumentMap.put(JMeterCommandLineArguments.JMETER_PROPERTY, true);
-    }
-
-    @Deprecated
-    public void setGlobalProperties(Map<String,String> value) {
-        if (UtilityFunctions.isNotSet(value)) return;
-        this.jMeterGlobalProperties = value;
-        this.jMeterUserProperties = value;
-        this.argumentMap.put(JMeterCommandLineArguments.JMETER_GLOBAL_PROP, true);
-        this.argumentMap.put(JMeterCommandLineArguments.JMETER_PROPERTY, true);
-    }
-
-    @Deprecated
-    public void setRemoteProperties(Map<String,String> value) {
-        if (UtilityFunctions.isNotSet(value)) return;
-        this.jMeterGlobalProperties = value;
-        this.argumentMap.put(JMeterCommandLineArguments.JMETER_GLOBAL_PROP, true);
-    }
-
-    @Deprecated
-    public void setRemotePropertiesFile(File value) {
-        if (UtilityFunctions.isNotSet(value)) return;
-        this.jMeterGlobalPropertiesFile = value.getAbsolutePath();
-        this.argumentMap.put(JMeterCommandLineArguments.JMETER_GLOBAL_PROP, true);
-    }
-
     //TODO we should support this rather than expecting people to modify thier jmeter.properties
     public void setLogCategoriesOverrides(Map<String,String> value) {
         if (UtilityFunctions.isNotSet(value)) return;
@@ -167,13 +125,6 @@ public class JMeterArgumentsArray {
         if (UtilityFunctions.isNotSet(value)) return;
         this.overrideRootLogLevel = value;
         this.argumentMap.put(JMeterCommandLineArguments.LOGLEVEL, true);
-    }
-
-    @Deprecated
-    public void setSystemProperties(Map<String,String> value) {
-        if (UtilityFunctions.isNotSet(value)) return;
-        this.systemProperties = value;
-        this.argumentMap.put(JMeterCommandLineArguments.SYSTEM_PROPERTY, true);
     }
 
     public void setTestFile(File value) {
@@ -231,25 +182,6 @@ public class JMeterArgumentsArray {
                         argumentsArray.add(JMeterCommandLineArguments.JMETER_HOME_OPT.getCommandLineArgument());
                         argumentsArray.add(this.jMeterHome);
                         break;
-                    case JMETER_PROPERTY:
-                        Set<String> userPropertySet = this.jMeterUserProperties.keySet();
-                        for (String property : userPropertySet) {
-                            argumentsArray.add(JMeterCommandLineArguments.JMETER_PROPERTY.getCommandLineArgument());
-                            argumentsArray.add(property + "=" + this.jMeterUserProperties.get(property));
-                        }
-                        break;
-                    case JMETER_GLOBAL_PROP:
-                        if (this.jMeterGlobalPropertiesFile == null) {
-                            Set<String> globalPropertySet = this.jMeterGlobalProperties.keySet();
-                            for (String property : globalPropertySet) {
-                                argumentsArray.add(JMeterCommandLineArguments.JMETER_GLOBAL_PROP.getCommandLineArgument());
-                                argumentsArray.add(property + "=" + this.jMeterGlobalProperties.get(property));
-                            }
-                        } else {
-                            argumentsArray.add(JMeterCommandLineArguments.JMETER_GLOBAL_PROP.getCommandLineArgument());
-                            argumentsArray.add(this.jMeterGlobalPropertiesFile);
-                        }
-                        break;
                     case LOGLEVEL:
                         if (this.overrideRootLogLevel == null) {
                             Set<String> logCategorySet = this.overrideLogCategories.keySet();
@@ -261,17 +193,6 @@ public class JMeterArgumentsArray {
                             argumentsArray.add(JMeterCommandLineArguments.LOGLEVEL.getCommandLineArgument());
                             argumentsArray.add(this.overrideRootLogLevel);
                         }
-                        break;
-                    case SYSTEM_PROPERTY:
-                        Set<String> systemPropertySet = this.systemProperties.keySet();
-                        for (String property : systemPropertySet) {
-                            argumentsArray.add(JMeterCommandLineArguments.SYSTEM_PROPERTY.getCommandLineArgument());
-                            argumentsArray.add(property + "=" + this.systemProperties.get(property));
-                        }
-                        break;
-                    case SYSTEM_PROPFILE:
-                        argumentsArray.add(JMeterCommandLineArguments.SYSTEM_PROPFILE.getCommandLineArgument());
-                        argumentsArray.add(this.systemPropertiesFile);
                         break;
                     case PROPFILE2_OPT:
                         argumentsArray.add(JMeterCommandLineArguments.PROPFILE2_OPT.getCommandLineArgument());

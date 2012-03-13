@@ -1,5 +1,6 @@
-package com.lazerycode.jmeter;
+package com.lazerycode.jmeter.configuration;
 
+import com.lazerycode.jmeter.UtilityFunctions;
 import com.lazerycode.jmeter.configuration.JMeterArgumentsArray;
 import com.lazerycode.jmeter.configuration.JMeterCommandLineArguments;
 import com.lazerycode.jmeter.configuration.ProxyConfiguration;

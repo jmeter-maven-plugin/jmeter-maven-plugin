@@ -16,7 +16,7 @@ import java.util.*;
 public class JMeterArgumentsArray {
 
     private LinkedHashMap<JMeterCommandLineArguments, Boolean> argumentMap = new LinkedHashMap<JMeterCommandLineArguments, Boolean>();
-    private DateFormat fmt = new SimpleDateFormat("yyMMdd");
+    private DateFormat dateFormat = new SimpleDateFormat("yyMMdd");
     private boolean timestampResults = true;
     private String remoteStartList = null;
     private String nonProxyHosts = null;
@@ -56,6 +56,10 @@ public class JMeterArgumentsArray {
         argumentMap.put(JMeterCommandLineArguments.NONPROXY_HOSTS, false);      //Set to true if non-proxy hosts are specified
         argumentMap.put(JMeterCommandLineArguments.REMOTE_STOP, false);         //Set to true to stop remote servers at the end of the tests.
         argumentMap.put(JMeterCommandLineArguments.REMOTE_OPT_PARAM, false);    //Set to true to stop remote servers at the end of the tests.
+    }
+
+    public void setResultsFileNameDateFormat(DateFormat value) {
+        this.dateFormat = value;
     }
 
     public void setRemoteStop(boolean value) {
@@ -131,7 +135,7 @@ public class JMeterArgumentsArray {
         this.testFile = value.getAbsolutePath();
         this.argumentMap.put(JMeterCommandLineArguments.TESTFILE_OPT, true);
         if (this.timestampResults) {
-            this.resultsFileName = this.reportDirectory + File.separator + value.getName().substring(0, value.getName().lastIndexOf(".")) + "-" + fmt.format(new Date()) + ".jtl";
+            this.resultsFileName = this.reportDirectory + File.separator + value.getName().substring(0, value.getName().lastIndexOf(".")) + "-" + this.dateFormat.format(new Date()) + ".jtl";
         } else {
             this.resultsFileName = this.reportDirectory + File.separator + value.getName().substring(0, value.getName().lastIndexOf(".")) + ".jtl";
         }

@@ -18,6 +18,7 @@ import org.codehaus.plexus.util.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -61,6 +62,14 @@ public class JMeterMojo extends AbstractMojo {
      * @parameter default-value="true"
      */
     private boolean testResultsTimestamp;
+
+    /**
+     * Set the SimpleDateFormat appended to the results filename.
+     * (This assumes that testResultsTimestamp is set to 'true')
+     *
+     * @parameter default-value="yyMMdd"
+     */
+    private String resultsFileNameDateFormat;
 
     /**
      * Absolute path to JMeter custom (test dependent) properties file.
@@ -305,6 +314,11 @@ public class JMeterMojo extends AbstractMojo {
         this.testArgs.setJMeterHome(this.workDir.getAbsolutePath());
         this.testArgs.setProxyConfig(this.proxyConfig);
         this.testArgs.setACustomPropertiesFile(this.customPropertiesFile);
+        try {
+            this.testArgs.setResultsFileNameDateFormat(new SimpleDateFormat(this.resultsFileNameDateFormat));
+        } catch (Exception ex) {
+            getLog().error("'" + this.resultsFileNameDateFormat + "' is an invalid date format.  Defaulting to 'yyMMdd'.");
+        }
     }
 
     /**

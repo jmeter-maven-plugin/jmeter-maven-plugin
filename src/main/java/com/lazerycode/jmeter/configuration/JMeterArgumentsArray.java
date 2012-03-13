@@ -106,7 +106,6 @@ public class JMeterArgumentsArray {
         this.argumentMap.put(JMeterCommandLineArguments.NONPROXY_HOSTS, true);
     }
 
-    //TODO enable this?  There is no defined name for this file so we can't automatically pick it up.
     public void setACustomPropertiesFile(File value) {
         if (UtilityFunctions.isNotSet(value)) return;
         this.customPropertiesFile = value.getAbsolutePath();

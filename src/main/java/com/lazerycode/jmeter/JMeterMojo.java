@@ -118,6 +118,14 @@ public class JMeterMojo extends AbstractMojo {
     private boolean propertiesReplacedByCustomFiles;
 
     /**
+     * Absolute path to JMeter custom (test dependent) properties file.
+     * .
+     *
+     * @parameter
+     */
+    private File customPropertiesFile;
+
+    /**
      * Sets whether ErrorScanner should ignore failures in JMeter result file.
      *
      * @parameter expression="${jmeter.ignore.failure}" default-value=false
@@ -296,6 +304,7 @@ public class JMeterMojo extends AbstractMojo {
         this.testArgs.setResultsTimestamp(this.testResultsTimestamp);
         this.testArgs.setJMeterHome(this.workDir.getAbsolutePath());
         this.testArgs.setProxyConfig(this.proxyConfig);
+        this.testArgs.setACustomPropertiesFile(this.customPropertiesFile);
     }
 
     /**

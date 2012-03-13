@@ -1,3 +1,4 @@
 Version 1.4.1 Release Notes
 
     * #41 - Removed deprecated log scanning code.
+    * #42 - Reporting disabled by default.

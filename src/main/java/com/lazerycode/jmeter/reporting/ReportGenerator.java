@@ -48,7 +48,8 @@ public class ReportGenerator extends JMeterMojo {
                 throw new MojoExecutionException("Error copying resources to jmeter results", e);
             }
         } else {
-            getLog().info("Report generation disabled.");
+            getLog().info("Report generation is currently disabled.");
+            getLog().info("set <enableReports>true</enableReports> inside <reportConfig> to enable them.");
         }
     }
 

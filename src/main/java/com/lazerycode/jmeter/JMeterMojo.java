@@ -177,6 +177,13 @@ public class JMeterMojo extends AbstractMojo {
     private boolean suppressJMeterOutput;
 
     /**
+     * Path(s) to add to the classpath used by the plugin.
+     *
+     * @parameter
+     */
+    private String addToClassPath;
+
+    /**
      * @parameter expression="${project}"
      * @required
      * @readonly
@@ -283,6 +290,8 @@ public class JMeterMojo extends AbstractMojo {
                 throw new MojoExecutionException("Unable to get the canonical path for " + artifact);
             }
         }
+        //Add any additional classpath paths supplied by end user.
+        if (!UtilityFunctions.isNotSet(this.addToClassPath)) classPath.add(this.addToClassPath);
         //Set the JMeter classpath
         System.setProperty("java.class.path", StringUtils.join(classPath.iterator(), File.pathSeparator));
     }

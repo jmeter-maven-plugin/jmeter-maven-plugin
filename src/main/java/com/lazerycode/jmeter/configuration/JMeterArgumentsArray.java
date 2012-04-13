@@ -62,6 +62,10 @@ public class JMeterArgumentsArray {
         this.dateFormat = value;
     }
 
+    public void setShowGUI(boolean value) {
+        this.argumentMap.put(JMeterCommandLineArguments.NONGUI_OPT, !value);
+    }
+
     public void setRemoteStop(boolean value) {
         this.argumentMap.put(JMeterCommandLineArguments.REMOTE_STOP, value);
     }
@@ -157,9 +161,13 @@ public class JMeterArgumentsArray {
     }
 
     public String[] buildArgumentsArray() throws MojoExecutionException {
-        if (!argumentMap.get(JMeterCommandLineArguments.TESTFILE_OPT)) {
+       return buildArgumentsArray ( true );
+    }
+
+    public String[] buildArgumentsArray(boolean expectTests) throws MojoExecutionException {
+        if (!argumentMap.get(JMeterCommandLineArguments.TESTFILE_OPT) && expectTests) {
             throw new MojoExecutionException("No test specified!");
-        } else if (!argumentMap.get(JMeterCommandLineArguments.LOGFILE_OPT)) {
+        } else if (!argumentMap.get(JMeterCommandLineArguments.LOGFILE_OPT) && expectTests) {
             throw new MojoExecutionException("Log file not set!");
         } else if (!argumentMap.get(JMeterCommandLineArguments.JMETER_HOME_OPT)) {
             throw new MojoExecutionException("JMETER_HOME not set!");
@@ -171,7 +179,8 @@ public class JMeterArgumentsArray {
             if (argument.getValue()) {
                 switch (argument.getKey()) {
                     case NONGUI_OPT:
-                        argumentsArray.add(JMeterCommandLineArguments.NONGUI_OPT.getCommandLineArgument());
+                        if ( argument.getValue ( ) )
+                           argumentsArray.add(JMeterCommandLineArguments.NONGUI_OPT.getCommandLineArgument());
                         break;
                     case TESTFILE_OPT:
                         argumentsArray.add(JMeterCommandLineArguments.TESTFILE_OPT.getCommandLineArgument());

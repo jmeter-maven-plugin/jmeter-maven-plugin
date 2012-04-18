@@ -3,6 +3,7 @@ package com.lazerycode.jmeter;
 import java.util.Set;
 
 import org.apache.jmeter.JMeter;
+import org.apache.jmeter.NewDriver;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 
@@ -33,8 +34,7 @@ public class JMeterGUIMojo extends JMeterAbstractMojo {
         initialiseJMeterArgumentsArray();
 
         getLog().info("JMeter is called with the following command line arguments: " + UtilityFunctions.humanReadableCommandLineOutput(testArgs.buildArgumentsArray(false)));
-        JMeter jmeter = new JMeter();
-        jmeter.start(testArgs.buildArgumentsArray(false));
+        NewDriver.main(testArgs.buildArgumentsArray(false));
         
         // TODO: There has to be a better way to figure out when JMeter GUI closes
         // JMeter is now running asynchronously.

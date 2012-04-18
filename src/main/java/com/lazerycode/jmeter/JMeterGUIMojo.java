@@ -41,21 +41,21 @@ public class JMeterGUIMojo extends JMeterAbstractMojo {
         // If we just keep going it will be closed immediately because its thread is daemon.
         // Instead we want to wait until the GUI is closed, then continue.
         // So we find the AWT-Windows thread and wait for it to finish.
-        Thread awtWindowsThread = null;
+        Thread awtThread = null;
         Set<Thread> threadSet = Thread.getAllStackTraces ( ).keySet ( );
         for ( Thread thread : threadSet )
         {
-           if ( "AWT-Windows".equals ( thread.getName ( ) ) )
+           if ( "AWT-Windows".equals ( thread.getName ( ) ) || "AWT-AppKit".equals(thread.getName()) )
            {
-              awtWindowsThread = thread;
+              awtThread = thread;
               break;
            }
         }
-        if ( awtWindowsThread != null )
+        if ( awtThread != null )
         {
            try
            {
-              awtWindowsThread.join ( );
+              awtThread.join ( );
            }
            catch ( InterruptedException e )
            {

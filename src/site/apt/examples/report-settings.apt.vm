@@ -28,7 +28,7 @@ Report Settings
                     </executions>
                     <configuration>
                         <reportConfig>
-                            <enableReports>true</enableReports>
+                            <enable>true</enable>
                             <postfix>-my-postfix.html</postfix>
                         </reportConfig>
                     </configuration>

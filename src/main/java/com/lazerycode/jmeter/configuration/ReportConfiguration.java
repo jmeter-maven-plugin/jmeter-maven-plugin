@@ -10,7 +10,7 @@ import java.io.File;
  * <pre>
  * {@code
  * <reportConfig>
- *     <enableReports></enableReports>
+ *     <enable></enable>
  *     <outputDirectory></outputDirectory>
  *     <postFix></postFix>
  *     <xsltFile></xsltFile>
@@ -19,27 +19,29 @@ import java.io.File;
  * </pre>
  *
  * @author Arne Franken
+ * @deprecated will be removed when separate reports plugin is released
  */
+@Deprecated
 public class ReportConfiguration {
 
     private File outputDirectory;
     private boolean outputDirectorySet = false;
     private String postfix = "-report.html";
-    private boolean enableReports = false;
+    private boolean enable = false;
     private File xsltFile;
 
     /**
      * @return Absolute path of directory in which the reports are stored.
      */
     public String getOutputDirectoryAbsolutePath() {
-        return this.outputDirectory.getAbsolutePath();
+        return this.outputDirectory != null ? this.outputDirectory.getAbsolutePath() : "";
     }
 
     /**
      * Directory in which the reports are stored.
      * @param outputDirectory
      */
-    public void createOutputDirectory(File outputDirectory) {
+    public void setOutputDirectory(File outputDirectory) {
         this.outputDirectory = outputDirectory;
         this.outputDirectory.mkdirs();
         this.outputDirectorySet = true;
@@ -69,16 +71,16 @@ public class ReportConfiguration {
      * @return Whether or not to generate reports after measurement.
      */
     public boolean areReportsEnabled() {
-        return this.enableReports;
+        return this.enable;
     }
 
     /**
      * Whether or not to generate reports after measurement.
      * Default: {@link true Boolean.TRUE}
-     * @param enableReports
+     * @param enable
      */
-    public void enableReports(boolean enableReports) {
-        this.enableReports = enableReports;
+    public void setEnable(boolean enable) {
+        this.enable = enable;
     }
 
     /**
@@ -98,7 +100,7 @@ public class ReportConfiguration {
 
     @Override
     public String toString() {
-        return "ReportConfiguration [ Enable=" + areReportsEnabled() + "OutputDirectory=" + getOutputDirectoryAbsolutePath() + ", PostFix=" + getPostfix() +
-                ", XsltFile=" + getXsltFile() + " ]";
+        return "ReportConfiguration [ Enable=" + areReportsEnabled() + "OutputDirectory=" + (getOutputDirectoryAbsolutePath()!=null ? getOutputDirectoryAbsolutePath() : "") + ", PostFix=" + getPostfix() +
+                ", XsltFile=" + (getXsltFile()!= null ? getXsltFile() : "") + " ]";
     }
 }

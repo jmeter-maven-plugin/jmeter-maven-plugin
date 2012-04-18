@@ -51,7 +51,7 @@ public class ReportGenerator extends JMeterMojo {
             }
         } else {
             getLog().info("Report generation is currently disabled.");
-            getLog().info("set <enableReports>true</enableReports> inside <reportConfig> to enable them.");
+            getLog().info("set <enable>true</enable> inside <reportConfig> to enable them.");
         }
     }
 

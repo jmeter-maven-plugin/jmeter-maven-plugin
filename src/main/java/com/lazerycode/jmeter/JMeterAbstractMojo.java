@@ -175,20 +175,6 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
     protected boolean suppressJMeterOutput;
 
     /**
-     * Path(s) to add to the classpath used by the plugin.
-     *
-     * @parameter
-     */
-    protected String addToClassPath;
-    
-    /**
-     * Dependency artifacts to add to extensions directory.
-     *
-     * @parameter
-     */
-    private List<String> extensions;
-
-    /**
      * @parameter expression="${project}"
      * @required
      * @readonly
@@ -206,7 +192,8 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 
     protected File workDir;
     protected File binDir;
-    protected File libExt;
+    protected File libDir;
+    protected File libExtDir;
     protected File logsDir;
     protected String jmeterConfigArtifact = "ApacheJMeter_config";
     protected JMeterArgumentsArray testArgs;
@@ -225,8 +212,10 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
         this.logsDir.mkdirs();
         this.binDir = new File(this.workDir + File.separator + "bin");
         this.binDir.mkdirs();
-        this.libExt = new File(this.workDir + File.separator + "lib" + File.separator + "ext");
-        this.libExt.mkdirs();
+        this.libDir = new File(this.workDir + File.separator + "lib");
+        this.libDir.mkdirs();
+        this.libExtDir = new File(libDir + File.separator + "ext");
+        this.libExtDir.mkdirs();
         if (!this.reportConfig.isOutputDirectorySet()) {
             this.reportConfig.setOutputDirectory(new File(workDir + File.separator + "report"));
         }
@@ -253,25 +242,16 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
      * @throws MojoExecutionException
      */
     protected void setJMeterClasspath() throws MojoExecutionException {
-        List<String> classPath = new ArrayList<String>();
+
         for (Artifact artifact : this.pluginArtifacts) {
             try {
-                //This assumes that all JMeter components are named "ApacheJMeter_<component>" in their POM files
-                if (artifact.getArtifactId().startsWith("ApacheJMeter_")) {
-                    FileUtils.copyFile(artifact.getFile(), new File(this.libExt + File.separator + artifact.getFile().getName()));
-                }
-                else if ( extensions.contains ( artifact.getArtifactId ( ) ) ) {
-                   FileUtils.copyFile(artifact.getFile(), new File(this.libExt + File.separator + artifact.getFile().getName()));                   
-                }
-                classPath.add(artifact.getFile().getCanonicalPath());
+                FileUtils.copyFile(artifact.getFile(), new File(this.libExtDir + File.separator + artifact.getFile().getName()));
             } catch (IOException mx) {
                 throw new MojoExecutionException("Unable to get the canonical path for " + artifact);
             }
         }
-        //Add any additional classpath paths supplied by end user.
-        if (!UtilityFunctions.isNotSet(this.addToClassPath)) classPath.add(this.addToClassPath);
-        //Set the JMeter classpath
-        System.setProperty("java.class.path", StringUtils.join(classPath.iterator(), File.pathSeparator));
+        //empty classpath, JMeter will automatically assemble and add all JARs in #libDir and #libExtDir and add them to the classpath.
+        System.setProperty("java.class.path", "");
     }
 
     /**

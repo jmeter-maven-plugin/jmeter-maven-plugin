@@ -13,9 +13,12 @@ import java.io.IOException;
  */
 public class ErrorScanner {
 
+    //TODO: where would such an element come from?
     private static final String ERROR_ELEMENT = "<error>true</error>";
-    private static final String REQUEST_FAILURE_ELEMENT = "s=\"false\"";
+    //TODO: where would such an element come from?
     private static final String FAILURE_ELEMENT = "<failure>true</failure>";
+
+    private static final String REQUEST_FAILURE_ELEMENT = "s=\"false\"";
 
     private boolean ignoreErrors;
     private boolean ignoreFailures;
@@ -62,6 +65,7 @@ public class ErrorScanner {
     }
 
     /**
+     * TODO: what are errors?
      * @return errorCount
      */
     public int getErrorCount() {

@@ -14,6 +14,7 @@ import java.io.InputStream;
  * Handles the xslt transform for the jmeter report.
  * 
  * @author Jon Roberts
+ * @deprecated will be removed when separate reports plugin is released
  */
 public class ReportTransformer {
 		

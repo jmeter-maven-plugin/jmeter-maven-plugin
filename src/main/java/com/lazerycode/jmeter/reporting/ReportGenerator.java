@@ -11,6 +11,8 @@ import java.util.List;
 
 /**
  * ReportGenerator encapsules functions for generating reports
+ *
+ * @deprecated will be removed when separate reports plugin is released
  */
 public class ReportGenerator extends JMeterMojo {
 

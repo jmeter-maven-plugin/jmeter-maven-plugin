@@ -4,8 +4,7 @@ import com.lazerycode.jmeter.*;
 import com.lazerycode.jmeter.configuration.JMeterArgumentsArray;
 import com.lazerycode.jmeter.configuration.RemoteConfiguration;
 import org.apache.commons.io.output.NullOutputStream;
-import org.apache.jmeter.JMeter;
-import org.apache.jmeter.engine.StandardJMeterEngine;
+import org.apache.jmeter.NewDriver;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.tools.ant.DirectoryScanner;
 
@@ -15,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 /**
  * TestManager encapsulates functions that gather JMeter Test files and execute the tests
@@ -33,8 +33,6 @@ public class TestManager extends JMeterMojo {
     private boolean remoteStartAndStopOnce = true;
     private String remoteStart = null;
     private int exitCheckPause = 7500;
-    private boolean useOldTestEndDetection = false;
-    private JMeterTestListener testListener = new JMeterTestListener();
 
     public TestManager(JMeterArgumentsArray testArgs, File logsDir, File testFilesDirectory, List<String> testFiles, List<String> excludeTestFiles, boolean suppressJMeterOutput) {
         this.testArgs = testArgs;
@@ -170,10 +168,8 @@ public class TestManager extends JMeterMojo {
         try {
             //Suppress JMeter's annoying System.out messages.
             if (suppressJMeterOutput) System.setOut(new PrintStream(new NullOutputStream()));
-            //Register Test Listener to track state of test.
-            new StandardJMeterEngine().register(this.testListener);
             //Start the test.
-            new JMeter().start(testArgs.buildArgumentsArray());
+            NewDriver.main(testArgs.buildArgumentsArray());
             waitForTestToFinish();
         } catch (ExitException e) {
             if (e.getCode() != 0) {
@@ -196,15 +192,24 @@ public class TestManager extends JMeterMojo {
     }
 
     /**
-     * Wait for the TestListener to tell us that the test has finished.
+     * Wait for the StandardJMeterEngine thread to stop.
      */
     private void waitForTestToFinish(){
-        while (this.testListener.isTestStillRunning()) {
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                break;
-            }
+      Thread awtThread = null;
+      Set<Thread> threadSet = Thread.getAllStackTraces().keySet();
+      for ( Thread thread : threadSet ) {
+        if ( "StandardJMeterEngine".equals(thread.getName())) {
+              awtThread = thread;
+              break;
+           }
+        }
+        if ( awtThread != null ) {
+           try {
+              awtThread.join();
+           }
+           catch ( InterruptedException e ) {
+              e.printStackTrace();
+           }
         }
     }
 

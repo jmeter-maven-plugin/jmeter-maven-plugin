@@ -161,6 +161,8 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
     /**
      * Value class that wraps all report configuration.
      *
+     * @deprecated will be removed when separate reports plugin is released
+     *
      * @parameter default-value="${reportConfig}"
      */
     protected ReportConfiguration reportConfig;
@@ -226,7 +228,7 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
         this.libExt = new File(this.workDir + File.separator + "lib" + File.separator + "ext");
         this.libExt.mkdirs();
         if (!this.reportConfig.isOutputDirectorySet()) {
-            this.reportConfig.createOutputDirectory(new File(workDir + File.separator + "report"));
+            this.reportConfig.setOutputDirectory(new File(workDir + File.separator + "report"));
         }
         //JMeter expects a <workdir>/lib/junit directory and complains if it can't find it.
         new File(this.workDir + File.separator + "lib" + File.separator + "junit").mkdirs();

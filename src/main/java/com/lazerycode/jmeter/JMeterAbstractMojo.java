@@ -3,16 +3,15 @@ package com.lazerycode.jmeter;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.util.StringUtils;
 
 import com.lazerycode.jmeter.configuration.JMeterArgumentsArray;
 import com.lazerycode.jmeter.configuration.ProxyConfiguration;
@@ -288,4 +287,29 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
             getLog().error("'" + this.resultsFileNameDateFormat + "' is an invalid date format.  Defaulting to 'yyMMdd'.");
         }
     }
+
+    /**
+     * Wait for one of the threads in the list to stop.
+     */
+    protected void waitForTestToFinish(List<String> threadNames){
+        Thread jmeterEngineThread = null;
+        Set<Thread> threadSet = Thread.getAllStackTraces().keySet();
+        for ( Thread thread : threadSet ) {
+            for(String threadName : threadNames) {
+              if ( threadName.equals(thread.getName())) {
+                    jmeterEngineThread = thread;
+                    break;
+                 }
+              }
+        }
+        if ( jmeterEngineThread != null ) {
+           try {
+              jmeterEngineThread.join();
+           }
+           catch ( InterruptedException e ) {
+             getLog().error("Thread was interrupted: ",e);
+           }
+        }
+    }
+
 }

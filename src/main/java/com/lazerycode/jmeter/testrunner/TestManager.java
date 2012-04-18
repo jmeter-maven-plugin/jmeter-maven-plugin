@@ -21,6 +21,8 @@ import java.util.Set;
  */
 public class TestManager extends JMeterMojo {
 
+    private static final String JMETERTHREADNAME = "StandardJMeterEngine";
+
     private JMeterArgumentsArray testArgs;
     private File jmeterLog;
     private File logsDir;
@@ -170,7 +172,7 @@ public class TestManager extends JMeterMojo {
             if (suppressJMeterOutput) System.setOut(new PrintStream(new NullOutputStream()));
             //Start the test.
             NewDriver.main(testArgs.buildArgumentsArray());
-            waitForTestToFinish();
+            waitForTestToFinish(Collections.singletonList(JMETERTHREADNAME));
         } catch (ExitException e) {
             if (e.getCode() != 0) {
                 throw new MojoExecutionException("Test failed", e);
@@ -189,28 +191,6 @@ public class TestManager extends JMeterMojo {
             getLog().info("Completed Test: " + test.getName());
         }
         return testArgs.getResultsFileName();
-    }
-
-    /**
-     * Wait for the StandardJMeterEngine thread to stop.
-     */
-    private void waitForTestToFinish(){
-      Thread awtThread = null;
-      Set<Thread> threadSet = Thread.getAllStackTraces().keySet();
-      for ( Thread thread : threadSet ) {
-        if ( "StandardJMeterEngine".equals(thread.getName())) {
-              awtThread = thread;
-              break;
-           }
-        }
-        if ( awtThread != null ) {
-           try {
-              awtThread.join();
-           }
-           catch ( InterruptedException e ) {
-              e.printStackTrace();
-           }
-        }
     }
 
     /**

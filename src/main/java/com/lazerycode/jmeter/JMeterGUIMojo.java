@@ -1,5 +1,7 @@
 package com.lazerycode.jmeter;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.jmeter.JMeter;
@@ -15,6 +17,13 @@ import org.apache.maven.plugin.MojoFailureException;
  * @requiresProject true
  */
 public class JMeterGUIMojo extends JMeterAbstractMojo {
+
+    private List<String> threadNames = new ArrayList<String>();
+
+    public JMeterGUIMojo() {
+      threadNames.add("AWT-Windows");
+      threadNames.add("AWT-AppKit");
+    }
 
     /**
      * Run all the JMeter tests.
@@ -35,33 +44,8 @@ public class JMeterGUIMojo extends JMeterAbstractMojo {
 
         getLog().info("JMeter is called with the following command line arguments: " + UtilityFunctions.humanReadableCommandLineOutput(testArgs.buildArgumentsArray(false)));
         NewDriver.main(testArgs.buildArgumentsArray(false));
-        
-        // TODO: There has to be a better way to figure out when JMeter GUI closes
-        // JMeter is now running asynchronously.
-        // If we just keep going it will be closed immediately because its thread is daemon.
-        // Instead we want to wait until the GUI is closed, then continue.
-        // So we find the AWT-Windows thread and wait for it to finish.
-        Thread awtThread = null;
-        Set<Thread> threadSet = Thread.getAllStackTraces ( ).keySet ( );
-        for ( Thread thread : threadSet )
-        {
-           if ( "AWT-Windows".equals ( thread.getName ( ) ) || "AWT-AppKit".equals(thread.getName()) )
-           {
-              awtThread = thread;
-              break;
-           }
-        }
-        if ( awtThread != null )
-        {
-           try
-           {
-              awtThread.join ( );
-           }
-           catch ( InterruptedException e )
-           {
-              e.printStackTrace ( );
-           }
-        }
+
+        waitForTestToFinish(threadNames);
     }
 
     /**

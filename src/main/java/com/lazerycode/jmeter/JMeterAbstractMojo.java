@@ -330,19 +330,19 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
      * Wait for one of the threads in the list to stop.
      */
     protected void waitForTestToFinish(List<String> threadNames){
-        Thread jmeterEngineThread = null;
+        Thread waitThread = null;
         Set<Thread> threadSet = Thread.getAllStackTraces().keySet();
         for ( Thread thread : threadSet ) {
             for(String threadName : threadNames) {
               if ( threadName.equals(thread.getName())) {
-                    jmeterEngineThread = thread;
+                    waitThread = thread;
                     break;
                  }
               }
         }
-        if ( jmeterEngineThread != null ) {
+        if ( waitThread != null ) {
            try {
-              jmeterEngineThread.join();
+              waitThread.join();
            }
            catch ( InterruptedException e ) {
              getLog().error("Thread was interrupted: ",e);

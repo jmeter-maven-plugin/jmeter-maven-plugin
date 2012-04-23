@@ -48,6 +48,10 @@ public class JMeterGUIMojo extends JMeterAbstractMojo {
         NewDriver.main(testArgs.buildArgumentsArray(false));
 
         waitForTestToFinish(threadNames);
+
+        //TODO: weird, plugin just stops running when GUI is closed. No success/failure message from Maven
+        //can't find any errors from Maven or JMeter
+        getLog().info("done.");
     }
 
     /**

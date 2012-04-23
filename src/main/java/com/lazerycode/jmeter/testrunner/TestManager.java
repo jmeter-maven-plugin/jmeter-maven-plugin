@@ -21,8 +21,6 @@ import java.util.Set;
  */
 public class TestManager extends JMeterMojo {
 
-    private static final String JMETERTHREADNAME = "StandardJMeterEngine";
-
     private JMeterArgumentsArray testArgs;
     private File jmeterLog;
     private File logsDir;
@@ -136,7 +134,7 @@ public class TestManager extends JMeterMojo {
     private Thread.UncaughtExceptionHandler overrideUncaughtExceptionHandler() {
         Thread.UncaughtExceptionHandler oldHandler = Thread.getDefaultUncaughtExceptionHandler();
         Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
-
+            @Override
             public void uncaughtException(Thread t, Throwable e) {
                 if (e instanceof ExitException && ((ExitException) e).getCode() == 0) {
                     return; // Ignore
@@ -172,16 +170,20 @@ public class TestManager extends JMeterMojo {
             if (suppressJMeterOutput) System.setOut(new PrintStream(new NullOutputStream()));
             //Start the test.
             NewDriver.main(testArgs.buildArgumentsArray());
-            waitForTestToFinish(Collections.singletonList(JMETERTHREADNAME));
-        } catch (ExitException e) {
+
+            waitForTestToFinish(threadNames);
+        }
+        catch (ExitException e) {
             if (e.getCode() != 0) {
                 throw new MojoExecutionException("Test failed", e);
             }
-        } finally {
+        }
+        finally {
             try {
                 //Wait for JMeter to clean up threads.
                 Thread.sleep(this.exitCheckPause);
-            } catch (InterruptedException e) {
+            }
+            catch (InterruptedException e) {
                 getLog().warn("Something went wrong during Thread cleanup, we may be leaving something running...");
             }
             //Reset everything back to normal

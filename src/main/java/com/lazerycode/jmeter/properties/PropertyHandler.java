@@ -25,7 +25,7 @@ import java.util.jar.JarFile;
  */
 public class PropertyHandler extends JMeterMojo {
 
-    private static EnumMap<JMeterPropertiesFiles, PropertyContainer> masterPropertiesMap = new EnumMap<JMeterPropertiesFiles, PropertyContainer> (JMeterPropertiesFiles.class);
+    private EnumMap<JMeterPropertiesFiles, PropertyContainer> masterPropertiesMap = new EnumMap<JMeterPropertiesFiles, PropertyContainer> (JMeterPropertiesFiles.class);
     private File propertySourceDirectory;
     private File propertyOutputDirectory;
     private boolean replaceDefaultProperties;

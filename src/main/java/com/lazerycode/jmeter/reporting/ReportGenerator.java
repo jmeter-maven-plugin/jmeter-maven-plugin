@@ -50,6 +50,7 @@ public class ReportGenerator extends JMeterMojo {
                 throw new MojoExecutionException("Error copying resources to jmeter results", e);
             }
         } else {
+            //TODO: do we really want to log this if we remove reporting in 1.5?
             getLog().info("Report generation is currently disabled.");
             getLog().info("set <enable>true</enable> inside <reportConfig> to enable them.");
         }

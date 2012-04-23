@@ -2,11 +2,14 @@ package com.lazerycode.jmeter;
 
 import java.io.File;
 import java.io.IOException;
+import java.security.Permission;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.lazerycode.jmeter.testrunner.ExitException;
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;
@@ -132,10 +135,13 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
     /**
      * Sets whether ErrorScanner should ignore failures in JMeter result file.
      *
+     * Failures are for example failed requests
+     *
      * @parameter expression="${jmeter.ignore.failure}" default-value=false
      */
     protected boolean ignoreResultFailures;
 
+    //TODO: what is an error?
     /**
      * Sets whether ErrorScanner should ignore errors in JMeter result file.
      *
@@ -189,15 +195,47 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
      */
     protected List<Artifact> pluginArtifacts;
 
+    //---------------------------------------------------
+
+    /**
+     * Directories will be created by this plugin and used by JMeter
+     */
     protected File workDir;
     protected File binDir;
     protected File libDir;
     protected File libExtDir;
     protected File logsDir;
+
+    /**
+     * All property files are stored in this artifact, comes with JMeter library
+     */
     protected String jmeterConfigArtifact = "ApacheJMeter_config";
     protected JMeterArgumentsArray testArgs;
     protected PropertyHandler pluginProperties;
+    protected int exitCheckPause = 7500;
 
+    /**
+     * Thread names added to this list will be used when scanning threads directly after JMeter is called
+     * The plugin will then wait for the thread to finish
+     * TODO: find out which threadname works for GUI detection on other operating systems
+     */
+    protected List<String> threadNames = new ArrayList<String>();
+
+    /**
+     * thread is started by JMeter and is used to start the actual test threads.
+     */
+    protected static final String STANDARD_JMETER_ENGINE = "StandardJMeterEngine";
+
+    /**
+     * thread is started on Windows when JMeter GUI is opened
+     * TODO: does this work for all current windows versions? (XP, Vista, 7)
+     */
+    protected static final String GUI_THREAD_WINDOWS = "AWT-Windows";
+    /**
+     * thread is started on Mac OSX when JMeter GUI is opened
+     * TODO: does this work for all current OSX versions? (10.6 -> not tested, 10.7 ->ok )
+     */
+    protected static final String GUI_THREAD_MACOSX = "AWT-AppKit";
 
     //==================================================================================================================
 
@@ -207,7 +245,7 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
     protected void generateJMeterDirectoryTree() {
         this.workDir = new File(this.mavenProject.getBasedir() + File.separator + "target" + File.separator + "jmeter");
         this.workDir.mkdirs();
-        this.logsDir = new File(this.workDir + File.separator + "jmeter-logs");
+        this.logsDir = new File(this.workDir + File.separator + "logs");
         this.logsDir.mkdirs();
         this.binDir = new File(this.workDir + File.separator + "bin");
         this.binDir.mkdirs();
@@ -244,8 +282,10 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 
         for (Artifact artifact : this.pluginArtifacts) {
             try {
+              //TODO: exclude jars that maven put in #pluginArtifacts
                 FileUtils.copyFile(artifact.getFile(), new File(this.libExtDir + File.separator + artifact.getFile().getName()));
-            } catch (IOException mx) {
+            }
+            catch (IOException mx) {
                 throw new MojoExecutionException("Unable to get the canonical path for " + artifact);
             }
         }
@@ -283,33 +323,99 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
         this.testArgs.setACustomPropertiesFile(this.customPropertiesFile);
         try {
             this.testArgs.setResultsFileNameDateFormat(new SimpleDateFormat(this.resultsFileNameDateFormat));
-        } catch (Exception ex) {
+        }
+        catch (Exception ex) {
             getLog().error("'" + this.resultsFileNameDateFormat + "' is an invalid date format.  Defaulting to 'yyMMdd'.");
         }
+    }
+
+    /**
+     * Set how long to wait for JMeter to clean up it's threads after a test run.
+     *
+     * @param value int
+     */
+    protected void setExitCheckPause(int value) {
+        //JMeter.java line 966 has an arbitrary 5000ms wait for thread cleanup.
+        //This happens after the listeners have been told that the test finishes.
+        //Replicate that here to ensure that the JMeter log writer has a chance to finish before we start another test/process logs.
+        this.exitCheckPause = value + 5000;
+    }
+
+    /**
+     * Return the value of jmeter.exit.check.pause used by the Test Manager.
+     */
+    protected int getExitCheckPause() {
+        //The arbitrary 5000ms wait for thread cleanup is removed from the value we set.
+        return this.exitCheckPause - 5000;
     }
 
     /**
      * Wait for one of the threads in the list to stop.
      */
     protected void waitForTestToFinish(List<String> threadNames){
-        Thread jmeterEngineThread = null;
+        Thread waitThread = null;
         Set<Thread> threadSet = Thread.getAllStackTraces().keySet();
         for ( Thread thread : threadSet ) {
             for(String threadName : threadNames) {
               if ( threadName.equals(thread.getName())) {
-                    jmeterEngineThread = thread;
+                    waitThread = thread;
                     break;
                  }
               }
         }
-        if ( jmeterEngineThread != null ) {
+        if ( waitThread != null ) {
            try {
-              jmeterEngineThread.join();
+              waitThread.join();
            }
            catch ( InterruptedException e ) {
              getLog().error("Thread was interrupted: ",e);
            }
         }
+    }
+
+
+    /**
+     * Capture System.exit commands so that we can check to see if JMeter is trying to kill us without warning.
+     *
+     * @return old SecurityManager so that we can switch back to normal behaviour.
+     */
+    protected SecurityManager overrideSecurityManager() {
+        SecurityManager oldManager = System.getSecurityManager();
+        System.setSecurityManager(new SecurityManager() {
+
+            @Override
+            public void checkExit(int status) {
+                throw new ExitException(status);
+            }
+
+            @Override
+            public void checkPermission(Permission perm, Object context) {
+            }
+
+            @Override
+            public void checkPermission(Permission perm) {
+            }
+        });
+        return oldManager;
+    }
+
+    /**
+     * Override System.exit(0) to ensure JMeter doesn't kill us without warning.
+     *
+     * @return old UncaughtExceptionHandler so that we can switch back to normal behaviour.
+     */
+    protected Thread.UncaughtExceptionHandler overrideUncaughtExceptionHandler() {
+        Thread.UncaughtExceptionHandler oldHandler = Thread.getDefaultUncaughtExceptionHandler();
+        Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+            @Override
+            public void uncaughtException(Thread t, Throwable e) {
+                if (e instanceof ExitException && ((ExitException) e).getCode() == 0) {
+                    return; // Ignore
+                }
+                getLog().error("Error in thread " + t.getName());
+            }
+        });
+        return oldHandler;
     }
 
 }

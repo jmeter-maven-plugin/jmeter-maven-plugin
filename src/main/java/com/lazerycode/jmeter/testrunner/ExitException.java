@@ -3,14 +3,14 @@ package com.lazerycode.jmeter.testrunner;
 public class ExitException extends SecurityException {
 
     private static final long serialVersionUID = 5544099211927987521L;
-    public int _rc;
+    public int status;
 
-    public ExitException(int rc) {
-        super(Integer.toString(rc));
-        _rc = rc;
+    public ExitException(int status) {
+        super(Integer.toString(status));
+        this.status = status;
     }
 
     public int getCode() {
-        return _rc;
+        return status;
     }
 }

@@ -21,8 +21,6 @@ import java.util.Set;
  */
 public class TestManager extends JMeterMojo {
 
-    private static final String JMETERTHREADNAME = "StandardJMeterEngine";
-
     private JMeterArgumentsArray testArgs;
     private File jmeterLog;
     private File logsDir;
@@ -34,7 +32,6 @@ public class TestManager extends JMeterMojo {
     private boolean remoteStartAll = false;
     private boolean remoteStartAndStopOnce = true;
     private String remoteStart = null;
-    private int exitCheckPause = 7500;
 
     public TestManager(JMeterArgumentsArray testArgs, File logsDir, File testFilesDirectory, List<String> testFiles, List<String> excludeTestFiles, boolean suppressJMeterOutput) {
         this.testArgs = testArgs;
@@ -43,26 +40,6 @@ public class TestManager extends JMeterMojo {
         this.testFilesIncluded = testFiles;
         this.testFilesExcluded = excludeTestFiles;
         this.suppressJMeterOutput = suppressJMeterOutput;
-    }
-
-    /**
-     * Set how long to wait for JMeter to clean up it's threads after a test run.
-     *
-     * @param value int
-     */
-    public void setExitCheckPause(int value) {
-        //JMeter.java line 966 has an arbitrary 5000ms wait for thread cleanup.
-        //This happens after the listeners have been told that the test finishes.
-        //Replicate that here to ensure that the JMeter log writer has a chance to finish before we start another test/process logs.
-        this.exitCheckPause = value + 5000;
-    }
-
-    /**
-     * Return the value of jmeter.exit.check.pause used by the Test Manager.
-     */
-    public int getExitCheckPause() {
-        //The arbitrary 5000ms wait for thread cleanup is removed from the value we set.
-        return this.exitCheckPause - 5000;
     }
 
     /**
@@ -104,50 +81,6 @@ public class TestManager extends JMeterMojo {
     //=============================================================================================
 
     /**
-     * Capture System.exit commands so that we can check to see if JMeter is trying to kill us without warning.
-     *
-     * @return old SecurityManager so that we can switch back to normal behaviour.
-     */
-    private SecurityManager overrideSecurityManager() {
-        SecurityManager oldManager = System.getSecurityManager();
-        System.setSecurityManager(new SecurityManager() {
-
-            @Override
-            public void checkExit(int status) {
-                throw new ExitException(status);
-            }
-
-            @Override
-            public void checkPermission(Permission perm, Object context) {
-            }
-
-            @Override
-            public void checkPermission(Permission perm) {
-            }
-        });
-        return oldManager;
-    }
-
-    /**
-     * Override System.exit(0) to ensure JMeter doesn't kill us without warning.
-     *
-     * @return old UncaughtExceptionHandler so that we can switch back to normal behaviour.
-     */
-    private Thread.UncaughtExceptionHandler overrideUncaughtExceptionHandler() {
-        Thread.UncaughtExceptionHandler oldHandler = Thread.getDefaultUncaughtExceptionHandler();
-        Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
-
-            public void uncaughtException(Thread t, Throwable e) {
-                if (e instanceof ExitException && ((ExitException) e).getCode() == 0) {
-                    return; // Ignore
-                }
-                getLog().error("Error in thread " + t.getName());
-            }
-        });
-        return oldHandler;
-    }
-
-    /**
      * Executes a single JMeter test by building up a list of command line
      * parameters to pass to JMeter.start().
      *
@@ -172,16 +105,20 @@ public class TestManager extends JMeterMojo {
             if (suppressJMeterOutput) System.setOut(new PrintStream(new NullOutputStream()));
             //Start the test.
             NewDriver.main(testArgs.buildArgumentsArray());
-            waitForTestToFinish(Collections.singletonList(JMETERTHREADNAME));
-        } catch (ExitException e) {
+
+            waitForTestToFinish(threadNames);
+        }
+        catch (ExitException e) {
             if (e.getCode() != 0) {
                 throw new MojoExecutionException("Test failed", e);
             }
-        } finally {
+        }
+        finally {
             try {
                 //Wait for JMeter to clean up threads.
                 Thread.sleep(this.exitCheckPause);
-            } catch (InterruptedException e) {
+            }
+            catch (InterruptedException e) {
                 getLog().warn("Something went wrong during Thread cleanup, we may be leaving something running...");
             }
             //Reset everything back to normal

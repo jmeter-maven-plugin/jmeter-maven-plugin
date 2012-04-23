@@ -100,6 +100,7 @@ public class ReportConfiguration {
 
     @Override
     public String toString() {
+      //this method is used by maven when debug output is enabled
         return "ReportConfiguration [ Enable=" + areReportsEnabled() + "OutputDirectory=" + (getOutputDirectoryAbsolutePath()!=null ? getOutputDirectoryAbsolutePath() : "") + ", PostFix=" + getPostfix() +
                 ", XsltFile=" + (getXsltFile()!= null ? getXsltFile() : "") + " ]";
     }

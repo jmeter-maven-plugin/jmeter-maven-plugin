@@ -105,6 +105,7 @@ public class ProxyConfiguration {
 
     @Override
     public String toString() {
+        //this method is used by maven when debug output is enabled
         String proxyDetails = "Proxy server is not being used.";
         if (null != this.host) {
             proxyDetails = "Proxy Details:\n\nHost: " + this.host + ":" + this.port + "\n";

@@ -1,13 +1,15 @@
 package com.lazerycode.jmeter;
 
+import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugin.logging.Log;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 /**
- * Handles checking the jmeter xml logs for errors and failures.
+ * Handles checking a JMeter results file in XML format for errors and failures.
  *
  * @author Jon Roberts
  */
@@ -18,25 +20,31 @@ public class ErrorScanner {
     //TODO: where would such an element come from?
     private static final String FAILURE_ELEMENT = "<failure>true</failure>";
 
+    /**
+     * Element is added by JMeter if request is deemed as failed
+     */
     private static final String REQUEST_FAILURE_ELEMENT = "s=\"false\"";
 
     private boolean ignoreErrors;
     private boolean ignoreFailures;
+    private Log log;
+
     private int failureCount = 0;
     private int errorCount = 0;
 
-    public ErrorScanner(boolean ignoreErrors, boolean ignoreFailures) {
+    public ErrorScanner(boolean ignoreErrors, boolean ignoreFailures, Log log) {
         this.ignoreErrors = ignoreErrors;
         this.ignoreFailures = ignoreFailures;
+        this.log = log;
     }
 
     /**
      * Check given file for errors
      * @param file
      * @return true of file doesn't contain errors
-     * @throws IOException
+     * @throws MojoExecutionException
      */
-    public boolean hasTestPassed(File file) throws IOException {
+    public boolean hasTestPassed(File file) throws MojoExecutionException {
         resetErrorAndFailureCount();
         BufferedReader in = null;
         try {
@@ -45,14 +53,26 @@ public class ErrorScanner {
             while ((line = in.readLine()) != null) {
                 this.checkLineForErrors(line);
             }
-        } finally {
+        }
+        catch (IOException e) {
+            throw new MojoExecutionException("Can't read test results file " + file, e);
+        }
+        finally {
+
             if (in != null) {
+              try {
                 in.close();
+              }
+              catch (IOException e) {
+                log.error("Error closing input stream", e);
+              }
             }
         }
+
         if (this.errorCount == 0 && this.failureCount == 0) {
             return true;
-        } else {
+        }
+        else {
             return false;
         }
     }

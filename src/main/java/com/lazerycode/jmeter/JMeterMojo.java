@@ -1,7 +1,7 @@
 package com.lazerycode.jmeter;
 
 import java.io.File;
-import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.maven.plugin.MojoExecutionException;
@@ -21,11 +21,19 @@ import com.lazerycode.jmeter.testrunner.TestManager;
 public class JMeterMojo extends JMeterAbstractMojo {
 
     /**
+     * Constructor will be called by maven
+     */
+    public JMeterMojo() {
+      threadNames.add(STANDARD_JMETER_ENGINE);
+    }
+
+    /**
      * Run all the JMeter tests.
      *
      * @throws MojoExecutionException
      * @throws MojoFailureException
      */
+    @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         getLog().info(" ");
         getLog().info("-------------------------------------------------------");
@@ -40,7 +48,9 @@ public class JMeterMojo extends JMeterAbstractMojo {
         jMeterTestManager.setRemoteConfig(this.remoteConfig);
         try {
             jMeterTestManager.setExitCheckPause(Integer.parseInt(this.pluginProperties.getPropertyObject(JMeterPropertiesFiles.JMETER_PROPERTIES).getProperty("jmeter.exit.check.pause")));
-        } catch (Exception ex) {
+        }
+        catch (Exception ex) {
+            //TODO: is this really worth a warning if the property isn't set by the user?
             getLog().warn("Unable to parse the 'jmeter.exit.check.pause' entry in jmeter.properties!  Falling back to a default value of '" + jMeterTestManager.getExitCheckPause() + "'.");
         }
         getLog().info(" ");
@@ -58,34 +68,32 @@ public class JMeterMojo extends JMeterAbstractMojo {
      * @throws MojoFailureException
      */
     protected void parseTestResults(List<String> results) throws MojoExecutionException, MojoFailureException {
-        ErrorScanner scanner = new ErrorScanner(this.ignoreResultErrors, this.ignoreResultFailures);
+        ErrorScanner scanner = new ErrorScanner(this.ignoreResultErrors, this.ignoreResultFailures, getLog());
         int totalErrorCount = 0;
         int totalFailureCount = 0;
         boolean failed = false;
-        try {
+
+
+        if(!ignoreResultErrors && !ignoreResultFailures) {
+            //only read in test result files if really needed
             for (String file : results) {
                 if (!scanner.hasTestPassed(new File(file))) {
-                    totalErrorCount = +scanner.getErrorCount();
-                    totalFailureCount = +scanner.getFailureCount();
+                    totalErrorCount += scanner.getErrorCount();
+                    totalFailureCount += scanner.getFailureCount();
                     failed = true;
                 }
             }
-            getLog().info(" ");
-            getLog().info("Test Results:");
-            getLog().info(" ");
-            getLog().info("Tests Run: " + results.size() + ", Failures: " + totalFailureCount + ", Errors: " + totalErrorCount + "");
-            getLog().info(" ");
-        } catch (IOException e) {
-            throw new MojoExecutionException("Can't read log file", e);
         }
+
+        getLog().info(" ");
+        getLog().info("Test Results:");
+        getLog().info(" ");
+        getLog().info("Tests Run: " + results.size() + ", Failures: " + totalFailureCount + ", Errors: " + totalErrorCount + "");
+        getLog().info(" ");
+
         if (failed) {
-            if (totalErrorCount == 0) {
-                throw new MojoFailureException("There were test failures.  See the jmeter logs for details.");
-            } else if (totalFailureCount == 0) {
-                throw new MojoFailureException("There were test errors.  See the jmeter logs for details.");
-            } else {
-                throw new MojoFailureException("There were test errors and failures.  See the jmeter logs for details.");
-            }
+          throw new MojoFailureException("There were "+totalErrorCount+" test errors " +
+                  "and "+totalFailureCount+" test failures.  See the jmeter logs for details.");
         }
     }
 }

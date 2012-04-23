@@ -18,11 +18,12 @@ import org.apache.maven.plugin.MojoFailureException;
  */
 public class JMeterGUIMojo extends JMeterAbstractMojo {
 
-    private List<String> threadNames = new ArrayList<String>();
-
+    /**
+     * Constructor will be called by maven
+     */
     public JMeterGUIMojo() {
-      threadNames.add("AWT-Windows");
-      threadNames.add("AWT-AppKit");
+      threadNames.add(GUI_THREAD_WINDOWS);
+      threadNames.add(GUI_THREAD_MACOSX);
     }
 
     /**
@@ -31,6 +32,7 @@ public class JMeterGUIMojo extends JMeterAbstractMojo {
      * @throws MojoExecutionException
      * @throws MojoFailureException
      */
+    @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         getLog().info(" ");
         getLog().info("-------------------------------------------------------");

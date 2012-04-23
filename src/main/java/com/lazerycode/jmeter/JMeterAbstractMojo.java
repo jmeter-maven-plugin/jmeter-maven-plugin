@@ -3,6 +3,7 @@ package com.lazerycode.jmeter;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -132,10 +133,13 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
     /**
      * Sets whether ErrorScanner should ignore failures in JMeter result file.
      *
+     * Failures are for example failed requests
+     *
      * @parameter expression="${jmeter.ignore.failure}" default-value=false
      */
     protected boolean ignoreResultFailures;
 
+    //TODO: what is an error?
     /**
      * Sets whether ErrorScanner should ignore errors in JMeter result file.
      *
@@ -189,15 +193,46 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
      */
     protected List<Artifact> pluginArtifacts;
 
+    //---------------------------------------------------
+
+    /**
+     * Directories will be created by this plugin and used by JMeter
+     */
     protected File workDir;
     protected File binDir;
     protected File libDir;
     protected File libExtDir;
     protected File logsDir;
+
+    /**
+     * All property files are stored in this artifact, comes with JMeter library
+     */
     protected String jmeterConfigArtifact = "ApacheJMeter_config";
     protected JMeterArgumentsArray testArgs;
     protected PropertyHandler pluginProperties;
 
+    /**
+     * Thread names added to this list will be used when scanning threads directly after JMeter is called
+     * The plugin will then wait for the thread to finish
+     * TODO: find out which threadname works for GUI detection on other operating systems
+     */
+    protected List<String> threadNames = new ArrayList<String>();
+
+    /**
+     * thread is started by JMeter and is used to start the actual test threads.
+     */
+    protected static final String STANDARD_JMETER_ENGINE = "StandardJMeterEngine";
+
+    /**
+     * thread is started on Windows when JMeter GUI is opened
+     * TODO: does this work for all current windows versions? (XP, Vista, 7)
+     */
+    protected static final String GUI_THREAD_WINDOWS = "AWT-Windows";
+    /**
+     * thread is started on Mac OSX when JMeter GUI is opened
+     * TODO: does this work for all current OSX versions? (10.6 -> not tested, 10.7 ->ok )
+     */
+    protected static final String GUI_THREAD_MACOSX = "AWT-AppKit";
 
     //==================================================================================================================
 
@@ -207,7 +242,7 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
     protected void generateJMeterDirectoryTree() {
         this.workDir = new File(this.mavenProject.getBasedir() + File.separator + "target" + File.separator + "jmeter");
         this.workDir.mkdirs();
-        this.logsDir = new File(this.workDir + File.separator + "jmeter-logs");
+        this.logsDir = new File(this.workDir + File.separator + "logs");
         this.logsDir.mkdirs();
         this.binDir = new File(this.workDir + File.separator + "bin");
         this.binDir.mkdirs();
@@ -244,8 +279,10 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 
         for (Artifact artifact : this.pluginArtifacts) {
             try {
+              //TODO: exclude jars that maven put in #pluginArtifacts
                 FileUtils.copyFile(artifact.getFile(), new File(this.libExtDir + File.separator + artifact.getFile().getName()));
-            } catch (IOException mx) {
+            }
+            catch (IOException mx) {
                 throw new MojoExecutionException("Unable to get the canonical path for " + artifact);
             }
         }
@@ -283,7 +320,8 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
         this.testArgs.setACustomPropertiesFile(this.customPropertiesFile);
         try {
             this.testArgs.setResultsFileNameDateFormat(new SimpleDateFormat(this.resultsFileNameDateFormat));
-        } catch (Exception ex) {
+        }
+        catch (Exception ex) {
             getLog().error("'" + this.resultsFileNameDateFormat + "' is an invalid date format.  Defaulting to 'yyMMdd'.");
         }
     }

@@ -13,7 +13,7 @@ public class ErrorScannerTest {
 
     @Test
     public void testLineContainsForErrors() {
-        ErrorScanner scanner = new ErrorScanner(false, false);
+        ErrorScanner scanner = new ErrorScanner(false, false, null);
         assertThat(scanner.checkLineForErrors("<failure>false</failure>"),
                 is(equalTo(false)));
         assertThat(scanner.checkLineForErrors("<failure>true</failure>"),
@@ -32,7 +32,7 @@ public class ErrorScannerTest {
 
     @Test
     public void testLineContainsWhenIgnoringErrorsAndFailures() {
-        ErrorScanner scanner = new ErrorScanner(true, true);
+        ErrorScanner scanner = new ErrorScanner(true, true, null);
         assertThat(scanner.checkLineForErrors("<failure>false</failure>"),
                 is(equalTo(false)));
         assertThat(scanner.checkLineForErrors("<failure>true</failure>"),
@@ -51,7 +51,7 @@ public class ErrorScannerTest {
 
     @Test
     public void jtlFormatFileWithFailures() throws Exception {
-        ErrorScanner scanner = new ErrorScanner(false, false);
+        ErrorScanner scanner = new ErrorScanner(false, false, null);
         URI testResultsFile = this.getClass().getResource("/jtl2-1-fail.jtl").toURI();
         assertThat(scanner.hasTestPassed(new File(testResultsFile)),
                 is(equalTo(false)));
@@ -63,7 +63,7 @@ public class ErrorScannerTest {
 
     @Test
     public void jtlFormatFileWithNoFailures() throws Exception {
-        ErrorScanner scanner = new ErrorScanner(false, false);
+        ErrorScanner scanner = new ErrorScanner(false, false, null);
         URI testResultsFile = this.getClass().getResource("/jtl2-1-pass.jtl").toURI();
         assertThat(scanner.hasTestPassed(new File(testResultsFile)),
                 is(equalTo(true)));

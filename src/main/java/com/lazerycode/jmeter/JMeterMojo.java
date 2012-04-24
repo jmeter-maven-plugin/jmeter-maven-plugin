@@ -58,14 +58,11 @@ public class JMeterMojo extends JMeterAbstractMojo {
         int totalErrorCount = 0;
         int totalFailureCount = 0;
         boolean failed = false;
-        if(!ignoreResultErrors && !ignoreResultFailures) {
-            //only read in test result files if really needed
-            for (String file : results) {
-                if (!scanner.hasTestPassed(new File(file))) {
-                    totalErrorCount += scanner.getErrorCount();
-                    totalFailureCount += scanner.getFailureCount();
-                    failed = true;
-                }
+        for (String file : results) {
+            if (!scanner.hasTestPassed(new File(file))) {
+                totalErrorCount += scanner.getErrorCount();
+                totalFailureCount += scanner.getFailureCount();
+                failed = true;
             }
         }
         getLog().info(" ");
@@ -74,8 +71,8 @@ public class JMeterMojo extends JMeterAbstractMojo {
         getLog().info("Tests Run: " + results.size() + ", Failures: " + totalFailureCount + ", Errors: " + totalErrorCount + "");
         getLog().info(" ");
         if (failed) {
-          throw new MojoFailureException("There were "+totalErrorCount+" test errors " +
-                  "and "+totalFailureCount+" test failures.  See the jmeter logs for details.");
+            throw new MojoFailureException("There were " + totalErrorCount + " test errors " +
+                    "and " + totalFailureCount + " test failures.  See the jmeter logs for details.");
         }
     }
 }

@@ -46,6 +46,8 @@ public class ErrorScanner {
      */
     public boolean hasTestPassed(File file) throws MojoExecutionException {
         resetErrorAndFailureCount();
+        //If we are ignoring errors/failures just return a pass without parsing the results file.
+        if (this.ignoreErrors && this.ignoreFailures) return true;
         BufferedReader in = null;
         try {
             in = new BufferedReader(new FileReader(file));
@@ -53,26 +55,22 @@ public class ErrorScanner {
             while ((line = in.readLine()) != null) {
                 this.checkLineForErrors(line);
             }
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new MojoExecutionException("Can't read test results file " + file, e);
-        }
-        finally {
+        } finally {
 
             if (in != null) {
-              try {
-                in.close();
-              }
-              catch (IOException e) {
-                log.error("Error closing input stream", e);
-              }
+                try {
+                    in.close();
+                } catch (IOException e) {
+                    log.error("Error closing input stream", e);
+                }
             }
         }
 
         if (this.errorCount == 0 && this.failureCount == 0) {
             return true;
-        }
-        else {
+        } else {
             return false;
         }
     }

@@ -117,13 +117,6 @@ public class TestManager extends JMeterMojo {
             getLog().info(" ");
         }
         finally {
-            try {
-                //Wait for JMeter to clean up JMeterThreads.
-                Thread.sleep(this.exitCheckPause);
-            }
-            catch (InterruptedException e) {
-                getLog().warn("Something went wrong during Thread cleanup, we may be leaving something running...");
-            }
             //Reset everything back to normal
             System.setSecurityManager(originalSecurityManager);
             Thread.setDefaultUncaughtExceptionHandler(originalExceptionHandler);

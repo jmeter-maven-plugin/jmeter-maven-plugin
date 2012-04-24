@@ -211,7 +211,6 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
     protected String jmeterConfigArtifact = "ApacheJMeter_config";
     protected JMeterArgumentsArray testArgs;
     protected PropertyHandler pluginProperties;
-    protected int exitCheckPause = 7500;
 
     //==================================================================================================================
 
@@ -302,26 +301,6 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
         catch (Exception ex) {
             getLog().error("'" + this.resultsFileNameDateFormat + "' is an invalid date format.  Defaulting to 'yyMMdd'.");
         }
-    }
-
-    /**
-     * Set how long to wait for JMeter to clean up it's JMeterThreads after a test run.
-     *
-     * @param value int
-     */
-    protected void setExitCheckPause(int value) {
-        //JMeter.java line 966 has an arbitrary 5000ms wait for thread cleanup.
-        //This happens after the listeners have been told that the test finishes.
-        //Replicate that here to ensure that the JMeter log writer has a chance to finish before we start another test/process logs.
-        this.exitCheckPause = value + 5000;
-    }
-
-    /**
-     * Return the value of jmeter.exit.check.pause used by the Test Manager.
-     */
-    protected int getExitCheckPause() {
-        //The arbitrary 5000ms wait for thread cleanup is removed from the value we set.
-        return this.exitCheckPause - 5000;
     }
 
     /**

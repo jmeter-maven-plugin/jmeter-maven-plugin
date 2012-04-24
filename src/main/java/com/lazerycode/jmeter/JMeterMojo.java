@@ -1,13 +1,10 @@
 package com.lazerycode.jmeter;
 
 import java.io.File;
-import java.util.Collections;
 import java.util.List;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-
-import com.lazerycode.jmeter.properties.JMeterPropertiesFiles;
 import com.lazerycode.jmeter.reporting.ReportGenerator;
 import com.lazerycode.jmeter.testrunner.TestManager;
 
@@ -71,8 +68,7 @@ public class JMeterMojo extends JMeterAbstractMojo {
         getLog().info("Tests Run: " + results.size() + ", Failures: " + totalFailureCount + ", Errors: " + totalErrorCount + "");
         getLog().info(" ");
         if (failed) {
-            throw new MojoFailureException("There were " + totalErrorCount + " test errors " +
-                    "and " + totalFailureCount + " test failures.  See the jmeter logs for details.");
+            throw new MojoFailureException("There were " + totalErrorCount + " test errors " + "and " + totalFailureCount + " test failures.  See the JMeter logs for details.");
         }
     }
 }

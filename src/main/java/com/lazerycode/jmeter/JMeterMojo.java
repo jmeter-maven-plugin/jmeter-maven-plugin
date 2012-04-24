@@ -21,13 +21,6 @@ import com.lazerycode.jmeter.testrunner.TestManager;
 public class JMeterMojo extends JMeterAbstractMojo {
 
     /**
-     * Constructor will be called by maven
-     */
-    public JMeterMojo() {
-      threadNames.add(STANDARD_JMETER_ENGINE);
-    }
-
-    /**
      * Run all the JMeter tests.
      *
      * @throws MojoExecutionException
@@ -46,13 +39,6 @@ public class JMeterMojo extends JMeterAbstractMojo {
         initialiseJMeterArgumentsArray();
         TestManager jMeterTestManager = new TestManager(this.testArgs, this.logsDir, this.testFilesDirectory, this.testFilesIncluded, this.testFilesExcluded, this.suppressJMeterOutput);
         jMeterTestManager.setRemoteConfig(this.remoteConfig);
-        try {
-            jMeterTestManager.setExitCheckPause(Integer.parseInt(this.pluginProperties.getPropertyObject(JMeterPropertiesFiles.JMETER_PROPERTIES).getProperty("jmeter.exit.check.pause")));
-        }
-        catch (Exception ex) {
-            //TODO: is this really worth a warning if the property isn't set by the user?
-            getLog().warn("Unable to parse the 'jmeter.exit.check.pause' entry in jmeter.properties!  Falling back to a default value of '" + jMeterTestManager.getExitCheckPause() + "'.");
-        }
         getLog().info(" ");
         getLog().info(this.proxyConfig.toString());
         List<String> testResults = jMeterTestManager.executeTests();
@@ -72,8 +58,6 @@ public class JMeterMojo extends JMeterAbstractMojo {
         int totalErrorCount = 0;
         int totalFailureCount = 0;
         boolean failed = false;
-
-
         if(!ignoreResultErrors && !ignoreResultFailures) {
             //only read in test result files if really needed
             for (String file : results) {
@@ -84,13 +68,11 @@ public class JMeterMojo extends JMeterAbstractMojo {
                 }
             }
         }
-
         getLog().info(" ");
         getLog().info("Test Results:");
         getLog().info(" ");
         getLog().info("Tests Run: " + results.size() + ", Failures: " + totalFailureCount + ", Errors: " + totalErrorCount + "");
         getLog().info(" ");
-
         if (failed) {
           throw new MojoFailureException("There were "+totalErrorCount+" test errors " +
                   "and "+totalFailureCount+" test failures.  See the jmeter logs for details.");

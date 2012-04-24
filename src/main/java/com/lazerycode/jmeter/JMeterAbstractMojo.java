@@ -3,14 +3,12 @@ package com.lazerycode.jmeter;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.lazerycode.jmeter.testrunner.ExitException;
-import com.lazerycode.jmeter.testrunner.jmeterPluginSecurityManager;
-import com.lazerycode.jmeter.testrunner.jmeterPluginUncaughtExceptionHandler;
+import com.lazerycode.jmeter.threadhandling.JMeterPluginSecurityManager;
+import com.lazerycode.jmeter.threadhandling.JMeterPluginUncaughtExceptionHandler;
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;
@@ -215,29 +213,6 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
     protected PropertyHandler pluginProperties;
     protected int exitCheckPause = 7500;
 
-    /**
-     * Thread names added to this list will be used when scanning threads directly after JMeter is called
-     * The plugin will then wait for the thread to finish
-     * TODO: find out which threadname works for GUI detection on other operating systems
-     */
-    protected List<String> threadNames = new ArrayList<String>();
-
-    /**
-     * thread is started by JMeter and is used to start the actual test threads.
-     */
-    protected static final String STANDARD_JMETER_ENGINE = "StandardJMeterEngine";
-
-    /**
-     * thread is started on Windows when JMeter GUI is opened
-     * TODO: does this work for all current windows versions? (XP, Vista, 7)
-     */
-    protected static final String GUI_THREAD_WINDOWS = "AWT-Windows";
-    /**
-     * thread is started on Mac OSX when JMeter GUI is opened
-     * TODO: does this work for all current OSX versions? (10.6 -> not tested, 10.7 ->ok )
-     */
-    protected static final String GUI_THREAD_MACOSX = "AWT-AppKit";
-
     //==================================================================================================================
 
     /**
@@ -330,7 +305,7 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
     }
 
     /**
-     * Set how long to wait for JMeter to clean up it's threads after a test run.
+     * Set how long to wait for JMeter to clean up it's JMeterThreads after a test run.
      *
      * @param value int
      */
@@ -350,7 +325,7 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
     }
 
     /**
-     * Wait for one of the threads in the list to stop.
+     * Wait for one of the JMeterThreads in the list to stop.
      */
     protected void waitForTestToFinish(List<String> threadNames) throws InterruptedException {
         Thread waitThread = null;
@@ -364,8 +339,8 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
             }
         }
         if (waitThread != null) {
-                waitThread.setUncaughtExceptionHandler(new jmeterPluginUncaughtExceptionHandler());
-                waitThread.join();
+            waitThread.setUncaughtExceptionHandler(new JMeterPluginUncaughtExceptionHandler());
+            waitThread.join();
         }
     }
 
@@ -377,7 +352,7 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
      */
     protected SecurityManager overrideSecurityManager() {
         SecurityManager oldManager = System.getSecurityManager();
-        System.setSecurityManager(new jmeterPluginSecurityManager());
+        System.setSecurityManager(new JMeterPluginSecurityManager());
         return oldManager;
     }
 
@@ -388,8 +363,7 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
      */
     protected Thread.UncaughtExceptionHandler overrideUncaughtExceptionHandler() {
         Thread.UncaughtExceptionHandler oldHandler = Thread.getDefaultUncaughtExceptionHandler();
-        Thread.setDefaultUncaughtExceptionHandler(new jmeterPluginUncaughtExceptionHandler());
+        Thread.setDefaultUncaughtExceptionHandler(new JMeterPluginUncaughtExceptionHandler());
         return oldHandler;
     }
-
 }

@@ -1,4 +1,4 @@
-package com.lazerycode.jmeter.testrunner;
+package com.lazerycode.jmeter.threadhandling;
 
 public class ExitException extends SecurityException {
 

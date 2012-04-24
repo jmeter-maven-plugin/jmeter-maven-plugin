@@ -1,6 +1,10 @@
 package com.lazerycode.jmeter;
 
+import com.lazerycode.jmeter.threadhandling.JMeterThreads;
+
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -51,4 +55,19 @@ public class UtilityFunctions {
         }
     }
 
+    /**
+     * Get a list of thread names to wait upon
+     *
+     * @param ofTypeGUI look for GUI threads (false implies non-GUI threads)
+     * @return
+     */
+    public static List<String> getThreadNames(boolean ofTypeGUI) {
+        List<String> threadNames = new ArrayList<String>();
+        for (JMeterThreads thread : JMeterThreads.values()) {
+            if (thread.isGUIThread() == ofTypeGUI) {
+                threadNames.add(thread.getThreadName());
+            }
+        }
+        return threadNames;
+    }
 }

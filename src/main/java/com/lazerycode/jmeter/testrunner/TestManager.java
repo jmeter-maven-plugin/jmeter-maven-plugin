@@ -3,18 +3,17 @@ package com.lazerycode.jmeter.testrunner;
 import com.lazerycode.jmeter.*;
 import com.lazerycode.jmeter.configuration.JMeterArgumentsArray;
 import com.lazerycode.jmeter.configuration.RemoteConfiguration;
+import com.lazerycode.jmeter.threadhandling.ExitException;
 import org.apache.commons.io.output.NullOutputStream;
 import org.apache.jmeter.NewDriver;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.tools.ant.DirectoryScanner;
 
 import java.io.*;
-import java.security.Permission;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 /**
  * TestManager encapsulates functions that gather JMeter Test files and execute the tests
@@ -120,7 +119,7 @@ public class TestManager extends JMeterMojo {
         }
         finally {
             try {
-                //Wait for JMeter to clean up threads.
+                //Wait for JMeter to clean up JMeterThreads.
                 Thread.sleep(this.exitCheckPause);
             }
             catch (InterruptedException e) {

@@ -2,7 +2,6 @@ package com.lazerycode.jmeter;
 
 import java.io.File;
 import java.io.IOException;
-import java.security.Permission;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,6 +9,8 @@ import java.util.Map;
 import java.util.Set;
 
 import com.lazerycode.jmeter.testrunner.ExitException;
+import com.lazerycode.jmeter.testrunner.jmeterPluginSecurityManager;
+import com.lazerycode.jmeter.testrunner.jmeterPluginUncaughtExceptionHandler;
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;
@@ -351,24 +352,20 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
     /**
      * Wait for one of the threads in the list to stop.
      */
-    protected void waitForTestToFinish(List<String> threadNames){
+    protected void waitForTestToFinish(List<String> threadNames) throws InterruptedException {
         Thread waitThread = null;
         Set<Thread> threadSet = Thread.getAllStackTraces().keySet();
-        for ( Thread thread : threadSet ) {
-            for(String threadName : threadNames) {
-              if ( threadName.equals(thread.getName())) {
+        for (Thread thread : threadSet) {
+            for (String threadName : threadNames) {
+                if (threadName.equals(thread.getName())) {
                     waitThread = thread;
                     break;
-                 }
-              }
+                }
+            }
         }
-        if ( waitThread != null ) {
-           try {
-              waitThread.join();
-           }
-           catch ( InterruptedException e ) {
-             getLog().error("Thread was interrupted: ",e);
-           }
+        if (waitThread != null) {
+                waitThread.setUncaughtExceptionHandler(new jmeterPluginUncaughtExceptionHandler());
+                waitThread.join();
         }
     }
 
@@ -380,21 +377,7 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
      */
     protected SecurityManager overrideSecurityManager() {
         SecurityManager oldManager = System.getSecurityManager();
-        System.setSecurityManager(new SecurityManager() {
-
-            @Override
-            public void checkExit(int status) {
-                throw new ExitException(status);
-            }
-
-            @Override
-            public void checkPermission(Permission perm, Object context) {
-            }
-
-            @Override
-            public void checkPermission(Permission perm) {
-            }
-        });
+        System.setSecurityManager(new jmeterPluginSecurityManager());
         return oldManager;
     }
 
@@ -405,15 +388,7 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
      */
     protected Thread.UncaughtExceptionHandler overrideUncaughtExceptionHandler() {
         Thread.UncaughtExceptionHandler oldHandler = Thread.getDefaultUncaughtExceptionHandler();
-        Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
-            @Override
-            public void uncaughtException(Thread t, Throwable e) {
-                if (e instanceof ExitException && ((ExitException) e).getCode() == 0) {
-                    return; // Ignore
-                }
-                getLog().error("Error in thread " + t.getName());
-            }
-        });
+        Thread.setDefaultUncaughtExceptionHandler(new jmeterPluginUncaughtExceptionHandler());
         return oldHandler;
     }
 

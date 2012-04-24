@@ -113,6 +113,11 @@ public class TestManager extends JMeterMojo {
                 throw new MojoExecutionException("Test failed", e);
             }
         }
+        catch (InterruptedException ex){
+            getLog().info(" ");
+            getLog().info("System Exit Detected!  Stopping Test...");
+            getLog().info(" ");
+        }
         finally {
             try {
                 //Wait for JMeter to clean up threads.

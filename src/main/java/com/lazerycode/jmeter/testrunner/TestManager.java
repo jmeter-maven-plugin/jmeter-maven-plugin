@@ -104,8 +104,7 @@ public class TestManager extends JMeterMojo {
             if (suppressJMeterOutput) System.setOut(new PrintStream(new NullOutputStream()));
             //Start the test.
             NewDriver.main(testArgs.buildArgumentsArray());
-
-            waitForTestToFinish(threadNames);
+            waitForTestToFinish(UtilityFunctions.getThreadNames(false));
         }
         catch (ExitException e) {
             if (e.getCode() != 0) {

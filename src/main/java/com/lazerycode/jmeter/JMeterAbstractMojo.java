@@ -258,8 +258,6 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
         }
         //JMeter expects a <workdir>/lib/junit directory and complains if it can't find it.
         new File(this.workDir + File.separator + "lib" + File.separator + "junit").mkdirs();
-        //JMeter uses the system property "user.dir" to set its base working directory
-        System.setProperty("user.dir", this.binDir.getAbsolutePath());
     }
 
     protected void propertyConfiguration() throws MojoExecutionException {
@@ -271,6 +269,7 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
         this.pluginProperties.setJmeterUserProperties(this.propertiesUser);
         this.pluginProperties.setJMeterSystemProperties(this.propertiesSystem);
         this.pluginProperties.configureJMeterPropertiesFiles();
+        this.pluginProperties.setDefaultPluginProperties(this.binDir.getAbsolutePath());
     }
 
     /**

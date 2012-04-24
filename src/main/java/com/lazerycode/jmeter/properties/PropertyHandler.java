@@ -216,4 +216,12 @@ public class PropertyHandler extends JMeterMojo {
             }
         }
     }
+
+    public void setDefaultPluginProperties(String userDirectory){
+        //JMeter uses the system property "user.dir" to set its base working directory
+        System.setProperty("user.dir", userDirectory);
+        //Prevent JMeter srom throwing some System.exit() calls
+        System.setProperty("jmeterengine.remote.system.exit", "false");
+        System.setProperty("jmeterengine.stopfail.system.exit", "false");
+    }
 }

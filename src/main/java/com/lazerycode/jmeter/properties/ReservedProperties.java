@@ -9,7 +9,9 @@ package com.lazerycode.jmeter.properties;
 public enum ReservedProperties {
 
     JAVA_CLASS_PATH("java.class.path"),
-    USER_DIR("user.dir");
+    USER_DIR("user.dir"),
+    REMOTE_SYSTEM_EXIT("jmeterengine.remote.system.exit"),
+    SYSTEM_EXIT_ON_STOP_FAIL("jmeterengine.stopfail.system.exit");
 
     private final String propertyKey;
 

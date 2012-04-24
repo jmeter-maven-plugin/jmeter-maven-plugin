@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.lazerycode.jmeter.threadhandling.JMeterPluginSecurityManager;
+import com.lazerycode.jmeter.threadhandling.JMeterPluginUncaughtExceptionHandler;
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;

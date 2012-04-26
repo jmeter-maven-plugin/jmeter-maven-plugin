@@ -1,15 +1,21 @@
 package com.lazerycode.jmeter;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.text.SimpleDateFormat;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.jar.Attributes;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+import java.util.jar.Manifest;
+import java.util.zip.ZipEntry;
 
 import com.lazerycode.jmeter.threadhandling.JMeterPluginSecurityManager;
 import com.lazerycode.jmeter.threadhandling.JMeterPluginUncaughtExceptionHandler;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -248,27 +254,55 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
     }
 
     /**
-     * Copy jars to JMeter ext dir for JMeter function search and set the classpath.
+     * Copy jars/files to correct place in the JMeter directory tree.
      *
      * @throws MojoExecutionException
      */
     protected void populateJMeterDirectoryTree() throws MojoExecutionException {
 
         for (Artifact artifact : this.pluginArtifacts) {
-            try {
-                if (artifact.getArtifactId().startsWith("ApacheJMeter_")) {
-                    if (artifact.getArtifactId().startsWith("ApacheJMeter_config")) {
-                        //TODO extract into bin dir if not a .properties file (we build the .properties files on the fly)
-                    } else {
-                        FileUtils.copyFile(artifact.getFile(), new File(this.libExtDir + File.separator + artifact.getFile().getName()));
+            if (artifact.getArtifactId().startsWith("ApacheJMeter_")) {
+                if (artifact.getArtifactId().startsWith("ApacheJMeter_config")) {
+                    try {
+                        JarFile configSettings = new JarFile(artifact.getFile());
+                        Enumeration<JarEntry> entries = configSettings.entries();
+                        while (entries.hasMoreElements()) {
+                            JarEntry jarFileEntry = entries.nextElement();
+                            // Only interested in files in the /bin directory that are not properties files
+                            if (jarFileEntry.getName().startsWith("bin") && !jarFileEntry.getName().endsWith(".properties")) {
+                                InputStream is = configSettings.getInputStream(jarFileEntry); // get the input stream
+                                OutputStream os = new FileOutputStream(new File(this.binDir.getCanonicalPath() + File.separator + jarFileEntry.getName()));
+                                byte[] buffer = new byte[4096];
+                                int readData;
+                                while ((readData = is.read(buffer)) != -1) {
+                                    os.write(buffer, 0, readData);
+                                }
+                                os.close();
+                                is.close();
+                            }
+                        }
+                        configSettings.close();
+                    } catch (IOException e) {
+                        throw new MojoExecutionException("Unable to extract config settings");
                     }
                 } else {
-                    //TODO: exclude jars that maven put in #pluginArtifacts
-                    //TODO: Need more info on above, how do we know which ones to exclude??
-                    FileUtils.copyFile(artifact.getFile(), new File(this.libDir + File.separator + artifact.getFile().getName()));
+                    try {
+                        FileUtils.copyFile(artifact.getFile(), new File(this.libExtDir + File.separator + artifact.getFile().getName()));
+                    } catch (IOException mx) {
+                        throw new MojoExecutionException("Unable to get the canonical path for " + artifact);
+                    }
                 }
-            } catch (IOException mx) {
-                throw new MojoExecutionException("Unable to get the canonical path for " + artifact);
+            } else {
+                try {
+                    /**
+                     * TODO: exclude jars that maven put in #pluginArtifacts?
+                     * Need more info on above, how do we know which ones to exclude??
+                     * Most of the files pulled down by maven are requires in /lib to match standard JMeter install
+                     */
+                    FileUtils.copyFile(artifact.getFile(), new File(this.libDir + File.separator + artifact.getFile().getName()));
+                } catch (IOException mx) {
+                    throw new MojoExecutionException("Unable to get the canonical path for " + artifact);
+                }
             }
         }
         //empty classpath, JMeter will automatically assemble and add all JARs in #libDir and #libExtDir and add them to the classpath.

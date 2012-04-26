@@ -41,7 +41,6 @@ public class PropertyHandler extends JMeterMojo {
         try {
             this.loadDefaultProperties(jMeterConfigArtifact);
             this.loadCustomProperties();
-            loadMiscellaneousProperties(jMeterConfigArtifact);
         } catch (Exception ex) {
             getLog().error("Error loading properties: " + ex);
         }
@@ -83,50 +82,6 @@ public class PropertyHandler extends JMeterMojo {
                 sourceInputStream.close();
                 getPropertyObject(propertyFile).setCustomPropertyObject(sourcePropertySet);
             }
-        }
-    }
-
-    /**
-     * Copy the miscellaneous default properties held in the JMeter artifact to the bin/ directory
-     *
-     * @param jMeterConfigArtifact
-     * @throws MojoExecutionException
-     * @throws java.io.IOException
-     */
-    private void loadMiscellaneousProperties(Artifact jMeterConfigArtifact) throws MojoExecutionException, IOException {
-        //TODO move this into JMeterAbstractMojo -> populateJMeterDirectoryTree().  This doesn't belong here
-        //TODO: list may be filled elsewhere. Maybe use an Enum
-        List<String> fileList = new ArrayList<String>();
-        fileList.add("proxyserver.jks");
-        fileList.add("logkit.xml");
-        fileList.add("log4j.conf");
-        fileList.add("httpclient.parameters");
-        fileList.add("hc.parameters");
-        fileList.add("BeanShellSampler.bshrc");
-        fileList.add("BeanShellListeners.bshrc");
-        fileList.add("BeanShellFunction.bshrc");
-        fileList.add("BeanShellAssertion.bshrc");
-
-        for (String propertyFile : fileList) {
-
-          InputStream sourceFile = null;
-
-          try {
-              //copy properties file.
-              JarFile propertyJar = new JarFile(jMeterConfigArtifact.getFile());
-              sourceFile = propertyJar.getInputStream(propertyJar.getEntry("bin/" + propertyFile));
-              FileOutputStream propertiesFile = new FileOutputStream(new File(this.propertyOutputDirectory.getCanonicalFile() + File.separator + propertyFile));
-              IOUtils.copy(sourceFile,propertiesFile);
-              propertiesFile.flush();
-              propertiesFile.close();
-          } catch (IOException e) {
-              throw new MojoExecutionException("Error creating properties file " + propertyFile + ": " + e);
-          } finally {
-              if (sourceFile != null) {
-                  sourceFile.close();
-              }
-          }
-
         }
     }
 

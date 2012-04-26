@@ -256,10 +256,13 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 
         for (Artifact artifact : this.pluginArtifacts) {
             try {
-              //TODO: exclude jars that maven put in #pluginArtifacts
-                FileUtils.copyFile(artifact.getFile(), new File(this.libExtDir + File.separator + artifact.getFile().getName()));
-            }
-            catch (IOException mx) {
+                if (artifact.getArtifactId().startsWith("ApacheJMeter_")) {
+                    FileUtils.copyFile(artifact.getFile(), new File(this.libExtDir + File.separator + artifact.getFile().getName()));
+                } else {
+                    //TODO: exclude jars that maven put in #pluginArtifacts
+                    FileUtils.copyFile(artifact.getFile(), new File(this.libDir + File.separator + artifact.getFile().getName()));
+                }
+            } catch (IOException mx) {
                 throw new MojoExecutionException("Unable to get the canonical path for " + artifact);
             }
         }

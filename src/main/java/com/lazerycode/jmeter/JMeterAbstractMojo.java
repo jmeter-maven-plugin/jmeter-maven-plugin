@@ -252,14 +252,19 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
      *
      * @throws MojoExecutionException
      */
-    protected void setJMeterClasspath() throws MojoExecutionException {
+    protected void populateJMeterDirectoryTree() throws MojoExecutionException {
 
         for (Artifact artifact : this.pluginArtifacts) {
             try {
                 if (artifact.getArtifactId().startsWith("ApacheJMeter_")) {
-                    FileUtils.copyFile(artifact.getFile(), new File(this.libExtDir + File.separator + artifact.getFile().getName()));
+                    if (artifact.getArtifactId().startsWith("ApacheJMeter_config")) {
+                        //TODO extract into bin dir if not a .properties file (we build the .properties files on the fly)
+                    } else {
+                        FileUtils.copyFile(artifact.getFile(), new File(this.libExtDir + File.separator + artifact.getFile().getName()));
+                    }
                 } else {
                     //TODO: exclude jars that maven put in #pluginArtifacts
+                    //TODO: Need more info on above, how do we know which ones to exclude??
                     FileUtils.copyFile(artifact.getFile(), new File(this.libDir + File.separator + artifact.getFile().getName()));
                 }
             } catch (IOException mx) {

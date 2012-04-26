@@ -94,6 +94,7 @@ public class PropertyHandler extends JMeterMojo {
      * @throws java.io.IOException
      */
     private void loadMiscellaneousProperties(Artifact jMeterConfigArtifact) throws MojoExecutionException, IOException {
+        //TODO move this into JMeterAbstractMojo -> populateJMeterDirectoryTree().  This doesn't belong here
         //TODO: list may be filled elsewhere. Maybe use an Enum
         List<String> fileList = new ArrayList<String>();
         fileList.add("proxyserver.jks");
@@ -220,7 +221,7 @@ public class PropertyHandler extends JMeterMojo {
     public void setDefaultPluginProperties(String userDirectory){
         //JMeter uses the system property "user.dir" to set its base working directory
         System.setProperty("user.dir", userDirectory);
-        //Prevent JMeter srom throwing some System.exit() calls
+        //Prevent JMeter from throwing some System.exit() calls
         System.setProperty("jmeterengine.remote.system.exit", "false");
         System.setProperty("jmeterengine.stopfail.system.exit", "false");
     }

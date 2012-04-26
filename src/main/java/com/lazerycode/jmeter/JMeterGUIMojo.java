@@ -28,7 +28,7 @@ public class JMeterGUIMojo extends JMeterAbstractMojo {
         getLog().info(" ");
         generateJMeterDirectoryTree();
         propertyConfiguration();
-        setJMeterClasspath();
+        populateJMeterDirectoryTree();
         initialiseJMeterArgumentsArray();
         SecurityManager originalSecurityManager = overrideSecurityManager();
         try {

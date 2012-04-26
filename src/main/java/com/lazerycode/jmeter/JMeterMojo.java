@@ -32,7 +32,7 @@ public class JMeterMojo extends JMeterAbstractMojo {
         getLog().info(" ");
         generateJMeterDirectoryTree();
         propertyConfiguration();
-        setJMeterClasspath();
+        populateJMeterDirectoryTree();
         initialiseJMeterArgumentsArray();
         TestManager jMeterTestManager = new TestManager(this.testArgs, this.logsDir, this.testFilesDirectory, this.testFilesIncluded, this.testFilesExcluded, this.suppressJMeterOutput);
         jMeterTestManager.setRemoteConfig(this.remoteConfig);

@@ -280,7 +280,7 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
                     }
                 } else {
                     /**
-                     * TODO: exclude jars that maven put in #pluginArtifacts?
+                     * TODO: exclude jars that maven put in #pluginArtifacts for maven run? (e.g. plexus jars, the plugin artifact itself)
                      * Need more info on above, how do we know which ones to exclude??
                      * Most of the files pulled down by maven are required in /lib to match standard JMeter install
                      */
@@ -291,7 +291,7 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
             }
         }
         //TODO Check if we really need to do this
-        //empty classpath, JMeter will automatically assemble and add all JARs in #libDir and #libExtDir and add them to the classpath.
+        //empty classpath, JMeter will automatically assemble and add all JARs in #libDir and #libExtDir and add them to the classpath. Otherwise all jars will be in the classpath twice.
         System.setProperty("java.class.path", "");
     }
 

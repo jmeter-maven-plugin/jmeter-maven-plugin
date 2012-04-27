@@ -1,31 +1,26 @@
 package com.lazerycode.jmeter;
 
+import com.lazerycode.jmeter.configuration.JMeterArgumentsArray;
+import com.lazerycode.jmeter.configuration.ProxyConfiguration;
+import com.lazerycode.jmeter.configuration.RemoteConfiguration;
+import com.lazerycode.jmeter.configuration.ReportConfiguration;
+import com.lazerycode.jmeter.properties.PropertyHandler;
+import com.lazerycode.jmeter.threadhandling.JMeterPluginSecurityManager;
+import com.lazerycode.jmeter.threadhandling.JMeterPluginUncaughtExceptionHandler;
+import org.apache.commons.io.FileUtils;
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.project.MavenProject;
+
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.jar.Attributes;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-import java.util.jar.Manifest;
-import java.util.zip.ZipEntry;
-
-import com.lazerycode.jmeter.threadhandling.JMeterPluginSecurityManager;
-import com.lazerycode.jmeter.threadhandling.JMeterPluginUncaughtExceptionHandler;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.plugin.AbstractMojo;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.project.MavenProject;
-
-import com.lazerycode.jmeter.configuration.JMeterArgumentsArray;
-import com.lazerycode.jmeter.configuration.ProxyConfiguration;
-import com.lazerycode.jmeter.configuration.RemoteConfiguration;
-import com.lazerycode.jmeter.configuration.ReportConfiguration;
-import com.lazerycode.jmeter.properties.PropertyHandler;
 
 /**
  * JMeter Maven plugin.
@@ -139,7 +134,7 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 
     /**
      * Sets whether ErrorScanner should ignore failures in JMeter result file.
-     *
+     * <p/>
      * Failures are for example failed requests
      *
      * @parameter expression="${jmeter.ignore.failure}" default-value=false
@@ -171,9 +166,8 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
     /**
      * Value class that wraps all report configuration.
      *
-     * @deprecated will be removed when separate reports plugin is released
-     *
      * @parameter default-value="${reportConfig}"
+     * @deprecated will be removed when separate reports plugin is released
      */
     protected ReportConfiguration reportConfig;
 
@@ -259,50 +253,41 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
      * @throws MojoExecutionException
      */
     protected void populateJMeterDirectoryTree() throws MojoExecutionException {
-
         for (Artifact artifact : this.pluginArtifacts) {
-            if (artifact.getArtifactId().startsWith("ApacheJMeter_")) {
-                if (artifact.getArtifactId().startsWith("ApacheJMeter_config")) {
-                    try {
+            try {
+                if (artifact.getArtifactId().startsWith("ApacheJMeter_")) {
+                    if (artifact.getArtifactId().startsWith("ApacheJMeter_config")) {
                         JarFile configSettings = new JarFile(artifact.getFile());
                         Enumeration<JarEntry> entries = configSettings.entries();
                         while (entries.hasMoreElements()) {
                             JarEntry jarFileEntry = entries.nextElement();
                             // Only interested in files in the /bin directory that are not properties files
                             if (jarFileEntry.getName().startsWith("bin") && !jarFileEntry.getName().endsWith(".properties")) {
-                                InputStream is = configSettings.getInputStream(jarFileEntry); // get the input stream
-                                OutputStream os = new FileOutputStream(new File(this.binDir.getCanonicalPath() + File.separator + jarFileEntry.getName()));
-                                byte[] buffer = new byte[4096];
-                                int readData;
-                                while ((readData = is.read(buffer)) != -1) {
-                                    os.write(buffer, 0, readData);
+                                if (!jarFileEntry.isDirectory()) {
+                                    InputStream is = configSettings.getInputStream(jarFileEntry); // get the input stream
+                                    OutputStream os = new FileOutputStream(new File(this.workDir.getCanonicalPath() + File.separator + jarFileEntry.getName()));
+                                    while (is.available() > 0) {
+                                        os.write(is.read());
+                                    }
+                                    os.close();
+                                    is.close();
                                 }
-                                os.close();
-                                is.close();
                             }
                         }
                         configSettings.close();
-                    } catch (IOException e) {
-                        throw new MojoExecutionException("Unable to extract config settings");
+                    } else {
+                        FileUtils.copyFile(artifact.getFile(), new File(this.libExtDir + File.separator + artifact.getFile().getName()));
                     }
                 } else {
-                    try {
-                        FileUtils.copyFile(artifact.getFile(), new File(this.libExtDir + File.separator + artifact.getFile().getName()));
-                    } catch (IOException mx) {
-                        throw new MojoExecutionException("Unable to get the canonical path for " + artifact);
-                    }
-                }
-            } else {
-                try {
                     /**
                      * TODO: exclude jars that maven put in #pluginArtifacts?
                      * Need more info on above, how do we know which ones to exclude??
                      * Most of the files pulled down by maven are requires in /lib to match standard JMeter install
                      */
                     FileUtils.copyFile(artifact.getFile(), new File(this.libDir + File.separator + artifact.getFile().getName()));
-                } catch (IOException mx) {
-                    throw new MojoExecutionException("Unable to get the canonical path for " + artifact);
                 }
+            } catch (IOException e) {
+                throw new MojoExecutionException("Unable to populate the JMeter directory tree: " + e);
             }
         }
         //empty classpath, JMeter will automatically assemble and add all JARs in #libDir and #libExtDir and add them to the classpath.
@@ -339,8 +324,7 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
         this.testArgs.setACustomPropertiesFile(this.customPropertiesFile);
         try {
             this.testArgs.setResultsFileNameDateFormat(new SimpleDateFormat(this.resultsFileNameDateFormat));
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             getLog().error("'" + this.resultsFileNameDateFormat + "' is an invalid date format.  Defaulting to 'yyMMdd'.");
         }
     }

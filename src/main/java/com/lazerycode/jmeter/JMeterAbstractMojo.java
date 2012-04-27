@@ -282,7 +282,7 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
                     /**
                      * TODO: exclude jars that maven put in #pluginArtifacts?
                      * Need more info on above, how do we know which ones to exclude??
-                     * Most of the files pulled down by maven are requires in /lib to match standard JMeter install
+                     * Most of the files pulled down by maven are required in /lib to match standard JMeter install
                      */
                     FileUtils.copyFile(artifact.getFile(), new File(this.libDir + File.separator + artifact.getFile().getName()));
                 }
@@ -290,6 +290,7 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
                 throw new MojoExecutionException("Unable to populate the JMeter directory tree: " + e);
             }
         }
+        //TODO Check if we really need to do this
         //empty classpath, JMeter will automatically assemble and add all JARs in #libDir and #libExtDir and add them to the classpath.
         System.setProperty("java.class.path", "");
     }
@@ -348,7 +349,6 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
             waitThread.join();
         }
     }
-
 
     /**
      * Capture System.exit commands so that we can check to see if JMeter is trying to kill us without warning.

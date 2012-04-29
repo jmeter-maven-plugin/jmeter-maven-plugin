@@ -38,7 +38,8 @@ public class JMeterGUIMojo extends JMeterAbstractMojo {
             waitForTestToFinish(UtilityFunctions.getThreadNames(true));
         } catch (InterruptedException e) {
             getLog().info(" ");
-            getLog().info("System Exit Detected!  Shutting GUI Down...");
+            getLog().info("Thread Interrupt Detected!  Shutting GUI Down...");
+            getLog().info("(Any interrupt stack trace after this point is expected)");
             getLog().info(" ");
         } finally {
             //Reset everything back to normal

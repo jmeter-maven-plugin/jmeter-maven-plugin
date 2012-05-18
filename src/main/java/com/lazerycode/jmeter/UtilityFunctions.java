@@ -12,6 +12,7 @@ import java.util.Map;
  *
  * @author Mark Collin
  */
+@SuppressWarnings("RedundantIfStatement")
 public class UtilityFunctions {
 
     /**
@@ -59,7 +60,7 @@ public class UtilityFunctions {
      * Get a list of thread names to wait upon
      *
      * @param ofTypeGUI look for GUI threads (false implies non-GUI threads)
-     * @return
+     * @return the list of thread names to wait upon
      */
     public static List<String> getThreadNames(boolean ofTypeGUI) {
         List<String> threadNames = new ArrayList<String>();

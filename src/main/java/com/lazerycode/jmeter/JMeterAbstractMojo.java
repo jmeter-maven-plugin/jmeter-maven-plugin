@@ -28,6 +28,7 @@ import java.util.jar.JarFile;
  *
  * @author Tim McCune
  */
+@SuppressWarnings({"UnusedDeclaration", "FieldCanBeLocal", "JavaDoc"}) // Mojos get their fields set via reflection
 public abstract class JMeterAbstractMojo extends AbstractMojo {
 
     /**

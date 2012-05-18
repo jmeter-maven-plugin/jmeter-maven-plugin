@@ -15,6 +15,7 @@ import com.lazerycode.jmeter.testrunner.TestManager;
  * @goal jmeter
  * @requiresProject true
  */
+@SuppressWarnings("JavaDoc")
 public class JMeterMojo extends JMeterAbstractMojo {
 
     /**

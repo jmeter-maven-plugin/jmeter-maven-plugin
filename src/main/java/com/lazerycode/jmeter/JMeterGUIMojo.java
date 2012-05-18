@@ -11,6 +11,7 @@ import org.apache.maven.plugin.MojoFailureException;
  * @goal gui
  * @requiresProject true
  */
+@SuppressWarnings("JavaDoc")
 public class JMeterGUIMojo extends JMeterAbstractMojo {
 
     /**

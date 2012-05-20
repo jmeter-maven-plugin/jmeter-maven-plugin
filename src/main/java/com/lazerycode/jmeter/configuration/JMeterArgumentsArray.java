@@ -138,6 +138,7 @@ public class JMeterArgumentsArray {
         if (UtilityFunctions.isNotSet(value)) return;
         this.testFile = value.getAbsolutePath();
         this.argumentMap.put(JMeterCommandLineArguments.TESTFILE_OPT, true);
+        //TODO: results file should not be written to target/jmeter/reports but to target/jmeter/results instead.
         if (this.timestampResults) {
             this.resultsFileName = this.reportDirectory + File.separator + value.getName().substring(0, value.getName().lastIndexOf(".")) + "-" + this.dateFormat.format(new Date()) + ".jtl";
         } else {

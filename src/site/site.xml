@@ -29,6 +29,7 @@
             <item name="Basic Usage" href="index.html"/>
         </menu>
         <menu name="Release Information">
+            <item name="Version 1.5.0" href="./notes/version1.5.0.html"/>
             <item name="Version 1.4.1" href="./notes/version1.4.1.html"/>
             <item name="Version 1.4.0" href="./notes/version1.4.html"/>
         </menu>

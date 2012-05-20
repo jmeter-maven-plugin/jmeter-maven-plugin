@@ -1,0 +1,3 @@
+Version 1.5.0 Release Notes
+
+    * clear system property "org.apache.commons.logging.Log" at the end of the test run

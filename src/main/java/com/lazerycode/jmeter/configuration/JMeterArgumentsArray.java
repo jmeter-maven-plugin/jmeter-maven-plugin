@@ -28,7 +28,7 @@ public class JMeterArgumentsArray {
     private String testFile = null;
     private String resultsFileName = null;
     private String jMeterHome = null;
-    private String reportDirectory = null;
+    private String resultsDirectory = null;
     private String overrideRootLogLevel = null;
     private Map<String,String> overrideLogCategories = null;
 
@@ -36,8 +36,7 @@ public class JMeterArgumentsArray {
      * The argument map will define which arguments are set on the command line.
      * The order properties are initially put into the argument map defines the order they are returned in the array produced by this class.
      */
-    public JMeterArgumentsArray(String reportDirectory) {
-        this.reportDirectory = reportDirectory;
+    public JMeterArgumentsArray() {
         argumentMap.put(JMeterCommandLineArguments.NONGUI_OPT, true);           //Always suppress the GUI.
         argumentMap.put(JMeterCommandLineArguments.TESTFILE_OPT, false);        //Required - test file as specified.
         argumentMap.put(JMeterCommandLineArguments.LOGFILE_OPT, false);         //Required - output file as specified.
@@ -134,15 +133,18 @@ public class JMeterArgumentsArray {
         this.argumentMap.put(JMeterCommandLineArguments.LOGLEVEL, true);
     }
 
+    public void setResultsDirectory(String resultsDirectory) {
+      this.resultsDirectory = resultsDirectory;
+    }
+
     public void setTestFile(File value) {
         if (UtilityFunctions.isNotSet(value)) return;
         this.testFile = value.getAbsolutePath();
         this.argumentMap.put(JMeterCommandLineArguments.TESTFILE_OPT, true);
-        //TODO: results file should not be written to target/jmeter/reports but to target/jmeter/results instead.
         if (this.timestampResults) {
-            this.resultsFileName = this.reportDirectory + File.separator + value.getName().substring(0, value.getName().lastIndexOf(".")) + "-" + this.dateFormat.format(new Date()) + ".jtl";
+            this.resultsFileName = this.resultsDirectory + File.separator + value.getName().substring(0, value.getName().lastIndexOf(".")) + "-" + this.dateFormat.format(new Date()) + ".jtl";
         } else {
-            this.resultsFileName = this.reportDirectory + File.separator + value.getName().substring(0, value.getName().lastIndexOf(".")) + ".jtl";
+            this.resultsFileName = this.resultsDirectory + File.separator + value.getName().substring(0, value.getName().lastIndexOf(".")) + ".jtl";
         }
         this.argumentMap.put(JMeterCommandLineArguments.LOGFILE_OPT, true);
     }

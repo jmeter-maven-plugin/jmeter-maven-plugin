@@ -42,7 +42,6 @@
             <item name="Saveservice Properties" href="./examples/setting-saveservice-properties.html"/>
             <item name="Upgrade Properties" href="./examples/setting-upgrade-properties.html"/>
             <item name="Proxy Settings" href="./examples/proxy-settings.html"/>
-            <item name="Report Settings" href="./examples/report-settings.html"/>
             <item name="Remote Start And Stop" href="./examples/remote-start-and-stop.html"/>
         </menu>
         <menu ref="reports"/>

@@ -1,9 +1,6 @@
 package com.lazerycode.jmeter.configuration;
 
 import com.lazerycode.jmeter.UtilityFunctions;
-import com.lazerycode.jmeter.configuration.JMeterArgumentsArray;
-import com.lazerycode.jmeter.configuration.JMeterCommandLineArguments;
-import com.lazerycode.jmeter.configuration.ProxyConfiguration;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.junit.Test;
 
@@ -20,12 +17,11 @@ import static org.junit.Assert.assertThat;
 
 public class JMeterArgumentsArrayTest {
 
-    private File reportDir = new File("${basedir}/target/jmeter-report");
     private URL testFile = this.getClass().getResource("/test.jmx");
 
     public String argumentsMapToString(Map<String, String> value, JMeterCommandLineArguments type) {
         String arguments = "";
-        Set<String> globalPropertySet = (Set<String>) value.keySet();
+        Set<String> globalPropertySet = value.keySet();
         for (String property : globalPropertySet) {
             arguments += type.getCommandLineArgument() + " ";
             arguments += property + "=" + value.get(property) + " ";
@@ -35,27 +31,27 @@ public class JMeterArgumentsArrayTest {
 
     @Test(expected = MojoExecutionException.class)
     public void noTestSpecified() throws MojoExecutionException {
-        JMeterArgumentsArray testArgs = new JMeterArgumentsArray(reportDir.getAbsolutePath());
+        JMeterArgumentsArray testArgs = new JMeterArgumentsArray();
         testArgs.buildArgumentsArray();
     }
 
     @Test(expected = MojoExecutionException.class)
     public void propertiesFileNotSet() throws Exception {
-        JMeterArgumentsArray testArgs = new JMeterArgumentsArray(reportDir.getAbsolutePath());
+        JMeterArgumentsArray testArgs = new JMeterArgumentsArray();
         testArgs.setTestFile(new File(this.testFile.toURI()));
         testArgs.buildArgumentsArray();
     }
 
     @Test(expected = MojoExecutionException.class)
     public void jMeterHomeNotSet() throws Exception {
-        JMeterArgumentsArray testArgs = new JMeterArgumentsArray(reportDir.getAbsolutePath());
+        JMeterArgumentsArray testArgs = new JMeterArgumentsArray();
         testArgs.setTestFile(new File(this.testFile.toURI()));
         testArgs.buildArgumentsArray();
     }
 
     @Test
     public void validateDefaultCommandLineOutput() throws Exception {
-        JMeterArgumentsArray testArgs = new JMeterArgumentsArray(reportDir.getAbsolutePath());
+        JMeterArgumentsArray testArgs = new JMeterArgumentsArray();
         testArgs.setTestFile(new File(this.testFile.toURI()));
         testArgs.setJMeterHome("target/jmeter/");
 
@@ -69,7 +65,7 @@ public class JMeterArgumentsArrayTest {
 
     @Test
     public void validateJMeterCustomPropertiesFile() throws Exception {
-        JMeterArgumentsArray testArgs = new JMeterArgumentsArray(reportDir.getAbsolutePath());
+        JMeterArgumentsArray testArgs = new JMeterArgumentsArray();
         testArgs.setTestFile(new File(this.testFile.toURI()));
         testArgs.setJMeterHome("target/jmeter/");
         File testPropFile = new File("test.properties");
@@ -80,7 +76,7 @@ public class JMeterArgumentsArrayTest {
 
     @Test
     public void validateJMeterChangeRootLogLevel() throws Exception {
-        JMeterArgumentsArray testArgs = new JMeterArgumentsArray(reportDir.getAbsolutePath());
+        JMeterArgumentsArray testArgs = new JMeterArgumentsArray();
         testArgs.setTestFile(new File(this.testFile.toURI()));
         testArgs.setJMeterHome("target/jmeter/");
         testArgs.setLogRootOverride("DEBUG");
@@ -90,7 +86,7 @@ public class JMeterArgumentsArrayTest {
 
     @Test
     public void validateJMeterChangeIndividualLogLevels() throws Exception {
-        JMeterArgumentsArray testArgs = new JMeterArgumentsArray(reportDir.getAbsolutePath());
+        JMeterArgumentsArray testArgs = new JMeterArgumentsArray();
         testArgs.setTestFile(new File(this.testFile.toURI()));
         testArgs.setJMeterHome("target/jmeter/");
         Map<String, String> logLevels = new HashMap<String, String>();
@@ -106,7 +102,7 @@ public class JMeterArgumentsArrayTest {
         ProxyConfiguration proxyConfiguration = new ProxyConfiguration();
         proxyConfiguration.setHost("http://10.10.50.43");
         proxyConfiguration.setPort(8080);
-        JMeterArgumentsArray testArgs = new JMeterArgumentsArray(reportDir.getAbsolutePath());
+        JMeterArgumentsArray testArgs = new JMeterArgumentsArray();
         testArgs.setTestFile(new File(this.testFile.toURI()));
         testArgs.setJMeterHome("target/jmeter/");
         testArgs.setProxyConfig(proxyConfiguration);
@@ -118,7 +114,7 @@ public class JMeterArgumentsArrayTest {
     public void validateJMeterSetProxyUsername() throws Exception {
         ProxyConfiguration proxyConfiguration = new ProxyConfiguration();
         proxyConfiguration.setUsername("god");
-        JMeterArgumentsArray testArgs = new JMeterArgumentsArray(reportDir.getAbsolutePath());
+        JMeterArgumentsArray testArgs = new JMeterArgumentsArray();
         testArgs.setTestFile(new File(this.testFile.toURI()));
         testArgs.setJMeterHome("target/jmeter/");
         testArgs.setProxyConfig(proxyConfiguration);
@@ -130,7 +126,7 @@ public class JMeterArgumentsArrayTest {
     public void validateJMeterSetProxyPassword() throws Exception {
         ProxyConfiguration proxyConfiguration = new ProxyConfiguration();
         proxyConfiguration.setPassword("changeme");
-        JMeterArgumentsArray testArgs = new JMeterArgumentsArray(reportDir.getAbsolutePath());
+        JMeterArgumentsArray testArgs = new JMeterArgumentsArray();
         testArgs.setTestFile(new File(this.testFile.toURI()));
         testArgs.setJMeterHome("target/jmeter/");
         testArgs.setProxyConfig(proxyConfiguration);
@@ -142,7 +138,7 @@ public class JMeterArgumentsArrayTest {
     public void validateSetNonProxyHosts() throws Exception {
         ProxyConfiguration proxyConfiguration = new ProxyConfiguration();
         proxyConfiguration.setHostExclusions("localhost|*.lazerycode.com");
-        JMeterArgumentsArray testArgs = new JMeterArgumentsArray(reportDir.getAbsolutePath());
+        JMeterArgumentsArray testArgs = new JMeterArgumentsArray();
         testArgs.setTestFile(new File(this.testFile.toURI()));
         testArgs.setJMeterHome("target/jmeter/");
         testArgs.setProxyConfig(proxyConfiguration);
@@ -152,7 +148,7 @@ public class JMeterArgumentsArrayTest {
 
     @Test
     public void validateSetRemoteStop() throws Exception {
-        JMeterArgumentsArray testArgs = new JMeterArgumentsArray(reportDir.getAbsolutePath());
+        JMeterArgumentsArray testArgs = new JMeterArgumentsArray();
         testArgs.setTestFile(new File(this.testFile.toURI()));
         testArgs.setJMeterHome("target/jmeter/");
         testArgs.setRemoteStop(true);
@@ -162,7 +158,7 @@ public class JMeterArgumentsArrayTest {
 
     @Test
     public void validateSetRemoteStartAll() throws Exception {
-        JMeterArgumentsArray testArgs = new JMeterArgumentsArray(reportDir.getAbsolutePath());
+        JMeterArgumentsArray testArgs = new JMeterArgumentsArray();
         testArgs.setTestFile(new File(this.testFile.toURI()));
         testArgs.setJMeterHome("target/jmeter/");
         testArgs.setRemoteStartAll(true);
@@ -172,7 +168,7 @@ public class JMeterArgumentsArrayTest {
 
     @Test
     public void validateSetRemoteStart() throws Exception {
-        JMeterArgumentsArray testArgs = new JMeterArgumentsArray(reportDir.getAbsolutePath());
+        JMeterArgumentsArray testArgs = new JMeterArgumentsArray();
         testArgs.setTestFile(new File(this.testFile.toURI()));
         testArgs.setJMeterHome("target/jmeter/");
         testArgs.setRemoteStart("server1, server2");

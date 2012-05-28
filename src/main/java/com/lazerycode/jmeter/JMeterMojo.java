@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import com.lazerycode.jmeter.reporting.ReportGenerator;
 import com.lazerycode.jmeter.testrunner.TestManager;
 
 /**
@@ -40,7 +39,6 @@ public class JMeterMojo extends JMeterAbstractMojo {
         getLog().info(" ");
         getLog().info(this.proxyConfig.toString());
         List<String> testResults = jMeterTestManager.executeTests();
-        new ReportGenerator(this.reportConfig).makeReport(testResults);
         parseTestResults(testResults);
 
         // JMeter sets this system property. to "org.apache.commons.logging.impl.LogKitLogger".

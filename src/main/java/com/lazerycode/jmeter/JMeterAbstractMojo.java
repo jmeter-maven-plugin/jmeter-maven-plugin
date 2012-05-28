@@ -3,7 +3,6 @@ package com.lazerycode.jmeter;
 import com.lazerycode.jmeter.configuration.JMeterArgumentsArray;
 import com.lazerycode.jmeter.configuration.ProxyConfiguration;
 import com.lazerycode.jmeter.configuration.RemoteConfiguration;
-import com.lazerycode.jmeter.configuration.ReportConfiguration;
 import com.lazerycode.jmeter.properties.PropertyHandler;
 import com.lazerycode.jmeter.threadhandling.JMeterPluginSecurityManager;
 import com.lazerycode.jmeter.threadhandling.JMeterPluginUncaughtExceptionHandler;
@@ -127,7 +126,6 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 
     /**
      * Absolute path to JMeter custom (test dependent) properties file.
-     * .
      *
      * @parameter
      */
@@ -165,14 +163,6 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
     protected RemoteConfiguration remoteConfig;
 
     /**
-     * Value class that wraps all report configuration.
-     *
-     * @parameter default-value="${reportConfig}"
-     * @deprecated will be removed when separate reports plugin is released
-     */
-    protected ReportConfiguration reportConfig;
-
-    /**
      * Suppress JMeter output
      *
      * @parameter default-value="true"
@@ -205,6 +195,7 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
     protected File libDir;
     protected File libExtDir;
     protected File logsDir;
+    protected File resultsDir;
 
     /**
      * All property files are stored in this artifact, comes with JMeter library
@@ -227,11 +218,11 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
         this.binDir.mkdirs();
         this.libDir = new File(this.workDir + File.separator + "lib");
         this.libDir.mkdirs();
+        this.resultsDir = new File(workDir + File.separator + "results");
+        this.resultsDir.mkdirs();
         this.libExtDir = new File(libDir + File.separator + "ext");
         this.libExtDir.mkdirs();
-        if (!this.reportConfig.isOutputDirectorySet()) {
-            this.reportConfig.setOutputDirectory(new File(workDir + File.separator + "report"));
-        }
+
         //JMeter expects a <workdir>/lib/junit directory and complains if it can't find it.
         new File(this.workDir + File.separator + "lib" + File.separator + "junit").mkdirs();
     }
@@ -319,7 +310,8 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
      * @throws MojoExecutionException
      */
     protected void initialiseJMeterArgumentsArray() throws MojoExecutionException {
-        this.testArgs = new JMeterArgumentsArray(this.reportConfig.getOutputDirectoryAbsolutePath());
+        this.testArgs = new JMeterArgumentsArray();
+        this.testArgs.setResultsDirectory(resultsDir.getAbsolutePath());
         this.testArgs.setResultsTimestamp(this.testResultsTimestamp);
         this.testArgs.setJMeterHome(this.workDir.getAbsolutePath());
         this.testArgs.setProxyConfig(this.proxyConfig);

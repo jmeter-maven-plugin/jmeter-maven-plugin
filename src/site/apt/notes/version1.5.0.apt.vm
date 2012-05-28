@@ -1,7 +1,11 @@
 Version 1.5.0 Release Notes
 
     * #41 - Removed deprecated log scanning code.
+
     * #42 - Reporting disabled by default (Takes a long time to parse the logs, so you need to explicitly turn it on now).
+
     * #45 - Fixed intermittant test end detection bug (Major refactor using thread detection to detect test end).
+
     * #49 - Added jmeter:gui goal so that you can start the GUI using maven.
+
     * Reporting is now marked as deprecated in preparation for bringing in a new reporting module.

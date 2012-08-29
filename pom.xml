@@ -79,7 +79,7 @@
     </issueManagement>
 
     <ciManagement>
-        <system>Jenkins CI</system>
+        <system>Teamcity</system>
         <url>http://ci.lazerycode.com</url>
     </ciManagement>
 

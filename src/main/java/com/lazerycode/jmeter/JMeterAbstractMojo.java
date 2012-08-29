@@ -88,6 +88,7 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
      * JMeter Properties that are merged with precedence into default JMeter file in upgrade.properties
      *
      * @parameter
+     * @description JMeter Properties that are merged with precedence into default JMeter file in 'upgrade.properties'.
      */
     protected Map<String, String> propertiesUpgrade;
 
@@ -96,15 +97,20 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
      * user.properties takes precedence over jmeter.properties
      *
      * @parameter
+     * @description JMeter Properties that are merged with precedence into default JMeter file in 'user.properties'
+     * user.properties takes precedence over 'jmeter.properties'.
      */
     protected Map<String, String> propertiesUser;
 
     /**
-     * JMeter Global Properties that override those given in jmeterProps
+     * JMeter Global Properties that override those given in jmeterProps. <br>
      * This sets local and remote properties (JMeter's definition of global properties is actually remote properties)
-     * This will override any local/remote properties already set
+     * and overrides any local/remote properties already set
      *
-     * @parameter
+     * @description JMeter Global Properties that override those given in jmeterProps. <br>
+     * This sets local and remote properties (JMeter's definition of global properties is actually remote properties)
+     * and overrides any local/remote properties already set.
+     *
      */
     protected Map<String, String> propertiesGlobal;
 
@@ -112,7 +118,7 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
      * (Java) System properties set for the test run.
      * Properties are merged with precedence into default JMeter file system.properties
      *
-     * @parameter
+     * @parameter Java merged with precedence into default JMeter file system.properties.
      */
     protected Map<String, String> propertiesSystem;
 
@@ -188,9 +194,15 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
     //---------------------------------------------------
 
     /**
-     * Directories will be created by this plugin and used by JMeter
+     * JMeter outputs.
+     * @parameter expression="${project.build.directory}/jmeter"
+     * @description Place where the JMeter files will be generated.
      */
-    protected File workDir;
+    protected transient File workDir;
+
+    /**
+     * Other directories will be created by this plugin and used by JMeter
+     */
     protected File binDir;
     protected File libDir;
     protected File libExtDir;
@@ -210,21 +222,18 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
      * Generate the directory tree utilised by JMeter.
      */
     protected void generateJMeterDirectoryTree() {
-        this.workDir = new File(this.mavenProject.getBasedir() + File.separator + "target" + File.separator + "jmeter");
-        this.workDir.mkdirs();
-        this.logsDir = new File(this.workDir + File.separator + "logs");
+        this.logsDir = new File(this.workDir,"logs");
         this.logsDir.mkdirs();
-        this.binDir = new File(this.workDir + File.separator + "bin");
+        this.binDir = new File(this.workDir, "bin");
         this.binDir.mkdirs();
-        this.libDir = new File(this.workDir + File.separator + "lib");
-        this.libDir.mkdirs();
-        this.resultsDir = new File(workDir + File.separator + "results");
+        this.libDir = new File(this.workDir, "lib");
+        this.resultsDir = new File(workDir, "results");
         this.resultsDir.mkdirs();
-        this.libExtDir = new File(libDir + File.separator + "ext");
+        this.libExtDir = new File(libDir, "ext");
         this.libExtDir.mkdirs();
 
         //JMeter expects a <workdir>/lib/junit directory and complains if it can't find it.
-        new File(this.workDir + File.separator + "lib" + File.separator + "junit").mkdirs();
+        new File(libDir, "junit").mkdirs();
     }
 
     protected void propertyConfiguration() throws MojoExecutionException {

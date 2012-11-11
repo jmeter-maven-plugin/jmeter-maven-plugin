@@ -10,7 +10,7 @@
 
     <groupId>com.lazerycode.jmeter</groupId>
     <artifactId>jmeter-maven-plugin</artifactId>
-    <version>1.7.0-SNAPSHOT</version>
+    <version>1.7.0</version>
     <packaging>maven-plugin</packaging>
     <name>JMeter Maven Plugin</name>
     <description>A plugin to allow you to run JMeter tests with Maven.</description>
@@ -103,7 +103,7 @@
         <connection>scm:git:git@github.com:Ronnie76er/jmeter-maven-plugin.git</connection>
         <developerConnection>scm:git:git@github.com:Ronnie76er/jmeter-maven-plugin.git</developerConnection>
         <url>https://github.com/Ronnie76er/jmeter-maven-plugin</url>
-      <tag>HEAD</tag>
+      <tag>jmeter-maven-plugin-1.7.0</tag>
   </scm>
 
     <distributionManagement>

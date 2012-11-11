@@ -117,6 +117,8 @@ public class TestManager extends JMeterMojo {
             getLog().info(" ");
         }
         finally {
+            //TODO wait for child thread shutdown here?
+            //TODO kill child threads if waited too long?
             //Reset everything back to normal
             System.setSecurityManager(originalSecurityManager);
             Thread.setDefaultUncaughtExceptionHandler(originalExceptionHandler);

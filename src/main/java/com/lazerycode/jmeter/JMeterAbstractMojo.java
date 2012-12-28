@@ -110,7 +110,6 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
      * @description JMeter Global Properties that override those given in jmeterProps. <br>
      * This sets local and remote properties (JMeter's definition of global properties is actually remote properties)
      * and overrides any local/remote properties already set.
-     *
      */
     protected Map<String, String> propertiesGlobal;
 
@@ -195,6 +194,7 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 
     /**
      * JMeter outputs.
+     *
      * @parameter expression="${project.build.directory}/jmeter"
      * @description Place where the JMeter files will be generated.
      */
@@ -222,7 +222,7 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
      * Generate the directory tree utilised by JMeter.
      */
     protected void generateJMeterDirectoryTree() {
-        this.logsDir = new File(this.workDir,"logs");
+        this.logsDir = new File(this.workDir, "logs");
         this.logsDir.mkdirs();
         this.binDir = new File(this.workDir, "bin");
         this.binDir.mkdirs();
@@ -285,7 +285,12 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
                      * Need more info on above, how do we know which ones to exclude??
                      * Most of the files pulled down by maven are required in /lib to match standard JMeter install
                      */
-                    FileUtils.copyFile(artifact.getFile(), new File(this.libDir + File.separator + artifact.getFile().getName()));
+                    // runtime dependencies copy to /lib/ext folder
+                    if (Artifact.SCOPE_RUNTIME.equals(artifact.getScope())) {
+                        FileUtils.copyFile(artifact.getFile(), new File(this.libExtDir + File.separator + artifact.getFile().getName()));
+                    } else {
+                        FileUtils.copyFile(artifact.getFile(), new File(this.libDir + File.separator + artifact.getFile().getName()));
+                    }
                 }
             } catch (IOException e) {
                 throw new MojoExecutionException("Unable to populate the JMeter directory tree: " + e);

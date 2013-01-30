@@ -10,7 +10,7 @@
 
     <groupId>com.lazerycode.jmeter</groupId>
     <artifactId>jmeter-maven-plugin</artifactId>
-    <version>1.7.1-SNAPSHOT</version>
+    <version>1.8.0-SNAPSHOT</version>
     <packaging>maven-plugin</packaging>
     <name>JMeter Maven Plugin</name>
     <description>A plugin to allow you to run JMeter tests with Maven.</description>
@@ -119,7 +119,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <jmeter.version>2.8</jmeter.version>
+        <jmeter.version>2.9</jmeter.version>
     </properties>
 
     <dependencies>

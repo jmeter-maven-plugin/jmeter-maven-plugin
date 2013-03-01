@@ -25,6 +25,14 @@ public class JMeterMojo extends JMeterAbstractMojo {
      */
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
+        if(skipTests){
+            getLog().info(" ");
+            getLog().info("-------------------------------------------------------");
+            getLog().info(" S K I P P I N G    P E R F O R M A N C E    T E S T S ");
+            getLog().info("-------------------------------------------------------");
+            getLog().info(" ");
+            return;
+        }
         getLog().info(" ");
         getLog().info("-------------------------------------------------------");
         getLog().info(" P E R F O R M A N C E    T E S T S");

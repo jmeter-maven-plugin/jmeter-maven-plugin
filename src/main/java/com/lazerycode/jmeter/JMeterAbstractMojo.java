@@ -191,6 +191,13 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
      */
     protected List<Artifact> pluginArtifacts;
 
+    /**
+     * Skip the JMeter tests
+     *
+     * @parameter default-value="false"
+     */
+    protected boolean skipTests;
+
     //---------------------------------------------------
 
     /**
@@ -221,6 +228,7 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
     /**
      * Generate the directory tree utilised by JMeter.
      */
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     protected void generateJMeterDirectoryTree() {
         this.logsDir = new File(this.workDir,"logs");
         this.logsDir.mkdirs();

@@ -1,13 +1,13 @@
 package com.lazerycode.jmeter;
 
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+
 /**
  * Handles checking a JMeter results file in XML format for errors and failures.
  *
@@ -40,7 +40,8 @@ public class ErrorScanner {
 
     /**
      * Check given file for errors
-     * @param file
+     *
+     * @param file File to parse for errors
      * @return true of file doesn't contain errors
      * @throws MojoExecutionException
      */
@@ -58,7 +59,6 @@ public class ErrorScanner {
         } catch (IOException e) {
             throw new MojoExecutionException("Can't read test results file " + file, e);
         } finally {
-
             if (in != null) {
                 try {
                     in.close();
@@ -68,11 +68,7 @@ public class ErrorScanner {
             }
         }
 
-        if (this.errorCount == 0 && this.failureCount == 0) {
-            return true;
-        } else {
-            return false;
-        }
+        return this.errorCount == 0 && this.failureCount == 0;
     }
 
     /**
@@ -84,6 +80,7 @@ public class ErrorScanner {
 
     /**
      * TODO: what are errors?
+     *
      * @return errorCount
      */
     public int getErrorCount() {
@@ -95,9 +92,8 @@ public class ErrorScanner {
     /**
      * protected for testing
      *
-     * @param line
+     * @param line String
      * @return boolean
-     * @throws MojoFailureException
      */
     protected boolean checkLineForErrors(String line) {
         boolean lineContainsError = false;
@@ -115,8 +111,6 @@ public class ErrorScanner {
         }
         return lineContainsError;
     }
-
-    // =========================================================
 
     private void resetErrorAndFailureCount() {
         this.failureCount = 0;

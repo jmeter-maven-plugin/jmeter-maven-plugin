@@ -1,6 +1,7 @@
 package com.lazerycode.jmeter.testrunner;
 
-import com.lazerycode.jmeter.*;
+import com.lazerycode.jmeter.JMeterMojo;
+import com.lazerycode.jmeter.UtilityFunctions;
 import com.lazerycode.jmeter.configuration.JMeterArgumentsArray;
 import com.lazerycode.jmeter.configuration.RemoteConfiguration;
 import com.lazerycode.jmeter.threadhandling.ExitException;
@@ -9,10 +10,10 @@ import org.apache.jmeter.NewDriver;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.tools.ant.DirectoryScanner;
 
-import java.io.*;
+import java.io.File;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -44,7 +45,7 @@ public class TestManager extends JMeterMojo {
     /**
      * Set remote configuration
      *
-     * @param remoteConfig
+     * @param remoteConfig RemoteConfiguration
      */
     public void setRemoteConfig(RemoteConfiguration remoteConfig) {
         this.remoteStop = remoteConfig.isStop();
@@ -88,6 +89,7 @@ public class TestManager extends JMeterMojo {
      * @throws org.apache.maven.plugin.MojoExecutionException
      *          Exception
      */
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     private String executeSingleTest(File test) throws MojoExecutionException {
         getLog().info(" ");
         testArgs.setTestFile(test);
@@ -131,7 +133,7 @@ public class TestManager extends JMeterMojo {
     /**
      * Create the jmeter.log file and set the log_file system property for JMeter to pick up
      *
-     * @param value
+     * @param value String
      */
     private void setJMeterLogFile(String value) {
         this.jmeterLog = new File(this.logsDir + File.separator + value);
@@ -153,7 +155,6 @@ public class TestManager extends JMeterMojo {
         }
         scanner.scan();
         final List<String> includedFiles = Arrays.asList(scanner.getIncludedFiles());
-        Collections.sort(includedFiles, new IncludesComparator(this.testFilesIncluded));
         jmeterTestFiles.addAll(includedFiles);
         return jmeterTestFiles;
     }

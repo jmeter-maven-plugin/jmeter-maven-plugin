@@ -3,8 +3,6 @@ package com.lazerycode.jmeter.threadhandling;
 /**
  * Thread names added to this list will be used when scanning JMeterThreads directly after JMeter is called
  * The plugin will then wait for the thread to finish
- * TODO: find out which threadname works for GUI detection on other operating systems
- * TODO: #GUI_THREAD_LINUX was found on a Mint 12 (Ubuntu) with Gnome desktop. is this universal for Linux?
  */
 public enum JMeterThreads {
 
@@ -13,17 +11,19 @@ public enum JMeterThreads {
     GUI_THREAD_MACOSX("AWT-AppKit", true),
     GUI_THREAD_LINUX("AWT-XAWT", true);
 
-    private final Object[] threadData;
+    private final String threadName;
+    private final boolean isGUIThread;
 
-    JMeterThreads(Object... values) {
-        this.threadData = values;
+    JMeterThreads(String threadName, boolean isGUIThread) {
+        this.threadName = threadName;
+        this.isGUIThread = isGUIThread;
     }
 
     public String getThreadName() {
-        return (String) this.threadData[0];
+        return threadName;
     }
 
     public boolean isGUIThread() {
-        return (Boolean) this.threadData[1];
+        return isGUIThread;
     }
 }

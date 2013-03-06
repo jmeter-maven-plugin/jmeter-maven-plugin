@@ -1,4 +1,6 @@
 Version 1.8.0 Release Notes
 
-* Jmeter version 2.9 support added.
-* #61 - Added skipTests ability
+* JMeter version 2.9 support added.
+* #61 - Added skipTests ability.
+* Removed jmx file sorting code as it was not sorting files into a determinalistic order.
+* Removed checks for &lt;error&gt;true&lt;/error&gt; and &lt;failure&gt;true&lt;/failure&gt; in .jtl files, these element do not occur in JMeter 2.9.

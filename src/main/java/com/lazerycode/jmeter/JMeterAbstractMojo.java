@@ -138,21 +138,13 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
     protected File customPropertiesFile;
 
     /**
-     * Sets whether ErrorScanner should ignore failures in JMeter result file.
+     * Sets whether FailureScanner should ignore failures in JMeter result file.
      * <p/>
      * Failures are for example failed requests
      *
      * @parameter expression="${jmeter.ignore.failure}" default-value=false
      */
     protected boolean ignoreResultFailures;
-
-    //TODO: what is an error?
-    /**
-     * Sets whether ErrorScanner should ignore errors in JMeter result file.
-     *
-     * @parameter expression="${jmeter.ignore.error}" default-value=false
-     */
-    protected boolean ignoreResultErrors;
 
     /**
      * Value class that wraps all proxy configurations.

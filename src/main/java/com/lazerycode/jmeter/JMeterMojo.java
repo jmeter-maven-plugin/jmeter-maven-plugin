@@ -63,13 +63,11 @@ public class JMeterMojo extends JMeterAbstractMojo {
      * @throws MojoFailureException
      */
     protected void parseTestResults(List<String> results) throws MojoExecutionException, MojoFailureException {
-        ErrorScanner scanner = new ErrorScanner(this.ignoreResultErrors, this.ignoreResultFailures, getLog());
-        int totalErrorCount = 0;
+        FailureScanner scanner = new FailureScanner(this.ignoreResultFailures, getLog());
         int totalFailureCount = 0;
         boolean failed = false;
         for (String file : results) {
             if (!scanner.hasTestPassed(new File(file))) {
-                totalErrorCount += scanner.getErrorCount();
                 totalFailureCount += scanner.getFailureCount();
                 failed = true;
             }
@@ -77,11 +75,11 @@ public class JMeterMojo extends JMeterAbstractMojo {
         getLog().info(" ");
         getLog().info("Test Results:");
         getLog().info(" ");
-        getLog().info("Tests Run: " + results.size() + ", Failures: " + totalFailureCount + ", Errors: " + totalErrorCount + "");
+        getLog().info("Tests Run: " + results.size() + ", Failures: " + totalFailureCount);
         getLog().info(" ");
         if (failed) {
             //TODO add absolute path to JMeter logs to make life easy?
-            throw new MojoFailureException("There were " + totalErrorCount + " test errors " + "and " + totalFailureCount + " test failures.  See the JMeter logs for details.");
+            throw new MojoFailureException("There were " + totalFailureCount + " test failures.  See the JMeter logs for details.");
         }
     }
 }

@@ -13,27 +13,19 @@ import java.io.IOException;
  *
  * @author Jon Roberts
  */
-public class ErrorScanner {
-
-    //TODO: where would such an element come from?
-    private static final String ERROR_ELEMENT = "<error>true</error>";
-    //TODO: where would such an element come from?
-    private static final String FAILURE_ELEMENT = "<failure>true</failure>";
+public class FailureScanner {
 
     /**
      * Element is added by JMeter if request is deemed as failed
      */
     private static final String REQUEST_FAILURE_ELEMENT = "s=\"false\"";
 
-    private boolean ignoreErrors;
     private boolean ignoreFailures;
     private Log log;
 
     private int failureCount = 0;
-    private int errorCount = 0;
 
-    public ErrorScanner(boolean ignoreErrors, boolean ignoreFailures, Log log) {
-        this.ignoreErrors = ignoreErrors;
+    public FailureScanner(boolean ignoreFailures, Log log) {
         this.ignoreFailures = ignoreFailures;
         this.log = log;
     }
@@ -46,15 +38,15 @@ public class ErrorScanner {
      * @throws MojoExecutionException
      */
     public boolean hasTestPassed(File file) throws MojoExecutionException {
-        resetErrorAndFailureCount();
-        //If we are ignoring errors/failures just return a pass without parsing the results file.
-        if (this.ignoreErrors && this.ignoreFailures) return true;
+        //If we are ignoring failures just return a pass without parsing the results file.
+        if (this.ignoreFailures) return true;
+        resetFailureCount();
         BufferedReader in = null;
         try {
             in = new BufferedReader(new FileReader(file));
             String line;
             while ((line = in.readLine()) != null) {
-                this.checkLineForErrors(line);
+                this.checkLineForFailures(line);
             }
         } catch (IOException e) {
             throw new MojoExecutionException("Can't read test results file " + file, e);
@@ -68,7 +60,7 @@ public class ErrorScanner {
             }
         }
 
-        return this.errorCount == 0 && this.failureCount == 0;
+        return this.failureCount == 0;
     }
 
     /**
@@ -79,41 +71,22 @@ public class ErrorScanner {
     }
 
     /**
-     * TODO: what are errors?
-     *
-     * @return errorCount
-     */
-    public int getErrorCount() {
-        return this.errorCount;
-    }
-
-    // ---------------------------------------------------------
-
-    /**
      * protected for testing
      *
      * @param line String
      * @return boolean
      */
-    protected boolean checkLineForErrors(String line) {
-        boolean lineContainsError = false;
-        if (line.contains(ERROR_ELEMENT)) {
-            if (!this.ignoreErrors) {
-                this.errorCount++;
-                lineContainsError = true;
-            }
-        }
-        if (line.contains(FAILURE_ELEMENT) || line.contains(REQUEST_FAILURE_ELEMENT)) {
+    protected boolean checkLineForFailures(String line) {
+        if (line.contains(REQUEST_FAILURE_ELEMENT)) {
             if (!this.ignoreFailures) {
                 this.failureCount++;
-                lineContainsError = true;
+                return true;
             }
         }
-        return lineContainsError;
+        return false;
     }
 
-    private void resetErrorAndFailureCount() {
+    protected void resetFailureCount() {
         this.failureCount = 0;
-        this.errorCount = 0;
     }
 }

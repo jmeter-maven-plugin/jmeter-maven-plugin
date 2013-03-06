@@ -15,18 +15,20 @@ public enum JMeterPropertiesFiles {
     USER_PROPERTIES("user.properties", false),
     GLOBAL_PROPERTIES("global.properties", false);
 
-    private final Object[] propertiesData;
+    private final String propertiesFilename;
+    private final boolean isRequired;
 
-    JMeterPropertiesFiles(Object ...values) {
-        this.propertiesData = values;
+    JMeterPropertiesFiles(String propertiesFilename, boolean isRequired) {
+        this.propertiesFilename = propertiesFilename;
+        this.isRequired = isRequired;
     }
 
     public String getPropertiesFileName() {
-        return (String) this.propertiesData[0];
+        return propertiesFilename;
     }
 
     public boolean createFileIfItDoesntExist() {
-        return (Boolean) this.propertiesData[1];
+        return isRequired;
     }
 
 }

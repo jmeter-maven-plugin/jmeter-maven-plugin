@@ -80,6 +80,7 @@ public class JMeterMojo extends JMeterAbstractMojo {
         getLog().info("Tests Run: " + results.size() + ", Failures: " + totalFailureCount + ", Errors: " + totalErrorCount + "");
         getLog().info(" ");
         if (failed) {
+            //TODO add absolute path to JMeter logs to make life easy?
             throw new MojoFailureException("There were " + totalErrorCount + " test errors " + "and " + totalFailureCount + " test failures.  See the JMeter logs for details.");
         }
     }

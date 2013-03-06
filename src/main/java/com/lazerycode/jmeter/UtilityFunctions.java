@@ -18,8 +18,15 @@ public class UtilityFunctions {
     /**
      * private constructor for non-instantiable helper classes
      */
-    private UtilityFunctions() {}
+    private UtilityFunctions() {
+    }
 
+    /**
+     * Build a human readable command line from the arguments set by the plugin
+     *
+     * @param arguments Array of String
+     * @return String
+     */
     public static String humanReadableCommandLineOutput(String[] arguments) {
         String debugOutput = "";
         for (String argument : arguments) {
@@ -27,11 +34,23 @@ public class UtilityFunctions {
         }
         return debugOutput.trim();
     }
-    
+
+    /**
+     * Utility function to strip carriage returns out of a String
+     *
+     * @param value String
+     * @return String
+     */
     public static String stripCarriageReturns(String value) {
         return value.replaceAll("[\n\r]", "");
     }
 
+    /**
+     * Utility function to check if a Map is defined and not empty
+     *
+     * @param value Map
+     * @return boolean
+     */
     public static Boolean isNotSet(Map<?, ?> value) {
         if (null == value || value.isEmpty()) {
             return true;
@@ -40,6 +59,12 @@ public class UtilityFunctions {
         }
     }
 
+    /**
+     * Utility function to check if a String is defined and not empty
+     *
+     * @param value String
+     * @return boolean
+     */
     public static Boolean isNotSet(String value) {
         if (null == value || value.isEmpty() || value.trim().length() == 0) {
             return true;
@@ -48,6 +73,12 @@ public class UtilityFunctions {
         }
     }
 
+    /**
+     * Utility function to check if File is defined and not empty
+     *
+     * @param value File
+     * @return boolean
+     */
     public static Boolean isNotSet(File value) {
         if (null == value || value.toString().isEmpty() || value.toString().trim().length() == 0) {
             return true;

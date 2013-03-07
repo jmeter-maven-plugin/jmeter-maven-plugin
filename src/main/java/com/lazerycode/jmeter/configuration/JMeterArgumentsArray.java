@@ -2,11 +2,15 @@ package com.lazerycode.jmeter.configuration;
 
 import com.lazerycode.jmeter.UtilityFunctions;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.joda.time.LocalDateTime;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.ISODateTimeFormat;
 
 import java.io.File;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import static com.lazerycode.jmeter.configuration.JMeterCommandLineArguments.*;
 
@@ -19,8 +23,9 @@ public class JMeterArgumentsArray {
 
 	private final boolean disableTests;
 	private TreeSet<JMeterCommandLineArguments> argumentList = new TreeSet<JMeterCommandLineArguments>();
-	private DateFormat dateFormat = new SimpleDateFormat("yyMMdd");
+	private DateTimeFormatter dateFormat = ISODateTimeFormat.dateTime();
 	private boolean timestampResults = true;
+	private boolean appendTimestamp = false;
 	private String remoteStartList = null;
 	private String nonProxyHosts = null;
 	private String proxyHost = null;
@@ -53,7 +58,7 @@ public class JMeterArgumentsArray {
 		}
 	}
 
-	public void setResultsFileNameDateFormat(DateFormat dateFormat) {
+	public void setResultsFileNameDateFormat(DateTimeFormatter dateFormat) {
 		this.dateFormat = dateFormat;
 	}
 
@@ -133,7 +138,11 @@ public class JMeterArgumentsArray {
 		if (UtilityFunctions.isNotSet(value) || disableTests) return;
 		testFile = value.getAbsolutePath();
 		if (timestampResults) {
-			resultsLogFileName = resultsDirectory + File.separator + value.getName().substring(0, value.getName().lastIndexOf(".")) + "-" + dateFormat.format(new Date()) + ".jtl";
+			if (appendTimestamp) {
+				resultsLogFileName = resultsDirectory + File.separator + value.getName().substring(0, value.getName().lastIndexOf(".")) + "-" + dateFormat.print(new LocalDateTime()) + ".jtl";
+			} else {
+				resultsLogFileName = resultsDirectory + File.separator + dateFormat.print(new LocalDateTime()) + "-" + value.getName().substring(0, value.getName().lastIndexOf(".")) + ".jtl";
+			}
 		} else {
 			resultsLogFileName = resultsDirectory + File.separator + value.getName().substring(0, value.getName().lastIndexOf(".")) + ".jtl";
 		}
@@ -141,8 +150,12 @@ public class JMeterArgumentsArray {
 		argumentList.add(LOGFILE_OPT);
 	}
 
-	public void setResultsTimestamp(boolean value) {
-		timestampResults = value;
+	public void setResultsTimestamp(boolean addTimestamp) {
+		timestampResults = addTimestamp;
+	}
+
+	public void appendTimestamp(boolean append) {
+		appendTimestamp = append;
 	}
 
 	public String getResultsLogFileName() {

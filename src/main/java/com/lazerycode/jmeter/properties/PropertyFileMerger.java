@@ -19,9 +19,9 @@ public class PropertyFileMerger extends JMeterMojo {
      * Merge two properties files together.
      * The additions will overwrite any existing properties in source if required.
      *
-     * @param source
-     * @param additions
-     * @return
+     * @param source Properties
+     * @param additions Properties
+     * @return Properties
      */
     public Properties mergePropertiesFiles(Properties source, Properties additions) {
         if (source == null && additions == null) {
@@ -31,9 +31,8 @@ public class PropertyFileMerger extends JMeterMojo {
         } else if (additions == null) {
             return stripReservedProperties(source);
         }
-        Properties merged = source;
-        merged.putAll(additions);
-        return stripReservedProperties(merged);
+        source.putAll(additions);
+        return stripReservedProperties(source);
     }
     
     /**
@@ -59,8 +58,8 @@ public class PropertyFileMerger extends JMeterMojo {
      * This will strip all reserved properties from a Properties object.
      * (Used to ensure that restricted properties haven't been set in custom properties files)
      *
-     * @param propertyFile
-     * @return
+     * @param propertyFile Properties
+     * @return Properties
      */
     private Properties stripReservedProperties(Properties propertyFile) {
         for (ReservedProperties reservedProperty : ReservedProperties.values()) {
@@ -75,7 +74,8 @@ public class PropertyFileMerger extends JMeterMojo {
     /**
      * Print a warning out to the user to highlight potential typos in the properties they have set.
      *
-     * @param value
+     * @param value Property Value
+     * @param baseProperties Properties
      */
     private void warnUserOfPossibleErrors(String value, Properties baseProperties) {
         for (String key : baseProperties.stringPropertyNames()) {

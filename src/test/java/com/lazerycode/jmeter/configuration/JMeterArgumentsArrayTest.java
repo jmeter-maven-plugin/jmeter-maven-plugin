@@ -22,12 +22,7 @@ public class JMeterArgumentsArrayTest {
     private final URL testFile = this.getClass().getResource("/test.jmx");
     private String testFilePath;
 
-    @Before
-    public void setTestFileAbsolutePath() throws URISyntaxException {
-        testFilePath = new File(this.testFile.toURI()).getAbsolutePath();
-    }
-
-    public String argumentsMapToString(Map<String, String> value, JMeterCommandLineArguments type) {
+    String argumentsMapToString(Map<String, String> value, JMeterCommandLineArguments type) {
         String arguments = "";
         Set<String> globalPropertySet = value.keySet();
         for (String property : globalPropertySet) {
@@ -35,6 +30,11 @@ public class JMeterArgumentsArrayTest {
             arguments += property + "=" + value.get(property) + " ";
         }
         return arguments.trim();
+    }
+
+    @Before
+    public void setTestFileAbsolutePath() throws URISyntaxException {
+        testFilePath = new File(this.testFile.toURI()).getAbsolutePath();
     }
 
     @Test(expected = MojoExecutionException.class)

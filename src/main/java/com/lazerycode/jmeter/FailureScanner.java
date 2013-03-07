@@ -20,8 +20,8 @@ public class FailureScanner {
      */
     private static final String REQUEST_FAILURE_ELEMENT = "s=\"false\"";
 
-    private boolean ignoreFailures;
-    private Log log;
+    private final boolean ignoreFailures;
+    private final Log log;
 
     private int failureCount = 0;
 

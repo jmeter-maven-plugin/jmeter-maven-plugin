@@ -2,7 +2,7 @@ package com.lazerycode.jmeter.threadhandling;
 
 public class ExitException extends SecurityException {
 
-    public int status;
+    private final int status;
 
     public ExitException(int status) {
         super("System Exit Captured!");

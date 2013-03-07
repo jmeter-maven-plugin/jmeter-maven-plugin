@@ -211,7 +211,7 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
     /**
      * All property files are stored in this artifact, comes with JMeter library
      */
-    protected String jmeterConfigArtifact = "ApacheJMeter_config";
+    protected final String jmeterConfigArtifact = "ApacheJMeter_config";
     protected JMeterArgumentsArray testArgs;
     protected PropertyHandler pluginProperties;
 

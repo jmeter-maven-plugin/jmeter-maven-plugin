@@ -2,18 +2,11 @@ package com.lazerycode.jmeter.properties;
 
 import com.lazerycode.jmeter.JMeterMojo;
 import com.lazerycode.jmeter.UtilityFunctions;
-import org.apache.commons.io.IOUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
+import java.io.*;
 import java.util.EnumMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.jar.JarFile;
@@ -25,7 +18,7 @@ import java.util.jar.JarFile;
  */
 public class PropertyHandler extends JMeterMojo {
 
-    private EnumMap<JMeterPropertiesFiles, PropertyContainer> masterPropertiesMap = new EnumMap<JMeterPropertiesFiles, PropertyContainer> (JMeterPropertiesFiles.class);
+    private EnumMap<JMeterPropertiesFiles, PropertyContainer> masterPropertiesMap = new EnumMap<JMeterPropertiesFiles, PropertyContainer>(JMeterPropertiesFiles.class);
     private File propertySourceDirectory;
     private File propertyOutputDirectory;
     private boolean replaceDefaultProperties;
@@ -49,8 +42,8 @@ public class PropertyHandler extends JMeterMojo {
     /**
      * Load in the default properties held in the JMeter artifact
      *
-     * @param jMeterConfigArtifact
-     * @throws MojoExecutionException
+     * @param jMeterConfigArtifact Configuration Artifact
+     * @throws IOException
      */
     private void loadDefaultProperties(Artifact jMeterConfigArtifact) throws IOException {
         for (JMeterPropertiesFiles propertyFile : JMeterPropertiesFiles.values()) {
@@ -88,7 +81,7 @@ public class PropertyHandler extends JMeterMojo {
     /**
      * Check that the source directory exists, throw an error if it does not
      *
-     * @param value
+     * @param value File
      * @throws MojoExecutionException
      */
     private void setSourceDirectory(File value) throws MojoExecutionException {
@@ -102,7 +95,7 @@ public class PropertyHandler extends JMeterMojo {
     /**
      * Create the output directory, throw an error if we can't
      *
-     * @param value
+     * @param value File
      * @throws MojoExecutionException
      */
     private void setOutputDirectory(File value) throws MojoExecutionException {
@@ -144,7 +137,7 @@ public class PropertyHandler extends JMeterMojo {
         this.getPropertyObject(JMeterPropertiesFiles.GLOBAL_PROPERTIES).setCustomPropertyMap(value);
     }
 
-    public PropertyContainer getPropertyObject(JMeterPropertiesFiles value){
+    public PropertyContainer getPropertyObject(JMeterPropertiesFiles value) {
         return this.masterPropertiesMap.get(value);
     }
 
@@ -173,7 +166,7 @@ public class PropertyHandler extends JMeterMojo {
         }
     }
 
-    public void setDefaultPluginProperties(String userDirectory){
+    public void setDefaultPluginProperties(String userDirectory) {
         //JMeter uses the system property "user.dir" to set its base working directory
         System.setProperty("user.dir", userDirectory);
         //Prevent JMeter from throwing some System.exit() calls

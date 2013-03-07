@@ -18,9 +18,9 @@ import static org.junit.Assert.assertThat;
 
 public class PropertyFileMergerTest {
 
-    private URL testFile = this.getClass().getResource("/jmeter.properties");
-    private URL testFileAdditional = this.getClass().getResource("/custom.properties");
-    private PrintStream originalOut = System.out;
+    private final URL testFile = this.getClass().getResource("/jmeter.properties");
+    private final URL testFileAdditional = this.getClass().getResource("/custom.properties");
+    private final PrintStream originalOut = System.out;
 
     @Test
     public void validMergePropertiesTest() throws Exception {

@@ -62,7 +62,7 @@ public class UtilityFunctionsTest{
     }
 
     @Test
-    public void removeCarriageReturnsTest() throws Exception {
+    public void removeCarriageReturnsTest() {
         assertThat(UtilityFunctions.stripCarriageReturns("foo\n"),
                 is(equalTo("foo")));
         assertThat(UtilityFunctions.stripCarriageReturns("bar\r"),

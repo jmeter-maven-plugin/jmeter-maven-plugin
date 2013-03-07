@@ -1,7 +1,5 @@
 package com.lazerycode.jmeter.properties;
 
-import org.apache.maven.plugin.MojoExecutionException;
-
 import java.util.Map;
 import java.util.Properties;
 
@@ -52,10 +50,9 @@ public class PropertyContainer {
      * This will return the custom properties object if it is set.
      * If it is not set it will return the default properties object (this may be empty)
      *
-     * @return
-     * @throws MojoExecutionException
+     * @return Properties
      */
-    public Properties getBasePropertiesObject() throws MojoExecutionException {
+    public Properties getBasePropertiesObject() {
         if (this.customPropertyObject == null) {
             return this.getDefaultPropertyObject();
         } else {

@@ -2,9 +2,9 @@ package com.lazerycode.jmeter.configuration;
 
 /**
  * This is used by the TestManager to configure remote start and stop settings for each test run.
- * <p>
+ * <p/>
  * Configuration in pom.xml:
- * <p>
+ * <p/>
  * <pre>
  * {@code
  * <remoteConfig>
@@ -35,7 +35,8 @@ public class RemoteConfiguration {
     /**
      * Stop remote servers when the test finishes
      * Default: {@link false Boolean.FALSE}
-     * @param stop
+     *
+     * @param stop boolean
      */
     public void setStop(boolean stop) {
         this.stop = stop;
@@ -51,7 +52,8 @@ public class RemoteConfiguration {
     /**
      * Start all remote servers as defined in jmeter.properties when the test starts
      * Default: {@link false Boolean.FALSE}
-     * @param startAll
+     *
+     * @param startAll boolean
      */
     public void setStartAll(boolean startAll) {
         this.startAll = startAll;
@@ -66,7 +68,8 @@ public class RemoteConfiguration {
 
     /**
      * Comma separated list of servers to start when starting tests
-     * @param start
+     *
+     * @param start String
      */
     public void setStart(String start) {
         this.start = start;
@@ -82,16 +85,20 @@ public class RemoteConfiguration {
     /**
      * Remote start and stop for every test, or once for the entire test suite of tests.
      * Default: {@link true Boolean.TRUE} (once for the entire suite of tests)
-     * @param startAndStopOnce
+     *
+     * @param startAndStopOnce boolean
      */
     public void setStartAndStopOnce(boolean startAndStopOnce) {
         this.startAndStopOnce = startAndStopOnce;
     }
 
+    /**
+     * Remote configuration details formatted for command line output.
+     *
+     * @return String
+     */
     @Override
     public String toString() {
-        //this method is used by maven when debug output is enabled
-        return "RemoteConfiguration [ "+"Start="+ getStart()+", Stop="+ isStop()+
-                ", StartAndStopOnce="+ isStartAndStopOnce()+", StartAll="+ isStartAll()+" ]";
+        return "RemoteConfiguration [ " + "Start=" + getStart() + ", Stop=" + isStop() + ", StartAndStopOnce=" + isStartAndStopOnce() + ", StartAll=" + isStartAll() + " ]";
     }
 }

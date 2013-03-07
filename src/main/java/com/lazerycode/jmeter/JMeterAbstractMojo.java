@@ -322,11 +322,10 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
      *
      * @throws MojoExecutionException
      */
-    protected void initialiseJMeterArgumentsArray() throws MojoExecutionException {
-        this.testArgs = new JMeterArgumentsArray();
+    protected void initialiseJMeterArgumentsArray(boolean disableGUI) throws MojoExecutionException {
+        this.testArgs = new JMeterArgumentsArray(disableGUI, this.workDir.getAbsolutePath());
         this.testArgs.setResultsDirectory(resultsDir.getAbsolutePath());
         this.testArgs.setResultsTimestamp(this.testResultsTimestamp);
-        this.testArgs.setJMeterHome(this.workDir.getAbsolutePath());
         this.testArgs.setProxyConfig(this.proxyConfig);
         this.testArgs.setACustomPropertiesFile(this.customPropertiesFile);
         try {

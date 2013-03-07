@@ -67,10 +67,10 @@ public class TestManager extends JMeterMojo {
         List<String> results = new ArrayList<String>();
         for (String file : tests) {
             if (!this.remoteStartAndStopOnce || tests.get(tests.size() - 1).equals(file)) {
-                testArgs.setRemoteStop(this.remoteStop);
+                testArgs.setRemoteStop();
             }
             if (!this.remoteStartAndStopOnce || tests.get(0).equals(file)) {
-                testArgs.setRemoteStartAll(this.remoteStartAll);
+                testArgs.setRemoteStartAll();
                 testArgs.setRemoteStart(this.remoteStart);
             }
             results.add(executeSingleTest(new File(testFilesDirectory, file)));
@@ -94,7 +94,7 @@ public class TestManager extends JMeterMojo {
         getLog().info(" ");
         testArgs.setTestFile(test);
         //Delete results file if it already exists
-        new File(testArgs.getResultsFileName()).delete();
+        new File(testArgs.getResultsLogFileName()).delete();
         getLog().debug("JMeter is called with the following command line arguments: " + UtilityFunctions.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()));
         SecurityManager originalSecurityManager = overrideSecurityManager();
         Thread.UncaughtExceptionHandler originalExceptionHandler = overrideUncaughtExceptionHandler();
@@ -127,7 +127,7 @@ public class TestManager extends JMeterMojo {
             System.setOut(originalOut);
             getLog().info("Completed Test: " + test.getName());
         }
-        return testArgs.getResultsFileName();
+        return testArgs.getResultsLogFileName();
     }
 
     /**

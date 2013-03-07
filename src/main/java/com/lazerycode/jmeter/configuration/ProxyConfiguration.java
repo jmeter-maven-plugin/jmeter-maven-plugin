@@ -2,9 +2,9 @@ package com.lazerycode.jmeter.configuration;
 
 /**
  * Is used for configuration of all proxy related configuration.
- * <p>
+ * <p/>
  * Configuration in pom.xml:
- * <p>
+ * <p/>
  * <pre>
  * {@code
  * <proxyConfig>
@@ -36,7 +36,8 @@ public class ProxyConfiguration {
 
     /**
      * Regex of hosts that will not be proxied
-     * @param hostExclusions
+     *
+     * @param hostExclusions String
      */
     public void setHostExclusions(String hostExclusions) {
         this.hostExclusions = hostExclusions;
@@ -51,7 +52,8 @@ public class ProxyConfiguration {
 
     /**
      * HTTP proxy host name
-     * @param host
+     *
+     * @param host String
      */
     public void setHost(String host) {
         this.host = host;
@@ -67,7 +69,8 @@ public class ProxyConfiguration {
     /**
      * HTTP proxy port
      * Default: 80
-     * @param port
+     *
+     * @param port Integer
      */
     public void setPort(Integer port) {
         this.port = port;
@@ -82,7 +85,8 @@ public class ProxyConfiguration {
 
     /**
      * HTTP proxy username
-     * @param username
+     *
+     * @param username String
      */
     public void setUsername(String username) {
         this.username = username;
@@ -97,15 +101,20 @@ public class ProxyConfiguration {
 
     /**
      * HTTP proxy user password
-     * @param password
+     *
+     * @param password String
      */
     public void setPassword(String password) {
         this.password = password;
     }
 
+    /**
+     * Proxy details formatted for command line output.
+     *
+     * @return String
+     */
     @Override
     public String toString() {
-        //this method is used by maven when debug output is enabled
         String proxyDetails = "Proxy server is not being used.";
         if (null != this.host) {
             proxyDetails = "Proxy Details:\n\nHost: " + this.host + ":" + this.port + "\n";

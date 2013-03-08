@@ -158,7 +158,7 @@ public class PropertyFileMergerTest {
 	}
 
 	@Test
-	public void validPropertiesObjectReturnIfBothFilesAreNull() throws Exception {
+	public void validPropertiesObjectReturnIfBothFilesAreNull() {
 		IsInstanceOf anInstanceOfPropertiesClass = new IsInstanceOf(Properties.class);
 		Properties propertiesFile = null;
 		Properties customProperties = null;

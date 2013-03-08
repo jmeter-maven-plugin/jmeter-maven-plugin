@@ -255,7 +255,6 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 	}
 
 	protected void propertyConfiguration() throws MojoExecutionException {
-		//TODO add custom category log level overrides into jmeter.properties
 		this.pluginProperties = new PropertyHandler(this.testFilesDirectory, this.binDir, getArtifactNamed(this.jmeterConfigArtifact), this.propertiesReplacedByCustomFiles);
 		this.pluginProperties.setJMeterProperties(this.propertiesJMeter);
 		this.pluginProperties.setJMeterGlobalProperties(this.propertiesGlobal);

@@ -10,7 +10,7 @@ import java.util.Properties;
  *
  * @author Arne Franken, Mark Collin
  */
-public class PropertyFileMerger extends JMeterMojo {
+class PropertyFileMerger extends JMeterMojo {
 
 	/**
 	 * Merge two properties files together.

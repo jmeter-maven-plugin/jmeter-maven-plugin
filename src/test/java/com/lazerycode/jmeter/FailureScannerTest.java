@@ -13,8 +13,8 @@ public class FailureScannerTest {
 
 	private final boolean ignoreAllFailures = true;
 	private final boolean reportAllFailures = false;
-	private URL failingResultsFileURL = this.getClass().getResource("/jtl2-1-fail.jtl");
-	private URL passingResultsFileURL = this.getClass().getResource("/jtl2-1-pass.jtl");
+	private final URL failingResultsFileURL = this.getClass().getResource("/jtl2-1-fail.jtl");
+	private final URL passingResultsFileURL = this.getClass().getResource("/jtl2-1-pass.jtl");
 
 	@Test
 	public void jtlFileWithFailures() throws Exception {

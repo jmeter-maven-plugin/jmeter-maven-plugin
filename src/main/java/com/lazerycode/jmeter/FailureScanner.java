@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
  *
  * @author Jon Roberts
  */
-public class FailureScanner {
+class FailureScanner {
 
 	private static final String REQUEST_FAILURE_PATTERN = "s=\"false\"";
 	private final boolean ignoreFailures;

@@ -18,7 +18,7 @@ import static org.junit.Assert.assertThat;
 public class UtilityFunctionsTest {
 
 	@Test
-	public void humanReadableCommandLineOutputTest() throws Exception {
+	public void humanReadableCommandLineOutputTest() {
 		String[] testArray = new String[]{"a", "b", "c", "d"};
 
 		String returnValue = UtilityFunctions.humanReadableCommandLineOutput(testArray);
@@ -29,7 +29,7 @@ public class UtilityFunctionsTest {
 	}
 
 	@Test
-	public void isNotSetMapTest() throws Exception {
+	public void isNotSetMapTest() {
 		Map testMap = null;
 		assertTrue("null value returns false", UtilityFunctions.isNotSet(testMap));
 
@@ -38,7 +38,7 @@ public class UtilityFunctionsTest {
 	}
 
 	@Test
-	public void isNotSetStringTest() throws Exception {
+	public void isNotSetStringTest() {
 		String testString = null;
 		assertTrue("null value returns false", UtilityFunctions.isNotSet(testString));
 
@@ -50,7 +50,7 @@ public class UtilityFunctionsTest {
 	}
 
 	@Test
-	public void isNotSetFile() throws Exception {
+	public void isNotSetFile() {
 		File testFile = null;
 		assertTrue("null value returns false", UtilityFunctions.isNotSet(testFile));
 

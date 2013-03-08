@@ -63,7 +63,7 @@ public class JMeterMojo extends JMeterAbstractMojo {
 	 * @throws MojoExecutionException
 	 * @throws MojoFailureException
 	 */
-	protected void parseTestResults(List<String> results) throws MojoExecutionException, MojoFailureException {
+	void parseTestResults(List<String> results) throws MojoExecutionException, MojoFailureException {
 		FailureScanner failureScanner = new FailureScanner(ignoreResultFailures);
 		int totalFailureCount = 0;
 		boolean failed = false;

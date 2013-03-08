@@ -22,9 +22,9 @@ public class JMeterArgumentsArrayTest {
 
 	private final URL testFile = this.getClass().getResource("/test.jmx");
 	private final String timestamp = new DateTime().year().getAsText();
+	private final boolean disableGUI = true;
+	private final boolean enableGUI = false;
 	private String testFilePath;
-	private boolean disableGUI = true;
-	private boolean enableGUI = false;
 
 	String argumentsMapToString(Map<String, String> value, JMeterCommandLineArguments type) {
 		String arguments = "";

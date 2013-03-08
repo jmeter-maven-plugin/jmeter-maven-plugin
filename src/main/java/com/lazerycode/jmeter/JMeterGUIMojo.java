@@ -12,7 +12,7 @@ import org.apache.maven.plugin.MojoFailureException;
  * @requiresProject true
  */
 @SuppressWarnings("JavaDoc")
-public class JMeterGUIMojo extends JMeterAbstractMojo {
+class JMeterGUIMojo extends JMeterAbstractMojo {
 
 	/**
 	 * Load the JMeter GUI

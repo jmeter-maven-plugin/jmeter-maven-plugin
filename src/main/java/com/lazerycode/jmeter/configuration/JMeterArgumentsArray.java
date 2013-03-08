@@ -1,6 +1,5 @@
 package com.lazerycode.jmeter.configuration;
 
-import com.lazerycode.jmeter.UtilityFunctions;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.joda.time.LocalDateTime;
 import org.joda.time.format.DateTimeFormatter;
@@ -10,6 +9,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.TreeSet;
 
+import static com.lazerycode.jmeter.UtilityFunctions.isNotSet;
 import static com.lazerycode.jmeter.configuration.JMeterCommandLineArguments.*;
 
 /**
@@ -38,11 +38,14 @@ public class JMeterArgumentsArray {
 	private LogLevel overrideRootLogLevel;
 
 	/**
-	 * The argument map will define which arguments are set on the command line.
-	 * The order properties are initially put into the argument map defines the order they are returned in the array produced by this class.
+	 * Create an instance of JMeterArgumentsArray
+	 *
+	 * @param disableGUI          If GUI should be disabled or not
+	 * @param jMeterHomeDirectory The JMETER_HOME directory, what JMeter bases its classpath on
+	 * @throws MojoExecutionException
 	 */
 	public JMeterArgumentsArray(boolean disableGUI, String jMeterHomeDirectory) throws MojoExecutionException {
-		if (UtilityFunctions.isNotSet(jMeterHomeDirectory)) {
+		if (isNotSet(jMeterHomeDirectory)) {
 			throw new MojoExecutionException("Unable to set JMeter Home Directory...");
 		}
 		jMeterHome = jMeterHomeDirectory;
@@ -55,10 +58,6 @@ public class JMeterArgumentsArray {
 		}
 	}
 
-	public void setResultsFileNameDateFormat(DateTimeFormatter dateFormat) {
-		this.dateFormat = dateFormat;
-	}
-
 	public void setRemoteStop() {
 		argumentList.add(REMOTE_STOP);
 	}
@@ -68,11 +67,13 @@ public class JMeterArgumentsArray {
 	}
 
 	public void setRemoteStart(String remoteStart) {
-		if (UtilityFunctions.isNotSet(remoteStart)) return;
+		if (isNotSet(remoteStart)) return;
 		remoteStartList = remoteStart;
 		argumentList.add(REMOTE_OPT_PARAM);
 	}
 
+	//************************************************
+	//TODO store a local copy of ProxyConfiguration rather than all the component parts?
 	public void setProxyConfig(ProxyConfiguration proxyConfiguration) {
 		setProxyHostDetails(proxyConfiguration.getHost(), proxyConfiguration.getPort());
 		setProxyUsername(proxyConfiguration.getUsername());
@@ -81,7 +82,7 @@ public class JMeterArgumentsArray {
 	}
 
 	private void setProxyHostDetails(String hostname, int port) {
-		if (UtilityFunctions.isNotSet(hostname)) return;
+		if (isNotSet(hostname)) return;
 		proxyHost = hostname;
 		proxyPort = Integer.toString(port);
 		argumentList.add(PROXY_HOST);
@@ -89,31 +90,32 @@ public class JMeterArgumentsArray {
 	}
 
 	private void setProxyUsername(String username) {
-		if (UtilityFunctions.isNotSet(username)) return;
+		if (isNotSet(username)) return;
 		proxyUsername = username;
 		argumentList.add(PROXY_USERNAME);
 	}
 
 	private void setProxyPassword(String password) {
-		if (UtilityFunctions.isNotSet(password)) return;
+		if (isNotSet(password)) return;
 		proxyPassword = password;
 		argumentList.add(PROXY_PASSWORD);
 	}
 
 	private void setNonProxyHosts(String hostsList) {
-		if (UtilityFunctions.isNotSet(hostsList)) return;
+		if (isNotSet(hostsList)) return;
 		nonProxyHosts = hostsList;
 		argumentList.add(NONPROXY_HOSTS);
 	}
+	//************************************************
 
 	public void setACustomPropertiesFile(File customProperties) {
-		if (UtilityFunctions.isNotSet(customProperties)) return;
+		if (isNotSet(customProperties)) return;
 		customPropertiesFile = customProperties.getAbsolutePath();
 		argumentList.add(PROPFILE2_OPT);
 	}
 
 	public void setLogRootOverride(String requestedLogLevel) {
-		if (UtilityFunctions.isNotSet(requestedLogLevel)) return;
+		if (isNotSet(requestedLogLevel)) return;
 		for (LogLevel logLevel : LogLevel.values()) {
 			if (logLevel.toString().equals(requestedLogLevel.toUpperCase())) {
 				overrideRootLogLevel = logLevel;
@@ -126,8 +128,24 @@ public class JMeterArgumentsArray {
 		this.resultsDirectory = resultsDirectory;
 	}
 
+	public void setResultsTimestamp(boolean addTimestamp) {
+		timestampResults = addTimestamp;
+	}
+
+	public void setResultsFileNameDateFormat(DateTimeFormatter dateFormat) {
+		this.dateFormat = dateFormat;
+	}
+
+	public void appendTimestamp(boolean append) {
+		appendTimestamp = append;
+	}
+
+	public String getResultsLogFileName() {
+		return resultsLogFileName;
+	}
+
 	public void setTestFile(File value) {
-		if (UtilityFunctions.isNotSet(value) || disableTests) return;
+		if (isNotSet(value) || disableTests) return;
 		testFile = value.getAbsolutePath();
 		if (timestampResults) {
 			//TODO investigate when timestamp is generated.
@@ -143,18 +161,13 @@ public class JMeterArgumentsArray {
 		argumentList.add(LOGFILE_OPT);
 	}
 
-	public void setResultsTimestamp(boolean addTimestamp) {
-		timestampResults = addTimestamp;
-	}
-
-	public void appendTimestamp(boolean append) {
-		appendTimestamp = append;
-	}
-
-	public String getResultsLogFileName() {
-		return resultsLogFileName;
-	}
-
+	/**
+	 * Generate an arguments array representing the command line options you want to send to JMeter.
+	 * The order of the array is determined by the order the values in JMeterCommandLineArguments are defined.
+	 *
+	 * @return An array representing the command line sent to JMeter
+	 * @throws MojoExecutionException
+	 */
 	public String[] buildArgumentsArray() throws MojoExecutionException {
 		if (!argumentList.contains(TESTFILE_OPT) && !disableTests) throw new MojoExecutionException("No test(s) specified!");
 		ArrayList<String> argumentsArray = new ArrayList<String>();

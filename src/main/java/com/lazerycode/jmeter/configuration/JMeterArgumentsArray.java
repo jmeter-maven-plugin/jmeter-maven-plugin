@@ -8,8 +8,6 @@ import org.joda.time.format.ISODateTimeFormat;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Map;
-import java.util.Set;
 import java.util.TreeSet;
 
 import static com.lazerycode.jmeter.configuration.JMeterCommandLineArguments.*;
@@ -26,19 +24,18 @@ public class JMeterArgumentsArray {
 	private DateTimeFormatter dateFormat = ISODateTimeFormat.dateTime();
 	private boolean timestampResults = true;
 	private boolean appendTimestamp = false;
-	private String remoteStartList = null;
-	private String nonProxyHosts = null;
-	private String proxyHost = null;
-	private String proxyPort = null;
-	private String proxyUsername = null;
-	private String proxyPassword = null;
-	private String customPropertiesFile = null;
-	private String testFile = null;
-	private String resultsLogFileName = null;
-	private String jMeterHome = null;
-	private String resultsDirectory = null;
-	private String overrideRootLogLevel = null;
-	private Map<String, String> overrideLogCategories = null;
+	private String remoteStartList;
+	private String nonProxyHosts;
+	private String proxyHost;
+	private String proxyPort;
+	private String proxyUsername;
+	private String proxyPassword;
+	private String customPropertiesFile;
+	private String testFile;
+	private String resultsLogFileName;
+	private String jMeterHome;
+	private String resultsDirectory;
+	private LogLevel overrideRootLogLevel;
 
 	/**
 	 * The argument map will define which arguments are set on the command line.
@@ -115,19 +112,14 @@ public class JMeterArgumentsArray {
 		argumentList.add(PROPFILE2_OPT);
 	}
 
-	//TODO we should support this rather than expecting people to modify thier jmeter.properties
-	public void setLogCategoriesOverrides(Map<String, String> logCategoryOverrideMap) {
-		if (UtilityFunctions.isNotSet(logCategoryOverrideMap)) return;
-		overrideLogCategories = logCategoryOverrideMap;
-		argumentList.add(LOGLEVEL);
-	}
-
-	//TODO we should support this rather than expecting people to modify thier jmeter.properties
-	public void setLogRootOverride(String logLevel) {
-		if (UtilityFunctions.isNotSet(logLevel)) return;
-		overrideRootLogLevel = logLevel;
-		//TODO ERROR should not be same as above...
-		argumentList.add(LOGLEVEL);
+	public void setLogRootOverride(String requestedLogLevel) {
+		if (UtilityFunctions.isNotSet(requestedLogLevel)) return;
+		for (LogLevel logLevel : LogLevel.values()) {
+			if (logLevel.toString().equals(requestedLogLevel.toUpperCase())) {
+				overrideRootLogLevel = logLevel;
+				argumentList.add(LOGLEVEL);
+			}
+		}
 	}
 
 	public void setResultsDirectory(String resultsDirectory) {
@@ -184,16 +176,8 @@ public class JMeterArgumentsArray {
 					argumentsArray.add(jMeterHome);
 					break;
 				case LOGLEVEL:
-					if (overrideRootLogLevel == null) {
-						Set<String> logCategorySet = overrideLogCategories.keySet();
-						for (String category : logCategorySet) {
-							argumentsArray.add(LOGLEVEL.getCommandLineArgument());
-							argumentsArray.add(category + "=" + overrideLogCategories.get(category));
-						}
-					} else {
-						argumentsArray.add(LOGLEVEL.getCommandLineArgument());
-						argumentsArray.add(overrideRootLogLevel);
-					}
+					argumentsArray.add(LOGLEVEL.getCommandLineArgument());
+					argumentsArray.add(overrideRootLogLevel.toString());
 					break;
 				case PROPFILE2_OPT:
 					argumentsArray.add(PROPFILE2_OPT.getCommandLineArgument());

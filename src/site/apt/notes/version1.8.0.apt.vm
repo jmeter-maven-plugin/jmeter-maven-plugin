@@ -3,6 +3,7 @@ Version 1.8.0 Release Notes
 * JMeter version 2.9 support added.
 * #61 - Added skipTests ability.
 * Removed jmx file sorting code as it was not sorting files into a determinalistic order.
-* Removed checks for &lt;error&gt;true&lt;/error&gt; and &lt;failure&gt;true&lt;/failure&gt; in .jtl files, these element do not occur in JMeter 2.9.
+* Removed checks for &lt;error&gt;true&lt;/error&gt; and &lt;failure&gt;true&lt;/failure&gt; in .jtl files, these elements do not occur in JMeter 2.9.
 * Added ability to choose whether to Append or Prepend date to filename.
 * Set default timestamp to an ISO_8601 timestamp.  The formatter now used is a JodaTime DateTimeFormatter (See )http://joda-time.sourceforge.net/apidocs/org/joda/time/format/DateTimeFormat.html)
+* Added the ability to override the root log level, new configuration option added: &lt;overrideRootLogLevel&gt;DEBUG&lt;/overrideRootLogLevel&gt;.  Valid log levels are FATAL_ERROR, ERROR, WARN, INFO and DEBUG.

@@ -68,6 +68,7 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 	 * @parameter default-value="false"
 	 */
 	protected boolean appendResultsTimestamp;
+
 	/**
 	 * Set the format of the timestamp that is appended to the results filename.
 	 * (This assumes that testResultsTimestamp is set to 'true')
@@ -128,6 +129,14 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 	 * @parameter Java merged with precedence into default JMeter file system.properties.
 	 */
 	protected Map<String, String> propertiesSystem;
+
+	/**
+	 * Set a root log level to override all log levels used by JMeter
+	 * Valid log levels are: FATAL_ERROR, ERROR, WARN, INFO, DEBUG;
+	 *
+	 * @parameter default-value=""
+	 */
+	protected String overrideRootLogLevel;
 
 	/**
 	 * Replace the default JMeter properties with any custom properties files supplied.
@@ -245,6 +254,7 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 	}
 
 	protected void propertyConfiguration() throws MojoExecutionException {
+		//TODO add custom category log level overrides into jmeter.properties
 		this.pluginProperties = new PropertyHandler(this.testFilesDirectory, this.binDir, getArtifactNamed(this.jmeterConfigArtifact), this.propertiesReplacedByCustomFiles);
 		this.pluginProperties.setJMeterProperties(this.propertiesJMeter);
 		this.pluginProperties.setJMeterGlobalProperties(this.propertiesGlobal);
@@ -344,7 +354,7 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 		}
 		testArgs.setProxyConfig(proxyConfig);
 		testArgs.setACustomPropertiesFile(customPropertiesFile);
-
+		testArgs.setLogRootOverride(overrideRootLogLevel);
 	}
 
 	/**

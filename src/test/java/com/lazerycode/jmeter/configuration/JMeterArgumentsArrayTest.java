@@ -10,7 +10,6 @@ import org.junit.Test;
 import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -99,7 +98,7 @@ public class JMeterArgumentsArrayTest {
 	}
 
 	@Test
-	public void validateJMeterChangeRootLogLevel() throws Exception {
+	public void validateSetRootLogLevel() throws Exception {
 		JMeterArgumentsArray testArgs = new JMeterArgumentsArray(disableGUI, "target/jmeter/");
 		testArgs.setTestFile(new File(this.testFile.toURI()));
 
@@ -110,17 +109,36 @@ public class JMeterArgumentsArrayTest {
 	}
 
 	@Test
-	public void validateJMeterChangeIndividualLogLevels() throws Exception {
+	public void validateSetRootLogLevelWithWrongCase() throws Exception {
 		JMeterArgumentsArray testArgs = new JMeterArgumentsArray(disableGUI, "target/jmeter/");
 		testArgs.setTestFile(new File(this.testFile.toURI()));
 
-		Map<String, String> logLevels = new HashMap<String, String>();
-		logLevels.put("jorphan", "INFO");
-		logLevels.put("jmeter.UtilityFunctions", "DEBUG");
-		testArgs.setLogCategoriesOverrides(logLevels);
+		testArgs.setLogRootOverride("info");
 
 		assertThat(UtilityFunctions.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()),
-				is(equalTo("-n -t " + testFilePath + " -l " + testArgs.getResultsLogFileName() + " -d target/jmeter/ " + argumentsMapToString(logLevels, JMeterCommandLineArguments.LOGLEVEL))));
+				is(equalTo("-n -t " + testFilePath + " -l " + testArgs.getResultsLogFileName() + " -d target/jmeter/ -L INFO")));
+	}
+
+	@Test
+	public void passingAEmptyRootLogLevelDoesNotSetAnything() throws Exception {
+		JMeterArgumentsArray testArgs = new JMeterArgumentsArray(disableGUI, "target/jmeter/");
+		testArgs.setTestFile(new File(this.testFile.toURI()));
+
+		testArgs.setLogRootOverride("");
+
+		assertThat(UtilityFunctions.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()),
+				is(equalTo("-n -t " + testFilePath + " -l " + testArgs.getResultsLogFileName() + " -d target/jmeter/")));
+	}
+
+	@Test
+	public void passingANullRootLogLevelDoesNotSetAnything() throws Exception {
+		JMeterArgumentsArray testArgs = new JMeterArgumentsArray(disableGUI, "target/jmeter/");
+		testArgs.setTestFile(new File(this.testFile.toURI()));
+
+		testArgs.setLogRootOverride(null);
+
+		assertThat(UtilityFunctions.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()),
+				is(equalTo("-n -t " + testFilePath + " -l " + testArgs.getResultsLogFileName() + " -d target/jmeter/")));
 	}
 
 	@Test
@@ -190,7 +208,7 @@ public class JMeterArgumentsArrayTest {
 	}
 
 	@Test
-	public void checkProxyDetailsReturnedWhenHostAndPortNotSet(){
+	public void checkProxyDetailsReturnedWhenHostAndPortNotSet() {
 		ProxyConfiguration proxyConfiguration = new ProxyConfiguration();
 		proxyConfiguration.setUsername("god");
 		proxyConfiguration.setPassword("changeme");

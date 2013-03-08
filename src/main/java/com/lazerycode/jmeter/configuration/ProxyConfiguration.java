@@ -1,5 +1,8 @@
 package com.lazerycode.jmeter.configuration;
 
+import static com.lazerycode.jmeter.UtilityFunctions.isNotSet;
+import static com.lazerycode.jmeter.UtilityFunctions.isSet;
+
 /**
  * Is used for configuration of all proxy related configuration.
  * <p/>
@@ -28,23 +31,6 @@ public class ProxyConfiguration {
 	private String password = null;
 
 	/**
-	 * @return Regex of hosts that will not be proxied
-	 */
-	public String getHostExclusions() {
-		if (null == host || host.isEmpty()) return null;
-		return hostExclusions;
-	}
-
-	/**
-	 * Regex of hosts that will not be proxied
-	 *
-	 * @param hostExclusions String
-	 */
-	public void setHostExclusions(String hostExclusions) {
-		this.hostExclusions = hostExclusions;
-	}
-
-	/**
 	 * @return HTTP proxy host name
 	 */
 	public String getHost() {
@@ -61,10 +47,10 @@ public class ProxyConfiguration {
 	}
 
 	/**
-	 * @return HTTP proxy port
+	 * @return HTTP proxy port as long as a host is set
 	 */
 	public String getPort() {
-		if (null == host || host.isEmpty()) return null;
+		if (isNotSet(host)) return null;
 		return port.toString();
 	}
 
@@ -79,10 +65,10 @@ public class ProxyConfiguration {
 	}
 
 	/**
-	 * @return HTTP proxy username
+	 * @return HTTP proxy username as long as a host is set
 	 */
 	public String getUsername() {
-		if (null == host || host.isEmpty()) return null;
+		if (isNotSet(host)) return null;
 		return username;
 	}
 
@@ -96,10 +82,10 @@ public class ProxyConfiguration {
 	}
 
 	/**
-	 * @return HTTP proxy user password
+	 * @return HTTP proxy user password as long as a host is set
 	 */
 	public String getPassword() {
-		if (null == host || host.isEmpty()) return null;
+		if (isNotSet(host)) return null;
 		return password;
 	}
 
@@ -113,6 +99,23 @@ public class ProxyConfiguration {
 	}
 
 	/**
+	 * @return Regex of hosts that will not be proxied as long as a host is set
+	 */
+	public String getHostExclusions() {
+		if (isNotSet(host)) return null;
+		return hostExclusions;
+	}
+
+	/**
+	 * Regex of hosts that will not be proxied
+	 *
+	 * @param hostExclusions String
+	 */
+	public void setHostExclusions(String hostExclusions) {
+		this.hostExclusions = hostExclusions;
+	}
+
+	/**
 	 * Proxy details formatted for command line output.
 	 *
 	 * @return String
@@ -120,17 +123,11 @@ public class ProxyConfiguration {
 	@Override
 	public String toString() {
 		String proxyDetails = "Proxy server is not being used.";
-		if (null != host) {
+		if (isSet(host)) {
 			proxyDetails = "Proxy Details:\n\nHost: " + host + ":" + port + "\n";
-			if (null != username) {
-				proxyDetails += "Username: " + username + "\n";
-			}
-			if (null != password) {
-				proxyDetails += "Password: " + password + "\n";
-			}
-			if (null != hostExclusions) {
-				proxyDetails += "Host Exclusions: " + hostExclusions + "\n";
-			}
+			if (isSet(username)) proxyDetails += "Username: " + username + "\n";
+			if (isSet(password)) proxyDetails += "Password: " + password + "\n";
+			if (isSet(hostExclusions)) proxyDetails += "Host Exclusions: " + hostExclusions + "\n";
 		}
 		return proxyDetails + "\n";
 	}

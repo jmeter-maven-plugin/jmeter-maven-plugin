@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.TreeSet;
 
 import static com.lazerycode.jmeter.UtilityFunctions.isNotSet;
+import static com.lazerycode.jmeter.UtilityFunctions.isSet;
 import static com.lazerycode.jmeter.configuration.JMeterCommandLineArguments.*;
 
 /**
@@ -23,14 +24,10 @@ public class JMeterArgumentsArray {
 	private final boolean disableTests;
 	private TreeSet<JMeterCommandLineArguments> argumentList = new TreeSet<JMeterCommandLineArguments>();
 	private DateTimeFormatter dateFormat = ISODateTimeFormat.dateTime();
+	private ProxyConfiguration proxyConfiguration;
 	private boolean timestampResults = true;
 	private boolean appendTimestamp = false;
 	private String remoteStartList;
-	private String nonProxyHosts;
-	private String proxyHost;
-	private String proxyPort;
-	private String proxyUsername;
-	private String proxyPassword;
 	private String customPropertiesFile;
 	private String testFile;
 	private String resultsLogFileName;
@@ -70,41 +67,22 @@ public class JMeterArgumentsArray {
 		argumentList.add(REMOTE_OPT_PARAM);
 	}
 
-	//************************************************
-	//TODO store a local copy of ProxyConfiguration rather than all the component parts?
-	public void setProxyConfig(ProxyConfiguration proxyConfiguration) {
-		setProxyHostDetails(proxyConfiguration.getHost(), proxyConfiguration.getPort());
-		setProxyUsername(proxyConfiguration.getUsername());
-		setProxyPassword(proxyConfiguration.getPassword());
-		setNonProxyHosts(proxyConfiguration.getHostExclusions());
+	public void setProxyConfig(ProxyConfiguration configuration) {
+		this.proxyConfiguration = configuration;
+		if (isSet(proxyConfiguration.getHost())) {
+			argumentList.add(PROXY_HOST);
+			argumentList.add(PROXY_PORT);
+		}
+		if (isSet(proxyConfiguration.getUsername())) {
+			argumentList.add(PROXY_USERNAME);
+		}
+		if (isSet(proxyConfiguration.getPassword())) {
+			argumentList.add(PROXY_PASSWORD);
+		}
+		if (isSet(proxyConfiguration.getHostExclusions())) {
+			argumentList.add(NONPROXY_HOSTS);
+		}
 	}
-
-	private void setProxyHostDetails(String hostname, int port) {
-		if (isNotSet(hostname)) return;
-		proxyHost = hostname;
-		proxyPort = Integer.toString(port);
-		argumentList.add(PROXY_HOST);
-		argumentList.add(PROXY_PORT);
-	}
-
-	private void setProxyUsername(String username) {
-		if (isNotSet(username)) return;
-		proxyUsername = username;
-		argumentList.add(PROXY_USERNAME);
-	}
-
-	private void setProxyPassword(String password) {
-		if (isNotSet(password)) return;
-		proxyPassword = password;
-		argumentList.add(PROXY_PASSWORD);
-	}
-
-	private void setNonProxyHosts(String hostsList) {
-		if (isNotSet(hostsList)) return;
-		nonProxyHosts = hostsList;
-		argumentList.add(NONPROXY_HOSTS);
-	}
-	//************************************************
 
 	public void setACustomPropertiesFile(File customProperties) {
 		if (isNotSet(customProperties)) return;
@@ -199,23 +177,23 @@ public class JMeterArgumentsArray {
 					break;
 				case PROXY_HOST:
 					argumentsArray.add(PROXY_HOST.getCommandLineArgument());
-					argumentsArray.add(proxyHost);
+					argumentsArray.add(proxyConfiguration.getHost());
 					break;
 				case PROXY_PORT:
 					argumentsArray.add(PROXY_PORT.getCommandLineArgument());
-					argumentsArray.add(proxyPort);
+					argumentsArray.add(proxyConfiguration.getPort());
 					break;
 				case PROXY_USERNAME:
 					argumentsArray.add(PROXY_USERNAME.getCommandLineArgument());
-					argumentsArray.add(proxyUsername);
+					argumentsArray.add(proxyConfiguration.getUsername());
 					break;
 				case PROXY_PASSWORD:
 					argumentsArray.add(PROXY_PASSWORD.getCommandLineArgument());
-					argumentsArray.add(proxyPassword);
+					argumentsArray.add(proxyConfiguration.getPassword());
 					break;
 				case NONPROXY_HOSTS:
 					argumentsArray.add(NONPROXY_HOSTS.getCommandLineArgument());
-					argumentsArray.add(nonProxyHosts);
+					argumentsArray.add(proxyConfiguration.getHostExclusions());
 					break;
 				case REMOTE_STOP:
 					argumentsArray.add(REMOTE_STOP.getCommandLineArgument());

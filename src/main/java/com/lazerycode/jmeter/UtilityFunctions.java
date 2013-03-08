@@ -66,6 +66,16 @@ public final class UtilityFunctions {
 	}
 
 	/**
+	 * Utility function to check if a String is defined and not empty
+	 *
+	 * @param value String
+	 * @return boolean
+	 */
+	public static Boolean isSet(String value) {
+		return !isNotSet(value);
+	}
+
+	/**
 	 * Utility function to check if File is defined and not empty
 	 *
 	 * @param value File

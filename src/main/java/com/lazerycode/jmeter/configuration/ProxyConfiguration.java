@@ -21,113 +21,117 @@ package com.lazerycode.jmeter.configuration;
  */
 public class ProxyConfiguration {
 
-    private String hostExclusions = null;
-    private String host = null;
-    private Integer port = 80;
-    private String username = null;
-    private String password = null;
+	private String hostExclusions = null;
+	private String host = null;
+	private Integer port = 80;
+	private String username = null;
+	private String password = null;
 
-    /**
-     * @return Regex of hosts that will not be proxied
-     */
-    public String getHostExclusions() {
-        return hostExclusions;
-    }
+	/**
+	 * @return Regex of hosts that will not be proxied
+	 */
+	public String getHostExclusions() {
+		if (null == host || host.isEmpty()) return null;
+		return hostExclusions;
+	}
 
-    /**
-     * Regex of hosts that will not be proxied
-     *
-     * @param hostExclusions String
-     */
-    public void setHostExclusions(String hostExclusions) {
-        this.hostExclusions = hostExclusions;
-    }
+	/**
+	 * Regex of hosts that will not be proxied
+	 *
+	 * @param hostExclusions String
+	 */
+	public void setHostExclusions(String hostExclusions) {
+		this.hostExclusions = hostExclusions;
+	}
 
-    /**
-     * @return HTTP proxy host name
-     */
-    public String getHost() {
-        return host;
-    }
+	/**
+	 * @return HTTP proxy host name
+	 */
+	public String getHost() {
+		return host;
+	}
 
-    /**
-     * HTTP proxy host name
-     *
-     * @param host String
-     */
-    public void setHost(String host) {
-        this.host = host;
-    }
+	/**
+	 * HTTP proxy host name
+	 *
+	 * @param host String
+	 */
+	public void setHost(String host) {
+		this.host = host;
+	}
 
-    /**
-     * @return HTTP proxy port
-     */
-    public Integer getPort() {
-        return port;
-    }
+	/**
+	 * @return HTTP proxy port
+	 */
+	public String getPort() {
+		if (null == host || host.isEmpty()) return null;
+		return port.toString();
+	}
 
-    /**
-     * HTTP proxy port
-     * Default: 80
-     *
-     * @param port Integer
-     */
-    public void setPort(Integer port) {
-        this.port = port;
-    }
+	/**
+	 * HTTP proxy port
+	 * Default: 80
+	 *
+	 * @param port Integer
+	 */
+	public void setPort(Integer port) {
+		this.port = port;
+	}
 
-    /**
-     * @return HTTP proxy username
-     */
-    public String getUsername() {
-        return username;
-    }
+	/**
+	 * @return HTTP proxy username
+	 */
+	public String getUsername() {
+		if (null == host || host.isEmpty()) return null;
+		return username;
+	}
 
-    /**
-     * HTTP proxy username
-     *
-     * @param username String
-     */
-    public void setUsername(String username) {
-        this.username = username;
-    }
+	/**
+	 * HTTP proxy username
+	 *
+	 * @param username String
+	 */
+	public void setUsername(String username) {
+		this.username = username;
+	}
 
-    /**
-     * @return HTTP proxy user password
-     */
-    public String getPassword() {
-        return password;
-    }
+	/**
+	 * @return HTTP proxy user password
+	 */
+	public String getPassword() {
+		if (null == host || host.isEmpty()) return null;
+		return password;
+	}
 
-    /**
-     * HTTP proxy user password
-     *
-     * @param password String
-     */
-    public void setPassword(String password) {
-        this.password = password;
-    }
+	/**
+	 * HTTP proxy user password
+	 *
+	 * @param password String
+	 */
+	public void setPassword(String password) {
+		this.password = password;
+	}
 
-    /**
-     * Proxy details formatted for command line output.
-     *
-     * @return String
-     */
-    @Override
-    public String toString() {
-        String proxyDetails = "Proxy server is not being used.";
-        if (null != this.host) {
-            proxyDetails = "Proxy Details:\n\nHost: " + this.host + ":" + this.port + "\n";
-            if (null != this.username) {
-                proxyDetails += "Username: " + this.username + "\n";
-            }
-            if (null != this.password) {
-                proxyDetails += "Password: " + this.password + "\n";
-            }
-            if (null != this.hostExclusions) {
-                proxyDetails += "Host Exclusions: " + this.hostExclusions + "\n";
-            }
-        }
-        return proxyDetails + "\n";
-    }
+	/**
+	 * Proxy details formatted for command line output.
+	 *
+	 * @return String
+	 */
+	@Override
+	public String toString() {
+		String proxyDetails = "Proxy server is not being used.";
+		if (null != host) {
+			proxyDetails = "Proxy Details:\n\nHost: " + host + ":" + port + "\n";
+			if (null != username) {
+				proxyDetails += "Username: " + username + "\n";
+			}
+			if (null != password) {
+				proxyDetails += "Password: " + password + "\n";
+			}
+			if (null != hostExclusions) {
+				proxyDetails += "Host Exclusions: " + hostExclusions + "\n";
+			}
+		}
+		return proxyDetails + "\n";
+	}
 }

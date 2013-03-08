@@ -175,6 +175,21 @@ public class JMeterArgumentsArrayTest {
 	}
 
 	@Test
+	public void validateProxyUsernameNotSetIfNoHost() throws Exception {
+		ProxyConfiguration proxyConfiguration = new ProxyConfiguration();
+		proxyConfiguration.setUsername("god");
+		JMeterArgumentsArray testArgs = new JMeterArgumentsArray(disableGUI, "target/jmeter/");
+		testArgs.setTestFile(new File(this.testFile.toURI()));
+
+		testArgs.setProxyConfig(proxyConfiguration);
+
+		assertThat(UtilityFunctions.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()),
+				is(equalTo("-n -t " + testFilePath + " -l " + testArgs.getResultsLogFileName() + " -d target/jmeter/")));
+		assertThat(proxyConfiguration.toString(),
+				is(equalTo("Proxy server is not being used.\n")));
+	}
+
+	@Test
 	public void validateJMeterSetProxyPassword() throws Exception {
 		ProxyConfiguration proxyConfiguration = new ProxyConfiguration();
 		proxyConfiguration.setHost("http://10.10.50.43");
@@ -192,6 +207,21 @@ public class JMeterArgumentsArrayTest {
 	}
 
 	@Test
+	public void validateProxyPasswordNotSetIfNoHost() throws Exception {
+		ProxyConfiguration proxyConfiguration = new ProxyConfiguration();
+		proxyConfiguration.setPassword("changeme");
+		JMeterArgumentsArray testArgs = new JMeterArgumentsArray(disableGUI, "target/jmeter/");
+		testArgs.setTestFile(new File(this.testFile.toURI()));
+
+		testArgs.setProxyConfig(proxyConfiguration);
+
+		assertThat(UtilityFunctions.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()),
+				is(equalTo("-n -t " + testFilePath + " -l " + testArgs.getResultsLogFileName() + " -d target/jmeter/")));
+		assertThat(proxyConfiguration.toString(),
+				is(equalTo("Proxy server is not being used.\n")));
+	}
+
+	@Test
 	public void validateSetNonProxyHosts() throws Exception {
 		ProxyConfiguration proxyConfiguration = new ProxyConfiguration();
 		proxyConfiguration.setHost("http://10.10.50.43");
@@ -205,6 +235,20 @@ public class JMeterArgumentsArrayTest {
 				is(equalTo("-n -t " + testFilePath + " -l " + testArgs.getResultsLogFileName() + " -d target/jmeter/ -H http://10.10.50.43 -P 8080 -N localhost|*.lazerycode.com")));
 		assertThat(proxyConfiguration.toString(),
 				is(equalTo("Proxy Details:\n\nHost: http://10.10.50.43:8080\nHost Exclusions: localhost|*.lazerycode.com\n\n")));
+	}
+
+	@Test
+	public void validateProxyNonProxyHostsNotSetIfNoHost() throws Exception {
+		ProxyConfiguration proxyConfiguration = new ProxyConfiguration();
+		proxyConfiguration.setHostExclusions("localhost|*.lazerycode.com");
+		JMeterArgumentsArray testArgs = new JMeterArgumentsArray(disableGUI, "target/jmeter/");
+		testArgs.setTestFile(new File(this.testFile.toURI()));
+		testArgs.setProxyConfig(proxyConfiguration);
+
+		assertThat(UtilityFunctions.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()),
+				is(equalTo("-n -t " + testFilePath + " -l " + testArgs.getResultsLogFileName() + " -d target/jmeter/")));
+		assertThat(proxyConfiguration.toString(),
+				is(equalTo("Proxy server is not being used.\n")));
 	}
 
 	@Test

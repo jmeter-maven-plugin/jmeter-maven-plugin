@@ -12,15 +12,14 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Properties;
 
-import static junit.framework.Assert.assertEquals;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
 
 public class PropertyFileMergerTest {
 
-	private final URL testFile = this.getClass().getResource("/testSource.properties");
-	private final URL testFileAdditional = this.getClass().getResource("/testAdditions.properties");
+	private final URL sourcePropertiesFiles = this.getClass().getResource("/testSource.properties");
+	private final URL additionsPropertiesFile = this.getClass().getResource("/testAdditions.properties");
 	private final PrintStream originalOut = System.out;
 
 	@Test
@@ -30,13 +29,18 @@ public class PropertyFileMergerTest {
 		customProperties.put("log_level.jmeter", "DEBUG");
 
 		Properties propertiesFile = new Properties();
-		propertiesFile.load(new FileInputStream(new File(this.testFile.toURI())));
+		propertiesFile.load(new FileInputStream(new File(sourcePropertiesFiles.toURI())));
 
 		Properties modifiedProperties = new PropertyFileMerger().mergeProperties(customProperties, propertiesFile);
 
-		assertEquals("property was not overwritten", "DEBUG", modifiedProperties.get("log_level.jmeter"));
-		assertEquals("property was not added", "INFO", modifiedProperties.get("log_level.jmeter.control"));
-		assertEquals("property should not differ from file entry", "DEBUG", modifiedProperties.get("log_level.jmeter.junit"));
+		assertThat(modifiedProperties.getProperty("log_level.jmeter"),
+				is(equalTo("DEBUG")));
+		assertThat(modifiedProperties.getProperty("log_level.jmeter.control"),
+				is(equalTo("INFO")));
+		assertThat(modifiedProperties.getProperty("log_level.jmeter.junit"),
+				is(equalTo("DEBUG")));
+		assertThat(modifiedProperties.size(),
+				is(equalTo(3)));
 	}
 
 	@Test
@@ -45,7 +49,7 @@ public class PropertyFileMergerTest {
 		customProperties.put("user.dir", "/home/foo");
 
 		Properties propertiesFile = new Properties();
-		propertiesFile.load(new FileInputStream(new File(this.testFile.toURI())));
+		propertiesFile.load(new FileInputStream(new File(sourcePropertiesFiles.toURI())));
 
 		ByteArrayOutputStream logCapture = new ByteArrayOutputStream();
 		System.setOut(new PrintStream(logCapture));
@@ -53,14 +57,14 @@ public class PropertyFileMergerTest {
 		Properties modifiedProperties = new PropertyFileMerger().mergeProperties(customProperties, propertiesFile);
 
 		String loggedMessage = UtilityFunctions.stripCarriageReturns(logCapture.toString());
-		System.setOut(this.originalOut);
+		System.setOut(originalOut);
 
+		assertThat(loggedMessage,
+				is(equalTo("[warn] Unable to set 'user.dir', it is a reserved property in the jmeter-maven-plugin")));
 		assertThat(modifiedProperties.containsKey("user.dir"),
 				is(equalTo(false)));
 		assertThat(modifiedProperties.size(),
 				is(equalTo(2)));
-		assertThat(loggedMessage,
-				is(equalTo("[warn] Unable to set 'user.dir', it is a reserved property in the jmeter-maven-plugin")));
 	}
 
 	@Test
@@ -69,7 +73,7 @@ public class PropertyFileMergerTest {
 		customProperties.put("log_level.Jmeter", "INFO");
 
 		Properties propertiesFile = new Properties();
-		propertiesFile.load(new FileInputStream(new File(this.testFile.toURI())));
+		propertiesFile.load(new FileInputStream(new File(sourcePropertiesFiles.toURI())));
 
 		ByteArrayOutputStream logCapture = new ByteArrayOutputStream();
 		System.setOut(new PrintStream(logCapture));
@@ -77,33 +81,37 @@ public class PropertyFileMergerTest {
 		Properties modifiedProperties = new PropertyFileMerger().mergeProperties(customProperties, propertiesFile);
 
 		String loggedMessage = UtilityFunctions.stripCarriageReturns(logCapture.toString());
-		System.setOut(this.originalOut);
+		System.setOut(originalOut);
 
-		assertThat(modifiedProperties.size(),
-				is(equalTo(3)));
 		assertThat(loggedMessage,
 				is(equalTo("[warn] You have set a property called 'log_level.Jmeter' which is very similar to 'log_level.jmeter'!")));
+		assertThat(modifiedProperties.size(),
+				is(equalTo(3)));
 	}
 
 	@Test
 	public void mergeTwoPropertiesFiles() throws Exception {
 
 		Properties propertiesFile = new Properties();
-		propertiesFile.load(new FileInputStream(new File(this.testFile.toURI())));
+		propertiesFile.load(new FileInputStream(new File(sourcePropertiesFiles.toURI())));
 
 		Properties customProperties = new Properties();
-		customProperties.load(new FileInputStream(new File(this.testFileAdditional.toURI())));
+		customProperties.load(new FileInputStream(new File(additionsPropertiesFile.toURI())));
 
 		Properties modifiedProperties = new PropertyFileMerger().mergePropertiesFiles(propertiesFile, customProperties);
 
 		assertThat(modifiedProperties.getProperty("log_level.jmeter"),
 				is(equalTo("INFO")));
+		assertThat(modifiedProperties.getProperty("log_level.jmeter.control"),
+				is(equalTo("DEBUG")));
 		assertThat(modifiedProperties.getProperty("log_level.jmeter.junit"),
 				is(equalTo("INFO")));
-		assertThat(modifiedProperties.getProperty("log_level.jmeter.control"),
+		assertThat(modifiedProperties.getProperty("log_level.jmeter.testbeans"),
 				is(equalTo("DEBUG")));
 		assertThat(modifiedProperties.containsKey("log_level.jmeter.engine"),
 				is(equalTo(false)));
+		assertThat(modifiedProperties.size(),
+				is(equalTo(4)));
 	}
 
 	@Test
@@ -112,24 +120,26 @@ public class PropertyFileMergerTest {
 		Properties propertiesFile = null;
 
 		Properties customProperties = new Properties();
-		customProperties.load(new FileInputStream(new File(this.testFileAdditional.toURI())));
+		customProperties.load(new FileInputStream(new File(this.additionsPropertiesFile.toURI())));
 
 		Properties modifiedProperties = new PropertyFileMerger().mergePropertiesFiles(propertiesFile, customProperties);
 
-		assertThat(modifiedProperties.getProperty("log_level.jmeter"),
-				is(equalTo(null)));
-		assertThat(modifiedProperties.getProperty("log_level.jmeter.junit"),
-				is(equalTo("INFO")));
 		assertThat(modifiedProperties.getProperty("log_level.jmeter.control"),
 				is(equalTo("DEBUG")));
+		assertThat(modifiedProperties.getProperty("log_level.jmeter.junit"),
+				is(equalTo("INFO")));
+		assertThat(modifiedProperties.containsKey("log_level.jmeter"),
+				is(equalTo(false)));
 		assertThat(modifiedProperties.containsKey("log_level.jmeter.engine"),
 				is(equalTo(false)));
+		assertThat(modifiedProperties.size(),
+				is(equalTo(3)));
 	}
 
 	@Test
 	public void mergeTwoPropertiesWithNullAdditions() throws Exception {
 		Properties propertiesFile = new Properties();
-		propertiesFile.load(new FileInputStream(new File(this.testFile.toURI())));
+		propertiesFile.load(new FileInputStream(new File(this.sourcePropertiesFiles.toURI())));
 
 		Properties customProperties = null;
 
@@ -139,10 +149,12 @@ public class PropertyFileMergerTest {
 				is(equalTo("INFO")));
 		assertThat(modifiedProperties.getProperty("log_level.jmeter.junit"),
 				is(equalTo("DEBUG")));
-		assertThat(modifiedProperties.getProperty("log_level.jmeter.control"),
-				is(equalTo(null)));
+		assertThat(modifiedProperties.containsKey("log_level.jmeter.control"),
+				is(equalTo(false)));
 		assertThat(modifiedProperties.containsKey("log_level.jmeter.engine"),
 				is(equalTo(false)));
+		assertThat(modifiedProperties.size(),
+				is(equalTo(2)));
 	}
 
 	@Test

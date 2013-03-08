@@ -1,10 +1,9 @@
 package com.lazerycode.jmeter;
 
-import org.apache.maven.plugin.logging.Log;
 import org.junit.Test;
 
 import java.io.File;
-import java.net.URI;
+import java.net.URL;
 
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -12,53 +11,43 @@ import static org.junit.Assert.assertThat;
 
 public class FailureScannerTest {
 
-    private final Log logger = null;
-    private final FailureScanner reportFailures = new FailureScanner(false, logger);
-    private final FailureScanner suppressFailures = new FailureScanner(true, logger);
+	private final boolean ignoreAllFailures = true;
+	private final boolean reportAllFailures = false;
+	private URL failingResultsFileURL = this.getClass().getResource("/jtl2-1-fail.jtl");
+	private URL passingResultsFileURL = this.getClass().getResource("/jtl2-1-pass.jtl");
 
-    @Test
-    public void validateCheckLineForFailureTest() {
-        assertThat(reportFailures.checkLineForFailures("<httpSample t=\"44\" lt=\"44\" ts=\"1303959710655\" s=\"false\" lb=\"/energy/mets/day/{endDate}/{StartDate} Reversed Dates\" rc=\"400\" rm=\"Bad Request\">"),
-                is(equalTo(true)));
-        assertThat(reportFailures.checkLineForFailures("<httpSample t=\"44\" lt=\"44\" ts=\"1303959710655\" s=\"true\" lb=\"/energy/mets/day/{endDate}/{StartDate} Reversed Dates\" rc=\"400\" rm=\"Bad Request\">"),
-                is(equalTo(false)));
-        assertThat(reportFailures.getFailureCount(),
-                is(equalTo(1)));
-    }
+	@Test
+	public void jtlFileWithFailures() throws Exception {
+		File resultsFile = new File(failingResultsFileURL.toURI());
+		FailureScanner fileScanner = new FailureScanner(reportAllFailures);
 
-    @Test
-    public void validateIgnoreFailuresTest() {
-        assertThat(suppressFailures.checkLineForFailures("<httpSample t=\"44\" lt=\"44\" ts=\"1303959710655\" s=\"true\" lb=\"/energy/mets/day/{endDate}/{StartDate} Reversed Dates\" rc=\"400\" rm=\"Bad Request\">"),
-                is(equalTo(false)));
-        assertThat(suppressFailures.getFailureCount(),
-                is(equalTo(0)));
-    }
+		assertThat(fileScanner.hasTestFailed(resultsFile),
+				is(equalTo(true)));
+		assertThat(fileScanner.getFailureCount(),
+				is(equalTo(2)));
+	}
 
-    @Test
-    public void validateResetFailureCountTest() {
-        reportFailures.checkLineForFailures("<httpSample t=\"44\" lt=\"44\" ts=\"1303959710655\" s=\"false\" lb=\"/energy/mets/day/{endDate}/{StartDate} Reversed Dates\" rc=\"400\" rm=\"Bad Request\">");
-        assertThat(reportFailures.getFailureCount(),
-                is(equalTo(1)));
-        reportFailures.resetFailureCount();
-        assertThat(reportFailures.getFailureCount(),
-                is(equalTo(0)));
-    }
+	@Test
+	public void jtlFileWithNoFailures() throws Exception {
+		File resultsFile = new File(passingResultsFileURL.toURI());
+		FailureScanner fileScanner = new FailureScanner(reportAllFailures);
 
-    @Test
-    public void jtlFormatFileWithFailuresTest() throws Exception {
-        URI testResultsFile = this.getClass().getResource("/jtl2-1-fail.jtl").toURI();
-        assertThat(reportFailures.hasTestPassed(new File(testResultsFile)),
-                is(equalTo(false)));
-        assertThat(reportFailures.getFailureCount(),
-                is(equalTo(2)));
-    }
+		assertThat(fileScanner.hasTestFailed(resultsFile),
+				is(equalTo(false)));
+		assertThat(fileScanner.getFailureCount(),
+				is(equalTo(0)));
+	}
 
-    @Test
-    public void jtlFormatFileWithNoFailuresTest() throws Exception {
-        URI testResultsFile = this.getClass().getResource("/jtl2-1-pass.jtl").toURI();
-        assertThat(reportFailures.hasTestPassed(new File(testResultsFile)),
-                is(equalTo(true)));
-        assertThat(reportFailures.getFailureCount(),
-                is(equalTo(0)));
-    }
+	@Test
+	public void jtlFileWithFailuresIgnored() throws Exception {
+		File resultsFile = new File(failingResultsFileURL.toURI());
+		FailureScanner fileScanner = new FailureScanner(ignoreAllFailures);
+
+		assertThat(fileScanner.hasTestFailed(resultsFile),
+				is(equalTo(false)));
+		assertThat(fileScanner.getFailureCount(),
+				is(equalTo(0)));
+	}
+
+
 }

@@ -119,13 +119,13 @@ public class ProxyConfiguration {
         if (null != this.host) {
             proxyDetails = "Proxy Details:\n\nHost: " + this.host + ":" + this.port + "\n";
             if (null != this.username) {
-                proxyDetails += "Username:" + this.username + "\n";
+                proxyDetails += "Username: " + this.username + "\n";
             }
             if (null != this.password) {
-                proxyDetails += "Password:" + this.password + "\n";
+                proxyDetails += "Password: " + this.password + "\n";
             }
             if (null != this.hostExclusions) {
-                proxyDetails += "Host Exclusions:" + this.hostExclusions + "\n";
+                proxyDetails += "Host Exclusions: " + this.hostExclusions + "\n";
             }
         }
         return proxyDetails + "\n";

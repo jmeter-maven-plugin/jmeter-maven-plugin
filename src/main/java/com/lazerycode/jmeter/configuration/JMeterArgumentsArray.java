@@ -138,6 +138,7 @@ public class JMeterArgumentsArray {
 		if (UtilityFunctions.isNotSet(value) || disableTests) return;
 		testFile = value.getAbsolutePath();
 		if (timestampResults) {
+			//TODO investigate when timestamp is generated.
 			if (appendTimestamp) {
 				resultsLogFileName = resultsDirectory + File.separator + value.getName().substring(0, value.getName().lastIndexOf(".")) + "-" + dateFormat.print(new LocalDateTime()) + ".jtl";
 			} else {

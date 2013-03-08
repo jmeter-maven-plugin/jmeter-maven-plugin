@@ -135,11 +135,15 @@ public class JMeterArgumentsArrayTest {
 
 		assertThat(UtilityFunctions.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()),
 				is(equalTo("-n -t " + testFilePath + " -l " + testArgs.getResultsLogFileName() + " -d target/jmeter/ -H http://10.10.50.43 -P 8080")));
+		assertThat(proxyConfiguration.toString(),
+				is(equalTo("Proxy Details:\n\nHost: http://10.10.50.43:8080\n\n")));
 	}
 
 	@Test
 	public void validateJMeterSetProxyUsername() throws Exception {
 		ProxyConfiguration proxyConfiguration = new ProxyConfiguration();
+		proxyConfiguration.setHost("http://10.10.50.43");
+		proxyConfiguration.setPort(8080);
 		proxyConfiguration.setUsername("god");
 		JMeterArgumentsArray testArgs = new JMeterArgumentsArray(disableGUI, "target/jmeter/");
 		testArgs.setTestFile(new File(this.testFile.toURI()));
@@ -147,12 +151,16 @@ public class JMeterArgumentsArrayTest {
 		testArgs.setProxyConfig(proxyConfiguration);
 
 		assertThat(UtilityFunctions.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()),
-				is(equalTo("-n -t " + testFilePath + " -l " + testArgs.getResultsLogFileName() + " -d target/jmeter/ -u god")));
+				is(equalTo("-n -t " + testFilePath + " -l " + testArgs.getResultsLogFileName() + " -d target/jmeter/ -H http://10.10.50.43 -P 8080 -u god")));
+		assertThat(proxyConfiguration.toString(),
+				is(equalTo("Proxy Details:\n\nHost: http://10.10.50.43:8080\nUsername: god\n\n")));
 	}
 
 	@Test
 	public void validateJMeterSetProxyPassword() throws Exception {
 		ProxyConfiguration proxyConfiguration = new ProxyConfiguration();
+		proxyConfiguration.setHost("http://10.10.50.43");
+		proxyConfiguration.setPort(8080);
 		proxyConfiguration.setPassword("changeme");
 		JMeterArgumentsArray testArgs = new JMeterArgumentsArray(disableGUI, "target/jmeter/");
 		testArgs.setTestFile(new File(this.testFile.toURI()));
@@ -160,20 +168,36 @@ public class JMeterArgumentsArrayTest {
 		testArgs.setProxyConfig(proxyConfiguration);
 
 		assertThat(UtilityFunctions.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()),
-				is(equalTo("-n -t " + testFilePath + " -l " + testArgs.getResultsLogFileName() + " -d target/jmeter/ -a changeme")));
+				is(equalTo("-n -t " + testFilePath + " -l " + testArgs.getResultsLogFileName() + " -d target/jmeter/ -H http://10.10.50.43 -P 8080 -a changeme")));
+		assertThat(proxyConfiguration.toString(),
+				is(equalTo("Proxy Details:\n\nHost: http://10.10.50.43:8080\nPassword: changeme\n\n")));
 	}
 
 	@Test
 	public void validateSetNonProxyHosts() throws Exception {
 		ProxyConfiguration proxyConfiguration = new ProxyConfiguration();
+		proxyConfiguration.setHost("http://10.10.50.43");
+		proxyConfiguration.setPort(8080);
 		proxyConfiguration.setHostExclusions("localhost|*.lazerycode.com");
 		JMeterArgumentsArray testArgs = new JMeterArgumentsArray(disableGUI, "target/jmeter/");
 		testArgs.setTestFile(new File(this.testFile.toURI()));
-
 		testArgs.setProxyConfig(proxyConfiguration);
 
 		assertThat(UtilityFunctions.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()),
-				is(equalTo("-n -t " + testFilePath + " -l " + testArgs.getResultsLogFileName() + " -d target/jmeter/ -N localhost|*.lazerycode.com")));
+				is(equalTo("-n -t " + testFilePath + " -l " + testArgs.getResultsLogFileName() + " -d target/jmeter/ -H http://10.10.50.43 -P 8080 -N localhost|*.lazerycode.com")));
+		assertThat(proxyConfiguration.toString(),
+				is(equalTo("Proxy Details:\n\nHost: http://10.10.50.43:8080\nHost Exclusions: localhost|*.lazerycode.com\n\n")));
+	}
+
+	@Test
+	public void checkProxyDetailsReturnedWhenHostAndPortNotSet(){
+		ProxyConfiguration proxyConfiguration = new ProxyConfiguration();
+		proxyConfiguration.setUsername("god");
+		proxyConfiguration.setPassword("changeme");
+		proxyConfiguration.setHostExclusions("localhost|*.lazerycode.com");
+
+		assertThat(proxyConfiguration.toString(),
+				is(equalTo("Proxy server is not being used.\n")));
 	}
 
 	@Test

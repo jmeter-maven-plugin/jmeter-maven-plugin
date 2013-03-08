@@ -19,6 +19,7 @@ import static com.lazerycode.jmeter.configuration.JMeterCommandLineArguments.*;
  */
 public class JMeterArgumentsArray {
 
+	private final String jMeterHome;
 	private final boolean disableTests;
 	private TreeSet<JMeterCommandLineArguments> argumentList = new TreeSet<JMeterCommandLineArguments>();
 	private DateTimeFormatter dateFormat = ISODateTimeFormat.dateTime();
@@ -33,7 +34,6 @@ public class JMeterArgumentsArray {
 	private String customPropertiesFile;
 	private String testFile;
 	private String resultsLogFileName;
-	private String jMeterHome;
 	private String resultsDirectory;
 	private LogLevel overrideRootLogLevel;
 
@@ -45,9 +45,7 @@ public class JMeterArgumentsArray {
 	 * @throws MojoExecutionException
 	 */
 	public JMeterArgumentsArray(boolean disableGUI, String jMeterHomeDirectory) throws MojoExecutionException {
-		if (isNotSet(jMeterHomeDirectory)) {
-			throw new MojoExecutionException("Unable to set JMeter Home Directory...");
-		}
+		if (isNotSet(jMeterHomeDirectory)) throw new MojoExecutionException("Unable to set JMeter Home Directory...");
 		jMeterHome = jMeterHomeDirectory;
 		argumentList.add(JMETER_HOME_OPT);
 		if (disableGUI) {

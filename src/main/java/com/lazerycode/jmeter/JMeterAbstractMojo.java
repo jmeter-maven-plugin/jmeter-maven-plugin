@@ -21,6 +21,8 @@ import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+import static com.lazerycode.jmeter.UtilityFunctions.isSet;
+
 /**
  * JMeter Maven plugin.
  * This is a base class for the JMeter mojos.
@@ -346,10 +348,12 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 		if (testResultsTimestamp) {
 			testArgs.setResultsTimestamp(testResultsTimestamp);
 			testArgs.appendTimestamp(appendResultsTimestamp);
-			try {
-				testArgs.setResultsFileNameDateFormat(DateTimeFormat.forPattern(resultsFileNameDateFormat));
-			} catch (Exception ex) {
-				getLog().error("'" + resultsFileNameDateFormat + "' is an invalid DateTimeFormat.  Defaulting to Standard ISO_8601.");
+			if (isSet(resultsFileNameDateFormat)) {
+				try {
+					testArgs.setResultsFileNameDateFormat(DateTimeFormat.forPattern(resultsFileNameDateFormat));
+				} catch (Exception ex) {
+					getLog().error("'" + resultsFileNameDateFormat + "' is an invalid DateTimeFormat.  Defaulting to Standard ISO_8601.");
+				}
 			}
 		}
 		testArgs.setProxyConfig(proxyConfig);

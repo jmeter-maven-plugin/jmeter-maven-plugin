@@ -23,7 +23,7 @@ public class JMeterArgumentsArray {
 	private final String jMeterHome;
 	private final boolean disableTests;
 	private final TreeSet<JMeterCommandLineArguments> argumentList = new TreeSet<JMeterCommandLineArguments>();
-	private DateTimeFormatter dateFormat = ISODateTimeFormat.dateTime();
+	private DateTimeFormatter dateFormat = ISODateTimeFormat.basicDate();
 	private ProxyConfiguration proxyConfiguration;
 	private boolean timestampResults = true;
 	private boolean appendTimestamp = false;

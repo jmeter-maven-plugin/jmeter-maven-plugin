@@ -15,7 +15,7 @@ public class PropertyContainerTest {
     @Test
     public void checkGetProperty() throws Exception {
         Properties propertiesFile = new Properties();
-        propertiesFile.load(new FileInputStream(new File(this.getClass().getResource("/jmeter.properties").toURI())));
+        propertiesFile.load(new FileInputStream(new File(this.getClass().getResource("/testSource.properties").toURI())));
         PropertyContainer propertyContainer = new PropertyContainer();
         propertyContainer.setFinalPropertyObject(propertiesFile);
 
@@ -27,8 +27,8 @@ public class PropertyContainerTest {
     public void propertyReturnCustomWhenBothExist() throws Exception {
         Properties propertiesDefault = new Properties();
         Properties propertiesCustom = new Properties();
-        propertiesDefault.load(new FileInputStream(new File(this.getClass().getResource("/jmeter.properties").toURI())));
-        propertiesCustom.load(new FileInputStream(new File(this.getClass().getResource("/custom.properties").toURI())));
+        propertiesDefault.load(new FileInputStream(new File(this.getClass().getResource("/testSource.properties").toURI())));
+        propertiesCustom.load(new FileInputStream(new File(this.getClass().getResource("/testAdditions.properties").toURI())));
         PropertyContainer propertyContainer = new PropertyContainer();
         propertyContainer.setDefaultPropertyObject(propertiesDefault);
         propertyContainer.setCustomPropertyObject(propertiesCustom);
@@ -45,7 +45,7 @@ public class PropertyContainerTest {
     @Test
     public void propertyReturnDefaultTest() throws Exception {
         Properties propertiesFile = new Properties();
-        propertiesFile.load(new FileInputStream(new File(this.getClass().getResource("/jmeter.properties").toURI())));
+        propertiesFile.load(new FileInputStream(new File(this.getClass().getResource("/testSource.properties").toURI())));
         PropertyContainer propertyContainer = new PropertyContainer();
         propertyContainer.setDefaultPropertyObject(propertiesFile);
         Properties mergedProperties = propertyContainer.getBasePropertiesObject();
@@ -61,7 +61,7 @@ public class PropertyContainerTest {
     @Test
     public void propertyReturnCustomTest() throws Exception {
         Properties propertiesCustom = new Properties();
-        propertiesCustom.load(new FileInputStream(new File(this.getClass().getResource("/custom.properties").toURI())));
+        propertiesCustom.load(new FileInputStream(new File(this.getClass().getResource("/testAdditions.properties").toURI())));
         PropertyContainer propertyContainer = new PropertyContainer();
         propertyContainer.setCustomPropertyObject(propertiesCustom);
         Properties mergedProperties = propertyContainer.getBasePropertiesObject();

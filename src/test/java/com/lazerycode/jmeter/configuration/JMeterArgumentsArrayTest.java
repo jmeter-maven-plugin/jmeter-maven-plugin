@@ -10,8 +10,6 @@ import org.junit.Test;
 import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.Map;
-import java.util.Set;
 
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -25,16 +23,6 @@ public class JMeterArgumentsArrayTest {
 	private final boolean disableGUI = true;
 	private final boolean enableGUI = false;
 	private String testFilePath;
-
-	String argumentsMapToString(Map<String, String> value, JMeterCommandLineArguments type) {
-		String arguments = "";
-		Set<String> globalPropertySet = value.keySet();
-		for (String property : globalPropertySet) {
-			arguments += type.getCommandLineArgument() + " ";
-			arguments += property + "=" + value.get(property) + " ";
-		}
-		return arguments.trim();
-	}
 
 	@Before
 	public void setTestFileAbsolutePath() throws URISyntaxException {
@@ -298,36 +286,36 @@ public class JMeterArgumentsArrayTest {
 	@Test
 	public void validateTestFileTimestampDisabled() throws Exception {
 		JMeterArgumentsArray testArgs = new JMeterArgumentsArray(disableGUI, "target/jmeter/");
-		testArgs.setResultsDirectory("/tmp");
+		testArgs.setResultsDirectory(File.separator + "tmp");
 		testArgs.setResultsTimestamp(false);
 		testArgs.setTestFile(new File(this.testFile.toURI()));
 
 		assertThat(UtilityFunctions.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()),
-				is(equalTo("-n -t " + testFilePath + " -l " + "/tmp/test.jtl" + " -d target/jmeter/")));
+				is(equalTo("-n -t " + testFilePath + " -l " + File.separator + "tmp" + File.separator + "test.jtl" + " -d target/jmeter/")));
 	}
 
 	@Test
 	public void validateTestFileTimestampEnabledAndPrepended() throws Exception {
 		JMeterArgumentsArray testArgs = new JMeterArgumentsArray(disableGUI, "target/jmeter/");
-		testArgs.setResultsDirectory("/tmp");
+		testArgs.setResultsDirectory(File.separator + "tmp");
 		testArgs.setResultsTimestamp(true);
 		testArgs.setResultsFileNameDateFormat(DateTimeFormat.forPattern("YYYY"));
 		testArgs.setTestFile(new File(this.testFile.toURI()));
 
 		assertThat(UtilityFunctions.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()),
-				is(equalTo("-n -t " + testFilePath + " -l " + "/tmp/" + timestamp + "-test.jtl" + " -d target/jmeter/")));
+				is(equalTo("-n -t " + testFilePath + " -l " + File.separator + "tmp" + File.separator + timestamp + "-test.jtl" + " -d target/jmeter/")));
 	}
 
 	@Test
 	public void validateTestFileTimestampEnabledAndAppended() throws Exception {
 		JMeterArgumentsArray testArgs = new JMeterArgumentsArray(disableGUI, "target/jmeter/");
-		testArgs.setResultsDirectory("/tmp");
+		testArgs.setResultsDirectory(File.separator + "tmp");
 		testArgs.setResultsTimestamp(true);
 		testArgs.appendTimestamp(true);
 		testArgs.setResultsFileNameDateFormat(DateTimeFormat.forPattern("YYYY"));
 		testArgs.setTestFile(new File(this.testFile.toURI()));
 
 		assertThat(UtilityFunctions.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()),
-				is(equalTo("-n -t " + testFilePath + " -l " + "/tmp/test-" + timestamp + ".jtl" + " -d target/jmeter/")));
+				is(equalTo("-n -t " + testFilePath + " -l " + File.separator + "tmp" + File.separator + "test-" + timestamp + ".jtl" + " -d target/jmeter/")));
 	}
 }

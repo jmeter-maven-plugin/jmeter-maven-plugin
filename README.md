@@ -3,7 +3,7 @@ Maven JMeter Plugin
 
 The Maven JMeter Plugin allows you to automate JMeter tests in Maven.
 
-Current Version In Maven Central: 1.8.0
+*Current Version In Maven Central: 1.8.0*
 
 *PLEASE NOTE: The Group ID and Artifact ID have changed since version 1.4!*
 -----

@@ -40,6 +40,7 @@ public class JMeterMojo extends JMeterAbstractMojo {
 		getLog().info("-------------------------------------------------------");
 		getLog().info(" ");
 		generateJMeterDirectoryTree();
+		setJMeterResultFileFormat();
 		propertyConfiguration();
 		populateJMeterDirectoryTree();
 		initialiseJMeterArgumentsArray(true);

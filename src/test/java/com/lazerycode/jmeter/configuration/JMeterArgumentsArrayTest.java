@@ -318,4 +318,44 @@ public class JMeterArgumentsArrayTest {
 		assertThat(UtilityFunctions.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()),
 				is(equalTo("-n -t " + testFilePath + " -l " + File.separator + "tmp" + File.separator + "test-" + timestamp + ".jtl" + " -d target/jmeter/")));
 	}
+
+	@Test
+	public void resultsFileIsCSVFormat() throws Exception{
+		JMeterArgumentsArray testArgs = new JMeterArgumentsArray(disableGUI, "target/jmeter/");
+		testArgs.setResultsDirectory(File.separator + "tmp");
+		testArgs.setResultFileOutputFormatIsCSV(true);
+		testArgs.setResultsTimestamp(true);
+		testArgs.setResultsFileNameDateFormat(DateTimeFormat.forPattern("YYYY"));
+		testArgs.setTestFile(new File(this.testFile.toURI()));
+
+		assertThat(testArgs.getResultsLogFileName(),
+				is(equalTo(File.separator + "tmp" + File.separator + timestamp + "-test.csv")));
+	}
+
+	@Test
+	public void resultsFileIsXMLFormat() throws Exception{
+		JMeterArgumentsArray testArgs = new JMeterArgumentsArray(disableGUI, "target/jmeter/");
+		testArgs.setResultsDirectory(File.separator + "tmp");
+		testArgs.setResultFileOutputFormatIsCSV(false);
+		testArgs.setResultsTimestamp(true);
+		testArgs.setResultsFileNameDateFormat(DateTimeFormat.forPattern("YYYY"));
+		testArgs.setTestFile(new File(this.testFile.toURI()));
+
+		assertThat(testArgs.getResultsLogFileName(),
+				is(equalTo(File.separator + "tmp" + File.separator + timestamp + "-test.jtl")));
+	}
+
+	@Test
+	public void resultsFileDefaultsToXMLFormat() throws Exception{
+		JMeterArgumentsArray testArgs = new JMeterArgumentsArray(disableGUI, "target/jmeter/");
+		testArgs.setResultsDirectory(File.separator + "tmp");
+		testArgs.setResultsTimestamp(true);
+		testArgs.setResultsFileNameDateFormat(DateTimeFormat.forPattern("YYYY"));
+		testArgs.setTestFile(new File(this.testFile.toURI()));
+
+
+
+		assertThat(testArgs.getResultsLogFileName(),
+				is(equalTo(File.separator + "tmp" + File.separator + timestamp + "-test.jtl")));
+	}
 }

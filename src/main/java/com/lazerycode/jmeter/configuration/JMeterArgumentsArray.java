@@ -27,6 +27,7 @@ public class JMeterArgumentsArray {
 	private ProxyConfiguration proxyConfiguration;
 	private boolean timestampResults = true;
 	private boolean appendTimestamp = false;
+	private String resultFileExtension = ".jtl";
 	private String remoteStartServerList;
 	private String customPropertiesFile;
 	private String testFile;
@@ -120,18 +121,26 @@ public class JMeterArgumentsArray {
 		return resultsLogFileName;
 	}
 
+	public void setResultFileOutputFormatIsCSV(boolean isCSVFormat) {
+		if (isCSVFormat) {
+			resultFileExtension = ".csv";
+		} else {
+			resultFileExtension = ".jtl";
+		}
+	}
+
 	public void setTestFile(File value) {
 		if (isNotSet(value) || disableTests) return;
 		testFile = value.getAbsolutePath();
 		if (timestampResults) {
 			//TODO investigate when timestamp is generated.
 			if (appendTimestamp) {
-				resultsLogFileName = resultsDirectory + File.separator + value.getName().substring(0, value.getName().lastIndexOf(".")) + "-" + dateFormat.print(new LocalDateTime()) + ".jtl";
+				resultsLogFileName = resultsDirectory + File.separator + value.getName().substring(0, value.getName().lastIndexOf(".")) + "-" + dateFormat.print(new LocalDateTime()) + resultFileExtension;
 			} else {
-				resultsLogFileName = resultsDirectory + File.separator + dateFormat.print(new LocalDateTime()) + "-" + value.getName().substring(0, value.getName().lastIndexOf(".")) + ".jtl";
+				resultsLogFileName = resultsDirectory + File.separator + dateFormat.print(new LocalDateTime()) + "-" + value.getName().substring(0, value.getName().lastIndexOf(".")) + resultFileExtension;
 			}
 		} else {
-			resultsLogFileName = resultsDirectory + File.separator + value.getName().substring(0, value.getName().lastIndexOf(".")) + ".jtl";
+			resultsLogFileName = resultsDirectory + File.separator + value.getName().substring(0, value.getName().lastIndexOf(".")) + resultFileExtension;
 		}
 		argumentList.add(TESTFILE_OPT);
 		argumentList.add(LOGFILE_OPT);

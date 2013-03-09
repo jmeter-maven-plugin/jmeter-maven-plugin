@@ -18,15 +18,15 @@ public enum JMeterCommandLineArguments {
     JMETER_GLOBAL_PROP("G"),    //DOCUMENTED
     LOGLEVEL("L"),              //DOCUMENTED
     PROPFILE2_OPT("q"),         //DOCUMENTED
-    REMOTE_OPT("r"),            //DOCUMENTED
     PROXY_HOST("H"),            //DOCUMENTED
     PROXY_PORT("P"),            //DOCUMENTED
     PROXY_USERNAME("u"),        //DOCUMENTED
     PROXY_PASSWORD("a"),        //DOCUMENTED
     NONPROXY_HOSTS("N"),        //DOCUMENTED
-    REMOTE_STOP("X"),           //DOCUMENTED
-    REMOTE_OPT_PARAM("R"),      //DOCUMENTED
     JMLOGFILE_OPT("j"),         //ALWAYS_SET - Test name is used for logfile name (<testname>.log).
+    REMOTE_OPT("r"),            //DOCUMENTED
+    REMOTE_OPT_PARAM("R"),      //DOCUMENTED
+    REMOTE_STOP("X"),           //DOCUMENTED
     PROPFILE_OPT("p"),          //NOT_USED - We place the jmeter.properties in the correct place on the filesystem.
     SERVER_OPT("s"),            //NOT_USED - We are never going to start up a server instance on the command line, we are only running tests.
     VERSION_OPT("v"),           //NOT_USED - Prints version information and exits.

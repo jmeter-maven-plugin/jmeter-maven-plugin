@@ -21,39 +21,22 @@ import java.util.List;
  */
 public class TestManager extends JMeterMojo {
 
-	private final JMeterArgumentsArray testArgs;
-	private final File logsDir;
+	private final JMeterArgumentsArray baseTestArgs;
+	private final File logsDirectory;
 	private final File testFilesDirectory;
 	private final List<String> testFilesIncluded;
 	private final List<String> testFilesExcluded;
 	private final boolean suppressJMeterOutput;
-	private boolean remoteStop = false;
-	private boolean remoteStartAll = false;
-	private boolean remoteStartAndStopOnce = true;
-	private File jmeterLog;
-	private String remoteStart = null;
+	private final RemoteConfiguration remoteServerConfiguration;
 
-	public TestManager(JMeterArgumentsArray testArgs, File logsDir, File testFilesDirectory, List<String> testFiles, List<String> excludeTestFiles, boolean suppressJMeterOutput) {
-		this.testArgs = testArgs;
-		this.logsDir = logsDir;
+	public TestManager(JMeterArgumentsArray baseTestArgs, File logsDirectory, File testFilesDirectory, List<String> testFilesIncluded, List<String> testFilesExcluded, RemoteConfiguration remoteServerConfiguration, boolean suppressJMeterOutput) {
+		this.baseTestArgs = baseTestArgs;
+		this.logsDirectory = logsDirectory;
 		this.testFilesDirectory = testFilesDirectory;
-		this.testFilesIncluded = testFiles;
-		this.testFilesExcluded = excludeTestFiles;
+		this.testFilesIncluded = testFilesIncluded;
+		this.testFilesExcluded = testFilesExcluded;
+		this.remoteServerConfiguration = remoteServerConfiguration;
 		this.suppressJMeterOutput = suppressJMeterOutput;
-	}
-
-	/**
-	 * Set remote configuration
-	 *
-	 * @param remoteConfig RemoteConfiguration
-	 */
-	public void setRemoteConfig(RemoteConfiguration remoteConfig) {
-		this.remoteStop = remoteConfig.isStop();
-		this.remoteStartAll = remoteConfig.isStartAll();
-		this.remoteStartAndStopOnce = remoteConfig.isStartAndStopOnce();
-		if (!UtilityFunctions.isNotSet(remoteConfig.getStart())) {
-			this.remoteStart = remoteConfig.getStart();
-		}
 	}
 
 	/**
@@ -63,17 +46,18 @@ public class TestManager extends JMeterMojo {
 	 * @throws MojoExecutionException
 	 */
 	public List<String> executeTests() throws MojoExecutionException {
+		JMeterArgumentsArray thisTestArgs = baseTestArgs;
 		List<String> tests = generateTestList();
 		List<String> results = new ArrayList<String>();
 		for (String file : tests) {
-			if (!this.remoteStartAndStopOnce || tests.get(tests.size() - 1).equals(file)) {
-				testArgs.setRemoteStop();
+			if ((remoteServerConfiguration.isStartServersBeforeTests() && tests.get(0).equals(file)) || remoteServerConfiguration.isStartAndStopServersForEachTest()) {
+				thisTestArgs.setRemoteStart();
+				thisTestArgs.setRemoteStartServerList(remoteServerConfiguration.getServerList());
 			}
-			if (!this.remoteStartAndStopOnce || tests.get(0).equals(file)) {
-				testArgs.setRemoteStartAll();
-				testArgs.setRemoteStart(this.remoteStart);
+			if ((remoteServerConfiguration.isStopServersAfterTests() && tests.get(tests.size() - 1).equals(file)) || remoteServerConfiguration.isStartAndStopServersForEachTest()) {
+				thisTestArgs.setRemoteStop();
 			}
-			results.add(executeSingleTest(new File(testFilesDirectory, file)));
+			results.add(executeSingleTest(new File(testFilesDirectory, file), thisTestArgs));
 		}
 		return results;
 	}
@@ -90,7 +74,7 @@ public class TestManager extends JMeterMojo {
 	 *          Exception
 	 */
 	@SuppressWarnings("ResultOfMethodCallIgnored")
-	private String executeSingleTest(File test) throws MojoExecutionException {
+	private String executeSingleTest(File test, JMeterArgumentsArray testArgs) throws MojoExecutionException {
 		getLog().info(" ");
 		testArgs.setTestFile(test);
 		//Delete results file if it already exists
@@ -133,8 +117,7 @@ public class TestManager extends JMeterMojo {
 	 * @param value String
 	 */
 	private void setJMeterLogFile(String value) {
-		this.jmeterLog = new File(this.logsDir + File.separator + value);
-		System.setProperty("log_file", this.jmeterLog.getAbsolutePath());
+		System.setProperty("log_file", new File(this.logsDirectory + File.separator + value).getAbsolutePath());
 	}
 
 	/**

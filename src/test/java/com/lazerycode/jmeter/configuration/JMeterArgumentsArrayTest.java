@@ -266,7 +266,7 @@ public class JMeterArgumentsArrayTest {
 		JMeterArgumentsArray testArgs = new JMeterArgumentsArray(disableGUI, "target/jmeter/");
 		testArgs.setTestFile(new File(this.testFile.toURI()));
 
-		testArgs.setRemoteStartAll();
+		testArgs.setRemoteStart();
 
 		assertThat(UtilityFunctions.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()),
 				is(equalTo("-n -t " + testFilePath + " -l " + testArgs.getResultsLogFileName() + " -d target/jmeter/ -r")));
@@ -277,7 +277,7 @@ public class JMeterArgumentsArrayTest {
 		JMeterArgumentsArray testArgs = new JMeterArgumentsArray(disableGUI, "target/jmeter/");
 		testArgs.setTestFile(new File(this.testFile.toURI()));
 
-		testArgs.setRemoteStart("server1, server2");
+		testArgs.setRemoteStartServerList("server1, server2");
 
 		assertThat(UtilityFunctions.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()),
 				is(equalTo("-n -t " + testFilePath + " -l " + testArgs.getResultsLogFileName() + " -d target/jmeter/ -R server1, server2")));

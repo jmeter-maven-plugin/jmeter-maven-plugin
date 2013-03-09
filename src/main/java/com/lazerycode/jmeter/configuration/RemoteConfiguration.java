@@ -1,17 +1,17 @@
 package com.lazerycode.jmeter.configuration;
 
 /**
- * This is used by the TestManager to configure remote start and stop settings for each test run.
+ * This is used by the TestManager to configure remote serverList and stopServersAfterTests settings for each test run.
  * <p/>
  * Configuration in pom.xml:
  * <p/>
  * <pre>
  * {@code
  * <remoteConfig>
- *     <stop></stop>
- *     <startAll></startAll>
- *     <start></start>
- *     <startAndStopOnce></startAndStopOnce>
+ *     <stopServersAfterTests></stopServersAfterTests>
+ *     <startServersBeforeTests></startServersBeforeTests>
+ *     <serverList></serverList>
+ *     <startAndStopServersForEachTest></startAndStopServersForEachTest>
  * </remoteConfig>
  * }
  * </pre>
@@ -20,76 +20,76 @@ package com.lazerycode.jmeter.configuration;
  */
 public class RemoteConfiguration {
 
-    private boolean stop = false;
-    private boolean startAll = false;
-    private String start = null;
-    private boolean startAndStopOnce = true;
+    private boolean startServersBeforeTests = false;
+    private boolean stopServersAfterTests = false;
+    private boolean startAndStopServersForEachTest = false;
+	private String serverList = null;
 
     /**
      * @return Stop remote servers when the test finishes
      */
-    public boolean isStop() {
-        return stop;
+    public boolean isStopServersAfterTests() {
+        return stopServersAfterTests;
     }
 
     /**
      * Stop remote servers when the test finishes
      * Default: {@link false Boolean.FALSE}
      *
-     * @param stop boolean
+     * @param stopServersAfterTests boolean
      */
-    public void setStop(boolean stop) {
-        this.stop = stop;
+    public void setStopServersAfterTests(boolean stopServersAfterTests) {
+        this.stopServersAfterTests = stopServersAfterTests;
     }
 
     /**
      * @return Start all remote servers as defined in jmeter.properties when the test starts
      */
-    public boolean isStartAll() {
-        return startAll;
+    public boolean isStartServersBeforeTests() {
+        return startServersBeforeTests;
     }
 
     /**
      * Start all remote servers as defined in jmeter.properties when the test starts
      * Default: {@link false Boolean.FALSE}
      *
-     * @param startAll boolean
+     * @param startServersBeforeTests boolean
      */
-    public void setStartAll(boolean startAll) {
-        this.startAll = startAll;
+    public void setStartServersBeforeTests(boolean startServersBeforeTests) {
+        this.startServersBeforeTests = startServersBeforeTests;
     }
 
     /**
-     * @return Comma separated list of servers to start when starting tests
+     * @return Comma separated list of servers to serverList when starting tests
      */
-    public String getStart() {
-        return start;
+    public String getServerList() {
+        return serverList;
     }
 
     /**
-     * Comma separated list of servers to start when starting tests
+     * Comma separated list of servers to serverList when starting tests
      *
-     * @param start String
+     * @param serverList String
      */
-    public void setStart(String start) {
-        this.start = start;
+    public void setServerList(String serverList) {
+        this.serverList = serverList;
     }
 
     /**
-     * @return Remote start and stop for every test, or once for the entire test suite of tests.
+     * @return Remote serverList and stopServersAfterTests for every test, or once for the entire test suite of tests.
      */
-    public boolean isStartAndStopOnce() {
-        return startAndStopOnce;
+    public boolean isStartAndStopServersForEachTest() {
+        return startAndStopServersForEachTest;
     }
 
     /**
-     * Remote start and stop for every test, or once for the entire test suite of tests.
+     * Remote serverList and stopServersAfterTests for every test, or once for the entire test suite of tests.
      * Default: {@link true Boolean.TRUE} (once for the entire suite of tests)
      *
-     * @param startAndStopOnce boolean
+     * @param startAndStopServersForEachTest boolean
      */
-    public void setStartAndStopOnce(boolean startAndStopOnce) {
-        this.startAndStopOnce = startAndStopOnce;
+    public void setStartAndStopServersForEachTest(boolean startAndStopServersForEachTest) {
+        this.startAndStopServersForEachTest = startAndStopServersForEachTest;
     }
 
     /**
@@ -99,6 +99,6 @@ public class RemoteConfiguration {
      */
     @Override
     public String toString() {
-        return "RemoteConfiguration [ " + "Start=" + getStart() + ", Stop=" + isStop() + ", StartAndStopOnce=" + isStartAndStopOnce() + ", StartAll=" + isStartAll() + " ]";
+        return "RemoteConfiguration [ " + "Start=" + getServerList() + ", Stop=" + isStopServersAfterTests() + ", StartAndStopOnce=" + isStartAndStopServersForEachTest() + ", StartAll=" + isStartServersBeforeTests() + " ]";
     }
 }

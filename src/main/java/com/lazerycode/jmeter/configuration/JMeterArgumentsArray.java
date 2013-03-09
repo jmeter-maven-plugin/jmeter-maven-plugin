@@ -27,7 +27,7 @@ public class JMeterArgumentsArray {
 	private ProxyConfiguration proxyConfiguration;
 	private boolean timestampResults = true;
 	private boolean appendTimestamp = false;
-	private String remoteStartList;
+	private String remoteStartServerList;
 	private String customPropertiesFile;
 	private String testFile;
 	private String resultsLogFileName;
@@ -57,13 +57,13 @@ public class JMeterArgumentsArray {
 		argumentList.add(REMOTE_STOP);
 	}
 
-	public void setRemoteStartAll() {
+	public void setRemoteStart() {
 		argumentList.add(REMOTE_OPT);
 	}
 
-	public void setRemoteStart(String remoteStart) {
-		if (isNotSet(remoteStart)) return;
-		remoteStartList = remoteStart;
+	public void setRemoteStartServerList(String serverList) {
+		if (isNotSet(serverList)) return;
+		remoteStartServerList = serverList;
 		argumentList.add(REMOTE_OPT_PARAM);
 	}
 
@@ -200,7 +200,7 @@ public class JMeterArgumentsArray {
 					break;
 				case REMOTE_OPT_PARAM:
 					argumentsArray.add(REMOTE_OPT_PARAM.getCommandLineArgument());
-					argumentsArray.add(remoteStartList);
+					argumentsArray.add(remoteStartServerList);
 					break;
 			}
 		}

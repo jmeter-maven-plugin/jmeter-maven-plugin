@@ -1,14 +1,18 @@
-#Maven JMeter Plugin
-===================
+#JMeter Maven Plugin
 
-The Maven JMeter Plugin allows you to automate JMeter tests in Maven.
+---
 
-Current Version In Maven Central: **1.8.0**
+The JMeter Maven Plugin allows you to automate JMeter tests in Maven.
 
-**PLEASE NOTE:** *The Group ID and Artifact ID have changed since version 1.4!*
------
+Current Version In Maven Central: **1.8.0** See the [release notes](https://github.com/Ronnie76er/jmeter-maven-plugin/wiki/Release-Notes) for change information.
+
+---
+
+**PLEASE NOTE:** _The Group ID and Artifact ID have changed since version 1.4!_
 
 This is to bring the project in line with maven naming practice for non-maven plugins and to enable us to upload to the Sonatype OSS repository.  This project is now in the maven central repository.
+
+---
 
 #Basic Usage
 -----
@@ -42,20 +46,17 @@ Once you have created your JMeter tests, you'll need to copy them to `<Project D
 
 All your tests will run in maven!
 
-#Community
+#Documentation
 -----
-
-## Release Notes
-
-The current release of this plugin is **1.8.0**.  See the [release notes](https://github.com/Ronnie76er/jmeter-maven-plugin/wiki/Release-Notes) for change information.
-
-## Documentation
 
 All the documentation you need to configure the plugin is available on the [github wiki](https://github.com/Ronnie76er/jmeter-maven-plugin/wiki).
 
 Beginners should start with the [Basic Configuration](https://github.com/Ronnie76er/jmeter-maven-plugin/wiki/Basic-Configuration) section.
 
 For advanced POM configuration settings have a look at the [Advanced Configuration](https://github.com/Ronnie76er/jmeter-maven-plugin/wiki/Advanced-Configuration) section.
+
+#Community
+-----
 
 ## Users Group
 

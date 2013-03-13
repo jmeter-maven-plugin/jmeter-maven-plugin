@@ -141,13 +141,11 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 	protected Map<String, String> propertiesSystem;
 
 	/**
-	 * Set a root log level to override all log levels used by JMeter
-	 * Valid log levels are: FATAL_ERROR, ERROR, WARN, INFO, DEBUG (They are not case sensitive);
-	 * If you try to set an invalid log level it will be ignored
+	 * Absolute path to JMeter custom (test dependent) properties file.
 	 *
-	 * @parameter default-value=""
+	 * @parameter
 	 */
-	protected String overrideRootLogLevel;
+	protected File customPropertiesFile;
 
 	/**
 	 * Replace the default JMeter properties with any custom properties files supplied.
@@ -156,22 +154,6 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 	 * @parameter default-value="true"
 	 */
 	protected boolean propertiesReplacedByCustomFiles;
-
-	/**
-	 * Absolute path to JMeter custom (test dependent) properties file.
-	 *
-	 * @parameter
-	 */
-	protected File customPropertiesFile;
-
-	/**
-	 * Sets whether FailureScanner should ignore failures in JMeter result file.
-	 * <p/>
-	 * Failures are for example failed requests
-	 *
-	 * @parameter expression="${jmeter.ignore.failure}" default-value=false
-	 */
-	protected boolean ignoreResultFailures;
 
 	/**
 	 * Value class that wraps all proxy configurations.
@@ -186,6 +168,24 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 	 * @parameter default-value="${remoteConfig}"
 	 */
 	protected RemoteConfiguration remoteConfig;
+
+	/**
+	 * Set a root log level to override all log levels used by JMeter
+	 * Valid log levels are: FATAL_ERROR, ERROR, WARN, INFO, DEBUG (They are not case sensitive);
+	 * If you try to set an invalid log level it will be ignored
+	 *
+	 * @parameter default-value=""
+	 */
+	protected String overrideRootLogLevel;
+
+	/**
+	 * Sets whether FailureScanner should ignore failures in JMeter result file.
+	 * <p/>
+	 * Failures are for example failed requests
+	 *
+	 * @parameter expression="${jmeter.ignore.failure}" default-value=false
+	 */
+	protected boolean ignoreResultFailures;
 
 	/**
 	 * Suppress JMeter output

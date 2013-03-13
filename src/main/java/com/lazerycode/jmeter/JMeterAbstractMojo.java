@@ -6,14 +6,14 @@ import com.lazerycode.jmeter.configuration.RemoteConfiguration;
 import com.lazerycode.jmeter.properties.PropertyHandler;
 import com.lazerycode.jmeter.threadhandling.JMeterPluginSecurityManager;
 import com.lazerycode.jmeter.threadhandling.JMeterPluginUncaughtExceptionHandler;
-import org.apache.commons.io.FileUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 import org.joda.time.format.DateTimeFormat;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +22,8 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 import static com.lazerycode.jmeter.UtilityFunctions.isSet;
+import static org.apache.commons.io.FileUtils.copyFile;
+import static org.apache.commons.io.FileUtils.copyInputStreamToFile;
 
 /**
  * JMeter Maven plugin.
@@ -294,19 +296,13 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 							// Only interested in files in the /bin directory that are not properties files
 							if (jarFileEntry.getName().startsWith("bin") && !jarFileEntry.getName().endsWith(".properties")) {
 								if (!jarFileEntry.isDirectory()) {
-									InputStream is = configSettings.getInputStream(jarFileEntry); // get the input stream
-									OutputStream os = new FileOutputStream(new File(workDir.getCanonicalPath() + File.separator + jarFileEntry.getName()));
-									while (is.available() > 0) {
-										os.write(is.read());
-									}
-									os.close();
-									is.close();
+									copyInputStreamToFile(configSettings.getInputStream(jarFileEntry), new File(workDir.getCanonicalPath() + File.separator + jarFileEntry.getName()));
 								}
 							}
 						}
 						configSettings.close();
 					} else {
-						FileUtils.copyFile(artifact.getFile(), new File(libExtDir + File.separator + artifact.getFile().getName()));
+						copyFile(artifact.getFile(), new File(libExtDir + File.separator + artifact.getFile().getName()));
 					}
 				} else {
 					/**
@@ -315,9 +311,9 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 					 * Most of the files pulled down by maven are required in /lib to match standard JMeter install
 					 */
 					if (Artifact.SCOPE_RUNTIME.equals(artifact.getScope())) {
-						FileUtils.copyFile(artifact.getFile(), new File(libExtDir + File.separator + artifact.getFile().getName()));
+						copyFile(artifact.getFile(), new File(libExtDir + File.separator + artifact.getFile().getName()));
 					} else {
-						FileUtils.copyFile(artifact.getFile(), new File(libDir + File.separator + artifact.getFile().getName()));
+						copyFile(artifact.getFile(), new File(libDir + File.separator + artifact.getFile().getName()));
 					}
 				}
 			} catch (IOException e) {

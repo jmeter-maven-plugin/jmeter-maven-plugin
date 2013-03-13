@@ -242,7 +242,7 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 	protected final String jmeterConfigArtifact = "ApacheJMeter_config";
 	protected JMeterArgumentsArray testArgs;
 	protected PropertyHandler pluginProperties;
-	protected boolean resultsOutputIsCSVFormat=false;
+	protected boolean resultsOutputIsCSVFormat = false;
 
 	//==================================================================================================================
 
@@ -251,15 +251,15 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 	 */
 	@SuppressWarnings("ResultOfMethodCallIgnored")
 	protected void generateJMeterDirectoryTree() {
-		this.logsDir = new File(this.workDir, "logs");
-		this.logsDir.mkdirs();
-		this.binDir = new File(this.workDir, "bin");
-		this.binDir.mkdirs();
-		this.libDir = new File(this.workDir, "lib");
-		this.resultsDir = new File(workDir, "results");
-		this.resultsDir.mkdirs();
-		this.libExtDir = new File(libDir, "ext");
-		this.libExtDir.mkdirs();
+		logsDir = new File(workDir, "logs");
+		logsDir.mkdirs();
+		binDir = new File(workDir, "bin");
+		binDir.mkdirs();
+		resultsDir = new File(workDir, "results");
+		resultsDir.mkdirs();
+		libDir = new File(workDir, "lib");
+		libExtDir = new File(libDir, "ext");
+		libExtDir.mkdirs();
 
 		//JMeter expects a <workdir>/lib/junit directory and complains if it can't find it.
 		new File(libDir, "junit").mkdirs();
@@ -283,7 +283,7 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 	 * @throws MojoExecutionException
 	 */
 	protected void populateJMeterDirectoryTree() throws MojoExecutionException {
-		for (Artifact artifact : this.pluginArtifacts) {
+		for (Artifact artifact : pluginArtifacts) {
 			try {
 				if (artifact.getArtifactId().startsWith("ApacheJMeter_")) {
 					if (artifact.getArtifactId().startsWith("ApacheJMeter_config")) {
@@ -295,7 +295,7 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 							if (jarFileEntry.getName().startsWith("bin") && !jarFileEntry.getName().endsWith(".properties")) {
 								if (!jarFileEntry.isDirectory()) {
 									InputStream is = configSettings.getInputStream(jarFileEntry); // get the input stream
-									OutputStream os = new FileOutputStream(new File(this.workDir.getCanonicalPath() + File.separator + jarFileEntry.getName()));
+									OutputStream os = new FileOutputStream(new File(workDir.getCanonicalPath() + File.separator + jarFileEntry.getName()));
 									while (is.available() > 0) {
 										os.write(is.read());
 									}
@@ -306,7 +306,7 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 						}
 						configSettings.close();
 					} else {
-						FileUtils.copyFile(artifact.getFile(), new File(this.libExtDir + File.separator + artifact.getFile().getName()));
+						FileUtils.copyFile(artifact.getFile(), new File(libExtDir + File.separator + artifact.getFile().getName()));
 					}
 				} else {
 					/**
@@ -315,9 +315,9 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 					 * Most of the files pulled down by maven are required in /lib to match standard JMeter install
 					 */
 					if (Artifact.SCOPE_RUNTIME.equals(artifact.getScope())) {
-						FileUtils.copyFile(artifact.getFile(), new File(this.libExtDir + File.separator + artifact.getFile().getName()));
+						FileUtils.copyFile(artifact.getFile(), new File(libExtDir + File.separator + artifact.getFile().getName()));
 					} else {
-						FileUtils.copyFile(artifact.getFile(), new File(this.libDir + File.separator + artifact.getFile().getName()));
+						FileUtils.copyFile(artifact.getFile(), new File(libDir + File.separator + artifact.getFile().getName()));
 					}
 				}
 			} catch (IOException e) {
@@ -337,7 +337,7 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 	 * @throws MojoExecutionException
 	 */
 	protected Artifact getArtifactNamed(String artifactName) throws MojoExecutionException {
-		for (Artifact artifact : this.pluginArtifacts) {
+		for (Artifact artifact : pluginArtifacts) {
 			if (artifact.getArtifactId().equals(artifactName)) {
 				return artifact;
 			}
@@ -371,13 +371,13 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 		testArgs.setLogRootOverride(overrideRootLogLevel);
 	}
 
-	protected void setJMeterResultFileFormat(){
+	protected void setJMeterResultFileFormat() {
 		if (resultsFileFormat.toLowerCase().equals("csv")) {
 			propertiesJMeter.put("jmeter.save.saveservice.output_format", "csv");
-			resultsOutputIsCSVFormat=true;
+			resultsOutputIsCSVFormat = true;
 		} else {
 			propertiesJMeter.put("jmeter.save.saveservice.output_format", "xml");
-			resultsOutputIsCSVFormat=false;
+			resultsOutputIsCSVFormat = false;
 		}
 	}
 

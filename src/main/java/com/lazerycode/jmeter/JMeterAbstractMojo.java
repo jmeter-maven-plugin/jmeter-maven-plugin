@@ -314,8 +314,7 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 				throw new MojoExecutionException("Unable to populate the JMeter directory tree: " + e);
 			}
 		}
-		//TODO Check if we really need to do this
-		//empty classpath, JMeter will automatically assemble and add all JARs in #libDir and #libExtDir and add them to the classpath. Otherwise all jars will be in the classpath twice.
+		//Clear down classpath and let JMeter manage it, errors will occur if this is not done.
 		System.setProperty("java.class.path", "");
 	}
 

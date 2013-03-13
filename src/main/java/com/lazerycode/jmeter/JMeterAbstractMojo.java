@@ -219,7 +219,7 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 	 */
 	protected boolean skipTests;
 
-	//---------------------------------------------------
+	//------------------------------------------------------------------------------------------------------------------
 
 	/**
 	 * JMeter outputs.
@@ -280,41 +280,35 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 	}
 
 	/**
-	 * Copy jars/files to correct place in the JMeter directory tree.
+	 * Create the JMeter directory tree and copy all compile time JMeter dependencies into it.
+	 * Generic compile time artifacts are copied into the libDir
+	 * ApacheJMeter_* artifacts are copied into the libExtDir
+	 * Runtime dependencies set by the user are also copied into the libExtDir
 	 *
 	 * @throws MojoExecutionException
 	 */
 	protected void populateJMeterDirectoryTree() throws MojoExecutionException {
 		for (Artifact artifact : pluginArtifacts) {
 			try {
-				if (artifact.getArtifactId().startsWith("ApacheJMeter_")) {
-					if (artifact.getArtifactId().startsWith("ApacheJMeter_config")) {
+				if (Artifact.SCOPE_COMPILE.equals(artifact.getScope()) && isArtifactAJMeterDependency(artifact)) {
+					if (artifact.getArtifactId().equals(jmeterConfigArtifact)) {
 						JarFile configSettings = new JarFile(artifact.getFile());
 						Enumeration<JarEntry> entries = configSettings.entries();
 						while (entries.hasMoreElements()) {
 							JarEntry jarFileEntry = entries.nextElement();
 							// Only interested in files in the /bin directory that are not properties files
-							if (jarFileEntry.getName().startsWith("bin") && !jarFileEntry.getName().endsWith(".properties")) {
-								if (!jarFileEntry.isDirectory()) {
-									copyInputStreamToFile(configSettings.getInputStream(jarFileEntry), new File(workDir.getCanonicalPath() + File.separator + jarFileEntry.getName()));
-								}
+							if (!jarFileEntry.isDirectory() && jarFileEntry.getName().startsWith("bin") && !jarFileEntry.getName().endsWith(".properties")) {
+								copyInputStreamToFile(configSettings.getInputStream(jarFileEntry), new File(workDir.getCanonicalPath() + File.separator + jarFileEntry.getName()));
 							}
 						}
 						configSettings.close();
-					} else {
-						copyFile(artifact.getFile(), new File(libExtDir + File.separator + artifact.getFile().getName()));
-					}
-				} else {
-					/**
-					 * TODO: exclude jars that maven put in #pluginArtifacts for maven run? (e.g. plexus jars, the plugin artifact itself)
-					 * Need more info on above, how do we know which ones to exclude??
-					 * Most of the files pulled down by maven are required in /lib to match standard JMeter install
-					 */
-					if (Artifact.SCOPE_RUNTIME.equals(artifact.getScope())) {
+					} else if (artifact.getArtifactId().startsWith("ApacheJMeter_")) {
 						copyFile(artifact.getFile(), new File(libExtDir + File.separator + artifact.getFile().getName()));
 					} else {
 						copyFile(artifact.getFile(), new File(libDir + File.separator + artifact.getFile().getName()));
 					}
+				} else if (Artifact.SCOPE_RUNTIME.equals(artifact.getScope())) {
+					copyFile(artifact.getFile(), new File(libExtDir + File.separator + artifact.getFile().getName()));
 				}
 			} catch (IOException e) {
 				throw new MojoExecutionException("Unable to populate the JMeter directory tree: " + e);
@@ -323,6 +317,21 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 		//TODO Check if we really need to do this
 		//empty classpath, JMeter will automatically assemble and add all JARs in #libDir and #libExtDir and add them to the classpath. Otherwise all jars will be in the classpath twice.
 		System.setProperty("java.class.path", "");
+	}
+
+	/**
+	 * Work out if an artifact is a JMeter dependency
+	 *
+	 * @param artifact Artifact to examine
+	 * @return true if a Jmeter dependency, false if a plugin dependency.
+	 */
+	protected boolean isArtifactAJMeterDependency(Artifact artifact) {
+		for (String dependency : artifact.getDependencyTrail()) {
+			if (dependency.contains("org.apache.jmeter:ApacheJMeter")) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**
@@ -340,7 +349,6 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 		}
 		throw new MojoExecutionException("Unable to find artifact '" + artifactName + "'!");
 	}
-
 
 	/**
 	 * Generate the initial JMeter Arguments array that is used to create the command line that we pass to JMeter.

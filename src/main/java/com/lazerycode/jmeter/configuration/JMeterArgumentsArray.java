@@ -25,7 +25,7 @@ public class JMeterArgumentsArray {
 	private final TreeSet<JMeterCommandLineArguments> argumentList = new TreeSet<JMeterCommandLineArguments>();
 	private DateTimeFormatter dateFormat = ISODateTimeFormat.basicDate();
 	private ProxyConfiguration proxyConfiguration;
-	private boolean timestampResults = true;
+	private boolean timestampResults = false;
 	private boolean appendTimestamp = false;
 	private String resultFileExtension = ".jtl";
 	private String remoteStartServerList;

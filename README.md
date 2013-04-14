@@ -80,9 +80,7 @@ You can see the state of the current codebase by looking at the [CI Server](http
 
 ## Website
 
-This is a work in progress at the moment, please use the documentation links above for more up to date documentation.
-
-[http://jmeter.lazerycode.com](http://jmeter.lazerycode.com)
+The official website is available at [http://jmeter.lazerycode.com](http://jmeter.lazerycode.com)
 
 #Contributing
 ------------

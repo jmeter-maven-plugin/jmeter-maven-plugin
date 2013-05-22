@@ -7,13 +7,20 @@ import com.lazerycode.jmeter.properties.PropertyHandler;
 import com.lazerycode.jmeter.threadhandling.JMeterPluginSecurityManager;
 import com.lazerycode.jmeter.threadhandling.JMeterPluginUncaughtExceptionHandler;
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.resolver.AbstractArtifactResolutionException;
+import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
+import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.MavenProjectBuilder;
+import org.apache.maven.project.ProjectBuildingException;
+import org.apache.maven.project.artifact.InvalidDependencyVersionException;
 import org.joda.time.format.DateTimeFormat;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
@@ -213,6 +220,32 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 	protected List<Artifact> pluginArtifacts;
 
 	/**
+	 * @component
+	 * */
+	private org.apache.maven.artifact.factory.ArtifactFactory artifactFactory;
+
+	/**
+	 * @component
+	 * */
+	private MavenProjectBuilder mavenProjectBuilder;
+
+	/**
+	 * @component
+	 * */
+	private org.apache.maven.artifact.resolver.ArtifactResolver resolver;
+
+	/**
+	 * @parameter default-value="${localRepository}"
+	 * */
+	private org.apache.maven.artifact.repository.ArtifactRepository localRepository;
+
+	/**
+	 * @parameter default-value="${project.remoteArtifactRepositories}"
+	 * */
+	@SuppressWarnings("rawtypes")
+	private java.util.List remoteRepositories;
+
+	/**
 	 * Skip the JMeter tests
 	 *
 	 * @parameter default-value="false"
@@ -241,7 +274,9 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 	/**
 	 * All property files are stored in this artifact, comes with JMeter library
 	 */
-	protected final String jmeterConfigArtifact = "ApacheJMeter_config";
+	protected final static String JMETER_CONFIG_ARTIFACTID = "ApacheJMeter_config";
+	protected final static String JMETER_GROUP_ID = "org.apache.jmeter";
+
 	protected JMeterArgumentsArray testArgs;
 	protected PropertyHandler pluginProperties;
 	protected boolean resultsOutputIsCSVFormat = false;
@@ -268,7 +303,7 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 	}
 
 	protected void propertyConfiguration() throws MojoExecutionException {
-		pluginProperties = new PropertyHandler(testFilesDirectory, binDir, getArtifactNamed(jmeterConfigArtifact), propertiesReplacedByCustomFiles);
+		pluginProperties = new PropertyHandler(testFilesDirectory, binDir, getArtifactNamed(JMETER_CONFIG_ARTIFACTID), propertiesReplacedByCustomFiles);
 		pluginProperties.setJMeterProperties(propertiesJMeter);
 		pluginProperties.setJMeterGlobalProperties(propertiesGlobal);
 		pluginProperties.setJMeterSaveServiceProperties(propertiesSaveService);
@@ -288,26 +323,36 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 	 * @throws MojoExecutionException
 	 */
 	protected void populateJMeterDirectoryTree() throws MojoExecutionException {
+		// Copy any jars required for libDir.
+		populateJMeterParentDependencies();
+
+		// Extract ApacheJMeter_config jar
+		Artifact configArtifact = artifactFactory.createArtifact(JMETER_GROUP_ID, JMETER_CONFIG_ARTIFACTID, "2.9", null, "jar");
+		try {
+			resolver.resolve(configArtifact, remoteRepositories, localRepository);
+			JarFile configSettings = new JarFile(configArtifact.getFile());
+			Enumeration<JarEntry> entries = configSettings.entries();
+
+			while (entries.hasMoreElements()) {
+				JarEntry jarFileEntry = entries.nextElement();
+				// Only interested in files in the /bin directory
+				// that are not properties files
+				if (!jarFileEntry.isDirectory() && jarFileEntry.getName().startsWith("bin") && !jarFileEntry.getName().endsWith(".properties")) {
+					copyInputStreamToFile(configSettings.getInputStream(jarFileEntry), new File(workDir.getCanonicalPath() + File.separator + jarFileEntry.getName()));
+				}
+			}
+
+			configSettings.close();
+		} catch (AbstractArtifactResolutionException e) {
+			throw new MojoExecutionException("Unable to find the JMeter " + JMETER_CONFIG_ARTIFACTID + " :" + e);
+		} catch (IOException e) {
+			throw new MojoExecutionException("Unable to extract the JMeter " + JMETER_CONFIG_ARTIFACTID + " jar :" + e);
+		}
+
+		// Copy Only ApacheJMeter dependencies to libExtDir
 		for (Artifact artifact : pluginArtifacts) {
 			try {
-				if (Artifact.SCOPE_COMPILE.equals(artifact.getScope()) && isArtifactAJMeterDependency(artifact)) {
-					if (artifact.getArtifactId().equals(jmeterConfigArtifact)) {
-						JarFile configSettings = new JarFile(artifact.getFile());
-						Enumeration<JarEntry> entries = configSettings.entries();
-						while (entries.hasMoreElements()) {
-							JarEntry jarFileEntry = entries.nextElement();
-							// Only interested in files in the /bin directory that are not properties files
-							if (!jarFileEntry.isDirectory() && jarFileEntry.getName().startsWith("bin") && !jarFileEntry.getName().endsWith(".properties")) {
-								copyInputStreamToFile(configSettings.getInputStream(jarFileEntry), new File(workDir.getCanonicalPath() + File.separator + jarFileEntry.getName()));
-							}
-						}
-						configSettings.close();
-					} else if (artifact.getArtifactId().startsWith("ApacheJMeter_")) {
-						copyFile(artifact.getFile(), new File(libExtDir + File.separator + artifact.getFile().getName()));
-					} else {
-						copyFile(artifact.getFile(), new File(libDir + File.separator + artifact.getFile().getName()));
-					}
-				} else if (Artifact.SCOPE_RUNTIME.equals(artifact.getScope())) {
+				if (isArtifactAJMeterDependency(artifact)) {
 					copyFile(artifact.getFile(), new File(libExtDir + File.separator + artifact.getFile().getName()));
 				}
 			} catch (IOException e) {
@@ -319,16 +364,60 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 	}
 
 	/**
+	 * This method copy ApacheJMeter_parent.pom dependencies to libDir. We DONOT
+	 * resolve transitively inorder to copy ONLY dependencies implicitly
+	 * declared at ApacheJMeter_parent.pom.
+	 * 
+	 * TODO -Get JMeter version from pom property e.g. jmeter.version
+	 * 
+	 * @throws MojoExecutionException
+	 */
+	protected void populateJMeterParentDependencies() throws MojoExecutionException {
+		try {
+			// Copy jorphan Artifact
+			Artifact jorphanArtifact = artifactFactory.createArtifact("org.apache.jmeter", "jorphan", "2.9", null, "jar");
+			resolver.resolve(jorphanArtifact, remoteRepositories, localRepository);
+			copyFile(jorphanArtifact.getFile(), new File(libDir + File.separator + jorphanArtifact.getFile().getName()));
+
+			// Copy All dependencies from ApacheJMeter_parent
+			Artifact pomArtifact = artifactFactory.createArtifact("org.apache.jmeter", "ApacheJMeter_parent", "2.9", null, "pom");
+			resolver.resolve(pomArtifact, remoteRepositories, localRepository);
+
+			MavenProject pomProject = mavenProjectBuilder.buildFromRepository(pomArtifact, remoteRepositories, localRepository);
+			@SuppressWarnings("unchecked")
+			Collection<Artifact> artifacts = (Collection<Artifact>) pomProject.createArtifacts(artifactFactory, null, null);
+
+			for (Artifact artifact : artifacts) {
+				resolver.resolve(artifact, remoteRepositories, localRepository);
+
+				if (Artifact.SCOPE_COMPILE.equals(artifact.getScope())) {
+					copyFile(artifact.getFile(), new File(libDir + File.separator + artifact.getFile().getName()));
+				}
+			}
+		} catch (ArtifactResolutionException e) {
+			throw new MojoExecutionException("Unable to populate the JMeter Parent Dependencies: " + e);
+		} catch (ArtifactNotFoundException e) {
+			throw new MojoExecutionException("Unable to populate the JMeter Parent Dependencies: " + e);
+		} catch (ProjectBuildingException e) {
+			throw new MojoExecutionException("Unable to populate the JMeter Parent Dependencies: " + e);
+		} catch (InvalidDependencyVersionException e) {
+			throw new MojoExecutionException("Unable to populate the JMeter Parent Dependencies: " + e);
+		} catch (IOException e) {
+			throw new MojoExecutionException("Unable to populate the JMeter Parent Dependencies: " + e);
+		}
+	}
+
+	/**
 	 * Work out if an artifact is a JMeter dependency
-	 *
-	 * @param artifact Artifact to examine
-	 * @return true if a Jmeter dependency, false if a plugin dependency.
+	 * 
+	 * @param artifact
+	 *            Artifact to examine
+	 * @return true if a Jmeter (ArtifactId Start with ApacheJMeter) dependency,
+	 *         false if a other dependency.
 	 */
 	protected boolean isArtifactAJMeterDependency(Artifact artifact) {
-		for (String dependency : artifact.getDependencyTrail()) {
-			if (dependency.contains("org.apache.jmeter:ApacheJMeter")) {
-				return true;
-			}
+		if (artifact.getArtifactId().startsWith("ApacheJMeter")) {
+			return true;
 		}
 		return false;
 	}

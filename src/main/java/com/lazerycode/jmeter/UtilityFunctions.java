@@ -9,8 +9,14 @@ import java.util.Map;
  *
  * @author Mark Collin
  */
-@SuppressWarnings("RedundantIfStatement")
 public final class UtilityFunctions {
+
+	/**
+	 * Make constructor private as this is a non-instantiable helper classes
+	 */
+	UtilityFunctions() throws AssertionError{
+		throw new AssertionError("This class is non-instantiable.");
+	}
 
 	/**
 	 * Build a human readable command line from the arguments set by the plugin

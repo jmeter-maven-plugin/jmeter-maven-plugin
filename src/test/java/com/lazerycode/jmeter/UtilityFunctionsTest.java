@@ -3,6 +3,8 @@ package com.lazerycode.jmeter;
 import org.junit.Test;
 
 import java.io.File;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 import static junit.framework.Assert.assertTrue;
@@ -68,5 +70,18 @@ public class UtilityFunctionsTest {
 				is(equalTo("bar")));
 		assertThat(UtilityFunctions.stripCarriageReturns("foo\nbar\r"),
 				is(equalTo("foobar")));
+	}
+
+	@Test
+	public void testTestPrivateConstructor() throws Exception {
+		Constructor<UtilityFunctions> utilityFunctions;
+		try {
+			utilityFunctions = UtilityFunctions.class.getDeclaredConstructor();
+			utilityFunctions.setAccessible(true);
+			utilityFunctions.newInstance();
+		} catch (InvocationTargetException e) {
+			assertThat(e.getTargetException().getMessage(),
+					is(equalTo("This class is non-instantiable.")));
+		}
 	}
 }

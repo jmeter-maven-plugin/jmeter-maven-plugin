@@ -3,6 +3,7 @@ package com.lazerycode.jmeter;
 import com.lazerycode.jmeter.testrunner.TestManager;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Mojo;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,6 +17,7 @@ import java.util.List;
  * @requiresProject true
  */
 @SuppressWarnings("JavaDoc")
+@Mojo(name="jmeter",requiresDirectInvocation=true)
 public class JMeterMojo extends JMeterAbstractMojo {
 
 	/**

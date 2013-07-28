@@ -4,14 +4,13 @@ import com.lazerycode.jmeter.JMeterMojo;
 import com.lazerycode.jmeter.UtilityFunctions;
 import com.lazerycode.jmeter.configuration.JMeterArgumentsArray;
 import com.lazerycode.jmeter.configuration.RemoteConfiguration;
-import com.lazerycode.jmeter.threadhandling.ExitException;
-import org.apache.commons.io.output.NullOutputStream;
-import org.apache.jmeter.NewDriver;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.tools.ant.DirectoryScanner;
 
+import java.io.BufferedReader;
 import java.io.File;
-import java.io.PrintStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -22,6 +21,7 @@ import java.util.List;
 public class TestManager extends JMeterMojo {
 
 	private final JMeterArgumentsArray baseTestArgs;
+	private final File binDir;
 	private final File logsDirectory;
 	private final File testFilesDirectory;
 	private final List<String> testFilesIncluded;
@@ -29,7 +29,8 @@ public class TestManager extends JMeterMojo {
 	private final boolean suppressJMeterOutput;
 	private final RemoteConfiguration remoteServerConfiguration;
 
-	public TestManager(JMeterArgumentsArray baseTestArgs, File logsDirectory, File testFilesDirectory, List<String> testFilesIncluded, List<String> testFilesExcluded, RemoteConfiguration remoteServerConfiguration, boolean suppressJMeterOutput) {
+	public TestManager(JMeterArgumentsArray baseTestArgs, File logsDirectory, File testFilesDirectory, List<String> testFilesIncluded, List<String> testFilesExcluded, RemoteConfiguration remoteServerConfiguration, boolean suppressJMeterOutput, File binDir) {
+		this.binDir = binDir;
 		this.baseTestArgs = baseTestArgs;
 		this.logsDirectory = logsDirectory;
 		this.testFilesDirectory = testFilesDirectory;
@@ -80,33 +81,33 @@ public class TestManager extends JMeterMojo {
 		//Delete results file if it already exists
 		new File(testArgs.getResultsLogFileName()).delete();
 		getLog().debug("JMeter is called with the following command line arguments: " + UtilityFunctions.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()));
-		SecurityManager originalSecurityManager = overrideSecurityManager();
-		Thread.UncaughtExceptionHandler originalExceptionHandler = overrideUncaughtExceptionHandler();
-		PrintStream originalOut = System.out;
 		setJMeterLogFile(test.getName() + ".log");
 		getLog().info("Executing test: " + test.getName());
+		//Start the test.
+		JMeterProcessBuilder JMeterProcessBuilder = new JMeterProcessBuilder();
+		JMeterProcessBuilder.setWorkingDirectory(binDir);
+		JMeterProcessBuilder.addArguments(testArgs.buildArgumentsArray());
 		try {
-			//Suppress JMeter's annoying System.out messages.
-			if (suppressJMeterOutput) System.setOut(new PrintStream(new NullOutputStream()));
-			//Start the test.
-			NewDriver.main(testArgs.buildArgumentsArray());
-			waitForTestToFinish(UtilityFunctions.getThreadNames(false));
-		} catch (ExitException e) {
-			if (e.getCode() != 0) {
-				throw new MojoExecutionException("Test failed", e);
+			final Process process = JMeterProcessBuilder.startProcess();
+			//Log process output
+			if (!suppressJMeterOutput) {
+				BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
+				String line;
+				while ((line = br.readLine()) != null) {
+					getLog().info(line);
+				}
 			}
+			int jMeterExitCode = process.waitFor();
+			if (jMeterExitCode != 0) {
+				throw new MojoExecutionException("Test failed");
+			}
+			getLog().info("Completed Test: " + test.getName());
 		} catch (InterruptedException ex) {
 			getLog().info(" ");
 			getLog().info("System Exit Detected!  Stopping Test...");
 			getLog().info(" ");
-		} finally {
-			//TODO wait for child thread shutdown here?
-			//TODO kill child threads if waited too long?
-			//Reset everything back to normal
-			System.setSecurityManager(originalSecurityManager);
-			Thread.setDefaultUncaughtExceptionHandler(originalExceptionHandler);
-			System.setOut(originalOut);
-			getLog().info("Completed Test: " + test.getName());
+		} catch (IOException e) {
+			getLog().error(e.getMessage());
 		}
 		return testArgs.getResultsLogFileName();
 	}

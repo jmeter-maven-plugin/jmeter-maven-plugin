@@ -44,16 +44,11 @@ public class JMeterMojo extends JMeterAbstractMojo {
 		propertyConfiguration();
 		populateJMeterDirectoryTree();
 		initialiseJMeterArgumentsArray(true);
-		TestManager jMeterTestManager = new TestManager(testArgs, logsDir, testFilesDirectory, testFilesIncluded, testFilesExcluded, remoteConfig, suppressJMeterOutput);
+		TestManager jMeterTestManager = new TestManager(testArgs, logsDir, testFilesDirectory, testFilesIncluded, testFilesExcluded, remoteConfig, suppressJMeterOutput, binDir);
 		getLog().info(" ");
 		getLog().info(this.proxyConfig.toString());
 		List<String> testResults = jMeterTestManager.executeTests();
 		parseTestResults(testResults);
-
-		// JMeter sets this system property. to "org.apache.commons.logging.impl.LogKitLogger".
-		// If another plugin is executed after this plugin that also uses (a third-party library that uses) commons-logging, but doesn't supply the same logger, execution will fail.
-		// TODO: may not work if SecurityManager is enabled. Needs PropertyPermission "key", "read,write" to work.
-		System.clearProperty("org.apache.commons.logging.Log");
 	}
 
 	/**

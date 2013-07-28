@@ -3,8 +3,7 @@ package com.lazerycode.jmeter;
 import org.junit.Test;
 
 import java.io.File;
-import java.util.Collections;
-import java.util.Map;
+import java.util.*;
 
 import static junit.framework.Assert.assertTrue;
 import static org.hamcrest.core.Is.is;
@@ -19,7 +18,7 @@ public class UtilityFunctionsTest {
 
 	@Test
 	public void humanReadableCommandLineOutputTest() {
-		String[] testArray = new String[]{"a", "b", "c", "d"};
+		List<String> testArray = new ArrayList<String>(Arrays.asList("a", "b", "c", "d"));
 
 		String returnValue = UtilityFunctions.humanReadableCommandLineOutput(testArray);
 

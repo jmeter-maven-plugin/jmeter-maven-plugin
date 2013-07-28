@@ -4,8 +4,6 @@ import com.lazerycode.jmeter.configuration.JMeterArgumentsArray;
 import com.lazerycode.jmeter.configuration.ProxyConfiguration;
 import com.lazerycode.jmeter.configuration.RemoteConfiguration;
 import com.lazerycode.jmeter.properties.PropertyHandler;
-import com.lazerycode.jmeter.threadhandling.JMeterPluginSecurityManager;
-import com.lazerycode.jmeter.threadhandling.JMeterPluginUncaughtExceptionHandler;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -17,7 +15,6 @@ import java.io.IOException;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
@@ -304,6 +301,8 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 						configSettings.close();
 					} else if (artifact.getArtifactId().startsWith("ApacheJMeter_")) {
 						copyFile(artifact.getFile(), new File(libExtDir + File.separator + artifact.getFile().getName()));
+					} else if (artifact.getArtifactId().equals("ApacheJMeter")) {
+						copyFile(artifact.getFile(), new File(binDir + File.separator + artifact.getArtifactId() + ".jar"));
 					} else {
 						copyFile(artifact.getFile(), new File(libDir + File.separator + artifact.getFile().getName()));
 					}
@@ -315,7 +314,8 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 			}
 		}
 		//Clear down classpath and let JMeter manage it, errors will occur if this is not done.
-		System.setProperty("java.class.path", "");
+		//TODO remove now in its own JVM
+//		System.setProperty("java.class.path", "");
 	}
 
 	/**
@@ -382,47 +382,5 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 			propertiesJMeter.put("jmeter.save.saveservice.output_format", "xml");
 			resultsOutputIsCSVFormat = false;
 		}
-	}
-
-	/**
-	 * Wait for one of the JMeterThreads in the list to stop.
-	 */
-	protected void waitForTestToFinish(List<String> threadNames) throws InterruptedException {
-		Thread waitThread = null;
-		Set<Thread> threadSet = Thread.getAllStackTraces().keySet();
-		for (Thread thread : threadSet) {
-			for (String threadName : threadNames) {
-				if (threadName.equals(thread.getName())) {
-					waitThread = thread;
-					break;
-				}
-			}
-		}
-		if (waitThread != null) {
-			waitThread.setUncaughtExceptionHandler(new JMeterPluginUncaughtExceptionHandler());
-			waitThread.join();
-		}
-	}
-
-	/**
-	 * Capture System.exit commands so that we can check to see if JMeter is trying to kill us without warning.
-	 *
-	 * @return old SecurityManager so that we can switch back to normal behaviour.
-	 */
-	protected SecurityManager overrideSecurityManager() {
-		SecurityManager oldManager = System.getSecurityManager();
-		System.setSecurityManager(new JMeterPluginSecurityManager());
-		return oldManager;
-	}
-
-	/**
-	 * Override System.exit(0) to ensure JMeter doesn't kill us without warning.
-	 *
-	 * @return old UncaughtExceptionHandler so that we can switch back to normal behaviour.
-	 */
-	protected Thread.UncaughtExceptionHandler overrideUncaughtExceptionHandler() {
-		Thread.UncaughtExceptionHandler oldHandler = Thread.getDefaultUncaughtExceptionHandler();
-		Thread.setDefaultUncaughtExceptionHandler(new JMeterPluginUncaughtExceptionHandler());
-		return oldHandler;
 	}
 }

@@ -7,6 +7,7 @@ import org.joda.time.format.ISODateTimeFormat;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.TreeSet;
 
 import static com.lazerycode.jmeter.UtilityFunctions.isNotSet;
@@ -153,9 +154,9 @@ public class JMeterArgumentsArray {
 	 * @return An array representing the command line sent to JMeter
 	 * @throws MojoExecutionException
 	 */
-	public String[] buildArgumentsArray() throws MojoExecutionException {
+	public List<String> buildArgumentsArray() throws MojoExecutionException {
 		if (!argumentList.contains(TESTFILE_OPT) && !disableTests) throw new MojoExecutionException("No test(s) specified!");
-		ArrayList<String> argumentsArray = new ArrayList<String>();
+		List<String> argumentsArray = new ArrayList<String>();
 		for (JMeterCommandLineArguments argument : argumentList) {
 			switch (argument) {
 				case NONGUI_OPT:
@@ -213,6 +214,6 @@ public class JMeterArgumentsArray {
 					break;
 			}
 		}
-		return argumentsArray.toArray(new String[argumentsArray.size()]);
+		return argumentsArray;
 	}
 }

@@ -1,8 +1,10 @@
 package com.lazerycode.jmeter;
 
-import org.apache.jmeter.NewDriver;
+import com.lazerycode.jmeter.testrunner.JMeterProcessBuilder;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+
+import java.io.IOException;
 
 /**
  * JMeter Maven plugin.
@@ -31,21 +33,20 @@ class JMeterGUIMojo extends JMeterAbstractMojo {
 		propertyConfiguration();
 		populateJMeterDirectoryTree();
 		initialiseJMeterArgumentsArray(false);
-		SecurityManager originalSecurityManager = overrideSecurityManager();
+		getLog().info("JMeter is called with the following command line arguments: " + UtilityFunctions.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()));
+		//Start The GUI
+		JMeterProcessBuilder JMeterProcessBuilder = new JMeterProcessBuilder();
+		JMeterProcessBuilder.setWorkingDirectory(binDir);
+		JMeterProcessBuilder.addArguments(testArgs.buildArgumentsArray());
 		try {
-			getLog().info("JMeter is called with the following command line arguments: " + UtilityFunctions.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()));
-			//start GUI
-			NewDriver.main(testArgs.buildArgumentsArray());
-			waitForTestToFinish(UtilityFunctions.getThreadNames(true));
-		} catch (InterruptedException e) {
+			final Process process = JMeterProcessBuilder.startProcess();
+			process.waitFor();
+		} catch (InterruptedException ex) {
 			getLog().info(" ");
-			getLog().info("Thread Interrupt Detected!  Shutting GUI Down...");
-			getLog().info("(Any interrupt stack trace after this point is expected)");
+			getLog().info("System Exit Detected!  Stopping GUI...");
 			getLog().info(" ");
-		} finally {
-			//Reset everything back to normal
-			System.setSecurityManager(originalSecurityManager);
+		} catch (IOException e) {
+			getLog().error(e.getMessage());
 		}
-
 	}
 }

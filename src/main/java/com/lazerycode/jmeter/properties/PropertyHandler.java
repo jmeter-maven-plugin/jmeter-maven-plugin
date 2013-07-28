@@ -47,7 +47,7 @@ public class PropertyHandler extends JMeterMojo {
 	 */
 	private void loadDefaultProperties(Artifact jMeterConfigArtifact) throws IOException {
 		for (JMeterPropertiesFiles propertyFile : JMeterPropertiesFiles.values()) {
-			if (propertyFile.createFileIfItDoesntExist()) {
+			if (propertyFile.createFileIfItDoesNotExist()) {
 				JarFile propertyJar = new JarFile(jMeterConfigArtifact.getFile());
 				InputStream sourceFile = propertyJar.getInputStream(propertyJar.getEntry("bin/" + propertyFile.getPropertiesFileName()));
 				Properties defaultPropertySet = new Properties();

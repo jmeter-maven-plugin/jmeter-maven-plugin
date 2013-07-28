@@ -73,7 +73,7 @@ public class UtilityFunctionsTest {
 	}
 
 	@Test
-	public void testTestPrivateConstructor() throws Exception {
+	public void checkPrivateConstructor() throws Exception {
 		Constructor<UtilityFunctions> utilityFunctions;
 		try {
 			utilityFunctions = UtilityFunctions.class.getDeclaredConstructor();

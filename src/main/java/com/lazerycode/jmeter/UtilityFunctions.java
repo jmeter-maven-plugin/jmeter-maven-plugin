@@ -13,12 +13,6 @@ import java.util.Map;
 public final class UtilityFunctions {
 
 	/**
-	 * Make constructor private as this is a non-instantiable helper classes
-	 */
-	private UtilityFunctions() {
-	}
-
-	/**
 	 * Build a human readable command line from the arguments set by the plugin
 	 *
 	 * @param arguments Array of String

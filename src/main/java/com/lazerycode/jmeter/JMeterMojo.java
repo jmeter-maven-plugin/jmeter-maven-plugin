@@ -17,7 +17,7 @@ import java.util.List;
  * @requiresProject true
  */
 @SuppressWarnings("JavaDoc")
-@Mojo(name="jmeter",requiresDirectInvocation=true)
+@Mojo(name = "jmeter", requiresDirectInvocation = true)
 public class JMeterMojo extends JMeterAbstractMojo {
 
 	/**

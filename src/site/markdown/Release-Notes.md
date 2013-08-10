@@ -4,6 +4,8 @@
 
 * Issue #56 - Now using a ProcessBuilder to isolate the JVM JMeter runs in.
 * Merge Pull request #70 from Erik G. H. Meade - Add requiresDirectInvocation true to JMeterMojo 
+* Issue #71 - Fixed documentation errors.
+* Issue #63 - Fixed remote configuration documentation errors.
 
 ##Version 1.8.1 Release Notes
 
@@ -23,12 +25,12 @@
 * Added the ability to set the result file format using **&lt;resultsFileFormat&gt;CSV&lt;/resultsFileFormat&gt;**.  Valid options are **XML** | **CSV**, it will default to XML.
 * Modified remote configuration settings, configuration options are now self explanitory:
 
-		<remoteConfiguration>
+		<remoteConfig>
 			<startAndStopServersForEachTest>false</startAndStopServersForEachTest>
 			<startServersBeforeTests>true</startServersBeforeTests>
 			<stopServersAfterTests>true</stopServersAfterTests>
 			<serverList>server1,server2</serverList>
-		</remoteConfiguration>
+		</remoteConfig>
 
 ##Version 1.7.0 Release Notes
 

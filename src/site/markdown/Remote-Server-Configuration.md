@@ -25,10 +25,10 @@ Setting the **&lt;stopServersAfterTests&gt;** option will result in a --remoteex
 						</execution>
 					</executions>
 					<configuration>
-						<remoteConfiguration>
+						<remoteConfig>
 							<startServersBeforeTests>true</startServersBeforeTests>
 							<stopServersAfterTests>true</stopServersAfterTests>
-						</remoteConfiguration>
+						</remoteConfig>
 					</configuration>
 				</plugin>
 			</plugins>
@@ -58,9 +58,9 @@ You can configure the plugin to perform a remote start and stop for each individ
 						</execution>
 					</executions>
 					<configuration>
-						<remoteConfiguration>
+						<remoteConfig>
 							<startAndStopServersForEachTest>false</startAndStopServersForEachTest>
-						</remoteConfiguration>
+						</remoteConfig>
 					</configuration>
 				</plugin>
 			</plugins>
@@ -90,11 +90,11 @@ Instead of starting all remote servers, you can specify which ones to start by u
 						</execution>
 					</executions>
 					<configuration>
-						<remoteConfiguration>
+						<remoteConfig>
                                <startServersBeforeTests>true</startServersBeforeTests>
 							<serverList>server1,server2</serverList>
 							<stopServersAfterTests>true</stopServersAfterTests>
-						</remoteConfiguration>
+						</remoteConfig>
 					</configuration>
 				</plugin>
 			</plugins>

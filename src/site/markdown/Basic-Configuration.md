@@ -44,4 +44,4 @@ To run the tests open a terminal/command prompt and then type:
 	cd ${project.base.directory}
 	mvn verify
 
-There are a series of configuration options available, see the [advanced configuration](https://github.com/Ronnie76er/jmeter-maven-plugin/wiki/Advanced-Configuration) section.
+There are a series of configuration options available, see the [advanced configuration](Advanced-Configuration) section.

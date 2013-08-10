@@ -5,7 +5,7 @@
 
 ***
 
-<a id="1"/>
+<a id="1" />
 ##How To &lt;overrideRootLogLevel&gt;
 
 You can specify a root log level for debug purposes.
@@ -40,7 +40,7 @@ You can specify a root log level for debug purposes.
 
 Setting the root log level will always override any settings for individual category log levels (as a result if the **&lt;overrideRootLogLevel&gt;** is set all category log levels set elsewhere will be ignored.
 
-<a id="2"/>
+<a id="2" />
 ##Individual Log Levels
 
 You can override individual log levels by setting them in your jmeter.properties file.  If you want to override them in the POM have a look at Adding [Additional Properties To **&lt;propertiesJMeter&gt;**](Modifying-Properties#wiki-1).

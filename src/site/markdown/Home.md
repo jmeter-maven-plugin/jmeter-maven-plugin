@@ -1,14 +1,14 @@
 ## Release Notes
 
-The current release of this plugin is **1.8.1**.  See the [release notes](https://github.com/Ronnie76er/jmeter-maven-plugin/wiki/Release-Notes) for change information.  This plugin requires **JDK 1.6** or higher.
+The current release of this plugin is **1.8.1**.  See the [release notes](./wiki/Release-Notes) for change information.  This plugin requires **JDK 1.6** or higher.
 
 ## Documentation
 
 All the documentation you need to configure the plugin is available on this wiki.
 
-Beginners should start with the [Basic Configuration](https://github.com/Ronnie76er/jmeter-maven-plugin/wiki/Basic-Configuration) section.
+Beginners should start with the [Basic Configuration](./wiki/Basic-Configuration) section.
 
-For advanced POM configuration settings have a look at the [Advanced Configuration](https://github.com/Ronnie76er/jmeter-maven-plugin/wiki/Advanced-Configuration) section.
+For advanced POM configuration settings have a look at the [Advanced Configuration](./wiki/Advanced-Configuration) section.
 
 ## Users Group
 

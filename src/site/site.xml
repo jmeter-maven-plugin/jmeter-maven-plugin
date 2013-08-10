@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<project xmlns="http://maven.apache.org/DECORATION/1.1.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/DECORATION/1.1.0 http://maven.apache.org/xsd/decoration-1.1.0.xsd"
+<project xmlns="http://maven.apache.org/DECORATION/1.4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/DECORATION/1.4.0 http://maven.apache.org/xsd/decoration-1.4.0.xsd"
          name="maven-jmeter-plugin documentation">
-
     <bannerLeft>
         <name>${project.name}</name>
         <alt>${project.name}</alt>
@@ -19,30 +17,27 @@
     <skin>
         <groupId>org.apache.maven.skins</groupId>
         <artifactId>maven-fluido-skin</artifactId>
-        <version>1.0</version>
+        <version>1.3.0</version>
     </skin>
 
     <body>
         <head/>
         <menu name="Overview">
-            <!-- TODO: move content from "index" to "basic usage" and write new text for index/about page -->
-            <item name="Basic Usage" href="index.html"/>
+            <item name="Home" href="Home.html"/>
+            <item name="Basic Configuration" href="Basic-Configuration.html"/>
         </menu>
         <menu name="Release Information">
-            <item name="Version 1.5.0" href="./notes/version1.5.0.html"/>
-            <item name="Version 1.4.1" href="./notes/version1.4.1.html"/>
-            <item name="Version 1.4.0" href="./notes/version1.4.html"/>
+            <item name="Release Notes" href="Release-Notes.html"/>
         </menu>
-        <menu name="Configuration">
-            <item name="Selecting Tests" href="./examples/running-tests.html"/>
-            <item name="JMeter Properties" href="./examples/setting-jmeter-properties.html"/>
-            <item name="User Properties" href="./examples/setting-user-properties.html"/>
-            <item name="Global Properties" href="./examples/setting-global-properties.html"/>
-            <item name="System Properties" href="./examples/setting-system-properties.html"/>
-            <item name="Saveservice Properties" href="./examples/setting-saveservice-properties.html"/>
-            <item name="Upgrade Properties" href="./examples/setting-upgrade-properties.html"/>
-            <item name="Proxy Settings" href="./examples/proxy-settings.html"/>
-            <item name="Remote Start And Stop" href="./examples/remote-start-and-stop.html"/>
+        <menu name="Advanced Configuration">
+            <item name="Advanced Configuration Overview" href="Advanced-Configuration.html"/>
+            <item name="Selecting Tests" href="Selecting-Tests-To-Run.html"/>
+            <item name="Test Results File Format" href="Test-Results-File-Format.html"/>
+            <item name="Log Levels" href="Log-Levels.html"/>
+            <item name="Modifying Properties" href="Modifying-Properties.html"/>
+            <item name="Proxy Configuration" href="Proxy-Configuration.html"/>
+            <item name="Remote Server Configuration" href="Remote-Server-Configuration.html"/>
+            <item name="Additional Configuration Options" href="Additional-Configuration-Options.html"/>
         </menu>
         <menu ref="reports"/>
     </body>

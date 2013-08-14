@@ -22,17 +22,15 @@ public class TestManager extends JMeterMojo {
 
 	private final JMeterArgumentsArray baseTestArgs;
 	private final File binDir;
-	private final File logsDirectory;
 	private final File testFilesDirectory;
 	private final List<String> testFilesIncluded;
 	private final List<String> testFilesExcluded;
 	private final boolean suppressJMeterOutput;
 	private final RemoteConfiguration remoteServerConfiguration;
 
-	public TestManager(JMeterArgumentsArray baseTestArgs, File logsDirectory, File testFilesDirectory, List<String> testFilesIncluded, List<String> testFilesExcluded, RemoteConfiguration remoteServerConfiguration, boolean suppressJMeterOutput, File binDir) {
+	public TestManager(JMeterArgumentsArray baseTestArgs, File testFilesDirectory, List<String> testFilesIncluded, List<String> testFilesExcluded, RemoteConfiguration remoteServerConfiguration, boolean suppressJMeterOutput, File binDir) {
 		this.binDir = binDir;
 		this.baseTestArgs = baseTestArgs;
-		this.logsDirectory = logsDirectory;
 		this.testFilesDirectory = testFilesDirectory;
 		this.testFilesIncluded = testFilesIncluded;
 		this.testFilesExcluded = testFilesExcluded;
@@ -81,7 +79,6 @@ public class TestManager extends JMeterMojo {
 		//Delete results file if it already exists
 		new File(testArgs.getResultsLogFileName()).delete();
 		getLog().debug("JMeter is called with the following command line arguments: " + UtilityFunctions.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()));
-		setJMeterLogFile(test.getName() + ".log");
 		getLog().info("Executing test: " + test.getName());
 		//Start the test.
 		JMeterProcessBuilder JMeterProcessBuilder = new JMeterProcessBuilder();
@@ -110,15 +107,6 @@ public class TestManager extends JMeterMojo {
 			getLog().error(e.getMessage());
 		}
 		return testArgs.getResultsLogFileName();
-	}
-
-	/**
-	 * Create the jmeter.log file and set the log_file system property for JMeter to pick up
-	 *
-	 * @param value String
-	 */
-	private void setJMeterLogFile(String value) {
-		System.setProperty("log_file", new File(this.logsDirectory + File.separator + value).getAbsolutePath());
 	}
 
 	/**

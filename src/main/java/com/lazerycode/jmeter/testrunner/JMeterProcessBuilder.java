@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class JMeterProcessBuilder {
 
@@ -13,7 +12,6 @@ public class JMeterProcessBuilder {
 	private int maximumHeapSizeInMegaBytes = 512;
 	private String workingDirectory;
 	private List<String> mainClassArguments = new ArrayList<String>();
-	public Map<String, String> env;
 
 	//TODO allow memory settings to be configured in POM
 	public int getInitialHeapSizeInMegabytes() {
@@ -67,7 +65,6 @@ public class JMeterProcessBuilder {
 		ProcessBuilder processBuilder = new ProcessBuilder(constructArgumentsList());
 		processBuilder.redirectErrorStream(true);
 		processBuilder.directory(new File(this.workingDirectory));
-		env = processBuilder.environment(); //TODO remove? debug only
 		return processBuilder.start();
 	}
 }

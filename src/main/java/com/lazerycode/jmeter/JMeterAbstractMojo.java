@@ -372,6 +372,7 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 		testArgs.setProxyConfig(proxyConfig);
 		testArgs.setACustomPropertiesFile(customPropertiesFile);
 		testArgs.setLogRootOverride(overrideRootLogLevel);
+		testArgs.setLogsDirectory(logsDir.getAbsolutePath());
 	}
 
 	protected void setJMeterResultFileFormat() {

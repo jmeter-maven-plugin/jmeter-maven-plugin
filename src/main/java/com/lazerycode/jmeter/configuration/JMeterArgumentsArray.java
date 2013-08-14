@@ -33,6 +33,8 @@ public class JMeterArgumentsArray {
 	private String customPropertiesFile;
 	private String testFile;
 	private String resultsLogFileName;
+	private String jmeterLogFileName;
+	private String logsDirectory;
 	private String resultsDirectory;
 	private LogLevel overrideRootLogLevel;
 
@@ -106,6 +108,10 @@ public class JMeterArgumentsArray {
 		this.resultsDirectory = resultsDirectory;
 	}
 
+	public void setLogsDirectory(String logsDirectory) {
+		this.logsDirectory = logsDirectory;
+	}
+
 	public void setResultsTimestamp(boolean addTimestamp) {
 		timestampResults = addTimestamp;
 	}
@@ -142,6 +148,10 @@ public class JMeterArgumentsArray {
 			}
 		} else {
 			resultsLogFileName = resultsDirectory + File.separator + value.getName().substring(0, value.getName().lastIndexOf(".")) + resultFileExtension;
+		}
+		if(isSet(logsDirectory)) {
+			jmeterLogFileName = logsDirectory + File.separator + value.getName() + ".log";
+			argumentList.add(JMLOGFILE_OPT);
 		}
 		argumentList.add(TESTFILE_OPT);
 		argumentList.add(LOGFILE_OPT);
@@ -211,6 +221,10 @@ public class JMeterArgumentsArray {
 				case REMOTE_OPT_PARAM:
 					argumentsArray.add(REMOTE_OPT_PARAM.getCommandLineArgument());
 					argumentsArray.add(remoteStartServerList);
+					break;
+				case JMLOGFILE_OPT:
+					argumentsArray.add(JMLOGFILE_OPT.getCommandLineArgument());
+					argumentsArray.add(jmeterLogFileName);
 					break;
 			}
 		}

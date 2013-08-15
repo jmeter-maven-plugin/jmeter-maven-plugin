@@ -46,6 +46,11 @@ Once you have created your JMeter tests, you'll need to copy them to `<Project D
 
 All your tests will run in maven!
 
+#Help
+----
+Run the HelpMojo of this plugin:
+`mvn jmeter:help -Ddetail=true -Dgoal=jmeter`
+
 #Documentation
 -----
 

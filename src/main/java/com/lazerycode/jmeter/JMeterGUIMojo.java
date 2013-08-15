@@ -3,6 +3,7 @@ package com.lazerycode.jmeter;
 import com.lazerycode.jmeter.testrunner.JMeterProcessBuilder;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Mojo;
 
 import java.io.IOException;
 
@@ -10,11 +11,9 @@ import java.io.IOException;
  * JMeter Maven plugin.
  *
  * @author Jarrod Ribble
- * @goal gui
- * @requiresProject true
  */
-@SuppressWarnings("JavaDoc")
-class JMeterGUIMojo extends JMeterAbstractMojo {
+@Mojo(name = "gui")
+public class JMeterGUIMojo extends JMeterAbstractMojo {
 
 	/**
 	 * Load the JMeter GUI

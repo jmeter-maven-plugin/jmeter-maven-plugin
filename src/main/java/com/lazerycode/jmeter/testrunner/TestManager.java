@@ -49,12 +49,14 @@ public class TestManager extends JMeterMojo {
 		List<String> tests = generateTestList();
 		List<String> results = new ArrayList<String>();
 		for (String file : tests) {
-			if ((remoteServerConfiguration.isStartServersBeforeTests() && tests.get(0).equals(file)) || remoteServerConfiguration.isStartAndStopServersForEachTest()) {
-				thisTestArgs.setRemoteStart();
-				thisTestArgs.setRemoteStartServerList(remoteServerConfiguration.getServerList());
-			}
-			if ((remoteServerConfiguration.isStopServersAfterTests() && tests.get(tests.size() - 1).equals(file)) || remoteServerConfiguration.isStartAndStopServersForEachTest()) {
-				thisTestArgs.setRemoteStop();
+			if(remoteServerConfiguration != null) {
+				if ((remoteServerConfiguration.isStartServersBeforeTests() && tests.get(0).equals(file)) || remoteServerConfiguration.isStartAndStopServersForEachTest()) {
+					thisTestArgs.setRemoteStart();
+					thisTestArgs.setRemoteStartServerList(remoteServerConfiguration.getServerList());
+				}
+				if ((remoteServerConfiguration.isStopServersAfterTests() && tests.get(tests.size() - 1).equals(file)) || remoteServerConfiguration.isStartAndStopServersForEachTest()) {
+					thisTestArgs.setRemoteStop();
+				}
 			}
 			results.add(executeSingleTest(new File(testFilesDirectory, file), thisTestArgs));
 		}

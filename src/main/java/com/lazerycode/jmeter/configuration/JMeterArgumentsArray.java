@@ -72,6 +72,8 @@ public class JMeterArgumentsArray {
 	}
 
 	public void setProxyConfig(ProxyConfiguration configuration) {
+		if(configuration == null) return;
+
 		this.proxyConfiguration = configuration;
 		if (isSet(proxyConfiguration.getHost())) {
 			argumentList.add(PROXY_HOST);

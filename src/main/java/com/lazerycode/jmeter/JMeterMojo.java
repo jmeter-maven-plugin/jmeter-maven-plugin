@@ -11,12 +11,7 @@ import java.util.List;
 
 /**
  * JMeter Maven plugin.
- *
- * @author Tim McCune
- * @goal jmeter
- * @requiresProject true
  */
-@SuppressWarnings("JavaDoc")
 @Mojo(name = "jmeter")
 public class JMeterMojo extends JMeterAbstractMojo {
 
@@ -48,7 +43,9 @@ public class JMeterMojo extends JMeterAbstractMojo {
 		initialiseJMeterArgumentsArray(true);
 		TestManager jMeterTestManager = new TestManager(testArgs, testFilesDirectory, testFilesIncluded, testFilesExcluded, remoteConfig, suppressJMeterOutput, binDir);
 		getLog().info(" ");
-		getLog().info(this.proxyConfig.toString());
+		if(proxyConfig != null) {
+			getLog().info(this.proxyConfig.toString());
+		}
 		List<String> testResults = jMeterTestManager.executeTests();
 		parseTestResults(testResults);
 	}

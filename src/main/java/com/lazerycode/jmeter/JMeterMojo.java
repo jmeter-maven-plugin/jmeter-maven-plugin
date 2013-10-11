@@ -41,6 +41,7 @@ public class JMeterMojo extends JMeterAbstractMojo {
 		propertyConfiguration();
 		populateJMeterDirectoryTree();
 		initialiseJMeterArgumentsArray(true);
+		remoteConfig.setMasterPropertiesMap(pluginProperties.getMasterPropertiesMap()); 
 		TestManager jMeterTestManager = new TestManager(testArgs, testFilesDirectory, testFilesIncluded, testFilesExcluded, remoteConfig, suppressJMeterOutput, binDir);
 		getLog().info(" ");
 		if(proxyConfig != null) {

@@ -19,6 +19,7 @@ import java.util.jar.JarFile;
 public class PropertyHandler extends JMeterMojo {
 
 	private final EnumMap<JMeterPropertiesFiles, PropertyContainer> masterPropertiesMap = new EnumMap<JMeterPropertiesFiles, PropertyContainer>(JMeterPropertiesFiles.class);
+
 	private File propertySourceDirectory;
 	private File propertyOutputDirectory;
 	private boolean replaceDefaultProperties;
@@ -77,6 +78,15 @@ public class PropertyHandler extends JMeterMojo {
 			}
 		}
 	}
+	
+	/**
+	 *  
+	 * @param props
+	 * @return PropertyContainer for jvm property access / non file based. 
+	 */
+	public PropertyContainer getPropertyContainer(JMeterPropertiesFiles props) { 
+		return masterPropertiesMap.get(props); 
+	}
 
 	/**
 	 * Check that the source directory exists, throw an error if it does not
@@ -107,6 +117,17 @@ public class PropertyHandler extends JMeterMojo {
 		this.propertyOutputDirectory = value;
 	}
 
+	/**
+	 * 
+	 * @return full property map for the application.
+	 */
+	//doesnt make sense to use the files for remote access as jmeter wont pick it up 
+	public EnumMap<JMeterPropertiesFiles, PropertyContainer> getMasterPropertiesMap() {
+		return masterPropertiesMap;
+	}
+
+	
+	
 	public void setJMeterProperties(Map<String, String> value) {
 		if (UtilityFunctions.isNotSet(value)) return;
 		this.getPropertyObject(JMeterPropertiesFiles.JMETER_PROPERTIES).setCustomPropertyMap(value);
@@ -137,7 +158,7 @@ public class PropertyHandler extends JMeterMojo {
 		this.getPropertyObject(JMeterPropertiesFiles.GLOBAL_PROPERTIES).setCustomPropertyMap(value);
 	}
 
-	PropertyContainer getPropertyObject(JMeterPropertiesFiles value) {
+	public PropertyContainer getPropertyObject(JMeterPropertiesFiles value) {
 		return this.masterPropertiesMap.get(value);
 	}
 

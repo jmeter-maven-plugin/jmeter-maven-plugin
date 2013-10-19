@@ -8,7 +8,7 @@ Current Version In Maven Central: **1.8.1** See the [release notes](https://gith
 
 ---
 
-**PLEASE NOTE:** _The Group ID and Artifact ID have changed since version 1.4!_
+**PLEASE NOTE:** _The Group ID and Artifact ID have changed since version 1.4! _
 
 This is to bring the project in line with maven naming practice for non-maven plugins and to enable us to upload to the Sonatype OSS repository.  This project is now in the maven central repository.
 

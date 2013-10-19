@@ -81,7 +81,7 @@ Group Email: [maven-jmeter-plugin-devs@googlegroups.com](mailto:maven-jmeter-plu
 
 ## Build Server
 
-You can see the state of the current codebase by looking at the [CI Server](http://ci.lazerycode.com/overview.html).
+You can see the state of the current codebase by looking at the [CI Server](http://build.lazerycode.com/overview.html).
 
 ## Website
 

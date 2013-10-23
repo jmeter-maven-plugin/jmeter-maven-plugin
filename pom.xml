@@ -11,7 +11,7 @@
 
     <groupId>com.lazerycode.jmeter</groupId>
     <artifactId>jmeter-maven-plugin</artifactId>
-    <version>1.9.0-SNAPSHOT</version>
+    <version>1.9.0-beta-1</version>
     <packaging>maven-plugin</packaging>
     <name>JMeter Maven Plugin</name>
     <description>A plugin to allow you to run JMeter tests with Maven.</description>
@@ -187,6 +187,11 @@
         <dependency>
             <groupId>org.apache.jmeter</groupId>
             <artifactId>ApacheJMeter_java</artifactId>
+            <version>${jmeter.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.jmeter</groupId>
+            <artifactId>ApacheJMeter_mongodb</artifactId>
             <version>${jmeter.version}</version>
         </dependency>
         <dependency>

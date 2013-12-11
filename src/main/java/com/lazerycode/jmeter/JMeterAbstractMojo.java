@@ -282,7 +282,7 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 					} else {
 						copyFile(artifact.getFile(), new File(libDir + File.separator + artifact.getFile().getName()));
 					}
-				} else if (Artifact.SCOPE_RUNTIME.equals(artifact.getScope())) {
+				} else if (Artifact.SCOPE_RUNTIME.equals(artifact.getScope()) || isArtifactNeededByExplicitDependency(artifact)) {
 					copyFile(artifact.getFile(), new File(libExtDir + File.separator + artifact.getFile().getName()));
 				}
 			} catch (IOException e) {

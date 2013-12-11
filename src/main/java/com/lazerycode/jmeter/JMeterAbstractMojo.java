@@ -5,8 +5,11 @@ import com.lazerycode.jmeter.configuration.ProxyConfiguration;
 import com.lazerycode.jmeter.configuration.RemoteConfiguration;
 import com.lazerycode.jmeter.properties.PropertyHandler;
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.descriptor.PluginDescriptor;
+import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.joda.time.format.DateTimeFormat;
 
@@ -173,6 +176,12 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 	protected List<Artifact> pluginArtifacts;
 
 	/**
+	 * The information extracted from the plugin-section of the pom of the project where the plugin is used
+	 */
+	@Component
+	protected PluginDescriptor pluginDescriptor;
+
+	/**
 	 * Skip the JMeter tests
 	 */
 	@Parameter(defaultValue = "false")
@@ -247,7 +256,14 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 	protected void populateJMeterDirectoryTree() throws MojoExecutionException {
 		for (Artifact artifact : pluginArtifacts) {
 			try {
-				if (Artifact.SCOPE_COMPILE.equals(artifact.getScope()) && isArtifactAJMeterDependency(artifact)) {
+				// All artifacts, that come from the dependencies section of the pom.xml of the jmeter-maven-plugin, have scope COMPILE.
+				// These artifacts fall in 3 categories:
+				// * Artifacts needed to build the jmeter-maven-plugin (such as org.apache.maven:maven-plugin-api)
+				// * Artifacts needed to run JMeter (see isArtifactAJMeterDependency())
+				// * Artifacts, that are direct dependencies of ApacheJMeter, but that are also dependencies of
+				//   some user-defined jmeter-plugin (see isArtifactNeededByExplicitDependency)
+				if (Artifact.SCOPE_COMPILE.equals(artifact.getScope()) &&
+						(isArtifactAJMeterDependency(artifact) || isArtifactNeededByExplicitDependency(artifact))) {
 					if (artifact.getArtifactId().equals(jmeterConfigArtifact)) {
 						JarFile configSettings = new JarFile(artifact.getFile());
 						Enumeration<JarEntry> entries = configSettings.entries();
@@ -276,6 +292,41 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 		//Clear down classpath and let JMeter manage it, errors will occur if this is not done.
 		//TODO remove now in its own JVM
 //		System.setProperty("java.class.path", "");
+	}
+
+	/**
+	 * Check if the given artifact is needed by an explicit dependency (a dependency, that is explicitly defined in
+	 * the pom of the project using the jmeter-maven-plugin).
+	 *
+	 * For example, consider the following pom:
+	 * <code>
+	 *     <plugin>
+	 *         <groupId>com.lazerycode.jmeter</groupId>
+	 *         <artifactId>jmeter-maven-plugin</artifactId>
+	 *         <dependencies>
+	 *             <dependency>
+	 *                 <groupId>kg.apc</groupId>
+	 *                 <artifactId>jmeter-plugins</artifactId>
+	 *             </dependency>
+	 *         </dependencies>
+	 *     </plugin>
+	 * </code>
+	 *
+	 * Now kg.apc:jmeter-plugins is an explicit dependency. And org.apache.jmeter:jorphan is a needed by this explicit dependency, so
+	 * isArtifactNeededByExplicitDependency(org.apache.jmeter:jorphan) would return true.
+	 *
+	 * @param artifact Artifact to examine
+	 * @return true if the given artifact is needed by a explicit dependency.
+	 */
+	protected boolean isArtifactNeededByExplicitDependency(Artifact artifact) {
+		List<Dependency> explizitDependencies = pluginDescriptor.getPlugin().getDependencies();
+		for (String parent: artifact.getDependencyTrail()) {
+			for (Dependency explicitDependency: explizitDependencies) {
+				if (parent.contains(explicitDependency.getGroupId() + ":" + explicitDependency.getArtifactId()))
+					return true;
+			}
+		}
+		return false;
 	}
 
 	/**

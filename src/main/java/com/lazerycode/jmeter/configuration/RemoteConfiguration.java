@@ -1,5 +1,10 @@
 package com.lazerycode.jmeter.configuration;
 
+import java.util.Map;
+
+import com.lazerycode.jmeter.properties.JMeterPropertiesFiles;
+import com.lazerycode.jmeter.properties.PropertyContainer;
+
 /**
  * This is used by the TestManager to configure remote serverList and stopServersAfterTests settings for each test run.
  * <p/>
@@ -24,8 +29,11 @@ public class RemoteConfiguration {
     private boolean stopServersAfterTests = false;
     private boolean startAndStopServersForEachTest = false;
 	private String serverList = null;
+	private Map<JMeterPropertiesFiles, PropertyContainer> masterPropertiesMap = null;
 
-    /**
+
+
+	/**
      * @return Stop remote servers when the test finishes
      */
     public boolean isStopServersAfterTests() {
@@ -49,7 +57,9 @@ public class RemoteConfiguration {
         return startServersBeforeTests;
     }
 
-    /**
+
+
+	/**
      * Start all remote servers as defined in jmeter.properties when the test starts
      * Default: {@link false Boolean.FALSE}
      *
@@ -101,4 +111,18 @@ public class RemoteConfiguration {
     public String toString() {
         return "RemoteConfiguration [ " + "Start=" + getServerList() + ", Stop=" + isStopServersAfterTests() + ", StartAndStopOnce=" + isStartAndStopServersForEachTest() + ", StartAll=" + isStartServersBeforeTests() + " ]";
     }
+    
+    
+    /**
+     *  
+     * @return propertycontainers with information specified in the various property sources. 
+     */
+    public Map<JMeterPropertiesFiles, PropertyContainer> getMasterPropertiesMap() {
+		return masterPropertiesMap;
+	}
+
+	public void setMasterPropertiesMap(
+			Map<JMeterPropertiesFiles, PropertyContainer> masterPropertiesMap) {
+		this.masterPropertiesMap = masterPropertiesMap;
+	}
 }

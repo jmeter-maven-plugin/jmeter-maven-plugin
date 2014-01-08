@@ -1,18 +1,40 @@
 package com.lazerycode.jmeter.configuration;
 
+import static com.lazerycode.jmeter.UtilityFunctions.isNotSet;
+import static com.lazerycode.jmeter.UtilityFunctions.isSet;
+import static com.lazerycode.jmeter.configuration.JMeterCommandLineArguments.JMETER_HOME_OPT;
+import static com.lazerycode.jmeter.configuration.JMeterCommandLineArguments.JMLOGFILE_OPT;
+import static com.lazerycode.jmeter.configuration.JMeterCommandLineArguments.LOGFILE_OPT;
+import static com.lazerycode.jmeter.configuration.JMeterCommandLineArguments.LOGLEVEL;
+import static com.lazerycode.jmeter.configuration.JMeterCommandLineArguments.NONGUI_OPT;
+import static com.lazerycode.jmeter.configuration.JMeterCommandLineArguments.NONPROXY_HOSTS;
+import static com.lazerycode.jmeter.configuration.JMeterCommandLineArguments.PROPFILE2_OPT;
+import static com.lazerycode.jmeter.configuration.JMeterCommandLineArguments.PROXY_HOST;
+import static com.lazerycode.jmeter.configuration.JMeterCommandLineArguments.PROXY_PASSWORD;
+import static com.lazerycode.jmeter.configuration.JMeterCommandLineArguments.PROXY_PORT;
+import static com.lazerycode.jmeter.configuration.JMeterCommandLineArguments.PROXY_USERNAME;
+import static com.lazerycode.jmeter.configuration.JMeterCommandLineArguments.REMOTE_OPT;
+import static com.lazerycode.jmeter.configuration.JMeterCommandLineArguments.REMOTE_OPT_PARAM;
+import static com.lazerycode.jmeter.configuration.JMeterCommandLineArguments.REMOTE_STOP;
+import static com.lazerycode.jmeter.configuration.JMeterCommandLineArguments.TESTFILE_OPT;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Properties;
+import java.util.TreeSet;
+
 import org.apache.maven.plugin.MojoExecutionException;
 import org.joda.time.LocalDateTime;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.TreeSet;
-
-import static com.lazerycode.jmeter.UtilityFunctions.isNotSet;
-import static com.lazerycode.jmeter.UtilityFunctions.isSet;
-import static com.lazerycode.jmeter.configuration.JMeterCommandLineArguments.*;
+import com.lazerycode.jmeter.properties.JMeterPropertiesFiles;
+import com.lazerycode.jmeter.properties.PropertyContainer;
+import com.lazerycode.jmeter.properties.PropertyHandler;
 
 /**
  * Creates an arguments array to pass to the JMeter object to run tests.
@@ -23,6 +45,7 @@ public class JMeterArgumentsArray {
 
 	private final String jMeterHome;
 	private final boolean disableTests;
+
 	private final TreeSet<JMeterCommandLineArguments> argumentList = new TreeSet<JMeterCommandLineArguments>();
 	private DateTimeFormatter dateFormat = ISODateTimeFormat.basicDate();
 	private ProxyConfiguration proxyConfiguration;
@@ -36,7 +59,10 @@ public class JMeterArgumentsArray {
 	private String jmeterLogFileName;
 	private String logsDirectory;
 	private String resultsDirectory;
+	private PropertyHandler propertyHandler ;
 	private LogLevel overrideRootLogLevel;
+
+
 
 	/**
 	 * Create an instance of JMeterArgumentsArray
@@ -56,6 +82,18 @@ public class JMeterArgumentsArray {
 			disableTests = true;
 		}
 	}
+
+	
+	
+	public PropertyHandler getPropertyHandler() {
+		return propertyHandler;
+	}
+
+	public void setPropertyHandler(PropertyHandler propertyHandler) {
+		this.propertyHandler = propertyHandler;
+	}
+
+
 
 	public void setRemoteStop() {
 		argumentList.add(REMOTE_STOP);
@@ -159,6 +197,8 @@ public class JMeterArgumentsArray {
 		argumentList.add(LOGFILE_OPT);
 	}
 
+	
+
 	/**
 	 * Generate an arguments array representing the command line options you want to send to JMeter.
 	 * The order of the array is determined by the order the values in JMeterCommandLineArguments are defined.
@@ -169,6 +209,7 @@ public class JMeterArgumentsArray {
 	public List<String> buildArgumentsArray() throws MojoExecutionException {
 		if (!argumentList.contains(TESTFILE_OPT) && !disableTests) throw new MojoExecutionException("No test(s) specified!");
 		List<String> argumentsArray = new ArrayList<String>();
+		
 		for (JMeterCommandLineArguments argument : argumentList) {
 			switch (argument) {
 				case NONGUI_OPT:

@@ -256,72 +256,77 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 	protected void populateJMeterDirectoryTree() throws MojoExecutionException {
 		for (Artifact artifact : pluginArtifacts) {
 			try {
-				// All artifacts, that come from the dependencies section of the pom.xml of the jmeter-maven-plugin, have scope COMPILE.
-				// These artifacts fall in 3 categories:
-				// * Artifacts needed to build the jmeter-maven-plugin (such as org.apache.maven:maven-plugin-api)
-				// * Artifacts needed to run JMeter (see isArtifactAJMeterDependency())
-				// * Artifacts, that are direct dependencies of ApacheJMeter, but that are also dependencies of
-				//   some user-defined jmeter-plugin (see isArtifactNeededByExplicitDependency)
-				if (Artifact.SCOPE_COMPILE.equals(artifact.getScope()) &&
-						(isArtifactAJMeterDependency(artifact) || isArtifactNeededByExplicitDependency(artifact))) {
+				if (Artifact.SCOPE_COMPILE.equals(artifact.getScope()) || Artifact.SCOPE_RUNTIME.equals(artifact.getScope())) {
 					if (artifact.getArtifactId().equals(jmeterConfigArtifact)) {
-						JarFile configSettings = new JarFile(artifact.getFile());
-						Enumeration<JarEntry> entries = configSettings.entries();
-						while (entries.hasMoreElements()) {
-							JarEntry jarFileEntry = entries.nextElement();
-							// Only interested in files in the /bin directory that are not properties files
-							if (!jarFileEntry.isDirectory() && jarFileEntry.getName().startsWith("bin") && !jarFileEntry.getName().endsWith(".properties")) {
-								copyInputStreamToFile(configSettings.getInputStream(jarFileEntry), new File(workDir.getCanonicalPath() + File.separator + jarFileEntry.getName()));
-							}
-						}
-						configSettings.close();
-					} else if (artifact.getArtifactId().startsWith("ApacheJMeter_")) {
-						copyFile(artifact.getFile(), new File(libExtDir + File.separator + artifact.getFile().getName()));
+						extractConfigSettings(artifact);
 					} else if (artifact.getArtifactId().equals("ApacheJMeter")) {
 						copyFile(artifact.getFile(), new File(binDir + File.separator + artifact.getArtifactId() + ".jar"));
-					} else {
+					} else if (artifact.getArtifactId().startsWith("ApacheJMeter_")) {
+						copyFile(artifact.getFile(), new File(libExtDir + File.separator + artifact.getFile().getName()));
+					} else if (isArtifactAJMeterDependency(artifact)) {
+						copyFile(artifact.getFile(), new File(libDir + File.separator + artifact.getFile().getName()));
+					//TODO Work out if the artifact is a plugin that should be placed in the /lib/ext dir instead of the /lib dir
+//					} else if (isArtifactAnExplicitDependency(artifact)  && <Some Condition to identify a plugin>) {
+//						copyFile(artifact.getFile(), new File(libExtDir + File.separator + artifact.getFile().getName()));
+					} else if (isArtifactAnExplicitDependency(artifact)) {
 						copyFile(artifact.getFile(), new File(libDir + File.separator + artifact.getFile().getName()));
 					}
-				} else if (Artifact.SCOPE_RUNTIME.equals(artifact.getScope()) || isArtifactNeededByExplicitDependency(artifact)) {
-					copyFile(artifact.getFile(), new File(libExtDir + File.separator + artifact.getFile().getName()));
 				}
 			} catch (IOException e) {
 				throw new MojoExecutionException("Unable to populate the JMeter directory tree: " + e);
 			}
 		}
-		//Clear down classpath and let JMeter manage it, errors will occur if this is not done.
-		//TODO remove now in its own JVM
-//		System.setProperty("java.class.path", "");
+	}
+
+	/**
+	 * Extract the configuration settings (not properties files) form the configuration artifact and load them into the /bin directory
+	 *
+	 * @param artifact Configuration artifact
+	 * @throws IOException
+	 */
+	private void extractConfigSettings(Artifact artifact) throws IOException {
+		JarFile configSettings = new JarFile(artifact.getFile());
+		Enumeration<JarEntry> entries = configSettings.entries();
+		while (entries.hasMoreElements()) {
+			JarEntry jarFileEntry = entries.nextElement();
+			// Only interested in files in the /bin directory that are not properties files
+			if (!jarFileEntry.isDirectory() && jarFileEntry.getName().startsWith("bin") && !jarFileEntry.getName().endsWith(".properties")) {
+				copyInputStreamToFile(configSettings.getInputStream(jarFileEntry), new File(workDir.getCanonicalPath() + File.separator + jarFileEntry.getName()));
+			}
+		}
+		configSettings.close();
 	}
 
 	/**
 	 * Check if the given artifact is needed by an explicit dependency (a dependency, that is explicitly defined in
 	 * the pom of the project using the jmeter-maven-plugin).
-	 *
+	 * <p/>
 	 * For example, consider the following pom:
+	 *
 	 * <code>
-	 *     <plugin>
-	 *         <groupId>com.lazerycode.jmeter</groupId>
-	 *         <artifactId>jmeter-maven-plugin</artifactId>
-	 *         <dependencies>
-	 *             <dependency>
-	 *                 <groupId>kg.apc</groupId>
-	 *                 <artifactId>jmeter-plugins</artifactId>
-	 *             </dependency>
-	 *         </dependencies>
-	 *     </plugin>
+	 * 	<plugin>
+	 * 		<groupId>com.lazerycode.jmeter</groupId>
+	 * 		<artifactId>jmeter-maven-plugin</artifactId>
+	 * 		<dependencies>
+	 * 			<dependency>
+	 * 				<groupId>kg.apc</groupId>
+	 * 				<artifactId>jmeter-plugins</artifactId>
+	 * 			</dependency>
+	 * 		</dependencies>
+	 * 	</plugin>
 	 * </code>
+	 * <p/>
 	 *
 	 * Now kg.apc:jmeter-plugins is an explicit dependency. And org.apache.jmeter:jorphan is a needed by this explicit dependency, so
-	 * isArtifactNeededByExplicitDependency(org.apache.jmeter:jorphan) would return true.
+	 * isArtifactAnExplicitDependency(org.apache.jmeter:jorphan) would return true.
 	 *
 	 * @param artifact Artifact to examine
 	 * @return true if the given artifact is needed by a explicit dependency.
 	 */
-	protected boolean isArtifactNeededByExplicitDependency(Artifact artifact) {
+	protected boolean isArtifactAnExplicitDependency(Artifact artifact) {
 		List<Dependency> explizitDependencies = pluginDescriptor.getPlugin().getDependencies();
-		for (String parent: artifact.getDependencyTrail()) {
-			for (Dependency explicitDependency: explizitDependencies) {
+		for (String parent : artifact.getDependencyTrail()) {
+			for (Dependency explicitDependency : explizitDependencies) {
 				if (parent.contains(explicitDependency.getGroupId() + ":" + explicitDependency.getArtifactId()))
 					return true;
 			}

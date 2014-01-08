@@ -8,17 +8,12 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.descriptor.PluginDescriptor;
-import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.joda.time.format.DateTimeFormat;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
@@ -178,8 +173,8 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 	/**
 	 * The information extracted from the plugin-section of the pom of the project where the plugin is used
 	 */
-	@Component
-	protected PluginDescriptor pluginDescriptor;
+	@Parameter(defaultValue = "${plugin.dependencies}", required = true, readonly = true)
+	protected List<Dependency> pluginDependencies;
 
 	/**
 	 * Skip the JMeter tests
@@ -324,14 +319,13 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 	 * @return true if the given artifact is needed by a explicit dependency.
 	 */
 	protected boolean isArtifactAnExplicitDependency(Artifact artifact) {
-		List<Dependency> explizitDependencies = pluginDescriptor.getPlugin().getDependencies();
-		for (String parent : artifact.getDependencyTrail()) {
-			for (Dependency explicitDependency : explizitDependencies) {
-				if (parent.contains(explicitDependency.getGroupId() + ":" + explicitDependency.getArtifactId()))
-					return true;
-			}
-		}
-		return false;
+		Dependency potentialExplicitDependency = new Dependency();
+		potentialExplicitDependency.setGroupId(artifact.getGroupId());
+		potentialExplicitDependency.setArtifactId(artifact.getArtifactId());
+		potentialExplicitDependency.setType(artifact.getType());
+		potentialExplicitDependency.setVersion(artifact.getVersion());
+
+		return pluginDependencies.contains(potentialExplicitDependency);
 	}
 
 	/**

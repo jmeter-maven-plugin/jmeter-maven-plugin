@@ -4,6 +4,8 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import static org.hamcrest.core.Is.is;
@@ -85,5 +87,45 @@ public class PropertyContainerTest {
 				is(equalTo(false)));
 		assertThat(mergedProperties.size(),
 				is(equalTo(0)));
+	}
+
+	@Test
+	public void sanitisePropertiesMapRemovesEntriesWithNullValuesTest() throws Exception {
+		Map<String, String> initialPropertiesMap = new HashMap<String, String>();
+		Map<String, String> finalPropertiesMap = new HashMap<String, String>();
+
+		finalPropertiesMap.put("fred", "true");
+		finalPropertiesMap.put("cats", "false");
+
+		initialPropertiesMap.putAll(finalPropertiesMap);
+		initialPropertiesMap.put("remove", null);
+
+		PropertyContainer propertyContainer = new PropertyContainer();
+		initialPropertiesMap = propertyContainer.removesEntriesWithNullValues(initialPropertiesMap);
+
+		assertThat(initialPropertiesMap.size(),
+				is(equalTo(2)));
+		assertThat(initialPropertiesMap,
+				is(equalTo(finalPropertiesMap)));
+	}
+
+	@Test
+	public void sanitisePropertiesMapRemovesEntriesWithBlankValuesTest() throws Exception {
+		Map<String, String> initialPropertiesMap = new HashMap<String, String>();
+		Map<String, String> finalPropertiesMap = new HashMap<String, String>();
+
+		finalPropertiesMap.put("fred", "true");
+		finalPropertiesMap.put("cats", "false");
+
+		initialPropertiesMap.putAll(finalPropertiesMap);
+		initialPropertiesMap.put("remove", "");
+
+		PropertyContainer propertyContainer = new PropertyContainer();
+		initialPropertiesMap = propertyContainer.removesEntriesWithNullValues(initialPropertiesMap);
+
+		assertThat(initialPropertiesMap.size(),
+				is(equalTo(2)));
+		assertThat(initialPropertiesMap,
+				is(equalTo(finalPropertiesMap)));
 	}
 }

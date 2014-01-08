@@ -1,5 +1,6 @@
 package com.lazerycode.jmeter.properties;
 
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 
@@ -14,8 +15,8 @@ public class PropertyContainer {
 
     }
 
-    public void setCustomPropertyMap(Map<String, String> value) {
-        this.customPropertyMap = value;
+    public void setCustomPropertyMap(Map<String, String> propertyMap) {
+        this.customPropertyMap = removesEntriesWithNullValues(propertyMap);
     }
 
     public Map<String, String> getCustomPropertyMap() {
@@ -45,6 +46,17 @@ public class PropertyContainer {
     public Properties getFinalPropertyObject() {
         return this.finalPropertyObject;
     }
+
+	public Map<String,String> removesEntriesWithNullValues(Map<String, String> propertiesMap) {
+		Iterator it = propertiesMap.entrySet().iterator();
+		while (it.hasNext()) {
+			Map.Entry propertyDefinition = (Map.Entry)it.next();
+			if(null == propertyDefinition.getValue() || propertyDefinition.getValue().equals("")){
+				it.remove();
+			}
+		}
+		return propertiesMap;
+	}
 
     /**
      * This will return the custom properties object if it is set.

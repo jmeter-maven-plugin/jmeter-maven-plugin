@@ -6,8 +6,8 @@ import com.lazerycode.jmeter.configuration.ProxyConfiguration;
 import com.lazerycode.jmeter.configuration.RemoteConfiguration;
 import com.lazerycode.jmeter.properties.PropertyHandler;
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.joda.time.format.DateTimeFormat;
@@ -178,10 +178,10 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 	protected List<Artifact> pluginArtifacts;
 
 	/**
-	 * The information extracted from the plugin-section of the pom of the project where the plugin is used
+	 * The information extracted from the Mojo being currently executed
 	 */
-	@Parameter(defaultValue = "${plugin.plugin.dependencies}", required = true, readonly = true)
-	protected List<Dependency> pluginDependencies;
+	@Parameter(defaultValue = "${mojoExecution}", required = true, readonly = true)
+	protected MojoExecution mojoExecution;
 
 	/**
 	 * Skip the JMeter tests
@@ -338,14 +338,8 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 	 * @return true if the given artifact is needed by a explicit dependency.
 	 */
 	protected boolean isArtifactAnExplicitDependency(Artifact artifact) {
-		for (Dependency dependency : pluginDependencies) {
-			if (dependency.getGroupId().equals(artifact.getGroupId())
-					&& dependency.getArtifactId().equals(artifact.getArtifactId())
-					&& dependency.getVersion().equals(artifact.getVersion())) {
-				return true;
-			}
-		}
-		return false;
+		Set<Artifact> pluginDependencies = mojoExecution.getMojoDescriptor().getPluginDescriptor().getIntroducedDependencyArtifacts();
+		return pluginDependencies.contains(artifact);
 	}
 
 	/**

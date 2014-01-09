@@ -301,9 +301,11 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 	}
 
 	protected boolean isArtifactMarkedAsAJMeterPlugin(Artifact artifact) {
-		for (JMeterPlugins identifiedPlugin : jmeterPlugins) {
-			if (identifiedPlugin.toString().equals(artifact.getGroupId() + ":" + artifact.getArtifactId())) {
-				return true;
+		if (null != jmeterPlugins) {
+			for (JMeterPlugins identifiedPlugin : jmeterPlugins) {
+				if (identifiedPlugin.toString().equals(artifact.getGroupId() + ":" + artifact.getArtifactId())) {
+					return true;
+				}
 			}
 		}
 		return false;

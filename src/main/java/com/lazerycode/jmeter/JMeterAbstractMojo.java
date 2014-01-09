@@ -1,6 +1,7 @@
 package com.lazerycode.jmeter;
 
 import com.lazerycode.jmeter.configuration.JMeterArgumentsArray;
+import com.lazerycode.jmeter.configuration.JMeterPlugins;
 import com.lazerycode.jmeter.configuration.ProxyConfiguration;
 import com.lazerycode.jmeter.configuration.RemoteConfiguration;
 import com.lazerycode.jmeter.properties.PropertyHandler;
@@ -144,6 +145,12 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 	protected RemoteConfiguration remoteConfig;
 
 	/**
+	 * Value class that wraps all remote configurations.
+	 */
+	@Parameter
+	protected Set<JMeterPlugins> jmeterPlugins;
+
+	/**
 	 * Set a root log level to override all log levels used by JMeter
 	 * Valid log levels are: FATAL_ERROR, ERROR, WARN, INFO, DEBUG (They are not case sensitive);
 	 * If you try to set an invalid log level it will be ignored
@@ -173,7 +180,7 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 	/**
 	 * The information extracted from the plugin-section of the pom of the project where the plugin is used
 	 */
-	@Parameter(defaultValue = "${plugin.dependencies}", required = true, readonly = true)
+	@Parameter(defaultValue = "${plugin.plugin.dependencies}", required = true, readonly = true)
 	protected List<Dependency> pluginDependencies;
 
 	/**
@@ -260,11 +267,12 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 						copyFile(artifact.getFile(), new File(libExtDir + File.separator + artifact.getFile().getName()));
 					} else if (isArtifactAJMeterDependency(artifact)) {
 						copyFile(artifact.getFile(), new File(libDir + File.separator + artifact.getFile().getName()));
-					//TODO Work out if the artifact is a plugin that should be placed in the /lib/ext dir instead of the /lib dir
-//					} else if (isArtifactAnExplicitDependency(artifact)  && <Some Condition to identify a plugin>) {
-//						copyFile(artifact.getFile(), new File(libExtDir + File.separator + artifact.getFile().getName()));
 					} else if (isArtifactAnExplicitDependency(artifact)) {
-						copyFile(artifact.getFile(), new File(libDir + File.separator + artifact.getFile().getName()));
+						if (isArtifactMarkedAsAJMeterPlugin(artifact)) {
+							copyFile(artifact.getFile(), new File(libExtDir + File.separator + artifact.getFile().getName()));
+						} else {
+							copyFile(artifact.getFile(), new File(libDir + File.separator + artifact.getFile().getName()));
+						}
 					}
 				}
 			} catch (IOException e) {
@@ -292,26 +300,35 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 		configSettings.close();
 	}
 
+	protected boolean isArtifactMarkedAsAJMeterPlugin(Artifact artifact) {
+		for (JMeterPlugins identifiedPlugin : jmeterPlugins) {
+			if (identifiedPlugin.toString().equals(artifact.getGroupId() + ":" + artifact.getArtifactId())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	/**
 	 * Check if the given artifact is needed by an explicit dependency (a dependency, that is explicitly defined in
 	 * the pom of the project using the jmeter-maven-plugin).
 	 * <p/>
 	 * For example, consider the following pom:
-	 *
+	 * <p/>
 	 * <code>
-	 * 	<plugin>
-	 * 		<groupId>com.lazerycode.jmeter</groupId>
-	 * 		<artifactId>jmeter-maven-plugin</artifactId>
-	 * 		<dependencies>
-	 * 			<dependency>
-	 * 				<groupId>kg.apc</groupId>
-	 * 				<artifactId>jmeter-plugins</artifactId>
-	 * 			</dependency>
-	 * 		</dependencies>
-	 * 	</plugin>
+	 * <plugin>
+	 * <groupId>com.lazerycode.jmeter</groupId>
+	 * <artifactId>jmeter-maven-plugin</artifactId>
+	 * <dependencies>
+	 * <dependency>
+	 * <groupId>kg.apc</groupId>
+	 * <artifactId>jmeter-plugins</artifactId>
+	 * </dependency>
+	 * </dependencies>
+	 * </plugin>
 	 * </code>
 	 * <p/>
-	 *
+	 * <p/>
 	 * Now kg.apc:jmeter-plugins is an explicit dependency. And org.apache.jmeter:jorphan is a needed by this explicit dependency, so
 	 * isArtifactAnExplicitDependency(org.apache.jmeter:jorphan) would return true.
 	 *
@@ -319,13 +336,15 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 	 * @return true if the given artifact is needed by a explicit dependency.
 	 */
 	protected boolean isArtifactAnExplicitDependency(Artifact artifact) {
-		Dependency potentialExplicitDependency = new Dependency();
-		potentialExplicitDependency.setGroupId(artifact.getGroupId());
-		potentialExplicitDependency.setArtifactId(artifact.getArtifactId());
-		potentialExplicitDependency.setType(artifact.getType());
-		potentialExplicitDependency.setVersion(artifact.getVersion());
-
-		return pluginDependencies.contains(potentialExplicitDependency);
+		for (int i = 0; i < pluginDependencies.size(); i++) {
+			Dependency dependency = pluginDependencies.get(i);
+			if (dependency.getGroupId().equals(artifact.getGroupId())
+					&& dependency.getArtifactId().equals(artifact.getArtifactId())
+					&& dependency.getVersion().equals(artifact.getVersion())) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**

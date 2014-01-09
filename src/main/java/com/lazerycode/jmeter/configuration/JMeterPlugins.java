@@ -18,7 +18,7 @@ package com.lazerycode.jmeter.configuration;
  *
  * @author Mark Collin
  */
-public class JMeterPluginsx {
+public class JMeterPlugins {
 
 	private String groupId = null;
 	private String artifactId = null;

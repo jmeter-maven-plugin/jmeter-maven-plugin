@@ -1,7 +1,7 @@
 package com.lazerycode.jmeter;
 
 import com.lazerycode.jmeter.configuration.JMeterArgumentsArray;
-import com.lazerycode.jmeter.configuration.JMeterPluginsx;
+import com.lazerycode.jmeter.configuration.JMeterPlugins;
 import com.lazerycode.jmeter.configuration.ProxyConfiguration;
 import com.lazerycode.jmeter.configuration.RemoteConfiguration;
 import com.lazerycode.jmeter.properties.PropertyHandler;
@@ -148,7 +148,7 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 	 * Value class that wraps all remote configurations.
 	 */
 	@Parameter
-	protected Set<JMeterPluginsx> jmeterPlugins;
+	protected Set<JMeterPlugins> jmeterPlugins;
 
 	/**
 	 * Set a root log level to override all log levels used by JMeter
@@ -301,7 +301,7 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 	}
 
 	protected boolean isArtifactMarkedAsAJMeterPlugin(Artifact artifact) {
-		for (JMeterPluginsx identifiedPlugin : jmeterPlugins) {
+		for (JMeterPlugins identifiedPlugin : jmeterPlugins) {
 			if (identifiedPlugin.toString().equals(artifact.getGroupId() + ":" + artifact.getArtifactId())) {
 				return true;
 			}
@@ -336,8 +336,7 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 	 * @return true if the given artifact is needed by a explicit dependency.
 	 */
 	protected boolean isArtifactAnExplicitDependency(Artifact artifact) {
-		for (int i = 0; i < pluginDependencies.size(); i++) {
-			Dependency dependency = pluginDependencies.get(i);
+		for (Dependency dependency : pluginDependencies) {
 			if (dependency.getGroupId().equals(artifact.getGroupId())
 					&& dependency.getArtifactId().equals(artifact.getArtifactId())
 					&& dependency.getVersion().equals(artifact.getVersion())) {

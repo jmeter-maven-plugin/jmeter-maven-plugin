@@ -1,7 +1,7 @@
 package com.lazerycode.jmeter;
 
 import com.lazerycode.jmeter.configuration.JMeterArgumentsArray;
-import com.lazerycode.jmeter.configuration.JMeterPlugins;
+import com.lazerycode.jmeter.configuration.JMeterPluginsx;
 import com.lazerycode.jmeter.configuration.ProxyConfiguration;
 import com.lazerycode.jmeter.configuration.RemoteConfiguration;
 import com.lazerycode.jmeter.properties.PropertyHandler;
@@ -148,7 +148,7 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 	 * Value class that wraps all remote configurations.
 	 */
 	@Parameter
-	protected Set<JMeterPlugins> jmeterPlugins;
+	protected Set<JMeterPluginsx> jmeterPlugins;
 
 	/**
 	 * Set a root log level to override all log levels used by JMeter
@@ -301,7 +301,7 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 	}
 
 	protected boolean isArtifactMarkedAsAJMeterPlugin(Artifact artifact) {
-		for (JMeterPlugins identifiedPlugin : jmeterPlugins) {
+		for (JMeterPluginsx identifiedPlugin : jmeterPlugins) {
 			if (identifiedPlugin.toString().equals(artifact.getGroupId() + ":" + artifact.getArtifactId())) {
 				return true;
 			}

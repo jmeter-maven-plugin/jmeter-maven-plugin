@@ -18,6 +18,9 @@ public class JMeterProcessBuilder {
 	private List<String> mainClassArguments = new ArrayList<String>();
 
 	public JMeterProcessBuilder(JMeterProcessJVMSettings settings) {
+		if (null == settings) {
+			settings = new JMeterProcessJVMSettings();
+		}
 		this.initialHeapSizeInMegaBytes = settings.getXms();
 		this.maximumHeapSizeInMegaBytes = settings.getXmx();
 		this.userSuppliedArguments = settings.getArguments();

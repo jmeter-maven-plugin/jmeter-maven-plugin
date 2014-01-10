@@ -6,6 +6,7 @@ import com.lazerycode.jmeter.configuration.ProxyConfiguration;
 import com.lazerycode.jmeter.configuration.RemoteConfiguration;
 import com.lazerycode.jmeter.properties.PropertyHandler;
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -314,32 +315,27 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 	/**
 	 * Check if the given artifact is needed by an explicit dependency (a dependency, that is explicitly defined in
 	 * the pom of the project using the jmeter-maven-plugin).
-	 * <p/>
-	 * For example, consider the following pom:
-	 * <p/>
-	 * <code>
-	 * <plugin>
-	 * <groupId>com.lazerycode.jmeter</groupId>
-	 * <artifactId>jmeter-maven-plugin</artifactId>
-	 * <dependencies>
-	 * <dependency>
-	 * <groupId>kg.apc</groupId>
-	 * <artifactId>jmeter-plugins</artifactId>
-	 * </dependency>
-	 * </dependencies>
-	 * </plugin>
-	 * </code>
-	 * <p/>
-	 * <p/>
-	 * Now kg.apc:jmeter-plugins is an explicit dependency. And org.apache.jmeter:jorphan is a needed by this explicit dependency, so
-	 * isArtifactAnExplicitDependency(org.apache.jmeter:jorphan) would return true.
 	 *
 	 * @param artifact Artifact to examine
 	 * @return true if the given artifact is needed by a explicit dependency.
 	 */
 	protected boolean isArtifactAnExplicitDependency(Artifact artifact) {
-		Set<Artifact> pluginDependencies = mojoExecution.getMojoDescriptor().getPluginDescriptor().getIntroducedDependencyArtifacts();
-		return pluginDependencies.contains(artifact);
+		try {
+			//Maven 3
+			List<Dependency> pluginDependencies = mojoExecution.getPlugin().getDependencies();
+			for (Dependency dependency : pluginDependencies) {
+				if (dependency.getGroupId().equals(artifact.getGroupId())
+						&& dependency.getArtifactId().equals(artifact.getArtifactId())
+						&& dependency.getVersion().equals(artifact.getBaseVersion())) {
+					return true;
+				}
+			}
+		} catch (NoSuchMethodError ignored) {
+			//Maven 2
+			Set<Artifact> pluginDependentArtifacts = mojoExecution.getMojoDescriptor().getPluginDescriptor().getIntroducedDependencyArtifacts();
+			return pluginDependentArtifacts.contains(artifact);
+		}
+		return false;
 	}
 
 	/**

@@ -78,6 +78,12 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 	protected String resultsFileFormat;
 
 	/**
+	 * Set the directory that JMeter results are saved to.
+	 */
+	@Parameter
+	protected String resultsDirectory;
+
+	/**
 	 * Absolute path to JMeter custom (test dependent) properties file.
 	 */
 	@Parameter
@@ -229,7 +235,11 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 		logsDir.mkdirs();
 		binDir = new File(workDir, "bin");
 		binDir.mkdirs();
-		resultsDir = new File(workDir, "results");
+		if (null != resultsDirectory) {
+			resultsDir = new File(resultsDirectory.replaceAll("\\|/", File.separator));
+		} else {
+			resultsDir = new File(workDir, "results");
+		}
 		resultsDir.mkdirs();
 		libDir = new File(workDir, "lib");
 		libExtDir = new File(libDir, "ext");

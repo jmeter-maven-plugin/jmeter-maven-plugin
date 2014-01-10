@@ -43,7 +43,7 @@ public class JMeterMojo extends JMeterAbstractMojo {
 		initialiseJMeterArgumentsArray(true);
 		TestManager jMeterTestManager = new TestManager(testArgs, testFilesDirectory, testFilesIncluded, testFilesExcluded, remoteConfig, suppressJMeterOutput, binDir, jMeterProcessJVMSettings);
 		getLog().info(" ");
-		if(proxyConfig != null) {
+		if (proxyConfig != null) {
 			getLog().info(this.proxyConfig.toString());
 		}
 		List<String> testResults = jMeterTestManager.executeTests();
@@ -77,8 +77,7 @@ public class JMeterMojo extends JMeterAbstractMojo {
 		getLog().info("Tests Run: " + results.size() + ", Failures: " + totalFailureCount);
 		getLog().info(" ");
 		if (failed) {
-			//TODO add absolute path to JMeter logs to make life easy?
-			throw new MojoFailureException("There were " + totalFailureCount + " test failures.  See the JMeter logs for details.");
+			throw new MojoFailureException("There were " + totalFailureCount + " test failures.  See the JMeter logs at '" + logsDir.getAbsolutePath() + "' for details.");
 		}
 	}
 }

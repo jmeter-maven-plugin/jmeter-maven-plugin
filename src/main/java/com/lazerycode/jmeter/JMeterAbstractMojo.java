@@ -324,15 +324,16 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 			//Maven 3
 			List<Dependency> pluginDependencies = mojoExecution.getPlugin().getDependencies();
 			for (Dependency dependency : pluginDependencies) {
-				if (dependency.getGroupId().equals(artifact.getGroupId())
-						&& dependency.getArtifactId().equals(artifact.getArtifactId())
-						&& dependency.getVersion().equals(artifact.getBaseVersion())) {
-					return true;
+				for (String parent : artifact.getDependencyTrail()) {
+					if (parent.contains(dependency.getGroupId() + ":" + dependency.getArtifactId()) && parent.contains(dependency.getVersion())) {
+						return true;
+					}
 				}
 			}
 		} catch (NoSuchMethodError ignored) {
 			//Maven 2
 			Set<Artifact> pluginDependentArtifacts = mojoExecution.getMojoDescriptor().getPluginDescriptor().getIntroducedDependencyArtifacts();
+			//TODO check dependency trail in maven 2
 			return pluginDependentArtifacts.contains(artifact);
 		}
 		return false;

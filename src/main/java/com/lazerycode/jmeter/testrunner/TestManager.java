@@ -3,6 +3,7 @@ package com.lazerycode.jmeter.testrunner;
 import com.lazerycode.jmeter.JMeterMojo;
 import com.lazerycode.jmeter.UtilityFunctions;
 import com.lazerycode.jmeter.configuration.JMeterArgumentsArray;
+import com.lazerycode.jmeter.configuration.JMeterProcessJVMSettings;
 import com.lazerycode.jmeter.configuration.RemoteConfiguration;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.tools.ant.DirectoryScanner;
@@ -27,8 +28,9 @@ public class TestManager extends JMeterMojo {
 	private final List<String> testFilesExcluded;
 	private final boolean suppressJMeterOutput;
 	private final RemoteConfiguration remoteServerConfiguration;
+	private final JMeterProcessJVMSettings jMeterProcessJVMSettings;
 
-	public TestManager(JMeterArgumentsArray baseTestArgs, File testFilesDirectory, List<String> testFilesIncluded, List<String> testFilesExcluded, RemoteConfiguration remoteServerConfiguration, boolean suppressJMeterOutput, File binDir) {
+	public TestManager(JMeterArgumentsArray baseTestArgs, File testFilesDirectory, List<String> testFilesIncluded, List<String> testFilesExcluded, RemoteConfiguration remoteServerConfiguration, boolean suppressJMeterOutput, File binDir, JMeterProcessJVMSettings jMeterProcessJVMSettings) {
 		this.binDir = binDir;
 		this.baseTestArgs = baseTestArgs;
 		this.testFilesDirectory = testFilesDirectory;
@@ -36,6 +38,7 @@ public class TestManager extends JMeterMojo {
 		this.testFilesExcluded = testFilesExcluded;
 		this.remoteServerConfiguration = remoteServerConfiguration;
 		this.suppressJMeterOutput = suppressJMeterOutput;
+		this.jMeterProcessJVMSettings = jMeterProcessJVMSettings;
 	}
 
 	/**
@@ -83,7 +86,7 @@ public class TestManager extends JMeterMojo {
 		getLog().debug("JMeter is called with the following command line arguments: " + UtilityFunctions.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()));
 		getLog().info("Executing test: " + test.getName());
 		//Start the test.
-		JMeterProcessBuilder JMeterProcessBuilder = new JMeterProcessBuilder();
+		JMeterProcessBuilder JMeterProcessBuilder = new JMeterProcessBuilder(jMeterProcessJVMSettings);
 		JMeterProcessBuilder.setWorkingDirectory(binDir);
 		JMeterProcessBuilder.addArguments(testArgs.buildArgumentsArray());
 		try {

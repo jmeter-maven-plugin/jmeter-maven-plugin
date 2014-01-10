@@ -1,9 +1,6 @@
 package com.lazerycode.jmeter;
 
-import com.lazerycode.jmeter.configuration.JMeterArgumentsArray;
-import com.lazerycode.jmeter.configuration.JMeterPlugins;
-import com.lazerycode.jmeter.configuration.ProxyConfiguration;
-import com.lazerycode.jmeter.configuration.RemoteConfiguration;
+import com.lazerycode.jmeter.configuration.*;
 import com.lazerycode.jmeter.properties.PropertyHandler;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Dependency;
@@ -150,6 +147,12 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 	 */
 	@Parameter
 	protected Set<JMeterPlugins> jmeterPlugins;
+
+	/**
+	 * Value class that wraps all JMeter Process JVM settings.
+	 */
+	@Parameter
+	protected JMeterProcessJVMSettings jMeterProcessJVMSettings;
 
 	/**
 	 * Set a root log level to override all log levels used by JMeter

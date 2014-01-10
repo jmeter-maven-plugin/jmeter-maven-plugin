@@ -34,7 +34,7 @@ public class JMeterGUIMojo extends JMeterAbstractMojo {
 		initialiseJMeterArgumentsArray(false);
 		getLog().info("JMeter is called with the following command line arguments: " + UtilityFunctions.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()));
 		//Start The GUI
-		JMeterProcessBuilder JMeterProcessBuilder = new JMeterProcessBuilder();
+		JMeterProcessBuilder JMeterProcessBuilder = new JMeterProcessBuilder(jMeterProcessJVMSettings);
 		JMeterProcessBuilder.setWorkingDirectory(binDir);
 		JMeterProcessBuilder.addArguments(testArgs.buildArgumentsArray());
 		try {

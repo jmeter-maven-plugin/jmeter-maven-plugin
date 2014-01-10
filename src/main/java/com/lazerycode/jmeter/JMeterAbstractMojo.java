@@ -346,7 +346,7 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 	 */
 	protected boolean isArtifactAJMeterDependency(Artifact artifact) {
 		for (String dependency : artifact.getDependencyTrail()) {
-			if (dependency.contains("org.apache.jmeter:ApacheJMeter")) {
+			if (dependency.contains("org.apache.jmeter")) {
 				return true;
 			}
 		}

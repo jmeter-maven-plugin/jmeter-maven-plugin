@@ -1,5 +1,6 @@
 package com.lazerycode.jmeter.configuration;
 
+import com.lazerycode.jmeter.properties.PropertyHandler;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.joda.time.LocalDateTime;
 import org.joda.time.format.DateTimeFormatter;
@@ -23,6 +24,7 @@ public class JMeterArgumentsArray {
 
 	private final String jMeterHome;
 	private final boolean disableTests;
+
 	private final TreeSet<JMeterCommandLineArguments> argumentList = new TreeSet<JMeterCommandLineArguments>();
 	private DateTimeFormatter dateFormat = ISODateTimeFormat.basicDate();
 	private ProxyConfiguration proxyConfiguration;
@@ -36,7 +38,9 @@ public class JMeterArgumentsArray {
 	private String jmeterLogFileName;
 	private String logsDirectory;
 	private String resultsDirectory;
+	private PropertyHandler propertyHandler;
 	private LogLevel overrideRootLogLevel;
+
 
 	/**
 	 * Create an instance of JMeterArgumentsArray
@@ -57,6 +61,16 @@ public class JMeterArgumentsArray {
 		}
 	}
 
+
+	public PropertyHandler getPropertyHandler() {
+		return propertyHandler;
+	}
+
+	public void setPropertyHandler(PropertyHandler propertyHandler) {
+		this.propertyHandler = propertyHandler;
+	}
+
+
 	public void setRemoteStop() {
 		argumentList.add(REMOTE_STOP);
 	}
@@ -72,7 +86,7 @@ public class JMeterArgumentsArray {
 	}
 
 	public void setProxyConfig(ProxyConfiguration configuration) {
-		if(configuration == null) return;
+		if (configuration == null) return;
 
 		this.proxyConfiguration = configuration;
 		if (isSet(proxyConfiguration.getHost())) {
@@ -151,13 +165,14 @@ public class JMeterArgumentsArray {
 		} else {
 			resultsLogFileName = resultsDirectory + File.separator + value.getName().substring(0, value.getName().lastIndexOf(".")) + resultFileExtension;
 		}
-		if(isSet(logsDirectory)) {
+		if (isSet(logsDirectory)) {
 			jmeterLogFileName = logsDirectory + File.separator + value.getName() + ".log";
 			argumentList.add(JMLOGFILE_OPT);
 		}
 		argumentList.add(TESTFILE_OPT);
 		argumentList.add(LOGFILE_OPT);
 	}
+
 
 	/**
 	 * Generate an arguments array representing the command line options you want to send to JMeter.
@@ -169,6 +184,7 @@ public class JMeterArgumentsArray {
 	public List<String> buildArgumentsArray() throws MojoExecutionException {
 		if (!argumentList.contains(TESTFILE_OPT) && !disableTests) throw new MojoExecutionException("No test(s) specified!");
 		List<String> argumentsArray = new ArrayList<String>();
+
 		for (JMeterCommandLineArguments argument : argumentList) {
 			switch (argument) {
 				case NONGUI_OPT:

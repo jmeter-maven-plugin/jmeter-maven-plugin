@@ -4,6 +4,7 @@ import com.lazerycode.jmeter.JMeterMojo;
 import com.lazerycode.jmeter.UtilityFunctions;
 import com.lazerycode.jmeter.configuration.JMeterArgumentsArray;
 import com.lazerycode.jmeter.configuration.JMeterProcessJVMSettings;
+import com.lazerycode.jmeter.configuration.RemoteArgumentsArrayBuilder;
 import com.lazerycode.jmeter.configuration.RemoteConfiguration;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.tools.ant.DirectoryScanner;
@@ -14,6 +15,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -52,7 +54,7 @@ public class TestManager extends JMeterMojo {
 		List<String> tests = generateTestList();
 		List<String> results = new ArrayList<String>();
 		for (String file : tests) {
-			if(remoteServerConfiguration != null) {
+			if (remoteServerConfiguration != null) {
 				if ((remoteServerConfiguration.isStartServersBeforeTests() && tests.get(0).equals(file)) || remoteServerConfiguration.isStartAndStopServersForEachTest()) {
 					thisTestArgs.setRemoteStart();
 					thisTestArgs.setRemoteStartServerList(remoteServerConfiguration.getServerList());
@@ -83,12 +85,14 @@ public class TestManager extends JMeterMojo {
 		testArgs.setTestFile(test);
 		//Delete results file if it already exists
 		new File(testArgs.getResultsLogFileName()).delete();
-		getLog().debug("JMeter is called with the following command line arguments: " + UtilityFunctions.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()));
+		List<String> argumentsArray = testArgs.buildArgumentsArray();
+		argumentsArray.addAll(buildRemoteArgs(remoteServerConfiguration));
+		getLog().debug("JMeter is called with the following command line arguments: " + UtilityFunctions.humanReadableCommandLineOutput(argumentsArray));
 		getLog().info("Executing test: " + test.getName());
 		//Start the test.
 		JMeterProcessBuilder JMeterProcessBuilder = new JMeterProcessBuilder(jMeterProcessJVMSettings);
 		JMeterProcessBuilder.setWorkingDirectory(binDir);
-		JMeterProcessBuilder.addArguments(testArgs.buildArgumentsArray());
+		JMeterProcessBuilder.addArguments(argumentsArray);
 		try {
 			final Process process = JMeterProcessBuilder.startProcess();
 			//Log process output
@@ -112,6 +116,13 @@ public class TestManager extends JMeterMojo {
 			getLog().error(e.getMessage());
 		}
 		return testArgs.getResultsLogFileName();
+	}
+
+	private List<String> buildRemoteArgs(RemoteConfiguration remoteConfig) {
+		if (remoteConfig == null) {
+			return Collections.emptyList();
+		}
+		return new RemoteArgumentsArrayBuilder().buildRemoteArgumentsArray(remoteConfig.getMasterPropertiesMap());
 	}
 
 	/**

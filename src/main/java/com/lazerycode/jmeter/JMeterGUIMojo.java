@@ -29,6 +29,7 @@ public class JMeterGUIMojo extends JMeterAbstractMojo {
 		getLog().info("-------------------------------------------------------");
 		getLog().info(" ");
 		generateJMeterDirectoryTree();
+		configureAdvancedLogging();
 		propertyConfiguration();
 		populateJMeterDirectoryTree();
 		initialiseJMeterArgumentsArray(false);

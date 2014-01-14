@@ -7,6 +7,7 @@ import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.joda.time.format.DateTimeFormat;
 
@@ -169,6 +170,13 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 	protected String overrideRootLogLevel;
 
 	/**
+	 * Name of advanced logging configuration file that is in the <testFilesDirectory>
+	 * Defaults to "logkit.xml"
+	 */
+	@Parameter(defaultValue = "logkit.xml")
+	protected String logConfigFilename;
+
+	/**
 	 * Sets whether FailureScanner should ignore failures in JMeter result file.
 	 * Failures are for example failed requests
 	 */
@@ -308,7 +316,11 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 			JarEntry jarFileEntry = entries.nextElement();
 			// Only interested in files in the /bin directory that are not properties files
 			if (!jarFileEntry.isDirectory() && jarFileEntry.getName().startsWith("bin") && !jarFileEntry.getName().endsWith(".properties")) {
-				copyInputStreamToFile(configSettings.getInputStream(jarFileEntry), new File(workDir.getCanonicalPath() + File.separator + jarFileEntry.getName()));
+				File fileToCreate = new File(workDir.getCanonicalPath() + File.separator + jarFileEntry.getName());
+				if (jarFileEntry.getName().endsWith(logConfigFilename) && fileToCreate.exists()) {
+					break;
+				}
+				copyInputStreamToFile(configSettings.getInputStream(jarFileEntry), fileToCreate);
 			}
 		}
 		configSettings.close();
@@ -421,6 +433,18 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 		} else {
 			propertiesJMeter.put("jmeter.save.saveservice.output_format", "xml");
 			resultsOutputIsCSVFormat = false;
+		}
+	}
+
+	protected void configureAdvancedLogging() throws MojoFailureException {
+		File advancedLoggingSetting = new File(testFilesDirectory + File.separator + logConfigFilename);
+		if (advancedLoggingSetting.exists()) {
+			try {
+				copyFile(advancedLoggingSetting, new File(binDir + File.separator + logConfigFilename));
+			} catch (IOException ex) {
+				throw new MojoFailureException(ex.getMessage());
+			}
+			propertiesJMeter.put("log_config", logConfigFilename);
 		}
 	}
 }

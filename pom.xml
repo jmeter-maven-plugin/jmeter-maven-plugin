@@ -238,6 +238,11 @@
         </dependency>
         <dependency>
             <groupId>org.apache.jmeter</groupId>
+            <artifactId>ApacheJMeter_mongodb</artifactId>
+            <version>${jmeter.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.jmeter</groupId>
             <artifactId>ApacheJMeter_junit</artifactId>
             <version>${jmeter.version}</version>
         </dependency>

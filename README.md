@@ -4,7 +4,7 @@
 
 The JMeter Maven Plugin allows you to automate JMeter tests in Maven.
 
-Current Version In Maven Central: **1.8.1** See the [release notes](https://github.com/Ronnie76er/jmeter-maven-plugin/wiki/Release-Notes) for change information.  This plugin requires **JDK 1.6** or higher.
+Current Version In Maven Central: **1.9.0** See the [release notes](https://github.com/Ronnie76er/jmeter-maven-plugin/wiki/Release-Notes) for change information.  This plugin requires **JDK 1.6** or higher.
 
 ---
 
@@ -46,11 +46,6 @@ Once you have created your JMeter tests, you'll need to copy them to `<Project D
 
 All your tests will run in maven!
 
-#Help
-----
-Run the HelpMojo of this plugin:
-`mvn jmeter:help -Ddetail=true -Dgoal=jmeter`
-
 #Documentation
 -----
 
@@ -75,7 +70,7 @@ Group Email: [maven-jmeter-plugin-users@googlegroups.com](mailto:maven-jmeter-pl
 
 A place to discuss the development of the maven-jmeter-plugin, or ask about features you would like to see added.
 
-Homepage: [ http://groups.google.com/group/maven-jmeter-plugin-devs]( http://groups.google.com/group/maven-jmeter-plugin-devs)
+Homepage: [http://groups.google.com/group/maven-jmeter-plugin-devs]( http://groups.google.com/group/maven-jmeter-plugin-devs)
 
 Group Email: [maven-jmeter-plugin-devs@googlegroups.com](mailto:maven-jmeter-plugin-devs@googlegroups.com)
 

@@ -24,7 +24,7 @@ This is to bring the project in line with maven naming practice for non-maven pl
 		<plugin>
 			<groupId>com.lazerycode.jmeter</groupId>
 			<artifactId>jmeter-maven-plugin</artifactId>
-			<version>1.8.1</version>
+			<version>1.9.0</version>
 			<executions>
 				<execution>
 					<id>jmeter-tests</id>

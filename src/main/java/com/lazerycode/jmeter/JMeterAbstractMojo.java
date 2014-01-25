@@ -2,6 +2,8 @@ package com.lazerycode.jmeter;
 
 import com.lazerycode.jmeter.configuration.*;
 import com.lazerycode.jmeter.properties.PropertyHandler;
+
+import org.apache.jmeter.testelement.TestElement;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.AbstractMojo;
@@ -13,6 +15,9 @@ import org.joda.time.format.DateTimeFormat;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -290,7 +295,7 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 					} else if (isArtifactAJMeterDependency(artifact)) {
 						copyFile(artifact.getFile(), new File(libDir + File.separator + artifact.getFile().getName()));
 					} else if (isArtifactAnExplicitDependency(artifact)) {
-						if (isArtifactMarkedAsAJMeterPlugin(artifact)) {
+						if(isJmeterPlugin(artifact)) {
 							copyFile(artifact.getFile(), new File(libExtDir + File.separator + artifact.getFile().getName()));
 						} else {
 							copyFile(artifact.getFile(), new File(libDir + File.separator + artifact.getFile().getName()));
@@ -301,6 +306,52 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 				throw new MojoExecutionException("Unable to populate the JMeter directory tree: " + e);
 			}
 		}
+	}
+
+	private boolean isJmeterPlugin(Artifact artifact) throws MojoExecutionException {
+		
+		JarFile jar;
+		try {
+			jar = new JarFile(artifact.getFile());
+		} catch (IOException e) {
+			throw new MojoExecutionException("Couldn't load jar file", e);
+		}
+		
+		Enumeration<JarEntry> entries = jar.entries();
+		
+		URLClassLoader cl = null;
+		Class<?> loadedClass = null;
+		
+		try {
+			while(entries.hasMoreElements()){
+				
+				JarEntry nextElement = entries.nextElement();
+				
+				if(nextElement.getName().endsWith(".class")){
+					try {
+						cl = new URLClassLoader(new URL[]{artifact.getFile().toURI().toURL()},this.getClass().getClassLoader());
+						loadedClass = cl.loadClass(nextElement.getName().replace(".class", "").replace("/", "."));
+					} catch (ClassNotFoundException e) {
+						throw new MojoExecutionException("Failure while trying to examing classes in artifact jar "+artifact.getArtifactId(), e); 
+					} catch (MalformedURLException e) {
+						throw new MojoExecutionException("Failure trying to create Classloader for artifact jar", e);
+					}
+					
+					if(TestElement.class.isAssignableFrom(loadedClass)){
+						loadedClass = null;
+						return true;
+					}
+					
+					loadedClass = null;
+				}
+			}
+		}finally {
+			cl = null;
+			loadedClass = null;
+		}
+		
+		return false;
+				
 	}
 
 	/**

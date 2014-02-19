@@ -207,6 +207,12 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 	@Parameter(defaultValue = "false")
 	protected boolean skipTests;
 
+	/**
+	 * Build failed if source directory is not found.
+	 */
+	@Parameter(defaultValue = "true")
+	protected boolean sourceDirFailed;
+
 	//------------------------------------------------------------------------------------------------------------------
 
 	/**
@@ -258,7 +264,7 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 	}
 
 	protected void propertyConfiguration() throws MojoExecutionException {
-		pluginProperties = new PropertyHandler(testFilesDirectory, binDir, getArtifactNamed(jmeterConfigArtifact), propertiesReplacedByCustomFiles);
+		pluginProperties = new PropertyHandler(testFilesDirectory, binDir, getArtifactNamed(jmeterConfigArtifact), propertiesReplacedByCustomFiles, sourceDirFailed);
 		pluginProperties.setJMeterProperties(propertiesJMeter);
 		pluginProperties.setJMeterGlobalProperties(propertiesGlobal);
 		pluginProperties.setJMeterSaveServiceProperties(propertiesSaveService);

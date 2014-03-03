@@ -124,7 +124,11 @@ public class JMeterArgumentsArray {
 		this.resultsDirectory = resultsDirectory;
 	}
 
-	public void setLogsDirectory(String logsDirectory) {
+	public String getResultsDirectory() {
+        return resultsDirectory;
+    }
+
+    public void setLogsDirectory(String logsDirectory) {
 		this.logsDirectory = logsDirectory;
 	}
 

@@ -135,6 +135,8 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <jmeter.version>2.10</jmeter.version>
+        <jmeter-plugins.version>1.1.3</jmeter-plugins.version>
+        <cmdrunner.version>1.0.2</cmdrunner.version>
     </properties>
 
     <dependencies>
@@ -163,6 +165,11 @@
             <artifactId>joda-time</artifactId>
             <version>2.2</version>
         </dependency>
+	<dependency>
+	    <groupId>org.freemarker</groupId>
+	    <artifactId>freemarker</artifactId>
+	    <version>2.3.20</version>
+	</dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -259,6 +266,21 @@
             <groupId>org.apache.jmeter</groupId>
             <artifactId>ApacheJMeter_config</artifactId>
             <version>${jmeter.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>kg.apc</groupId>
+            <artifactId>jmeter-plugins-standard</artifactId>
+            <version>${jmeter-plugins.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>kg.apc</groupId>
+            <artifactId>jmeter-plugins-extras</artifactId>
+            <version>${jmeter-plugins.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>kg.apc</groupId>
+            <artifactId>cmdrunner</artifactId>
+            <version>${cmdrunner.version}</version>
         </dependency>
     </dependencies>
 

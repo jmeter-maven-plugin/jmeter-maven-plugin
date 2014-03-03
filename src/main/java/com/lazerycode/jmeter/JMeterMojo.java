@@ -1,6 +1,7 @@
 package com.lazerycode.jmeter;
 
 import com.lazerycode.jmeter.testrunner.TestManager;
+
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -65,12 +66,17 @@ public class JMeterMojo extends JMeterAbstractMojo {
 		FailureScanner failureScanner = new FailureScanner(ignoreResultFailures);
 		int totalFailureCount = 0;
 		boolean failed = false;
-		for (String file : results) {
+		for (String fileString : results) {
 			try {
-				if (failureScanner.hasTestFailed(new File(file))) {
-					totalFailureCount += failureScanner.getFailureCount();
-					failed = true;
-				}
+	            File file = new File(fileString);
+			    if (file.exists()) {
+    				if (failureScanner.hasTestFailed(file)) {
+    					totalFailureCount += failureScanner.getFailureCount();
+    					failed = true;
+    				}
+			    } else {
+			        getLog().warn("File doesn't exist : " + fileString);
+			    }
 			} catch (IOException e) {
 				throw new MojoExecutionException(e.getMessage());
 			}

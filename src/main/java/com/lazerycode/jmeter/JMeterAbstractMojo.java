@@ -2,6 +2,7 @@ package com.lazerycode.jmeter;
 
 import com.lazerycode.jmeter.configuration.*;
 import com.lazerycode.jmeter.properties.PropertyHandler;
+
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.AbstractMojo;
@@ -83,6 +84,12 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 	 */
 	@Parameter
 	protected String resultsDirectory;
+
+    /**
+     * Set the directory that JMeter analysis are saved to.
+     */
+    @Parameter
+    protected String analysisDirectory;
 
 	/**
 	 * Absolute path to JMeter custom (test dependent) properties file.
@@ -229,6 +236,8 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 	protected File libExtDir;
 	protected File logsDir;
 	protected File resultsDir;
+    protected File analysisDir;
+    protected File resourcesDir;
 
 	/**
 	 * All property files are stored in this artifact, comes with JMeter library
@@ -245,22 +254,39 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 	 */
 	@SuppressWarnings("ResultOfMethodCallIgnored")
 	protected void generateJMeterDirectoryTree() {
-		logsDir = new File(workDir, "logs");
-		logsDir.mkdirs();
-		binDir = new File(workDir, "bin");
-		binDir.mkdirs();
-		if (null != resultsDirectory) {
-			resultsDir = new File(resultsDirectory.replaceAll("\\|/", File.separator));
-		} else {
-			resultsDir = new File(workDir, "results");
-		}
-		resultsDir.mkdirs();
-		libDir = new File(workDir, "lib");
-		libExtDir = new File(libDir, "ext");
-		libExtDir.mkdirs();
-
+		logsDir = createDirectory(workDir, "logs", null);
+		binDir = createDirectory(workDir, "bin", null);
+		resultsDir = createDirectory(workDir, "results", resultsDirectory);
+		analysisDir = createDirectory(workDir, "analysis", analysisDirectory);
+		resourcesDir =  createDirectory(analysisDir, "resources", null);
+		libDir = createDirectory(workDir, "lib", null);
+		libExtDir = createDirectory(libDir, "ext", null);
 		//JMeter expects a <workdir>/lib/junit directory and complains if it can't find it.
-		new File(libDir, "junit").mkdirs();
+		createDirectory(libDir, "junit", null);
+	}
+
+	/**
+	 * Create directory if not exist.
+	 *
+	 * @param parentDir
+	 * @param specificDir
+	 * @param overrideDirectory
+	 * @return
+	 */
+	private File createDirectory(File parentDir, String specificDir ,String overrideDirectory) {
+	    File result = null;
+	    if (null != overrideDirectory) {
+	        result = new File(overrideDirectory.replaceAll("\\|/", File.separator));
+	    } else {
+	        result = new File (parentDir, specificDir);
+	    }
+	    if (!result.exists()) {
+	        if (!result.mkdirs()) {
+	            getLog().error("Could not create directory : " + result.getAbsolutePath());
+	        }
+	    }
+
+	    return result;
 	}
 
 	protected void propertyConfiguration() throws MojoExecutionException {
@@ -291,9 +317,11 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 						extractConfigSettings(artifact);
 					} else if (artifact.getArtifactId().equals("ApacheJMeter")) {
 						copyFile(artifact.getFile(), new File(binDir + File.separator + artifact.getArtifactId() + ".jar"));
-					} else if (artifact.getArtifactId().startsWith("ApacheJMeter_")) {
+					} else if (artifact.getArtifactId().startsWith("ApacheJMeter_") || artifact.getArtifactId().startsWith("jmeter-plugins")) {
 						copyFile(artifact.getFile(), new File(libExtDir + File.separator + artifact.getFile().getName()));
-					} else if (isArtifactAJMeterDependency(artifact)) {
+					}else if (artifact.getArtifactId().equals("cmdrunner")) {
+					    copyFile(artifact.getFile(), new File(libExtDir + File.separator + artifact.getArtifactId() + ".jar"));
+					}else if (isArtifactAJMeterDependency(artifact)) {
 						copyFile(artifact.getFile(), new File(libDir + File.separator + artifact.getFile().getName()));
 					} else if (isArtifactAnExplicitDependency(artifact)) {
 						if (isArtifactMarkedAsAJMeterPlugin(artifact)) {

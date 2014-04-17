@@ -12,8 +12,9 @@ import java.util.List;
  * {@code
  * 	<configuration>
  *      <jMeterProcessJVMSettings>
- *          <xms>true</xms>
- *          <xmx>true</xmx>
+ *          <javaRuntime>{env.JAVA_HOME}/bin/java</javaRuntime>
+ *          <xms>512</xms>
+ *          <xmx>1024</xmx>
  *          <arguments>
  *              <argument>foo</argument>
  *          </arguments>
@@ -28,6 +29,7 @@ public class JMeterProcessJVMSettings {
 
 	private int xms = 512;
 	private int xmx = 512;
+	private String java = "java";
 	private List<String> arguments = new ArrayList<String>();
 
 	public int getXms() {
@@ -52,5 +54,13 @@ public class JMeterProcessJVMSettings {
 
 	public void setArguments(List<String> arguments) {
 		this.arguments = arguments;
+	}
+
+	public void setJavaRuntime(String java) {
+		this.java = java;
+	}
+
+	public String getJavaRuntime() {
+		return this.java;
 	}
 }

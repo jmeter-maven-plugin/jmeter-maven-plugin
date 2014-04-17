@@ -14,6 +14,7 @@ public class JMeterProcessBuilder {
 	private int initialHeapSizeInMegaBytes;
 	private int maximumHeapSizeInMegaBytes;
 	private String workingDirectory;
+	private String javaRuntime;
 	private List<String> userSuppliedArguments;
 	private List<String> mainClassArguments = new ArrayList<String>();
 
@@ -24,6 +25,7 @@ public class JMeterProcessBuilder {
 		this.initialHeapSizeInMegaBytes = settings.getXms();
 		this.maximumHeapSizeInMegaBytes = settings.getXmx();
 		this.userSuppliedArguments = settings.getArguments();
+		this.javaRuntime = settings.getJavaRuntime();
 	}
 
 	public void setWorkingDirectory(File workingDirectory) throws MojoExecutionException {
@@ -41,7 +43,6 @@ public class JMeterProcessBuilder {
 	}
 
 	private String[] constructArgumentsList() {
-		String javaRuntime = "java";
 		String mainClass = "ApacheJMeter.jar";
 
 		List<String> argumentsList = new ArrayList<String>();

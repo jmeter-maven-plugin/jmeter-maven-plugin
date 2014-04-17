@@ -1,7 +1,23 @@
 package com.lazerycode.jmeter;
 
-import com.lazerycode.jmeter.configuration.*;
-import com.lazerycode.jmeter.properties.PropertyHandler;
+import static com.lazerycode.jmeter.UtilityFunctions.isSet;
+import static org.apache.commons.io.FileUtils.copyFile;
+import static org.apache.commons.io.FileUtils.copyInputStreamToFile;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+
+import org.apache.jmeter.testelement.TestElement;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.AbstractMojo;
@@ -11,15 +27,12 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.joda.time.format.DateTimeFormat;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.*;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
-
-import static com.lazerycode.jmeter.UtilityFunctions.isSet;
-import static org.apache.commons.io.FileUtils.copyFile;
-import static org.apache.commons.io.FileUtils.copyInputStreamToFile;
+import com.lazerycode.jmeter.configuration.JMeterArgumentsArray;
+import com.lazerycode.jmeter.configuration.JMeterPlugins;
+import com.lazerycode.jmeter.configuration.JMeterProcessJVMSettings;
+import com.lazerycode.jmeter.configuration.ProxyConfiguration;
+import com.lazerycode.jmeter.configuration.RemoteConfiguration;
+import com.lazerycode.jmeter.properties.PropertyHandler;
 
 /**
  * JMeter Maven plugin.
@@ -290,7 +303,7 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 					} else if (isArtifactAJMeterDependency(artifact)) {
 						copyFile(artifact.getFile(), new File(libDir + File.separator + artifact.getFile().getName()));
 					} else if (isArtifactAnExplicitDependency(artifact)) {
-						if (isArtifactMarkedAsAJMeterPlugin(artifact)) {
+						if(isJmeterPlugin(artifact)) {
 							copyFile(artifact.getFile(), new File(libExtDir + File.separator + artifact.getFile().getName()));
 						} else {
 							copyFile(artifact.getFile(), new File(libDir + File.separator + artifact.getFile().getName()));
@@ -301,6 +314,75 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 				throw new MojoExecutionException("Unable to populate the JMeter directory tree: " + e);
 			}
 		}
+	}
+
+	/**
+	 * check that whether there is any class that implements {@link TestElement}. 
+	 * If then the artifact must be an plugin  (and must therefore be copied to lib/ext). 
+	 * If not it can't be a plugin but can reside in lib!
+	 * 
+	 * @param artifact the artifact to check
+	 * @return true if the artifact is supposed to be a jmeter plugin, false if not
+	 * @throws MojoExecutionException if classes can't be loaded or jar can't be accessed.
+	 */
+	private boolean isJmeterPlugin(Artifact artifact) throws MojoExecutionException {
+		
+		/*
+		 * first get access to the jar, so we can examine it's contents
+		 */
+		JarFile jar;
+		try {
+			jar = new JarFile(artifact.getFile());
+		} catch (IOException e) {
+			throw new MojoExecutionException("Couldn't load jar file", e);
+		}
+		
+		Enumeration<JarEntry> entries = jar.entries();
+		
+		//reference to a classloader which needs to stay local so that it can
+		//be collected by the GC after this method finished.
+		//this is important so that all classes loaded by (only) this cloader can be unloaded
+		//otherwise there may be problems because we wont' load everything from the artifact and no 
+		//dependencies of the artifact!
+		URLClassLoader cl;
+		try {
+			cl = new URLClassLoader(new URL[]{artifact.getFile().toURI().toURL()},this.getClass().getClassLoader());
+		} catch (MalformedURLException e) {
+			throw new MojoExecutionException("Failure trying to create Classloader for artifact jar", e);
+		}
+		
+		//the reference to the loadedCLasses which must not be referenced anywhere else, so that they can 
+		//collected as soon as possible
+		Class<?> loadedClass = null;
+		
+		try {
+			while(entries.hasMoreElements()){
+				
+				JarEntry nextElement = entries.nextElement();
+				
+				if(nextElement.getName().endsWith(".class")){
+					try {
+						
+						loadedClass = cl.loadClass(nextElement.getName().replace(".class", "").replace("/", "."));
+
+						//if the class implements TestElement we're done. 
+						//the finally block makes sure the loadedClass reference is killed
+						if(TestElement.class.isAssignableFrom(loadedClass))
+							return true;
+						
+					} catch (ClassNotFoundException e) {
+						throw new MojoExecutionException("Failure while trying to examing classes in artifact jar "+artifact.getArtifactId(), e); 
+					} finally {
+						loadedClass = null;
+					}
+				}
+			}
+		} finally {
+			cl = null;
+		}
+		
+		return false;
+				
 	}
 
 	/**

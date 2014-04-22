@@ -24,12 +24,12 @@ public class PropertyHandler extends JMeterMojo {
 	private File propertyOutputDirectory;
 	private boolean replaceDefaultProperties;
 
-	public PropertyHandler(File sourceDirectory, File outputDirectory, Artifact jMeterConfigArtifact, boolean replaceDefaultProperties) throws MojoExecutionException {
+	public PropertyHandler(File sourceDirectory, File outputDirectory, Artifact jMeterConfigArtifact, boolean replaceDefaultProperties, boolean sourceDirFailed) throws MojoExecutionException {
 		//Initialise the enum map
 		for (JMeterPropertiesFiles propertyFile : JMeterPropertiesFiles.values()) {
 			this.masterPropertiesMap.put(propertyFile, new PropertyContainer());
 		}
-		setSourceDirectory(sourceDirectory);
+		setSourceDirectory(sourceDirectory, sourceDirFailed);
 		setOutputDirectory(outputDirectory);
 		this.replaceDefaultProperties = replaceDefaultProperties;
 		try {
@@ -67,25 +67,27 @@ public class PropertyHandler extends JMeterMojo {
 	 * @throws IOException
 	 */
 	private void loadCustomProperties() throws IOException {
-		for (JMeterPropertiesFiles propertyFile : JMeterPropertiesFiles.values()) {
-			File sourceFile = new File(this.propertySourceDirectory.getCanonicalFile() + File.separator + propertyFile.getPropertiesFileName());
-			if (sourceFile.exists()) {
-				InputStream sourceInputStream = new FileInputStream(sourceFile);
-				Properties sourcePropertySet = new Properties();
-				sourcePropertySet.load(sourceInputStream);
-				sourceInputStream.close();
-				getPropertyObject(propertyFile).setCustomPropertyObject(sourcePropertySet);
+		if (null != propertySourceDirectory) {
+			for (JMeterPropertiesFiles propertyFile : JMeterPropertiesFiles.values()) {
+				File sourceFile = new File(this.propertySourceDirectory.getCanonicalFile() + File.separator + propertyFile.getPropertiesFileName());
+				if (sourceFile.exists()) {
+					InputStream sourceInputStream = new FileInputStream(sourceFile);
+					Properties sourcePropertySet = new Properties();
+					sourcePropertySet.load(sourceInputStream);
+					sourceInputStream.close();
+					getPropertyObject(propertyFile).setCustomPropertyObject(sourcePropertySet);
+				}
 			}
 		}
 	}
-	
+
 	/**
-	 *  
+	 *
 	 * @param props a properties file
-	 * @return PropertyContainer for jvm property access / non file based. 
+	 * @return PropertyContainer for jvm property access / non file based.
 	 */
-	public PropertyContainer getPropertyContainer(JMeterPropertiesFiles props) { 
-		return masterPropertiesMap.get(props); 
+	public PropertyContainer getPropertyContainer(JMeterPropertiesFiles props) {
+		return masterPropertiesMap.get(props);
 	}
 
 	/**
@@ -94,11 +96,16 @@ public class PropertyHandler extends JMeterMojo {
 	 * @param value File
 	 * @throws MojoExecutionException
 	 */
-	private void setSourceDirectory(File value) throws MojoExecutionException {
+	private void setSourceDirectory(File value, boolean sourceDirFailed) throws MojoExecutionException {
 		if (value.exists()) {
 			this.propertySourceDirectory = value;
 		} else {
-			throw new MojoExecutionException("Property source directory '" + value.getAbsolutePath() + "' does not exist!");
+		    if (!sourceDirFailed) {
+		        getLog().info("Property source directory '" + value.getAbsolutePath() + "' does not exist!");
+		        this.propertySourceDirectory = null;
+		    } else {
+			    throw new MojoExecutionException("Property source directory '" + value.getAbsolutePath() + "' does not exist!");
+		    }
 		}
 	}
 
@@ -118,14 +125,14 @@ public class PropertyHandler extends JMeterMojo {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return full property map for the application.
 	 */
-	//doesnt make sense to use the files for remote access as jmeter wont pick it up 
+	//doesnt make sense to use the files for remote access as jmeter wont pick it up
 	public EnumMap<JMeterPropertiesFiles, PropertyContainer> getMasterPropertiesMap() {
 		return masterPropertiesMap;
 	}
-	
+
 	public void setJMeterProperties(Map<String, String> value) {
 		if (UtilityFunctions.isNotSet(value)) return;
 		this.getPropertyObject(JMeterPropertiesFiles.JMETER_PROPERTIES).setCustomPropertyMap(value);

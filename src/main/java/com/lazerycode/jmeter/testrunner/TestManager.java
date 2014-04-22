@@ -133,6 +133,7 @@ public class TestManager extends JMeterMojo {
 	private List<String> generateTestList() {
 		List<String> jmeterTestFiles = new ArrayList<String>();
 		DirectoryScanner scanner = new DirectoryScanner();
+		scanner.setErrorOnMissingDir(false);
 		scanner.setBasedir(this.testFilesDirectory);
 		scanner.setIncludes(this.testFilesIncluded == null ? new String[]{"**/*.jmx"} : this.testFilesIncluded.toArray(new String[jmeterTestFiles.size()]));
 		if (this.testFilesExcluded != null) {

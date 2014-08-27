@@ -11,6 +11,7 @@ package com.lazerycode.jmeter.configuration;
  * 		<plugin>
  *     		<groupId></groupId>
  *     		<artifactId></artifactId>
+ *     		<typeId></typeId> // Optional
  *     </plugin>
  * 	</jmeterPlugins>
  * }
@@ -22,6 +23,7 @@ public class JMeterPlugins {
 
 	private String groupId = null;
 	private String artifactId = null;
+	private String typeId = null;
 
 	public String getGroupId() {
 		return groupId;
@@ -38,10 +40,18 @@ public class JMeterPlugins {
 	public void setArtifactId(String artifactId) {
 		this.artifactId = artifactId;
 	}
+	
+	public String getType() {
+		return typeId;
+	}
+
+	public void setType(String typeId) {
+		this.typeId = typeId;
+	}
 
 	@Override
 	public String toString() {
-		return groupId + ":" + artifactId;
+		return groupId + ":" + artifactId+":" + typeId;
 	}
 
 }

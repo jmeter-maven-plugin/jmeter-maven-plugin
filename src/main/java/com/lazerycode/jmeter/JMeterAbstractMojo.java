@@ -154,6 +154,9 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 	 */
 	@Parameter
 	protected Set<JMeterPlugins> jmeterPlugins;
+	
+	@Parameter
+	protected Set<JMeterPlugins> junitPlugins;
 
 	/**
 	 * Value class that wraps all JMeter Process JVM settings.
@@ -194,7 +197,7 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 	 */
 	@Parameter(defaultValue = "${plugin.artifacts}", required = true, readonly = true)
 	protected List<Artifact> pluginArtifacts;
-
+	
 	/**
 	 * The information extracted from the Mojo being currently executed
 	 */
@@ -221,6 +224,7 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 	protected File binDir;
 	protected File libDir;
 	protected File libExtDir;
+	protected File libUnitDir;
 	protected File logsDir;
 	protected File resultsDir;
 
@@ -251,6 +255,7 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 		resultsDir.mkdirs();
 		libDir = new File(workDir, "lib");
 		libExtDir = new File(libDir, "ext");
+		libUnitDir = new File(libDir, "junit");
 		libExtDir.mkdirs();
 
 		//JMeter expects a <workdir>/lib/junit directory and complains if it can't find it.
@@ -280,6 +285,7 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 	protected void populateJMeterDirectoryTree() throws MojoExecutionException {
 		for (Artifact artifact : pluginArtifacts) {
 			try {
+				//System.out.println("ARTIFACT ID - "+artifact.getFile().getName());
 				if (Artifact.SCOPE_COMPILE.equals(artifact.getScope()) || Artifact.SCOPE_RUNTIME.equals(artifact.getScope())) {
 					if (artifact.getArtifactId().equals(jmeterConfigArtifact)) {
 						extractConfigSettings(artifact);
@@ -292,6 +298,8 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 					} else if (isArtifactAnExplicitDependency(artifact)) {
 						if (isArtifactMarkedAsAJMeterPlugin(artifact)) {
 							copyFile(artifact.getFile(), new File(libExtDir + File.separator + artifact.getFile().getName()));
+						} else if (isArtifactMarkedAsAJUnitPlugin(artifact)) {
+							copyFile(artifact.getFile(), new File(libUnitDir + File.separator + artifact.getFile().getName()));
 						} else {
 							copyFile(artifact.getFile(), new File(libDir + File.separator + artifact.getFile().getName()));
 						}
@@ -329,7 +337,18 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 	protected boolean isArtifactMarkedAsAJMeterPlugin(Artifact artifact) {
 		if (null != jmeterPlugins) {
 			for (JMeterPlugins identifiedPlugin : jmeterPlugins) {
-				if (identifiedPlugin.toString().equals(artifact.getGroupId() + ":" + artifact.getArtifactId())) {
+				if (identifiedPlugin.toString().equals(artifact.getGroupId() + ":" + artifact.getArtifactId()+":"+artifact.getType())) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	protected boolean isArtifactMarkedAsAJUnitPlugin(Artifact artifact) {
+		if (null != junitPlugins) {
+			for (JMeterPlugins identifiedPlugin : junitPlugins) {
+				if (identifiedPlugin.toString().equals(artifact.getGroupId() + ":" + artifact.getArtifactId()+":"+artifact.getType())) {
 					return true;
 				}
 			}

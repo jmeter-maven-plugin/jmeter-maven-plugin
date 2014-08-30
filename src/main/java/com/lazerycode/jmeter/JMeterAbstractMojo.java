@@ -156,6 +156,12 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 	protected Set<JMeterPlugins> jmeterPlugins;
 
 	/**
+	 * Value class that wraps all remote configurations.
+	 */
+	@Parameter
+	protected Set<JMeterPlugins> junitLibraries;
+
+	/**
 	 * Value class that wraps all JMeter Process JVM settings.
 	 */
 	@Parameter
@@ -221,6 +227,7 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 	protected File binDir;
 	protected File libDir;
 	protected File libExtDir;
+	protected File libJUnitDir;
 	protected File logsDir;
 	protected File resultsDir;
 
@@ -252,9 +259,8 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 		libDir = new File(workDir, "lib");
 		libExtDir = new File(libDir, "ext");
 		libExtDir.mkdirs();
-
-		//JMeter expects a <workdir>/lib/junit directory and complains if it can't find it.
-		new File(libDir, "junit").mkdirs();
+		libJUnitDir = new File(libDir, "junit");
+		libJUnitDir.mkdirs();
 	}
 
 	protected void propertyConfiguration() throws MojoExecutionException {
@@ -292,6 +298,8 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 					} else if (isArtifactAnExplicitDependency(artifact)) {
 						if (isArtifactMarkedAsAJMeterPlugin(artifact)) {
 							copyFile(artifact.getFile(), new File(libExtDir + File.separator + artifact.getFile().getName()));
+						} else if (isArtifactMarkedAsAJUnitLib(artifact)) {
+							copyFile(artifact.getFile(), new File(libJUnitDir + File.separator + artifact.getFile().getName()));
 						} else {
 							copyFile(artifact.getFile(), new File(libDir + File.separator + artifact.getFile().getName()));
 						}
@@ -327,8 +335,16 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 	}
 
 	protected boolean isArtifactMarkedAsAJMeterPlugin(Artifact artifact) {
-		if (null != jmeterPlugins) {
-			for (JMeterPlugins identifiedPlugin : jmeterPlugins) {
+		return isMarkedAs(jmeterPlugins, artifact);
+	}
+
+	protected boolean isArtifactMarkedAsAJUnitLib(Artifact artifact) {
+		return isMarkedAs(junitLibraries, artifact);
+	}
+
+	private boolean isMarkedAs(Set<JMeterPlugins> plugins, Artifact artifact) {
+		if (null != plugins) {
+			for (JMeterPlugins identifiedPlugin : plugins) {
 				if (identifiedPlugin.toString().equals(artifact.getGroupId() + ":" + artifact.getArtifactId())) {
 					return true;
 				}

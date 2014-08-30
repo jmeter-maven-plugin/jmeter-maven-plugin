@@ -22,7 +22,7 @@ public class JMeterPropertiesFilesTest {
 
 	@Test
 	public void createFileIfItDoesNotExistReturnsFalse() {
-		assertThat(JMeterPropertiesFiles.SYSTEM_PROPERTIES.createFileIfItDoesNotExist(),
+		assertThat(JMeterPropertiesFiles.GLOBAL_PROPERTIES.createFileIfItDoesNotExist(),
 				is(equalTo(false)));
 	}
 }

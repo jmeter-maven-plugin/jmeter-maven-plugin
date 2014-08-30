@@ -11,8 +11,8 @@ public enum JMeterPropertiesFiles {
 	JMETER_PROPERTIES("jmeter.properties", true),
 	SAVE_SERVICE_PROPERTIES("saveservice.properties", true),
 	UPGRADE_PROPERTIES("upgrade.properties", true),
-	SYSTEM_PROPERTIES("system.properties", false),
-	USER_PROPERTIES("user.properties", false),
+	SYSTEM_PROPERTIES("system.properties", true),
+	USER_PROPERTIES("user.properties", true),
 	GLOBAL_PROPERTIES("global.properties", false);
 
 	private final String propertiesFilename;

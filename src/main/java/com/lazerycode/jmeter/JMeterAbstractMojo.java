@@ -2,6 +2,7 @@ package com.lazerycode.jmeter;
 
 import com.lazerycode.jmeter.configuration.*;
 import com.lazerycode.jmeter.properties.PropertyHandler;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.AbstractMojo;
@@ -284,24 +285,25 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 	 * @throws MojoExecutionException
 	 */
 	protected void populateJMeterDirectoryTree() throws MojoExecutionException {
+		getLog().debug("Copying artifacts, showing dependency trail: ");
 		for (Artifact artifact : pluginArtifacts) {
 			try {
 				if (Artifact.SCOPE_COMPILE.equals(artifact.getScope()) || Artifact.SCOPE_RUNTIME.equals(artifact.getScope())) {
 					if (artifact.getArtifactId().equals(jmeterConfigArtifact)) {
 						extractConfigSettings(artifact);
 					} else if (artifact.getArtifactId().equals("ApacheJMeter")) {
-						copyFile(artifact.getFile(), new File(binDir + File.separator + artifact.getArtifactId() + ".jar"));
+						copyArtifact(artifact, new File(binDir + File.separator + artifact.getArtifactId() + ".jar"));
 					} else if (artifact.getArtifactId().startsWith("ApacheJMeter_")) {
-						copyFile(artifact.getFile(), new File(libExtDir + File.separator + artifact.getFile().getName()));
+						copyArtifact(artifact, new File(libExtDir + File.separator + artifact.getFile().getName()));
 					} else if (isArtifactAJMeterDependency(artifact)) {
-						copyFile(artifact.getFile(), new File(libDir + File.separator + artifact.getFile().getName()));
+						copyArtifact(artifact, new File(libDir + File.separator + artifact.getFile().getName()));
 					} else if (isArtifactAnExplicitDependency(artifact)) {
 						if (isArtifactMarkedAsAJMeterPlugin(artifact)) {
-							copyFile(artifact.getFile(), new File(libExtDir + File.separator + artifact.getFile().getName()));
+							copyArtifact(artifact, new File(libExtDir + File.separator + artifact.getFile().getName()));
 						} else if (isArtifactMarkedAsAJUnitLib(artifact)) {
-							copyFile(artifact.getFile(), new File(libJUnitDir + File.separator + artifact.getFile().getName()));
+							copyArtifact(artifact, new File(libJUnitDir + File.separator + artifact.getFile().getName()));
 						} else {
-							copyFile(artifact.getFile(), new File(libDir + File.separator + artifact.getFile().getName()));
+							copyArtifact(artifact, new File(libDir + File.separator + artifact.getFile().getName()));
 						}
 					}
 				}
@@ -309,6 +311,16 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 				throw new MojoExecutionException("Unable to populate the JMeter directory tree: " + e);
 			}
 		}
+	}
+
+	private void copyArtifact(Artifact artifact, File destination) throws IOException{
+		if ( getLog().isDebugEnabled() ) {
+			List<String> trail = artifact.getDependencyTrail();
+			for ( int i = 0; i < trail.size(); i++) {
+				getLog().debug(StringUtils.leftPad("", i) + trail.get(i));
+			}
+		}
+		copyFile(artifact.getFile(), destination);
 	}
 
 	/**

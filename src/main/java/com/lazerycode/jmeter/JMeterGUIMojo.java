@@ -6,6 +6,7 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
+import java.io.File;
 import java.io.IOException;
 
 /**
@@ -19,6 +20,12 @@ public class JMeterGUIMojo extends JMeterAbstractMojo {
 
 	@Parameter(defaultValue = "false")
 	private boolean runInBackground;
+
+	/**
+	 * Supply a test file to open in the GUI once it is loaded.
+	 */
+	@Parameter
+	private File guiTestFile;
 
 	/**
 	 * Load the JMeter GUI
@@ -55,5 +62,11 @@ public class JMeterGUIMojo extends JMeterAbstractMojo {
 		} catch (IOException e) {
 			getLog().error(e.getMessage());
 		}
+	}
+
+	@Override
+	protected void initialiseJMeterArgumentsArray(boolean disableGUI) throws MojoExecutionException {
+		super.initialiseJMeterArgumentsArray(disableGUI);
+		testArgs.setTestFile(guiTestFile);
 	}
 }

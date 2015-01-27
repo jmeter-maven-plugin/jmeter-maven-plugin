@@ -23,7 +23,7 @@ import static com.lazerycode.jmeter.configuration.JMeterCommandLineArguments.*;
 public class JMeterArgumentsArray {
 
 	private final String jMeterHome;
-	private final boolean disableTests;
+	private boolean disableTests;
 
 	private final TreeSet<JMeterCommandLineArguments> argumentList = new TreeSet<JMeterCommandLineArguments>();
 	private DateTimeFormatter dateFormat = ISODateTimeFormat.basicDate();
@@ -153,7 +153,7 @@ public class JMeterArgumentsArray {
 	}
 
 	public void setTestFile(File value) {
-		if (isNotSet(value) || disableTests) return;
+		if (isNotSet(value)) return;
 		testFile = value.getAbsolutePath();
 		if (timestampResults) {
 			//TODO investigate when timestamp is generated.
@@ -171,6 +171,7 @@ public class JMeterArgumentsArray {
 		}
 		argumentList.add(TESTFILE_OPT);
 		argumentList.add(LOGFILE_OPT);
+		disableTests = false;
 	}
 
 

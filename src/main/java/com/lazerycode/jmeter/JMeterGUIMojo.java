@@ -4,6 +4,7 @@ import com.lazerycode.jmeter.testrunner.JMeterProcessBuilder;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 
 import java.io.IOException;
 
@@ -13,7 +14,11 @@ import java.io.IOException;
  * @author Jarrod Ribble
  */
 @Mojo(name = "gui")
+@SuppressWarnings({"UnusedDeclaration"})
 public class JMeterGUIMojo extends JMeterAbstractMojo {
+
+	@Parameter(defaultValue = "false")
+	private boolean runInBackground;
 
 	/**
 	 * Load the JMeter GUI
@@ -40,7 +45,9 @@ public class JMeterGUIMojo extends JMeterAbstractMojo {
 		JMeterProcessBuilder.addArguments(testArgs.buildArgumentsArray());
 		try {
 			final Process process = JMeterProcessBuilder.startProcess();
-			process.waitFor();
+			if(!runInBackground) {
+				process.waitFor();
+			}
 		} catch (InterruptedException ex) {
 			getLog().info(" ");
 			getLog().info("System Exit Detected!  Stopping GUI...");

@@ -67,10 +67,8 @@ public class JMeterArgumentsArrayTest {
 		JMeterArgumentsArray testArgs = new JMeterArgumentsArray(enableGUI, "target/jmeter/");
 		testArgs.setTestFile(new File(this.testFile.toURI()));
 
-		assertThat(testArgs.getResultsLogFileName(),
-				is(equalTo(null)));
 		assertThat(UtilityFunctions.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()),
-				is(equalTo("-d target/jmeter/")));
+				is(equalTo("-t " + testFilePath + " -l " + testArgs.getResultsLogFileName() + " -d target/jmeter/")));
 	}
 
 	@Test

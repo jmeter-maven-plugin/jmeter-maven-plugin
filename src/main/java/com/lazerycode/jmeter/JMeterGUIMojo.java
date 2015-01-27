@@ -4,7 +4,9 @@ import com.lazerycode.jmeter.testrunner.JMeterProcessBuilder;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 
+import java.io.File;
 import java.io.IOException;
 
 /**
@@ -14,6 +16,12 @@ import java.io.IOException;
  */
 @Mojo(name = "gui")
 public class JMeterGUIMojo extends JMeterAbstractMojo {
+
+	/**
+	 * Convenient to open a test file into the GUI after it is loaded.
+	 */
+	@Parameter
+	private File guiTestFile;
 
 	/**
 	 * Load the JMeter GUI
@@ -48,5 +56,11 @@ public class JMeterGUIMojo extends JMeterAbstractMojo {
 		} catch (IOException e) {
 			getLog().error(e.getMessage());
 		}
+	}
+
+	@Override
+	protected void initialiseJMeterArgumentsArray(boolean disableGUI) throws MojoExecutionException {
+		super.initialiseJMeterArgumentsArray(disableGUI);
+		testArgs.setTestFile(guiTestFile);
 	}
 }

@@ -39,7 +39,7 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 	protected List<String> testFilesIncluded;
 
 	/**
-	 * Sets the list of exclude patterns to use in directory scan for Test files.
+	 * Sets the list of exclude patterns to use in directory scan for JMX files.
 	 * Relative to testFilesDirectory.
 	 */
 	@Parameter
@@ -50,6 +50,12 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 	 */
 	@Parameter(defaultValue = "${basedir}/src/test/jmeter")
 	protected File testFilesDirectory;
+
+	/**
+	 * Path under which .properties files are stored.
+	 */
+	@Parameter(defaultValue = "${basedir}/src/test/jmeter")
+	protected File propertiesFilesDirectory;
 
 	/**
 	 * Timestamp the test results.
@@ -265,7 +271,7 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 	}
 
 	protected void propertyConfiguration() throws MojoExecutionException {
-		pluginProperties = new PropertyHandler(testFilesDirectory, binDir, getArtifactNamed(jmeterConfigArtifact), propertiesReplacedByCustomFiles);
+		pluginProperties = new PropertyHandler(propertiesFilesDirectory, binDir, getArtifactNamed(jmeterConfigArtifact), propertiesReplacedByCustomFiles);
 		pluginProperties.setJMeterProperties(propertiesJMeter);
 		pluginProperties.setJMeterGlobalProperties(propertiesGlobal);
 		pluginProperties.setJMeterSaveServiceProperties(propertiesSaveService);
@@ -465,7 +471,7 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 	}
 
 	protected void configureAdvancedLogging() throws MojoFailureException {
-		File advancedLoggingSetting = new File(testFilesDirectory + File.separator + logConfigFilename);
+		File advancedLoggingSetting = new File(propertiesFilesDirectory + File.separator + logConfigFilename);
 		if (advancedLoggingSetting.exists()) {
 			try {
 				copyFile(advancedLoggingSetting, new File(binDir + File.separator + logConfigFilename));

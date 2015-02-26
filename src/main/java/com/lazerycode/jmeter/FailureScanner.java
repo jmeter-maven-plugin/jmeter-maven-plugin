@@ -64,10 +64,7 @@ class FailureScanner {
 			return this.failureCount;
 		}
 	}
-
-	/**
-	 * @return requestCount
-	 */
+	
 	public int getRequestCount() {
 		return this.failureCount + this.successCount;
 	}

@@ -140,7 +140,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <jmeter.version>2.11</jmeter.version>
+        <jmeter.version>2.12</jmeter.version>
     </properties>
 
     <dependencies>

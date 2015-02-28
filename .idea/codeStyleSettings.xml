@@ -25,203 +25,245 @@
             <option name="USE_TAB_CHARACTER" value="true" />
           </indentOptions>
           <arrangement>
-            <groups>
-              <group>
-                <type>GETTERS_AND_SETTERS</type>
-                <order>KEEP</order>
-              </group>
-            </groups>
             <rules>
-              <rule>
-                <match>
-                  <AND>
-                    <TYPE>FIELD</TYPE>
-                    <MODIFIER>PUBLIC</MODIFIER>
-                    <MODIFIER>STATIC</MODIFIER>
-                    <MODIFIER>FINAL</MODIFIER>
-                  </AND>
-                </match>
-              </rule>
-              <rule>
-                <match>
-                  <AND>
-                    <TYPE>FIELD</TYPE>
-                    <MODIFIER>PROTECTED</MODIFIER>
-                    <MODIFIER>STATIC</MODIFIER>
-                    <MODIFIER>FINAL</MODIFIER>
-                  </AND>
-                </match>
-              </rule>
-              <rule>
-                <match>
-                  <AND>
-                    <TYPE>FIELD</TYPE>
-                    <MODIFIER>PACKAGE_PRIVATE</MODIFIER>
-                    <MODIFIER>STATIC</MODIFIER>
-                    <MODIFIER>FINAL</MODIFIER>
-                  </AND>
-                </match>
-              </rule>
-              <rule>
-                <match>
-                  <AND>
-                    <TYPE>FIELD</TYPE>
-                    <MODIFIER>PRIVATE</MODIFIER>
-                    <MODIFIER>STATIC</MODIFIER>
-                    <MODIFIER>FINAL</MODIFIER>
-                  </AND>
-                </match>
-              </rule>
-              <rule>
-                <match>
-                  <AND>
-                    <TYPE>FIELD</TYPE>
-                    <MODIFIER>PUBLIC</MODIFIER>
-                    <MODIFIER>STATIC</MODIFIER>
-                  </AND>
-                </match>
-              </rule>
-              <rule>
-                <match>
-                  <AND>
-                    <TYPE>FIELD</TYPE>
-                    <MODIFIER>PROTECTED</MODIFIER>
-                    <MODIFIER>STATIC</MODIFIER>
-                  </AND>
-                </match>
-              </rule>
-              <rule>
-                <match>
-                  <AND>
-                    <TYPE>FIELD</TYPE>
-                    <MODIFIER>PACKAGE_PRIVATE</MODIFIER>
-                    <MODIFIER>STATIC</MODIFIER>
-                  </AND>
-                </match>
-              </rule>
-              <rule>
-                <match>
-                  <AND>
-                    <TYPE>FIELD</TYPE>
-                    <MODIFIER>PRIVATE</MODIFIER>
-                    <MODIFIER>STATIC</MODIFIER>
-                  </AND>
-                </match>
-              </rule>
-              <rule>
-                <match>
-                  <AND>
-                    <TYPE>FIELD</TYPE>
-                    <MODIFIER>PUBLIC</MODIFIER>
-                    <MODIFIER>FINAL</MODIFIER>
-                  </AND>
-                </match>
-              </rule>
-              <rule>
-                <match>
-                  <AND>
-                    <TYPE>FIELD</TYPE>
-                    <MODIFIER>PROTECTED</MODIFIER>
-                    <MODIFIER>FINAL</MODIFIER>
-                  </AND>
-                </match>
-              </rule>
-              <rule>
-                <match>
-                  <AND>
-                    <TYPE>FIELD</TYPE>
-                    <MODIFIER>PACKAGE_PRIVATE</MODIFIER>
-                    <MODIFIER>FINAL</MODIFIER>
-                  </AND>
-                </match>
-              </rule>
-              <rule>
-                <match>
-                  <AND>
-                    <TYPE>FIELD</TYPE>
-                    <MODIFIER>PRIVATE</MODIFIER>
-                    <MODIFIER>FINAL</MODIFIER>
-                  </AND>
-                </match>
-              </rule>
-              <rule>
-                <match>
-                  <AND>
-                    <TYPE>FIELD</TYPE>
-                    <MODIFIER>PUBLIC</MODIFIER>
-                  </AND>
-                </match>
-              </rule>
-              <rule>
-                <match>
-                  <AND>
-                    <TYPE>FIELD</TYPE>
-                    <MODIFIER>PROTECTED</MODIFIER>
-                  </AND>
-                </match>
-              </rule>
-              <rule>
-                <match>
-                  <AND>
-                    <TYPE>FIELD</TYPE>
-                    <MODIFIER>PACKAGE_PRIVATE</MODIFIER>
-                  </AND>
-                </match>
-              </rule>
-              <rule>
-                <match>
-                  <AND>
-                    <TYPE>FIELD</TYPE>
-                    <MODIFIER>PRIVATE</MODIFIER>
-                  </AND>
-                </match>
-              </rule>
-              <rule>
-                <match>
-                  <TYPE>FIELD</TYPE>
-                </match>
-              </rule>
-              <rule>
-                <match>
-                  <TYPE>CONSTRUCTOR</TYPE>
-                </match>
-              </rule>
-              <rule>
-                <match>
-                  <AND>
-                    <TYPE>METHOD</TYPE>
-                    <MODIFIER>STATIC</MODIFIER>
-                  </AND>
-                </match>
-              </rule>
-              <rule>
-                <match>
-                  <TYPE>METHOD</TYPE>
-                </match>
-              </rule>
-              <rule>
-                <match>
-                  <TYPE>ENUM</TYPE>
-                </match>
-              </rule>
-              <rule>
-                <match>
-                  <TYPE>INTERFACE</TYPE>
-                </match>
-              </rule>
-              <rule>
-                <match>
-                  <AND>
-                    <TYPE>CLASS</TYPE>
-                    <MODIFIER>STATIC</MODIFIER>
-                  </AND>
-                </match>
-              </rule>
-              <rule>
-                <match>
-                  <TYPE>CLASS</TYPE>
-                </match>
-              </rule>
+              <section>
+                <rule>
+                  <match>
+                    <AND>
+                      <FIELD />
+                      <FINAL />
+                      <PUBLIC />
+                      <STATIC />
+                    </AND>
+                  </match>
+                </rule>
+              </section>
+              <section>
+                <rule>
+                  <match>
+                    <AND>
+                      <FIELD />
+                      <FINAL />
+                      <PROTECTED />
+                      <STATIC />
+                    </AND>
+                  </match>
+                </rule>
+              </section>
+              <section>
+                <rule>
+                  <match>
+                    <AND>
+                      <FIELD />
+                      <FINAL />
+                      <PACKAGE_PRIVATE />
+                      <STATIC />
+                    </AND>
+                  </match>
+                </rule>
+              </section>
+              <section>
+                <rule>
+                  <match>
+                    <AND>
+                      <FIELD />
+                      <FINAL />
+                      <PRIVATE />
+                      <STATIC />
+                    </AND>
+                  </match>
+                </rule>
+              </section>
+              <section>
+                <rule>
+                  <match>
+                    <AND>
+                      <FIELD />
+                      <PUBLIC />
+                      <STATIC />
+                    </AND>
+                  </match>
+                </rule>
+              </section>
+              <section>
+                <rule>
+                  <match>
+                    <AND>
+                      <FIELD />
+                      <PROTECTED />
+                      <STATIC />
+                    </AND>
+                  </match>
+                </rule>
+              </section>
+              <section>
+                <rule>
+                  <match>
+                    <AND>
+                      <FIELD />
+                      <PACKAGE_PRIVATE />
+                      <STATIC />
+                    </AND>
+                  </match>
+                </rule>
+              </section>
+              <section>
+                <rule>
+                  <match>
+                    <AND>
+                      <FIELD />
+                      <PRIVATE />
+                      <STATIC />
+                    </AND>
+                  </match>
+                </rule>
+              </section>
+              <section>
+                <rule>
+                  <match>
+                    <AND>
+                      <FIELD />
+                      <FINAL />
+                      <PUBLIC />
+                    </AND>
+                  </match>
+                </rule>
+              </section>
+              <section>
+                <rule>
+                  <match>
+                    <AND>
+                      <FIELD />
+                      <FINAL />
+                      <PROTECTED />
+                    </AND>
+                  </match>
+                </rule>
+              </section>
+              <section>
+                <rule>
+                  <match>
+                    <AND>
+                      <FIELD />
+                      <FINAL />
+                      <PACKAGE_PRIVATE />
+                    </AND>
+                  </match>
+                </rule>
+              </section>
+              <section>
+                <rule>
+                  <match>
+                    <AND>
+                      <FIELD />
+                      <FINAL />
+                      <PRIVATE />
+                    </AND>
+                  </match>
+                </rule>
+              </section>
+              <section>
+                <rule>
+                  <match>
+                    <AND>
+                      <FIELD />
+                      <PUBLIC />
+                    </AND>
+                  </match>
+                </rule>
+              </section>
+              <section>
+                <rule>
+                  <match>
+                    <AND>
+                      <FIELD />
+                      <PROTECTED />
+                    </AND>
+                  </match>
+                </rule>
+              </section>
+              <section>
+                <rule>
+                  <match>
+                    <AND>
+                      <FIELD />
+                      <PACKAGE_PRIVATE />
+                    </AND>
+                  </match>
+                </rule>
+              </section>
+              <section>
+                <rule>
+                  <match>
+                    <AND>
+                      <FIELD />
+                      <PRIVATE />
+                    </AND>
+                  </match>
+                </rule>
+              </section>
+              <section>
+                <rule>
+                  <match>
+                    <FIELD />
+                  </match>
+                </rule>
+              </section>
+              <section>
+                <rule>
+                  <match>
+                    <CONSTRUCTOR />
+                  </match>
+                </rule>
+              </section>
+              <section>
+                <rule>
+                  <match>
+                    <AND>
+                      <METHOD />
+                      <STATIC />
+                    </AND>
+                  </match>
+                </rule>
+              </section>
+              <section>
+                <rule>
+                  <match>
+                    <METHOD />
+                  </match>
+                </rule>
+              </section>
+              <section>
+                <rule>
+                  <match>
+                    <ENUM />
+                  </match>
+                </rule>
+              </section>
+              <section>
+                <rule>
+                  <match>
+                    <INTERFACE />
+                  </match>
+                </rule>
+              </section>
+              <section>
+                <rule>
+                  <match>
+                    <AND>
+                      <CLASS />
+                      <STATIC />
+                    </AND>
+                  </match>
+                </rule>
+              </section>
+              <section>
+                <rule>
+                  <match>
+                    <CLASS />
+                  </match>
+                </rule>
+              </section>
             </rules>
           </arrangement>
         </codeStyleSettings>
@@ -230,4 +272,3 @@
     <option name="USE_PER_PROJECT_SETTINGS" value="true" />
   </component>
 </project>
-

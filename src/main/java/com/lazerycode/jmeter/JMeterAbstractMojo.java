@@ -151,6 +151,12 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 	protected ProxyConfiguration proxyConfig;
 
 	/**
+	 * Value class that wraps SOCKS proxy configurations.
+	 */
+	@Parameter
+	protected SocksProxyConfiguration socksProxyConfig;
+
+	/**
 	 * Value class that wraps all remote configurations.
 	 */
 	@Parameter
@@ -455,6 +461,7 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 			}
 		}
 		testArgs.setProxyConfig(proxyConfig);
+		testArgs.setSocksProxyConfig(socksProxyConfig);
 		testArgs.setACustomPropertiesFile(customPropertiesFile);
 		testArgs.setLogRootOverride(overrideRootLogLevel);
 		testArgs.setLogsDirectory(logsDir.getAbsolutePath());

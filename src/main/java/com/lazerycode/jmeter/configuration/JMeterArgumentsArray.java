@@ -28,6 +28,7 @@ public class JMeterArgumentsArray {
 	private final TreeSet<JMeterCommandLineArguments> argumentList = new TreeSet<JMeterCommandLineArguments>();
 	private DateTimeFormatter dateFormat = ISODateTimeFormat.basicDate();
 	private ProxyConfiguration proxyConfiguration;
+	private SocksProxyConfiguration socksProxyConfiguration;
 	private boolean timestampResults = false;
 	private boolean appendTimestamp = false;
 	private String resultFileExtension = ".jtl";
@@ -101,6 +102,16 @@ public class JMeterArgumentsArray {
 		}
 		if (isSet(proxyConfiguration.getHostExclusions())) {
 			argumentList.add(NONPROXY_HOSTS);
+		}
+	}
+
+	public void setSocksProxyConfig(SocksProxyConfiguration configuration) {
+		if (configuration == null) return;
+
+		this.socksProxyConfiguration = configuration;
+		if (isSet(socksProxyConfiguration.getHost())) {
+			argumentList.add(SOCKS_PROXY_HOST);
+			argumentList.add(SOCKS_PROXY_PORT);
 		}
 	}
 
@@ -232,6 +243,14 @@ public class JMeterArgumentsArray {
 				case NONPROXY_HOSTS:
 					argumentsArray.add(NONPROXY_HOSTS.getCommandLineArgument());
 					argumentsArray.add(proxyConfiguration.getHostExclusions());
+					break;
+				case SOCKS_PROXY_HOST:
+					argumentsArray.add(SOCKS_PROXY_HOST.getCommandLineArgument());
+					argumentsArray.add(socksProxyConfiguration.getHost());
+					break;
+				case SOCKS_PROXY_PORT:
+					argumentsArray.add(SOCKS_PROXY_PORT.getCommandLineArgument());
+					argumentsArray.add(socksProxyConfiguration.getPort());
 					break;
 				case REMOTE_STOP:
 					argumentsArray.add(REMOTE_STOP.getCommandLineArgument());

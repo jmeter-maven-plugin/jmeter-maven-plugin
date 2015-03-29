@@ -251,6 +251,30 @@ public class JMeterArgumentsArrayTest {
 	}
 
 	@Test
+	public void validateJMeterSetSocksProxyHost() throws Exception {
+		SocksProxyConfiguration socksProxyConfiguration = new SocksProxyConfiguration();
+		socksProxyConfiguration.setHost("http://10.10.50.43");
+		socksProxyConfiguration.setPort(8080);
+		JMeterArgumentsArray testArgs = new JMeterArgumentsArray(disableGUI, "target/jmeter/");
+		testArgs.setTestFile(new File(this.testFile.toURI()));
+
+		testArgs.setSocksProxyConfig(socksProxyConfiguration);
+
+		assertThat(UtilityFunctions.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()),
+				is(equalTo("-n -t " + testFilePath + " -l " + testArgs.getResultsLogFileName() + " -d target/jmeter/ -DsocksProxyHost http://10.10.50.43 -DsocksProxyPort 8080")));
+		assertThat(socksProxyConfiguration.toString(),
+				is(equalTo("SOCKS Proxy Details:\n\nHost: http://10.10.50.43:8080\n\n")));
+	}
+
+	@Test
+	public void checkSocksProxyDetailsReturnedWhenHostAndPortNotSet() {
+		SocksProxyConfiguration socksProxyConfiguration = new SocksProxyConfiguration();
+
+		assertThat(socksProxyConfiguration.toString(),
+				is(equalTo("SOCKS proxy server is not being used.\n")));
+	}
+
+	@Test
 	public void validateSetRemoteStop() throws Exception {
 		JMeterArgumentsArray testArgs = new JMeterArgumentsArray(disableGUI, "target/jmeter/");
 		testArgs.setTestFile(new File(this.testFile.toURI()));

@@ -65,7 +65,7 @@ public class SocksProxyConfiguration {
 	public String toString() {
 		String proxyDetails = "SOCKS proxy server is not being used.";
 		if (isSet(host)) {
-			proxyDetails = "SOCKS proxy Details:\n\nHost: " + host + ":" + port + "\n";
+			proxyDetails = "SOCKS Proxy Details:\n\nHost: " + host + ":" + port + "\n";
 		}
 		return proxyDetails + "\n";
 	}

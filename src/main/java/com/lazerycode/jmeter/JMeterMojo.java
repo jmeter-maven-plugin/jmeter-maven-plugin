@@ -1,13 +1,16 @@
 package com.lazerycode.jmeter;
 
-import com.lazerycode.jmeter.testrunner.TestManager;
+import java.io.File;
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
+import com.lazerycode.jmeter.testrunner.TestManager;
 
 /**
  * JMeter Maven plugin.
@@ -65,10 +68,12 @@ public class JMeterMojo extends JMeterAbstractMojo {
 		FailureScanner failureScanner = new FailureScanner(ignoreResultFailures);
 		int totalFailureCount = 0;
 		boolean failed = false;
+		Set<String> lstFileFailed = new HashSet<String>();
 		for (String file : results) {
 			try {
 				if (failureScanner.hasTestFailed(new File(file))) {
 					totalFailureCount += failureScanner.getFailureCount();
+					lstFileFailed.add(new File(file).getName()+":");
 					failed = true;
 				}
 			} catch (IOException e) {
@@ -81,6 +86,7 @@ public class JMeterMojo extends JMeterAbstractMojo {
 		getLog().info("Tests Run: " + results.size() + ", Failures: " + totalFailureCount);
 		getLog().info(" ");
 		if (failed) {
+			getLog().info("Name Tests Failed: " + lstFileFailed.toString());
 			throw new MojoFailureException("There were " + totalFailureCount + " test failures.  See the JMeter logs at '" + logsDir.getAbsolutePath() + "' for details.");
 		}
 	}

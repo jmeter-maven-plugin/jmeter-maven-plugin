@@ -1,9 +1,9 @@
 package com.lazerycode.jmeter;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
+import java.util.Scanner;
+import java.util.regex.Pattern;
 
 /**
  * Handles checking a JMeter results file in XML format for errors and failures.
@@ -42,16 +42,21 @@ class FailureScanner {
 		failureCount = 0;
 		successCount = 0;
 
-		BufferedReader br = new BufferedReader(new FileReader(file));
-		String line;
-		while ((line = br.readLine()) != null) {
-			if (line.contains(REQUEST_FAILURE_PATTERN)) {
-				this.failureCount++;
-			} else if (line.contains(REQUEST_SUCCESS_PATTERN)) {
-				this.successCount++;
-			}
+		Scanner resultFileScanner;
+		Pattern errorPattern = Pattern.compile(REQUEST_FAILURE_PATTERN);
+		Pattern successPattern = Pattern.compile(REQUEST_SUCCESS_PATTERN);
+
+		resultFileScanner = new Scanner(file);
+		while (resultFileScanner.findWithinHorizon(errorPattern, 0) != null) {
+			failureCount++;
 		}
-		br.close();
+		resultFileScanner.close();
+
+		resultFileScanner = new Scanner(file);
+		while (resultFileScanner.findWithinHorizon(successPattern, 0) != null) {
+			successCount++;
+		}
+		resultFileScanner.close();
 	}
 
 	/**

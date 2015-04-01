@@ -13,38 +13,64 @@ import java.util.regex.Pattern;
 class FailureScanner {
 
 	private static final String REQUEST_FAILURE_PATTERN = "s=\"false\"";
+	private static final String REQUEST_SUCCESS_PATTERN = "s=\"true\"";
 	private final boolean ignoreFailures;
 	private int failureCount;
+	private int successCount;
 
 	public FailureScanner(boolean ignoreFailures) {
 		this.ignoreFailures = ignoreFailures;
 	}
 
 	/**
-	 * Check given file for errors
+	 * Check file for errors
 	 *
-	 * @param file File to parse for failures
-	 * @return true if file doesn't contain failures
+	 * @return false if file doesn't contain failures
+	 */
+	public boolean hasTestFailed() {
+		return !this.ignoreFailures && this.failureCount > 0;
+	}
+
+	/**
+	 * Parse given results file
+	 *
+	 * @param file File to parse for results
 	 * @throws IOException
 	 */
-	public boolean hasTestFailed(File file) throws IOException {
-		if (this.ignoreFailures) return false;
+	public void parseResults(File file) throws IOException {
+
 		failureCount = 0;
+		successCount = 0;
+
 		Scanner resultFileScanner;
 		Pattern errorPattern = Pattern.compile(REQUEST_FAILURE_PATTERN);
+		Pattern successPattern = Pattern.compile(REQUEST_SUCCESS_PATTERN);
+
 		resultFileScanner = new Scanner(file);
 		while (resultFileScanner.findWithinHorizon(errorPattern, 0) != null) {
 			failureCount++;
 		}
 		resultFileScanner.close();
 
-		return this.failureCount > 0;
+		resultFileScanner = new Scanner(file);
+		while (resultFileScanner.findWithinHorizon(successPattern, 0) != null) {
+			successCount++;
+		}
+		resultFileScanner.close();
 	}
 
 	/**
 	 * @return failureCount
 	 */
 	public int getFailureCount() {
-		return this.failureCount;
+		if (this.ignoreFailures) {
+			return 0;
+		} else {
+			return this.failureCount;
+		}
+	}
+	
+	public int getRequestCount() {
+		return this.failureCount + this.successCount;
 	}
 }

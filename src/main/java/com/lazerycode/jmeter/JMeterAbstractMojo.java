@@ -266,7 +266,7 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 	/**
 	 * Place where the script files will be started.
 	 */
-	@Parameter(defaultValue = "${project.build.directory}/target")
+	@Parameter(defaultValue = "${project.build.directory}")
 	protected transient File scriptDir;
 
 

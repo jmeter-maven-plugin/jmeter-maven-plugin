@@ -263,6 +263,12 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 	@Parameter(defaultValue = "false")
 	protected boolean addTestNameOnScript;
 
+	/**
+	 * Place where the script files will be started.
+	 */
+	@Parameter(defaultValue = "${project.build.directory}/target")
+	protected transient File scriptDir;
+
 
 	/**
 	 * Other directories will be created by this plugin and used by JMeter

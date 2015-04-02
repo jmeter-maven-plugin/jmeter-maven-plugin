@@ -53,7 +53,7 @@ public class TestManager extends JMeterMojo {
 	 * @throws MojoExecutionException
 	 */
 	public List<String> executeTests() throws MojoExecutionException {
-		runScript(prePostProcessingConfig.getGlobalPreProcessingScript());
+		runScript(prePostProcessingConfig.getGlobalPreProcessingScript(), prePostProcessingConfig.getDirectory());
 
 		JMeterArgumentsArray thisTestArgs = baseTestArgs;
 		List<String> tests = generateTestList();
@@ -70,7 +70,7 @@ public class TestManager extends JMeterMojo {
 			}
 			results.add(executeSingleTest(new File(testFilesDirectory, file), thisTestArgs));
 		}
-		runScript(prePostProcessingConfig.getGlobalPostProcessingScript());
+		runScript(prePostProcessingConfig.getGlobalPostProcessingScript(), prePostProcessingConfig.getDirectory());
 		return results;
 	}
 
@@ -106,7 +106,7 @@ public class TestManager extends JMeterMojo {
 				commandStr.append(" ").append(test.getName().toString());
 			}
 
-			runScript(commandStr.toString());
+			runScript(commandStr.toString(), prePostProcessingConfig.getDirectory());
 
 			final Process process = JMeterProcessBuilder.startProcess();
 			BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
@@ -135,7 +135,7 @@ public class TestManager extends JMeterMojo {
 			if(prePostProcessingConfig.isAddTestNameOnScript()){
 				commandStr.append(" ").append(test.getName().toString());
 			}
-			runScript(commandStr.toString());
+			runScript(commandStr.toString(), prePostProcessingConfig.getDirectory());
 
 		}
 		return testArgs.getResultsLogFileName();
@@ -168,11 +168,11 @@ public class TestManager extends JMeterMojo {
 	}
 
 
-	private void runScript(String command)  {
+	private void runScript(String command, File dir)  {
 		getLog().debug("Call script : " + command);
 		try {
 			if(command!=null||!command.isEmpty()) {
-				Process process= Runtime.getRuntime().exec(command.split(" "));
+				Process process= Runtime.getRuntime().exec(command.split(" "),null,dir);
 				BufferedReader reader =null;
 				try{
 					reader = new BufferedReader(new InputStreamReader(process.getInputStream()));

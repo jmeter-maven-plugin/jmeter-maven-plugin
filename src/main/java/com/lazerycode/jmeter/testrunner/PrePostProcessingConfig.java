@@ -1,5 +1,7 @@
 package com.lazerycode.jmeter.testrunner;
 
+import java.io.File;
+
 /**
  * Post and Pre Processing configuration
  * The idea is to have the possibility to launch some script at each jmeter script and externally
@@ -29,14 +31,16 @@ public class PrePostProcessingConfig {
 	 * Post processing after jmeter run
 	 */
 	private final String postProcessingScript;
+	private final File directory;
 
-	public PrePostProcessingConfig(String globalPreProcessingScript, String globalPostProcessingScript, String preProcessingScript, String postProcessingScript,boolean addTestNameOnScript) {
+	public PrePostProcessingConfig(String globalPreProcessingScript, String globalPostProcessingScript, String preProcessingScript, String postProcessingScript, boolean addTestNameOnScript, File directory) {
 		this.globalPreProcessingScript=globalPreProcessingScript;
 		this.globalPostProcessingScript=globalPostProcessingScript;
 		this.preProcessingScript=preProcessingScript;
 		this.postProcessingScript=postProcessingScript;
 		this.addTestNameOnScript=addTestNameOnScript;
 
+		this.directory = directory;
 	}
 
 
@@ -59,4 +63,10 @@ public class PrePostProcessingConfig {
 	public boolean isAddTestNameOnScript() {
 		return addTestNameOnScript;
 	}
+
+	public File getDirectory() {
+		return directory;
+	}
+
+
 }

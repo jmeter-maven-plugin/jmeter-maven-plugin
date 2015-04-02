@@ -94,6 +94,6 @@ public class JMeterMojo extends JMeterAbstractMojo {
 	 * @return
 	 */
 	private PrePostProcessingConfig getPrePostProcessingConfig() {
-		return new PrePostProcessingConfig(preProcessingScript,postProcessingScript,preTestScript,postTestScript,addTestNameOnScript);
+		return new PrePostProcessingConfig(preProcessingScript,postProcessingScript,preTestScript,postTestScript,addTestNameOnScript, scriptDir);
 	}
 }

@@ -228,6 +228,42 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 	@Parameter(defaultValue = "${project.build.directory}/jmeter")
 	protected transient File workDir;
 
+	//------------------------------------------------------------------------------------------------------------------
+
+	/****************************************************************************
+	 * Pre and Post Processing
+	 ****************************************************************************/
+	/**
+	 * Global Pre Processing Script
+	 */
+	@Parameter
+	protected String preProcessingScript;
+
+	/**
+	 * Global Post Processing Script
+	 */
+	@Parameter
+	protected String postProcessingScript;
+
+	/**
+	 * On each Jmeter test Pre Processing Script
+	 */
+	@Parameter
+	protected String preTestScript;
+
+	/**
+	 * On each Jmeter test  Post Processing Script
+	 */
+	@Parameter
+	protected String postTestScript;
+
+	/**
+	 * On each Jmeter test ,add the test name on script as argument?
+	 */
+	@Parameter(defaultValue = "false")
+	protected boolean addTestNameOnScript;
+
+
 	/**
 	 * Other directories will be created by this plugin and used by JMeter
 	 */

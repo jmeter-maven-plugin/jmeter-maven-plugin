@@ -9,10 +9,7 @@ import com.lazerycode.jmeter.configuration.RemoteConfiguration;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.tools.ant.DirectoryScanner;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -31,8 +28,10 @@ public class TestManager extends JMeterMojo {
 	private final boolean suppressJMeterOutput;
 	private final RemoteConfiguration remoteServerConfiguration;
 	private final JMeterProcessJVMSettings jMeterProcessJVMSettings;
+	private final PrePostProcessingConfig prePostProcessingConfig;
 
-	public TestManager(JMeterArgumentsArray baseTestArgs, File testFilesDirectory, List<String> testFilesIncluded, List<String> testFilesExcluded, RemoteConfiguration remoteServerConfiguration, boolean suppressJMeterOutput, File binDir, JMeterProcessJVMSettings jMeterProcessJVMSettings) {
+
+	public TestManager(JMeterArgumentsArray baseTestArgs, File testFilesDirectory, List<String> testFilesIncluded, List<String> testFilesExcluded, RemoteConfiguration remoteServerConfiguration, boolean suppressJMeterOutput, File binDir, JMeterProcessJVMSettings jMeterProcessJVMSettings, PrePostProcessingConfig prePostProcessingConfig) {
 		this.binDir = binDir;
 		this.baseTestArgs = baseTestArgs;
 		this.testFilesDirectory = testFilesDirectory;
@@ -41,7 +40,11 @@ public class TestManager extends JMeterMojo {
 		this.remoteServerConfiguration = remoteServerConfiguration;
 		this.suppressJMeterOutput = suppressJMeterOutput;
 		this.jMeterProcessJVMSettings = jMeterProcessJVMSettings;
+		this.prePostProcessingConfig=prePostProcessingConfig;
 	}
+
+
+
 
 	/**
 	 * Executes all tests and returns the resultFile names
@@ -50,6 +53,8 @@ public class TestManager extends JMeterMojo {
 	 * @throws MojoExecutionException
 	 */
 	public List<String> executeTests() throws MojoExecutionException {
+		runScript(prePostProcessingConfig.getGlobalPreProcessingScript());
+
 		JMeterArgumentsArray thisTestArgs = baseTestArgs;
 		List<String> tests = generateTestList();
 		List<String> results = new ArrayList<String>();
@@ -65,6 +70,7 @@ public class TestManager extends JMeterMojo {
 			}
 			results.add(executeSingleTest(new File(testFilesDirectory, file), thisTestArgs));
 		}
+		runScript(prePostProcessingConfig.getGlobalPostProcessingScript());
 		return results;
 	}
 
@@ -92,7 +98,16 @@ public class TestManager extends JMeterMojo {
 		JMeterProcessBuilder JMeterProcessBuilder = new JMeterProcessBuilder(jMeterProcessJVMSettings);
 		JMeterProcessBuilder.setWorkingDirectory(binDir);
 		JMeterProcessBuilder.addArguments(argumentsArray);
+
 		try {
+			StringBuilder commandStr=new StringBuilder();
+			commandStr.append(prePostProcessingConfig.getPreProcessingScript());
+			if(prePostProcessingConfig.isAddTestNameOnScript()){
+				commandStr.append(" ").append(test.getName().toString());
+			}
+
+			runScript(commandStr.toString());
+
 			final Process process = JMeterProcessBuilder.startProcess();
 			BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
 			String line;
@@ -114,6 +129,14 @@ public class TestManager extends JMeterMojo {
 			getLog().info(" ");
 		} catch (IOException e) {
 			getLog().error(e.getMessage());
+		}finally {
+			StringBuilder commandStr=new StringBuilder();
+			commandStr.append(prePostProcessingConfig.getPostProcessingScript());
+			if(prePostProcessingConfig.isAddTestNameOnScript()){
+				commandStr.append(" ").append(test.getName().toString());
+			}
+			runScript(commandStr.toString());
+
 		}
 		return testArgs.getResultsLogFileName();
 	}
@@ -142,5 +165,30 @@ public class TestManager extends JMeterMojo {
 		final List<String> includedFiles = Arrays.asList(scanner.getIncludedFiles());
 		jmeterTestFiles.addAll(includedFiles);
 		return jmeterTestFiles;
+	}
+
+
+	private void runScript(String command)  {
+		getLog().debug("Call script : " + command);
+		try {
+			if(command!=null||!command.isEmpty()) {
+				Process process= Runtime.getRuntime().exec(command.split(" "));
+				BufferedReader reader =null;
+				try{
+					reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+					String line = "";
+					while ((line = reader.readLine()) != null) {
+						getLog().info("Script output:" + line);
+					}
+				}finally {
+					if(reader!=null){
+						reader.close();
+					}
+				}
+			}
+		} catch (IOException e) {
+			getLog().error(e.getMessage());
+		}
+
 	}
 }

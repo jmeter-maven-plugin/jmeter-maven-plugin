@@ -1,5 +1,6 @@
 package com.lazerycode.jmeter;
 
+import com.lazerycode.jmeter.testrunner.PrePostProcessingConfig;
 import com.lazerycode.jmeter.testrunner.TestManager;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -45,7 +46,8 @@ public class JMeterMojo extends JMeterAbstractMojo {
 		if (null != remoteConfig) {
 			remoteConfig.setMasterPropertiesMap(pluginProperties.getMasterPropertiesMap());
 		}
-		TestManager jMeterTestManager = new TestManager(testArgs, testFilesDirectory, testFilesIncluded, testFilesExcluded, remoteConfig, suppressJMeterOutput, binDir, jMeterProcessJVMSettings);
+
+		TestManager jMeterTestManager = new TestManager(testArgs, testFilesDirectory, testFilesIncluded, testFilesExcluded, remoteConfig, suppressJMeterOutput, binDir, jMeterProcessJVMSettings,getPrePostProcessingConfig());
 		getLog().info(" ");
 		if (proxyConfig != null) {
 			getLog().info(this.proxyConfig.toString());
@@ -53,6 +55,8 @@ public class JMeterMojo extends JMeterAbstractMojo {
 		List<String> testResults = jMeterTestManager.executeTests();
 		parseTestResults(testResults);
 	}
+
+
 
 	/**
 	 * Scan JMeter result files for "error" and "failure" messages
@@ -83,5 +87,13 @@ public class JMeterMojo extends JMeterAbstractMojo {
 		if (failed) {
 			throw new MojoFailureException("There were " + totalFailureCount + " test failures.  See the JMeter logs at '" + logsDir.getAbsolutePath() + "' for details.");
 		}
+	}
+
+	/**
+	 * Construct Pre and Post Processing configuration
+	 * @return
+	 */
+	private PrePostProcessingConfig getPrePostProcessingConfig() {
+		return new PrePostProcessingConfig(preProcessingScript,postProcessingScript,preTestScript,postTestScript,addTestNameOnScript);
 	}
 }

@@ -23,12 +23,15 @@ public class JMeterMojo extends JMeterAbstractMojo {
 	 */
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
+		
+		// Skip when no JMeter sources are found
+		if (!propertiesFilesDirectory.exists()) {
+			getLog().info("Property source directory '" + propertiesFilesDirectory.getAbsolutePath() + "' does not exist");
+			skipTests = true;
+		}
+		
 		if (skipTests) {
-			getLog().info(" ");
-			getLog().info("-------------------------------------------------------");
-			getLog().info(" S K I P P I N G    P E R F O R M A N C E    T E S T S ");
-			getLog().info("-------------------------------------------------------");
-			getLog().info(" ");
+			getLog().info("Performance tests are skipped. ");
 			return;
 		}
 		getLog().info(" ");

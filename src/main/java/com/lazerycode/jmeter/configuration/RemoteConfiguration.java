@@ -1,17 +1,22 @@
 package com.lazerycode.jmeter.configuration;
 
+import com.lazerycode.jmeter.properties.JMeterPropertiesFiles;
+import com.lazerycode.jmeter.properties.PropertyContainer;
+
+import java.util.Map;
+
 /**
- * This is used by the TestManager to configure remote start and stop settings for each test run.
- * <p>
+ * This is used by the TestManager to configure remote serverList and stopServersAfterTests settings for each test run.
+ * <p/>
  * Configuration in pom.xml:
- * <p>
+ * <p/>
  * <pre>
  * {@code
  * <remoteConfig>
- *     <stop></stop>
- *     <startAll></startAll>
- *     <start></start>
- *     <startAndStopOnce></startAndStopOnce>
+ *     <stopServersAfterTests></stopServersAfterTests>
+ *     <startServersBeforeTests></startServersBeforeTests>
+ *     <serverList></serverList>
+ *     <startAndStopServersForEachTest></startAndStopServersForEachTest>
  * </remoteConfig>
  * }
  * </pre>
@@ -20,78 +25,101 @@ package com.lazerycode.jmeter.configuration;
  */
 public class RemoteConfiguration {
 
-    private boolean stop = false;
-    private boolean startAll = false;
-    private String start = null;
-    private boolean startAndStopOnce = true;
+	private boolean startServersBeforeTests = false;
+	private boolean stopServersAfterTests = false;
+	private boolean startAndStopServersForEachTest = false;
+	private String serverList = null;
+	private Map<JMeterPropertiesFiles, PropertyContainer> masterPropertiesMap = null;
 
-    /**
-     * @return Stop remote servers when the test finishes
-     */
-    public boolean isStop() {
-        return stop;
-    }
 
-    /**
-     * Stop remote servers when the test finishes
-     * Default: {@link false Boolean.FALSE}
-     * @param stop
-     */
-    public void setStop(boolean stop) {
-        this.stop = stop;
-    }
+	/**
+	 * @return Stop remote servers when the test finishes
+	 */
+	public boolean isStopServersAfterTests() {
+		return stopServersAfterTests;
+	}
 
-    /**
-     * @return Start all remote servers as defined in jmeter.properties when the test starts
-     */
-    public boolean isStartAll() {
-        return startAll;
-    }
+	/**
+	 * Stop remote servers when the test finishes
+	 * Default: {@link false Boolean.FALSE}
+	 *
+	 * @param stopServersAfterTests boolean
+	 */
+	public void setStopServersAfterTests(boolean stopServersAfterTests) {
+		this.stopServersAfterTests = stopServersAfterTests;
+	}
 
-    /**
-     * Start all remote servers as defined in jmeter.properties when the test starts
-     * Default: {@link false Boolean.FALSE}
-     * @param startAll
-     */
-    public void setStartAll(boolean startAll) {
-        this.startAll = startAll;
-    }
+	/**
+	 * @return Start all remote servers as defined in jmeter.properties when the test starts
+	 */
+	public boolean isStartServersBeforeTests() {
+		return startServersBeforeTests;
+	}
 
-    /**
-     * @return Comma separated list of servers to start when starting tests
-     */
-    public String getStart() {
-        return start;
-    }
 
-    /**
-     * Comma separated list of servers to start when starting tests
-     * @param start
-     */
-    public void setStart(String start) {
-        this.start = start;
-    }
+	/**
+	 * Start all remote servers as defined in jmeter.properties when the test starts
+	 * Default: {@link false Boolean.FALSE}
+	 *
+	 * @param startServersBeforeTests boolean
+	 */
+	public void setStartServersBeforeTests(boolean startServersBeforeTests) {
+		this.startServersBeforeTests = startServersBeforeTests;
+	}
 
-    /**
-     * @return Remote start and stop for every test, or once for the entire test suite of tests.
-     */
-    public boolean isStartAndStopOnce() {
-        return startAndStopOnce;
-    }
+	/**
+	 * @return Comma separated list of servers to serverList when starting tests
+	 */
+	public String getServerList() {
+		return serverList;
+	}
 
-    /**
-     * Remote start and stop for every test, or once for the entire test suite of tests.
-     * Default: {@link true Boolean.TRUE} (once for the entire suite of tests)
-     * @param startAndStopOnce
-     */
-    public void setStartAndStopOnce(boolean startAndStopOnce) {
-        this.startAndStopOnce = startAndStopOnce;
-    }
+	/**
+	 * Comma separated list of servers to serverList when starting tests
+	 *
+	 * @param serverList String
+	 */
+	public void setServerList(String serverList) {
+		this.serverList = serverList;
+	}
 
-    @Override
-    public String toString() {
-        //this method is used by maven when debug output is enabled
-        return "RemoteConfiguration [ "+"Start="+ getStart()+", Stop="+ isStop()+
-                ", StartAndStopOnce="+ isStartAndStopOnce()+", StartAll="+ isStartAll()+" ]";
-    }
+	/**
+	 * @return Remote serverList and stopServersAfterTests for every test, or once for the entire test suite of tests.
+	 */
+	public boolean isStartAndStopServersForEachTest() {
+		return startAndStopServersForEachTest;
+	}
+
+	/**
+	 * Remote serverList and stopServersAfterTests for every test, or once for the entire test suite of tests.
+	 * Default: {@link true Boolean.TRUE} (once for the entire suite of tests)
+	 *
+	 * @param startAndStopServersForEachTest boolean
+	 */
+	public void setStartAndStopServersForEachTest(boolean startAndStopServersForEachTest) {
+		this.startAndStopServersForEachTest = startAndStopServersForEachTest;
+	}
+
+	/**
+	 * Remote configuration details formatted for command line output.
+	 *
+	 * @return String
+	 */
+	@Override
+	public String toString() {
+		return "RemoteConfiguration [ " + "Start=" + getServerList() + ", Stop=" + isStopServersAfterTests() + ", StartAndStopOnce=" + isStartAndStopServersForEachTest() + ", StartAll=" + isStartServersBeforeTests() + " ]";
+	}
+
+
+	/**
+	 * @return propertycontainers with information specified in the various property sources.
+	 */
+	public Map<JMeterPropertiesFiles, PropertyContainer> getMasterPropertiesMap() {
+		return masterPropertiesMap;
+	}
+
+	public void setMasterPropertiesMap(
+			Map<JMeterPropertiesFiles, PropertyContainer> masterPropertiesMap) {
+		this.masterPropertiesMap = masterPropertiesMap;
+	}
 }

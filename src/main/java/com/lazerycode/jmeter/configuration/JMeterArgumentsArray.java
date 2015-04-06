@@ -1,12 +1,19 @@
 package com.lazerycode.jmeter.configuration;
 
-import com.lazerycode.jmeter.UtilityFunctions;
+import com.lazerycode.jmeter.properties.PropertyHandler;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.joda.time.LocalDateTime;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.ISODateTimeFormat;
 
 import java.io.File;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.TreeSet;
+
+import static com.lazerycode.jmeter.UtilityFunctions.isNotSet;
+import static com.lazerycode.jmeter.UtilityFunctions.isSet;
+import static com.lazerycode.jmeter.configuration.JMeterCommandLineArguments.*;
 
 /**
  * Creates an arguments array to pass to the JMeter object to run tests.
@@ -15,236 +22,230 @@ import java.util.*;
  */
 public class JMeterArgumentsArray {
 
-    private LinkedHashMap<JMeterCommandLineArguments, Boolean> argumentMap = new LinkedHashMap<JMeterCommandLineArguments, Boolean>();
-    private DateFormat dateFormat = new SimpleDateFormat("yyMMdd");
-    private boolean timestampResults = true;
-    private String remoteStartList = null;
-    private String nonProxyHosts = null;
-    private String proxyHost = null;
-    private String proxyPort = null;
-    private String proxyUsername = null;
-    private String proxyPassword = null;
-    private String customPropertiesFile = null;
-    private String testFile = null;
-    private String resultsFileName = null;
-    private String jMeterHome = null;
-    private String resultsDirectory = null;
-    private String overrideRootLogLevel = null;
-    private Map<String,String> overrideLogCategories = null;
+	private final String jMeterHome;
+	private final boolean disableTests;
 
-    /**
-     * The argument map will define which arguments are set on the command line.
-     * The order properties are initially put into the argument map defines the order they are returned in the array produced by this class.
-     */
-    public JMeterArgumentsArray() {
-        argumentMap.put(JMeterCommandLineArguments.NONGUI_OPT, true);           //Always suppress the GUI.
-        argumentMap.put(JMeterCommandLineArguments.TESTFILE_OPT, false);        //Required - test file as specified.
-        argumentMap.put(JMeterCommandLineArguments.LOGFILE_OPT, false);         //Required - output file as specified.
-        argumentMap.put(JMeterCommandLineArguments.JMETER_HOME_OPT, false);     //Required - JMETER_HOME location as specified.
-        argumentMap.put(JMeterCommandLineArguments.SYSTEM_PROPFILE, false);     //Set to true if system properties are specified.
-        argumentMap.put(JMeterCommandLineArguments.SYSTEM_PROPERTY, false);     //Set to true if system properties are specified.
-        argumentMap.put(JMeterCommandLineArguments.JMETER_PROPERTY, false);     //Set to true if user properties are specified.
-        argumentMap.put(JMeterCommandLineArguments.JMETER_GLOBAL_PROP, false);  //Set to true if global properties are specified(These get sent to remote servers as well).
-        argumentMap.put(JMeterCommandLineArguments.LOGLEVEL, false);            //Set to true if log level overrides have been specified
-        argumentMap.put(JMeterCommandLineArguments.PROPFILE2_OPT, false);       //Set to true if a custom properties file is specified.
-        argumentMap.put(JMeterCommandLineArguments.REMOTE_OPT, false);          //Set to true if a remote host used.
-        argumentMap.put(JMeterCommandLineArguments.PROXY_HOST, false);          //Set to true if proxy host is specified
-        argumentMap.put(JMeterCommandLineArguments.PROXY_PORT, false);          //Set to true if proxy port is specified
-        argumentMap.put(JMeterCommandLineArguments.PROXY_USERNAME, false);      //Set to true if proxy username is specified
-        argumentMap.put(JMeterCommandLineArguments.PROXY_PASSWORD, false);      //Set to true if proxy password is specified
-        argumentMap.put(JMeterCommandLineArguments.NONPROXY_HOSTS, false);      //Set to true if non-proxy hosts are specified
-        argumentMap.put(JMeterCommandLineArguments.REMOTE_STOP, false);         //Set to true to stop remote servers at the end of the tests.
-        argumentMap.put(JMeterCommandLineArguments.REMOTE_OPT_PARAM, false);    //Set to true to stop remote servers at the end of the tests.
-    }
+	private final TreeSet<JMeterCommandLineArguments> argumentList = new TreeSet<JMeterCommandLineArguments>();
+	private DateTimeFormatter dateFormat = ISODateTimeFormat.basicDate();
+	private ProxyConfiguration proxyConfiguration;
+	private boolean timestampResults = false;
+	private boolean appendTimestamp = false;
+	private String resultFileExtension = ".jtl";
+	private String remoteStartServerList;
+	private String customPropertiesFile;
+	private String testFile;
+	private String resultsLogFileName;
+	private String jmeterLogFileName;
+	private String logsDirectory;
+	private String resultsDirectory;
+	private PropertyHandler propertyHandler;
+	private LogLevel overrideRootLogLevel;
 
-    public void setResultsFileNameDateFormat(DateFormat value) {
-        this.dateFormat = value;
-    }
 
-    public void setShowGUI(boolean value) {
-        this.argumentMap.put(JMeterCommandLineArguments.NONGUI_OPT, !value);
-    }
+	/**
+	 * Create an instance of JMeterArgumentsArray
+	 *
+	 * @param disableGUI          If GUI should be disabled or not
+	 * @param jMeterHomeDirectory The JMETER_HOME directory, what JMeter bases its classpath on
+	 * @throws MojoExecutionException
+	 */
+	public JMeterArgumentsArray(boolean disableGUI, String jMeterHomeDirectory) throws MojoExecutionException {
+		if (isNotSet(jMeterHomeDirectory)) throw new MojoExecutionException("Unable to set JMeter Home Directory...");
+		jMeterHome = jMeterHomeDirectory;
+		argumentList.add(JMETER_HOME_OPT);
+		if (disableGUI) {
+			argumentList.add(NONGUI_OPT);
+			disableTests = false;
+		} else {
+			disableTests = true;
+		}
+	}
 
-    public void setRemoteStop(boolean value) {
-        this.argumentMap.put(JMeterCommandLineArguments.REMOTE_STOP, value);
-    }
 
-    public void setRemoteStartAll(boolean value) {
-        this.argumentMap.put(JMeterCommandLineArguments.REMOTE_OPT, value);
-    }
+	public PropertyHandler getPropertyHandler() {
+		return propertyHandler;
+	}
 
-    public void setRemoteStart(String value) {
-        if (UtilityFunctions.isNotSet(value)) return;
-        this.remoteStartList = value;
-        this.argumentMap.put(JMeterCommandLineArguments.REMOTE_OPT_PARAM, true);
-    }
+	public void setPropertyHandler(PropertyHandler propertyHandler) {
+		this.propertyHandler = propertyHandler;
+	}
 
-    public void setProxyConfig(ProxyConfiguration proxyConfiguration) {
-        this.setProxyHostDetails(proxyConfiguration.getHost(), proxyConfiguration.getPort());
-        this.setProxyUsername(proxyConfiguration.getUsername());
-        this.setProxyPassword(proxyConfiguration.getPassword());
-        this.setNonProxyHosts(proxyConfiguration.getHostExclusions());
 
-    }
+	public void setRemoteStop() {
+		argumentList.add(REMOTE_STOP);
+	}
 
-    private void setProxyHostDetails(String value, int port) {
-        if (UtilityFunctions.isNotSet(value)) return;
-        this.proxyHost = value;
-        this.proxyPort = Integer.toString(port);
-        this.argumentMap.put(JMeterCommandLineArguments.PROXY_HOST, true);
-        this.argumentMap.put(JMeterCommandLineArguments.PROXY_PORT, true);
-    }
+	public void setRemoteStart() {
+		argumentList.add(REMOTE_OPT);
+	}
 
-    private void setProxyUsername(String value) {
-        if (UtilityFunctions.isNotSet(value)) return;
-        this.proxyUsername = value;
-        this.argumentMap.put(JMeterCommandLineArguments.PROXY_USERNAME, true);
-    }
+	public void setRemoteStartServerList(String serverList) {
+		if (isNotSet(serverList)) return;
+		remoteStartServerList = serverList;
+		argumentList.add(REMOTE_OPT_PARAM);
+	}
 
-    private void setProxyPassword(String value) {
-        if (UtilityFunctions.isNotSet(value)) return;
-        this.proxyPassword = value;
-        this.argumentMap.put(JMeterCommandLineArguments.PROXY_PASSWORD, true);
-    }
+	public void setProxyConfig(ProxyConfiguration configuration) {
+		if (configuration == null) return;
 
-    private void setNonProxyHosts(String value) {
-        if (UtilityFunctions.isNotSet(value)) return;
-        this.nonProxyHosts = value;
-        this.argumentMap.put(JMeterCommandLineArguments.NONPROXY_HOSTS, true);
-    }
+		this.proxyConfiguration = configuration;
+		if (isSet(proxyConfiguration.getHost())) {
+			argumentList.add(PROXY_HOST);
+			argumentList.add(PROXY_PORT);
+		}
+		if (isSet(proxyConfiguration.getUsername())) {
+			argumentList.add(PROXY_USERNAME);
+		}
+		if (isSet(proxyConfiguration.getPassword())) {
+			argumentList.add(PROXY_PASSWORD);
+		}
+		if (isSet(proxyConfiguration.getHostExclusions())) {
+			argumentList.add(NONPROXY_HOSTS);
+		}
+	}
 
-    public void setACustomPropertiesFile(File value) {
-        if (UtilityFunctions.isNotSet(value)) return;
-        this.customPropertiesFile = value.getAbsolutePath();
-        this.argumentMap.put(JMeterCommandLineArguments.PROPFILE2_OPT, true);
-    }
+	public void setACustomPropertiesFile(File customProperties) {
+		if (isNotSet(customProperties)) return;
+		customPropertiesFile = customProperties.getAbsolutePath();
+		argumentList.add(PROPFILE2_OPT);
+	}
 
-    //TODO we should support this rather than expecting people to modify thier jmeter.properties
-    public void setLogCategoriesOverrides(Map<String,String> value) {
-        if (UtilityFunctions.isNotSet(value)) return;
-        this.overrideLogCategories = value;
-        this.argumentMap.put(JMeterCommandLineArguments.LOGLEVEL, true);
-    }
+	public void setLogRootOverride(String requestedLogLevel) {
+		if (isNotSet(requestedLogLevel)) return;
+		for (LogLevel logLevel : LogLevel.values()) {
+			if (logLevel.toString().equals(requestedLogLevel.toUpperCase())) {
+				overrideRootLogLevel = logLevel;
+				argumentList.add(LOGLEVEL);
+			}
+		}
+	}
 
-    //TODO we should support this rather than expecting people to modify thier jmeter.properties
-    public void setLogRootOverride(String value) {
-        if (UtilityFunctions.isNotSet(value)) return;
-        this.overrideRootLogLevel = value;
-        this.argumentMap.put(JMeterCommandLineArguments.LOGLEVEL, true);
-    }
+	public void setResultsDirectory(String resultsDirectory) {
+		this.resultsDirectory = resultsDirectory;
+	}
 
-    public void setResultsDirectory(String resultsDirectory) {
-      this.resultsDirectory = resultsDirectory;
-    }
+	public void setLogsDirectory(String logsDirectory) {
+		this.logsDirectory = logsDirectory;
+	}
 
-    public void setTestFile(File value) {
-        if (UtilityFunctions.isNotSet(value)) return;
-        this.testFile = value.getAbsolutePath();
-        this.argumentMap.put(JMeterCommandLineArguments.TESTFILE_OPT, true);
-        if (this.timestampResults) {
-            this.resultsFileName = this.resultsDirectory + File.separator + value.getName().substring(0, value.getName().lastIndexOf(".")) + "-" + this.dateFormat.format(new Date()) + ".jtl";
-        } else {
-            this.resultsFileName = this.resultsDirectory + File.separator + value.getName().substring(0, value.getName().lastIndexOf(".")) + ".jtl";
-        }
-        this.argumentMap.put(JMeterCommandLineArguments.LOGFILE_OPT, true);
-    }
+	public void setResultsTimestamp(boolean addTimestamp) {
+		timestampResults = addTimestamp;
+	}
 
-    public void setJMeterHome(String value) {
-        if (UtilityFunctions.isNotSet(value)) return;
-        this.jMeterHome = value;
-        this.argumentMap.put(JMeterCommandLineArguments.JMETER_HOME_OPT, true);
-    }
+	public void setResultsFileNameDateFormat(DateTimeFormatter dateFormat) {
+		this.dateFormat = dateFormat;
+	}
 
-    public void setResultsTimestamp(boolean value) {
-        this.timestampResults = value;
-    }
+	public void appendTimestamp(boolean append) {
+		appendTimestamp = append;
+	}
 
-    public String getResultsFileName() {
-        return this.resultsFileName;
-    }
+	public String getResultsLogFileName() {
+		return resultsLogFileName;
+	}
 
-    public String[] buildArgumentsArray() throws MojoExecutionException {
-       return buildArgumentsArray ( true );
-    }
+	public void setResultFileOutputFormatIsCSV(boolean isCSVFormat) {
+		if (isCSVFormat) {
+			resultFileExtension = ".csv";
+		} else {
+			resultFileExtension = ".jtl";
+		}
+	}
 
-    public String[] buildArgumentsArray(boolean expectTests) throws MojoExecutionException {
-        if (!argumentMap.get(JMeterCommandLineArguments.TESTFILE_OPT) && expectTests) {
-            throw new MojoExecutionException("No test specified!");
-        } else if (!argumentMap.get(JMeterCommandLineArguments.LOGFILE_OPT) && expectTests) {
-            throw new MojoExecutionException("Log file not set!");
-        } else if (!argumentMap.get(JMeterCommandLineArguments.JMETER_HOME_OPT)) {
-            throw new MojoExecutionException("JMETER_HOME not set!");
-        }
-        ArrayList<String> argumentsArray = new ArrayList<String>();
-        Iterator<Map.Entry<JMeterCommandLineArguments, Boolean>> mapIterator = argumentMap.entrySet().iterator();
-        while (mapIterator.hasNext()) {
-            Map.Entry<JMeterCommandLineArguments, Boolean> argument = mapIterator.next();
-            if (argument.getValue()) {
-                switch (argument.getKey()) {
-                    case NONGUI_OPT:
-                        if ( argument.getValue ( ) )
-                           argumentsArray.add(JMeterCommandLineArguments.NONGUI_OPT.getCommandLineArgument());
-                        break;
-                    case TESTFILE_OPT:
-                        argumentsArray.add(JMeterCommandLineArguments.TESTFILE_OPT.getCommandLineArgument());
-                        argumentsArray.add(this.testFile);
-                        break;
-                    case LOGFILE_OPT:
-                        argumentsArray.add(JMeterCommandLineArguments.LOGFILE_OPT.getCommandLineArgument());
-                        argumentsArray.add(this.resultsFileName);
-                        break;
-                    case JMETER_HOME_OPT:
-                        argumentsArray.add(JMeterCommandLineArguments.JMETER_HOME_OPT.getCommandLineArgument());
-                        argumentsArray.add(this.jMeterHome);
-                        break;
-                    case LOGLEVEL:
-                        if (this.overrideRootLogLevel == null) {
-                            Set<String> logCategorySet = this.overrideLogCategories.keySet();
-                            for (String category : logCategorySet) {
-                                argumentsArray.add(JMeterCommandLineArguments.LOGLEVEL.getCommandLineArgument());
-                                argumentsArray.add(category + "=" + this.overrideLogCategories.get(category));
-                            }
-                        } else {
-                            argumentsArray.add(JMeterCommandLineArguments.LOGLEVEL.getCommandLineArgument());
-                            argumentsArray.add(this.overrideRootLogLevel);
-                        }
-                        break;
-                    case PROPFILE2_OPT:
-                        argumentsArray.add(JMeterCommandLineArguments.PROPFILE2_OPT.getCommandLineArgument());
-                        argumentsArray.add(this.customPropertiesFile);
-                        break;
-                    case REMOTE_OPT:
-                        argumentsArray.add(JMeterCommandLineArguments.REMOTE_OPT.getCommandLineArgument());
-                        break;
-                    case PROXY_HOST:
-                        argumentsArray.add(JMeterCommandLineArguments.PROXY_HOST.getCommandLineArgument());
-                        argumentsArray.add(this.proxyHost);
-                        break;
-                    case PROXY_PORT:
-                        argumentsArray.add(JMeterCommandLineArguments.PROXY_PORT.getCommandLineArgument());
-                        argumentsArray.add(this.proxyPort);
-                        break;
-                    case PROXY_USERNAME:
-                        argumentsArray.add(JMeterCommandLineArguments.PROXY_USERNAME.getCommandLineArgument());
-                        argumentsArray.add(proxyUsername);
-                        break;
-                    case PROXY_PASSWORD:
-                        argumentsArray.add(JMeterCommandLineArguments.PROXY_PASSWORD.getCommandLineArgument());
-                        argumentsArray.add(proxyPassword);
-                        break;
-                    case NONPROXY_HOSTS:
-                        argumentsArray.add(JMeterCommandLineArguments.NONPROXY_HOSTS.getCommandLineArgument());
-                        argumentsArray.add(this.nonProxyHosts);
-                        break;
-                    case REMOTE_STOP:
-                        argumentsArray.add(JMeterCommandLineArguments.REMOTE_STOP.getCommandLineArgument());
-                        break;
-                    case REMOTE_OPT_PARAM:
-                        argumentsArray.add(JMeterCommandLineArguments.REMOTE_OPT_PARAM.getCommandLineArgument());
-                        argumentsArray.add(this.remoteStartList);
-                        break;}
-            }
-        }
-        return argumentsArray.toArray(new String[argumentsArray.size()]);
-    }
+	public void setTestFile(File value) {
+		if (isNotSet(value) || disableTests) return;
+		testFile = value.getAbsolutePath();
+		if (timestampResults) {
+			//TODO investigate when timestamp is generated.
+			if (appendTimestamp) {
+				resultsLogFileName = resultsDirectory + File.separator + value.getName().substring(0, value.getName().lastIndexOf(".")) + "-" + dateFormat.print(new LocalDateTime()) + resultFileExtension;
+			} else {
+				resultsLogFileName = resultsDirectory + File.separator + dateFormat.print(new LocalDateTime()) + "-" + value.getName().substring(0, value.getName().lastIndexOf(".")) + resultFileExtension;
+			}
+		} else {
+			resultsLogFileName = resultsDirectory + File.separator + value.getName().substring(0, value.getName().lastIndexOf(".")) + resultFileExtension;
+		}
+		if (isSet(logsDirectory)) {
+			jmeterLogFileName = logsDirectory + File.separator + value.getName() + ".log";
+			argumentList.add(JMLOGFILE_OPT);
+		}
+		argumentList.add(TESTFILE_OPT);
+		argumentList.add(LOGFILE_OPT);
+	}
+
+
+	/**
+	 * Generate an arguments array representing the command line options you want to send to JMeter.
+	 * The order of the array is determined by the order the values in JMeterCommandLineArguments are defined.
+	 *
+	 * @return An array representing the command line sent to JMeter
+	 * @throws MojoExecutionException
+	 */
+	public List<String> buildArgumentsArray() throws MojoExecutionException {
+		if (!argumentList.contains(TESTFILE_OPT) && !disableTests) throw new MojoExecutionException("No test(s) specified!");
+		List<String> argumentsArray = new ArrayList<String>();
+
+		for (JMeterCommandLineArguments argument : argumentList) {
+			switch (argument) {
+				case NONGUI_OPT:
+					argumentsArray.add(NONGUI_OPT.getCommandLineArgument());
+					break;
+				case TESTFILE_OPT:
+					argumentsArray.add(TESTFILE_OPT.getCommandLineArgument());
+					argumentsArray.add(testFile);
+					break;
+				case LOGFILE_OPT:
+					argumentsArray.add(LOGFILE_OPT.getCommandLineArgument());
+					argumentsArray.add(resultsLogFileName);
+					break;
+				case JMETER_HOME_OPT:
+					argumentsArray.add(JMETER_HOME_OPT.getCommandLineArgument());
+					argumentsArray.add(jMeterHome);
+					break;
+				case LOGLEVEL:
+					argumentsArray.add(LOGLEVEL.getCommandLineArgument());
+					argumentsArray.add(overrideRootLogLevel.toString());
+					break;
+				case PROPFILE2_OPT:
+					argumentsArray.add(PROPFILE2_OPT.getCommandLineArgument());
+					argumentsArray.add(customPropertiesFile);
+					break;
+				case REMOTE_OPT:
+					argumentsArray.add(REMOTE_OPT.getCommandLineArgument());
+					break;
+				case PROXY_HOST:
+					argumentsArray.add(PROXY_HOST.getCommandLineArgument());
+					argumentsArray.add(proxyConfiguration.getHost());
+					break;
+				case PROXY_PORT:
+					argumentsArray.add(PROXY_PORT.getCommandLineArgument());
+					argumentsArray.add(proxyConfiguration.getPort());
+					break;
+				case PROXY_USERNAME:
+					argumentsArray.add(PROXY_USERNAME.getCommandLineArgument());
+					argumentsArray.add(proxyConfiguration.getUsername());
+					break;
+				case PROXY_PASSWORD:
+					argumentsArray.add(PROXY_PASSWORD.getCommandLineArgument());
+					argumentsArray.add(proxyConfiguration.getPassword());
+					break;
+				case NONPROXY_HOSTS:
+					argumentsArray.add(NONPROXY_HOSTS.getCommandLineArgument());
+					argumentsArray.add(proxyConfiguration.getHostExclusions());
+					break;
+				case REMOTE_STOP:
+					argumentsArray.add(REMOTE_STOP.getCommandLineArgument());
+					break;
+				case REMOTE_OPT_PARAM:
+					argumentsArray.add(REMOTE_OPT_PARAM.getCommandLineArgument());
+					argumentsArray.add(remoteStartServerList);
+					break;
+				case JMLOGFILE_OPT:
+					argumentsArray.add(JMLOGFILE_OPT.getCommandLineArgument());
+					argumentsArray.add(jmeterLogFileName);
+					break;
+			}
+		}
+		return argumentsArray;
+	}
 }

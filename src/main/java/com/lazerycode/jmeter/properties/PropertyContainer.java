@@ -1,7 +1,6 @@
 package com.lazerycode.jmeter.properties;
 
-import org.apache.maven.plugin.MojoExecutionException;
-
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 
@@ -16,8 +15,8 @@ public class PropertyContainer {
 
     }
 
-    public void setCustomPropertyMap(Map<String, String> value) {
-        this.customPropertyMap = value;
+    public void setCustomPropertyMap(Map<String, String> propertyMap) {
+        this.customPropertyMap = removesEntriesWithNullValues(propertyMap);
     }
 
     public Map<String, String> getCustomPropertyMap() {
@@ -48,14 +47,24 @@ public class PropertyContainer {
         return this.finalPropertyObject;
     }
 
+	public Map<String,String> removesEntriesWithNullValues(Map<String, String> propertiesMap) {
+		Iterator it = propertiesMap.entrySet().iterator();
+		while (it.hasNext()) {
+			Map.Entry propertyDefinition = (Map.Entry)it.next();
+			if(null == propertyDefinition.getValue() || propertyDefinition.getValue().equals("")){
+				it.remove();
+			}
+		}
+		return propertiesMap;
+	}
+
     /**
      * This will return the custom properties object if it is set.
      * If it is not set it will return the default properties object (this may be empty)
      *
-     * @return
-     * @throws MojoExecutionException
+     * @return Properties
      */
-    public Properties getBasePropertiesObject() throws MojoExecutionException {
+    public Properties getBasePropertiesObject() {
         if (this.customPropertyObject == null) {
             return this.getDefaultPropertyObject();
         } else {

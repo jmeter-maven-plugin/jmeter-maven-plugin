@@ -1,4 +1,0 @@
-Version 1.5.1 Release Notes
-
-    * jmeter-maven-plugin can no longer generate reports. Use jmeter-analysis-maven-plugin instead.
-    * clear system property "org.apache.commons.logging.Log" at the end of the test run

@@ -8,25 +8,27 @@ package com.lazerycode.jmeter.properties;
  */
 public enum JMeterPropertiesFiles {
 
-    JMETER_PROPERTIES("jmeter.properties", true),
-    SAVE_SERVICE_PROPERTIES("saveservice.properties", true),
-    UPGRADE_PROPERTIES("upgrade.properties", true),
-    SYSTEM_PROPERTIES("system.properties", false),
-    USER_PROPERTIES("user.properties", false),
-    GLOBAL_PROPERTIES("global.properties", false);
+	JMETER_PROPERTIES("jmeter.properties", true),
+	SAVE_SERVICE_PROPERTIES("saveservice.properties", true),
+	UPGRADE_PROPERTIES("upgrade.properties", true),
+	SYSTEM_PROPERTIES("system.properties", true),
+	USER_PROPERTIES("user.properties", true),
+	GLOBAL_PROPERTIES("global.properties", false);
 
-    private final Object[] propertiesData;
+	private final String propertiesFilename;
+	private final boolean isRequired;
 
-    JMeterPropertiesFiles(Object ...values) {
-        this.propertiesData = values;
-    }
+	JMeterPropertiesFiles(String propertiesFilename, boolean isRequired) {
+		this.propertiesFilename = propertiesFilename;
+		this.isRequired = isRequired;
+	}
 
-    public String getPropertiesFileName() {
-        return (String) this.propertiesData[0];
-    }
+	public String getPropertiesFileName() {
+		return propertiesFilename;
+	}
 
-    public boolean createFileIfItDoesntExist() {
-        return (Boolean) this.propertiesData[1];
-    }
+	public boolean createFileIfItDoesNotExist() {
+		return isRequired;
+	}
 
 }

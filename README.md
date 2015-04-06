@@ -1,49 +1,20 @@
-Maven JMeter Plugin
-===================
+#JMeter Maven Plugin
 
-The Maven JMeter Plugin allows you to automate JMeter tests in Maven.
+---
 
-*PLEASE NOTE: The Group ID and Artifact ID have changed since version 1.4!*
------
+The JMeter Maven Plugin allows you to automate JMeter tests in Maven.
+
+Current Version In Maven Central: **1.10.1** See the [release notes](https://github.com/Ronnie76er/jmeter-maven-plugin/wiki/Release-Notes) for change information.  This plugin requires **JDK 1.6** or higher.
+
+---
+
+**PLEASE NOTE:** _The Group ID and Artifact ID have changed since version 1.4!_
 
 This is to bring the project in line with maven naming practice for non-maven plugins and to enable us to upload to the Sonatype OSS repository.  This project is now in the maven central repository.
 
-Community
------
+---
 
-### Website
-
-Website for this project: [http://jmeter.lazerycode.com/](http://jmeter.lazerycode.com/)
-
-A couple of google groups have been created for discussion about this plugin:
-
-### Users Group
-
-A place to discuss usage of the maven-jmeter-plugin, let people know how you use it here.
-
-Homepage: [http://groups.google.com/group/maven-jmeter-plugin-users](http://groups.google.com/group/maven-jmeter-plugin-users)
-
-Group Email: [maven-jmeter-plugin-users@googlegroups.com](mailto:maven-jmeter-plugin-users@googlegroups.com)
-
-### Devs Group
-
-A place to discuss the development of the maven-jmeter-plugin, or ask about features you would like to see added.
-
-Homepage: [http://groups.google.com/group/maven-jmeter-plugin-devs](http://groups.google.com/group/maven-jmeter-plugin-devs)
-
-Group Email: [maven-jmeter-plugin-devs@googlegroups.com](mailto:maven-jmeter-plugin-devs@googlegroups.com)
-
-Build Server
------
-
-You can see the state of the current codebase by looking at the CI server - [http://ci.lazerycode.com](http://ci.lazerycode.com)
-
-Full Documentation
--------
-
-Up to date documentation is available by checking out the code and running `mvn site:run` on the command line, this information will also be mirrored on [http://jmeter.lazerycode.com](http://jmeter.lazerycode.com) in the near future.
-
-Basic Usage
+#Basic Usage
 -----
 
 ### Add the plugin to your project
@@ -53,7 +24,7 @@ Basic Usage
 		<plugin>
 			<groupId>com.lazerycode.jmeter</groupId>
 			<artifactId>jmeter-maven-plugin</artifactId>
-			<version>1.4.1</version>
+			<version>1.10.1</version>
 			<executions>
 				<execution>
 					<id>jmeter-tests</id>
@@ -75,9 +46,43 @@ Once you have created your JMeter tests, you'll need to copy them to `<Project D
 
 All your tests will run in maven!
 
-See the full documentation for information on how to configure the plugin.
+#Documentation
+-----
 
-Contributing
+All the documentation you need to configure the plugin is available on the [github wiki](https://github.com/Ronnie76er/jmeter-maven-plugin/wiki).
+
+Beginners should start with the [Basic Configuration](https://github.com/Ronnie76er/jmeter-maven-plugin/wiki/Basic-Configuration) section.
+
+For advanced POM configuration settings have a look at the [Advanced Configuration](https://github.com/Ronnie76er/jmeter-maven-plugin/wiki/Advanced-Configuration) section.
+
+#Community
+-----
+
+## Users Group
+
+A place to discuss usage of the maven-jmeter-plugin, let people know how you use it here.
+
+Homepage: [http://groups.google.com/group/maven-jmeter-plugin-users](http://groups.google.com/group/maven-jmeter-plugin-users)
+
+Group Email: [maven-jmeter-plugin-users@googlegroups.com](mailto:maven-jmeter-plugin-users@googlegroups.com)
+
+## Devs Group
+
+A place to discuss the development of the maven-jmeter-plugin, or ask about features you would like to see added.
+
+Homepage: [http://groups.google.com/group/maven-jmeter-plugin-devs]( http://groups.google.com/group/maven-jmeter-plugin-devs)
+
+Group Email: [maven-jmeter-plugin-devs@googlegroups.com](mailto:maven-jmeter-plugin-devs@googlegroups.com)
+
+## Build Server
+
+You can see the state of the current codebase by looking at the [CI Server](http://build.lazerycode.com/overview.html).
+
+## Website
+
+The official website is available at [http://jmeter.lazerycode.com](http://jmeter.lazerycode.com)
+
+#Contributing
 ------------
 
 1. Fork it.

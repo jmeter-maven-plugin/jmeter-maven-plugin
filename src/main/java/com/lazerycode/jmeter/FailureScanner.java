@@ -12,8 +12,11 @@ import java.util.regex.Pattern;
  */
 class FailureScanner {
 
-	private static final String REQUEST_FAILURE_PATTERN = "s=\"false\"";
-	private static final String REQUEST_SUCCESS_PATTERN = "s=\"true\"";
+	private static final String REQUEST_FAILURE = "s=\"false\"";
+	private static final Pattern ERROR_PATTERN = Pattern.compile(REQUEST_FAILURE);
+	private static final String REQUEST_SUCCESS = "s=\"true\"";
+	private static final Pattern SUCCESS_PATTERN = Pattern.compile(REQUEST_SUCCESS);
+
 	private final boolean ignoreFailures;
 	private int failureCount;
 	private int successCount;
@@ -43,16 +46,13 @@ class FailureScanner {
 		successCount = 0;
 
 		Scanner resultFileScanner;
-		Pattern errorPattern = Pattern.compile(REQUEST_FAILURE_PATTERN);
-		Pattern successPattern = Pattern.compile(REQUEST_SUCCESS_PATTERN);
-
 		resultFileScanner = new Scanner(file);
 		while(resultFileScanner.hasNextLine()) {
 			String line = resultFileScanner.nextLine();
 			//optimistic: assume that there are more successes than failures on average and scan for success first 
-			if(successPattern.matcher(line).find()) {
+			if(SUCCESS_PATTERN.matcher(line).find()) {
 				successCount++;
-			} else if(errorPattern.matcher(line).find()) {
+			} else if(ERROR_PATTERN.matcher(line).find()) {
 				failureCount++;
 			}
 		}

@@ -47,14 +47,14 @@ class FailureScanner {
 		Pattern successPattern = Pattern.compile(REQUEST_SUCCESS_PATTERN);
 
 		resultFileScanner = new Scanner(file);
-		while (resultFileScanner.findWithinHorizon(errorPattern, 0) != null) {
-			failureCount++;
-		}
-		resultFileScanner.close();
-
-		resultFileScanner = new Scanner(file);
-		while (resultFileScanner.findWithinHorizon(successPattern, 0) != null) {
-			successCount++;
+		while(resultFileScanner.hasNextLine()) {
+			String line = resultFileScanner.nextLine();
+			//optimistic: assume that there are more successes than failures on average and scan for success first 
+			if(successPattern.matcher(line).find()) {
+				successCount++;
+			} else if(errorPattern.matcher(line).find()) {
+				failureCount++;
+			}
 		}
 		resultFileScanner.close();
 	}

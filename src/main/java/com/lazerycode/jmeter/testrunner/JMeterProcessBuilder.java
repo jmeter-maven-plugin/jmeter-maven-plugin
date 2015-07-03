@@ -42,16 +42,22 @@ public class JMeterProcessBuilder {
 		}
 	}
 
-	private String[] constructArgumentsList() {
-		String mainClass = "ApacheJMeter.jar";
-
-		List<String> argumentsList = new ArrayList<String>();
-		argumentsList.add(javaRuntime);
+	public ArrayList<String> getJVMArgumentsList() {
+		ArrayList<String> argumentsList = new ArrayList<String>();
 		argumentsList.add(MessageFormat.format("-Xms{0}M", String.valueOf(this.initialHeapSizeInMegaBytes)));
 		argumentsList.add(MessageFormat.format("-Xmx{0}M", String.valueOf(this.maximumHeapSizeInMegaBytes)));
 		for (String argument : userSuppliedArguments) {
 			argumentsList.add(argument);
 		}
+		return argumentsList;
+	}
+
+	private String[] constructArgumentsList() {
+		String mainClass = "ApacheJMeter.jar";
+
+		List<String> argumentsList = new ArrayList<String>();
+		argumentsList.add(javaRuntime);
+		argumentsList.addAll(getJVMArgumentsList());
 
 		argumentsList.add("-jar");
 		argumentsList.add(mainClass);

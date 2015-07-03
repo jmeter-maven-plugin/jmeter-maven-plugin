@@ -87,13 +87,14 @@ public class TestManager extends JMeterMojo {
 		List<String> argumentsArray = testArgs.buildArgumentsArray();
 		argumentsArray.addAll(buildRemoteArgs(remoteServerConfiguration));
 		getLog().debug("JMeter is called with the following command line arguments: " + UtilityFunctions.humanReadableCommandLineOutput(argumentsArray));
+		JMeterProcessBuilder jMeterProcessBuilder = new JMeterProcessBuilder(jMeterProcessJVMSettings);
+		getLog().debug("JMeter is called with the following JVM arguments: " + UtilityFunctions.humanReadableCommandLineOutput(jMeterProcessBuilder.getJVMArgumentsList()));
+		jMeterProcessBuilder.setWorkingDirectory(binDir);
+		jMeterProcessBuilder.addArguments(argumentsArray);
 		getLog().info("Executing test: " + test.getName());
 		//Start the test.
-		JMeterProcessBuilder JMeterProcessBuilder = new JMeterProcessBuilder(jMeterProcessJVMSettings);
-		JMeterProcessBuilder.setWorkingDirectory(binDir);
-		JMeterProcessBuilder.addArguments(argumentsArray);
 		try {
-			final Process process = JMeterProcessBuilder.startProcess();
+			final Process process = jMeterProcessBuilder.startProcess();
 			BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
 			String line;
 			while ((line = br.readLine()) != null) {

@@ -2,6 +2,8 @@ package com.lazerycode.jmeter.testrunner;
 
 import com.lazerycode.jmeter.configuration.JMeterProcessJVMSettings;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,6 +13,7 @@ import java.util.List;
 
 public class JMeterProcessBuilder {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(JMeterProcessBuilder.class);
 	private int initialHeapSizeInMegaBytes;
 	private int maximumHeapSizeInMegaBytes;
 	private String workingDirectory;
@@ -58,6 +61,8 @@ public class JMeterProcessBuilder {
 		for (String arg : mainClassArguments) {
 			argumentsList.add(arg);
 		}
+
+		LOGGER.debug("Arguments for forked JMeter JVM: " + argumentsList.toString());
 
 		return argumentsList.toArray(new String[argumentsList.size()]);
 	}

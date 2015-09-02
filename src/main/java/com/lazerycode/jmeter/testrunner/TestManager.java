@@ -8,6 +8,8 @@ import com.lazerycode.jmeter.configuration.RemoteArgumentsArrayBuilder;
 import com.lazerycode.jmeter.configuration.RemoteConfiguration;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.tools.ant.DirectoryScanner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -21,8 +23,9 @@ import java.util.List;
 /**
  * TestManager encapsulates functions that gather JMeter Test files and execute the tests
  */
-public class TestManager extends JMeterMojo {
+public class TestManager {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(JMeterProcessBuilder.class);
 	private final JMeterArgumentsArray baseTestArgs;
 	private final File binDir;
 	private final File testFilesDirectory;
@@ -80,14 +83,14 @@ public class TestManager extends JMeterMojo {
 	 */
 	@SuppressWarnings("ResultOfMethodCallIgnored")
 	private String executeSingleTest(File test, JMeterArgumentsArray testArgs) throws MojoExecutionException {
-		getLog().info(" ");
+		LOGGER.info(" ");
 		testArgs.setTestFile(test);
 		//Delete results file if it already exists
 		new File(testArgs.getResultsLogFileName()).delete();
 		List<String> argumentsArray = testArgs.buildArgumentsArray();
 		argumentsArray.addAll(buildRemoteArgs(remoteServerConfiguration));
-		getLog().debug("JMeter is called with the following command line arguments: " + UtilityFunctions.humanReadableCommandLineOutput(argumentsArray));
-		getLog().info("Executing test: " + test.getName());
+		LOGGER.debug("JMeter is called with the following command line arguments: " + UtilityFunctions.humanReadableCommandLineOutput(argumentsArray));
+		LOGGER.info("Executing test: " + test.getName());
 		//Start the test.
 		JMeterProcessBuilder JMeterProcessBuilder = new JMeterProcessBuilder(jMeterProcessJVMSettings);
 		JMeterProcessBuilder.setWorkingDirectory(binDir);
@@ -98,22 +101,22 @@ public class TestManager extends JMeterMojo {
 			String line;
 			while ((line = br.readLine()) != null) {
 				if (suppressJMeterOutput) {
-					getLog().debug(line);
+					LOGGER.debug(line);
 				} else {
-					getLog().info(line);
+					LOGGER.info(line);
 				}
 			}
 			int jMeterExitCode = process.waitFor();
 			if (jMeterExitCode != 0) {
 				throw new MojoExecutionException("Test failed");
 			}
-			getLog().info("Completed Test: " + test.getName());
+			LOGGER.info("Completed Test: " + test.getName());
 		} catch (InterruptedException ex) {
-			getLog().info(" ");
-			getLog().info("System Exit Detected!  Stopping Test...");
-			getLog().info(" ");
+			LOGGER.info(" ");
+			LOGGER.info("System Exit Detected!  Stopping Test...");
+			LOGGER.info(" ");
 		} catch (IOException e) {
-			getLog().error(e.getMessage());
+			LOGGER.error(e.getMessage());
 		}
 		return testArgs.getResultsLogFileName();
 	}

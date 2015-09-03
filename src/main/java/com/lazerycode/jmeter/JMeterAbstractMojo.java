@@ -206,7 +206,7 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 	 * Get a list of artifacts used by this plugin
 	 */
 	@Parameter(defaultValue = "${plugin.artifacts}", required = true, readonly = true)
-	protected List<Artifact> pluginArtifacts;
+	protected static List<Artifact> pluginArtifacts;
 
 	/**
 	 * The information extracted from the Mojo being currently executed
@@ -221,7 +221,7 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 	protected boolean skipTests;
 
 	/**
-	 * Skip the JMeter tests
+	 * Set a pause in seconds after each test that is run.
 	 */
 	@Parameter(defaultValue = "0")
 	protected String postTestPauseInSeconds;
@@ -244,13 +244,14 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 	protected File logsDir;
 	protected File resultsDir;
 
-	/**
-	 * All property files are stored in this artifact, comes with JMeter library
-	 */
-	protected final String jmeterConfigArtifact = "ApacheJMeter_config";
 	protected JMeterArgumentsArray testArgs;
 	protected PropertyHandler pluginProperties;
 	protected boolean resultsOutputIsCSVFormat = false;
+
+	/**
+	 * All property files are stored in this artifact, comes with JMeter library
+	 */
+	public static final String JMETER_CONFIG_ARTIFACT = "ApacheJMeter_config";
 
 	//==================================================================================================================
 
@@ -277,7 +278,7 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 	}
 
 	protected void propertyConfiguration() throws MojoExecutionException {
-		pluginProperties = new PropertyHandler(propertiesFilesDirectory, binDir, getArtifactNamed(jmeterConfigArtifact), propertiesReplacedByCustomFiles);
+		pluginProperties = new PropertyHandler(propertiesFilesDirectory, binDir, propertiesReplacedByCustomFiles);
 		pluginProperties.setJMeterProperties(propertiesJMeter);
 		pluginProperties.setJMeterGlobalProperties(propertiesGlobal);
 		pluginProperties.setJMeterSaveServiceProperties(propertiesSaveService);
@@ -301,7 +302,7 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 		for (Artifact artifact : pluginArtifacts) {
 			try {
 				if (Artifact.SCOPE_COMPILE.equals(artifact.getScope()) || Artifact.SCOPE_RUNTIME.equals(artifact.getScope())) {
-					if (artifact.getArtifactId().equals(jmeterConfigArtifact)) {
+					if (artifact.getArtifactId().equals(JMETER_CONFIG_ARTIFACT)) {
 						extractConfigSettings(artifact);
 					} else if (artifact.getArtifactId().equals("ApacheJMeter")) {
 						copyArtifact(artifact, new File(binDir + File.separator + artifact.getArtifactId() + ".jar"));
@@ -431,7 +432,7 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 	 * @return
 	 * @throws MojoExecutionException
 	 */
-	protected Artifact getArtifactNamed(String artifactName) throws MojoExecutionException {
+	public static Artifact getArtifactNamed(String artifactName) throws MojoExecutionException {
 		for (Artifact artifact : pluginArtifacts) {
 			if (artifact.getArtifactId().equals(artifactName)) {
 				return artifact;

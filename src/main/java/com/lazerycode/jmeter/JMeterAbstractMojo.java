@@ -220,6 +220,12 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 	@Parameter(defaultValue = "false")
 	protected boolean skipTests;
 
+	/**
+	 * Skip the JMeter tests
+	 */
+	@Parameter(defaultValue = "0")
+	protected String postTestPauseInSeconds;
+
 	//------------------------------------------------------------------------------------------------------------------
 
 	/**

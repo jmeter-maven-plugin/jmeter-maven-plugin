@@ -1,6 +1,5 @@
 package com.lazerycode.jmeter.testrunner;
 
-import com.lazerycode.jmeter.JMeterMojo;
 import com.lazerycode.jmeter.UtilityFunctions;
 import com.lazerycode.jmeter.configuration.JMeterArgumentsArray;
 import com.lazerycode.jmeter.configuration.JMeterProcessJVMSettings;
@@ -19,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * TestManager encapsulates functions that gather JMeter Test files and execute the tests
@@ -34,6 +34,7 @@ public class TestManager {
 	private final boolean suppressJMeterOutput;
 	private final RemoteConfiguration remoteServerConfiguration;
 	private final JMeterProcessJVMSettings jMeterProcessJVMSettings;
+	private long postTestPauseInSeconds;
 
 	public TestManager(JMeterArgumentsArray baseTestArgs, File testFilesDirectory, List<String> testFilesIncluded, List<String> testFilesExcluded, RemoteConfiguration remoteServerConfiguration, boolean suppressJMeterOutput, File binDir, JMeterProcessJVMSettings jMeterProcessJVMSettings) {
 		this.binDir = binDir;
@@ -44,6 +45,21 @@ public class TestManager {
 		this.remoteServerConfiguration = remoteServerConfiguration;
 		this.suppressJMeterOutput = suppressJMeterOutput;
 		this.jMeterProcessJVMSettings = jMeterProcessJVMSettings;
+	}
+
+	/**
+	 * Sets a pause after each test has been executed.
+	 *
+	 * @param postTestPauseInSeconds Number of seconds to pause after a test has completed
+	 */
+	public void setPostTestPauseInSeconds(String postTestPauseInSeconds) {
+		Long testPause = Long.getLong(postTestPauseInSeconds);
+		if (null == testPause) {
+			LOGGER.info("Invalid value detected for <postTestPauseInSeconds>.  Setting pause to 0...");
+			testPause = 0l;
+		}
+
+		this.postTestPauseInSeconds = testPause;
 	}
 
 	/**
@@ -67,6 +83,10 @@ public class TestManager {
 				}
 			}
 			results.add(executeSingleTest(new File(testFilesDirectory, file), thisTestArgs));
+			try {
+				TimeUnit.SECONDS.sleep(postTestPauseInSeconds);
+			} catch (InterruptedException ignored) {
+			}
 		}
 		return results;
 	}

@@ -14,7 +14,7 @@ if [[ "${TRAVIS_BRANCH}" == 'master' ]] ; then
         </servers>
     </settings>'
     echo ${MVNSETTINGS} > ./target/maven-settings.xml
-    echo "Attempting to deploy snapshot"
+    echo "Attempting to deploy snapshot..."
     mvn deploy -s ./target/maven-settings.xml -DskipTests
 else
     echo "Not on master, skipping snapshot deployment"

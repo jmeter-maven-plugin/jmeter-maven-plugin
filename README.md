@@ -1,10 +1,15 @@
 #JMeter Maven Plugin
+=================================
 
----
+[![Join the chat at https://gitter.im/Ardesco/selenium-standalone-server-plugin](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/jmeter-maven-plugin/jmeter-maven-plugin?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Build Status](https://travis-ci.org/jmeter-maven-plugin/jmeter-maven-plugin.svg?branch=master)](https://travis-ci.org/jmeter-maven-plugin/jmeter-maven-plugin)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.lazerycode.jmeter/jmeter-maven-plugin/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.lazerycode.jmeter/jmeter-maven-plugin)
 
-The JMeter Maven Plugin allows you to automate JMeter tests in Maven.
+A Maven plugin that provides the ability to run JMeter tests as part of your build
 
-Current Version In Maven Central: **1.10.1** See the [release notes](https://github.com/Ronnie76er/jmeter-maven-plugin/wiki/Release-Notes) for change information.  This plugin requires **JDK 1.6** or higher.
+See the [release notes](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/wiki/Release-Notes) for change information.  
+
+This plugin requires **JDK 1.6** or higher.
 
 ---
 

@@ -22,6 +22,8 @@
     <url>http://jmeter.lazerycode.com</url>
 
     <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <jmeter.version>2.13</jmeter.version>
         <maven.required.version>3.1.1</maven.required.version>
     </properties>
 
@@ -149,11 +151,6 @@
             <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
-
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <jmeter.version>2.13</jmeter.version>
-    </properties>
 
     <dependencies>
         <dependency>

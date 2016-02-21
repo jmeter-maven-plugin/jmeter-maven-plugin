@@ -9,7 +9,7 @@ A Maven plugin that provides the ability to run JMeter tests as part of your bui
 
 See the [release notes](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/wiki/Release-Notes) for change information.  
 
-This plugin requires **JDK 1.6** or higher.
+This plugin requires **JDK 1.7** or higher.
 
 ---
 

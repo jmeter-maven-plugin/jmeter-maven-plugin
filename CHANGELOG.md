@@ -14,7 +14,17 @@
 ##Version 1.10.0 Release Notes
 
 * **JMeter version 2.11 support added.**
-* Merge pull request #100 (Thanks [Sascha Theves](https://github.com/sath1982)) - 
+* Merge pull request #100 (Thanks [Sascha Theves](https://github.com/sath1982)) - Add support for `<junitPlugins>` element to let you copy libraries into the  `jmeter/lib/junit` directory.
+
+		<configuration>
+		    <junitPlugins>
+		        <plugin>
+		            <groupId>my.group</groupId>
+		            <artifactId>my.artifact</artifactId>
+		        </plugin>
+		    </junitPlugins>
+		</configuration>
+
 * Issue #103 - system.properties and user.properties from JMeter used if custom ones are not specified.
 
 ##Version 1.9.1 Release Notes

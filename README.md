@@ -12,14 +12,6 @@ See the [CHANGELOG](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/b
 
 This plugin requires **JDK 1.7** or higher.
 
----
-
-**PLEASE NOTE:** _The Group ID and Artifact ID have changed since version 1.4!_
-
-This is to bring the project in line with maven naming practice for non-maven plugins and to enable us to upload to the Sonatype OSS repository.  This project is now in the maven central repository.
-
----
-
 #Basic Usage
 -----
 
@@ -79,10 +71,6 @@ A place to discuss the development of the maven-jmeter-plugin, or ask about feat
 Homepage: [http://groups.google.com/group/maven-jmeter-plugin-devs]( http://groups.google.com/group/maven-jmeter-plugin-devs)
 
 Group Email: [maven-jmeter-plugin-devs@googlegroups.com](mailto:maven-jmeter-plugin-devs@googlegroups.com)
-
-## Build Server
-
-You can see the state of the current codebase by looking at the [CI Server](http://build.lazerycode.com/overview.html).
 
 ## Website
 

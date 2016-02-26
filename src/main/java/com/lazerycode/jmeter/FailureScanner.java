@@ -12,39 +12,65 @@ import java.util.regex.Pattern;
  */
 class FailureScanner {
 
-	private static final String REQUEST_FAILURE_PATTERN = "s=\"false\"";
+	private static final String REQUEST_FAILURE = "s=\"false\"";
+	private static final Pattern ERROR_PATTERN = Pattern.compile(REQUEST_FAILURE);
+	private static final String REQUEST_SUCCESS = "s=\"true\"";
+	private static final Pattern SUCCESS_PATTERN = Pattern.compile(REQUEST_SUCCESS);
+
 	private final boolean ignoreFailures;
 	private int failureCount;
+	private int successCount;
 
 	public FailureScanner(boolean ignoreFailures) {
 		this.ignoreFailures = ignoreFailures;
 	}
 
 	/**
-	 * Check given file for errors
+	 * Check file for errors
 	 *
-	 * @param file File to parse for failures
-	 * @return true if file doesn't contain failures
+	 * @return false if file doesn't contain failures
+	 */
+	public boolean hasTestFailed() {
+		return !this.ignoreFailures && this.failureCount > 0;
+	}
+
+	/**
+	 * Parse given results file
+	 *
+	 * @param file File to parse for results
 	 * @throws IOException
 	 */
-	public boolean hasTestFailed(File file) throws IOException {
-		if (this.ignoreFailures) return false;
+	public void parseResults(File file) throws IOException {
+
 		failureCount = 0;
+		successCount = 0;
+
 		Scanner resultFileScanner;
-		Pattern errorPattern = Pattern.compile(REQUEST_FAILURE_PATTERN);
 		resultFileScanner = new Scanner(file);
-		while (resultFileScanner.findWithinHorizon(errorPattern, 0) != null) {
-			failureCount++;
+		while(resultFileScanner.hasNextLine()) {
+			String line = resultFileScanner.nextLine();
+			//optimistic: assume that there are more successes than failures on average and scan for success first 
+			if(SUCCESS_PATTERN.matcher(line).find()) {
+				successCount++;
+			} else if(ERROR_PATTERN.matcher(line).find()) {
+				failureCount++;
+			}
 		}
 		resultFileScanner.close();
-
-		return this.failureCount > 0;
 	}
 
 	/**
 	 * @return failureCount
 	 */
 	public int getFailureCount() {
-		return this.failureCount;
+		if (this.ignoreFailures) {
+			return 0;
+		} else {
+			return this.failureCount;
+		}
+	}
+	
+	public int getRequestCount() {
+		return this.failureCount + this.successCount;
 	}
 }

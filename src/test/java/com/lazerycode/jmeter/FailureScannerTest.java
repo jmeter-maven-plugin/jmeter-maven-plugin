@@ -20,33 +20,42 @@ public class FailureScannerTest {
 	public void jtlFileWithFailures() throws Exception {
 		File resultsFile = new File(failingResultsFileURL.toURI());
 		FailureScanner fileScanner = new FailureScanner(reportAllFailures);
+		fileScanner.parseResults(resultsFile);
 
-		assertThat(fileScanner.hasTestFailed(resultsFile),
+		assertThat(fileScanner.hasTestFailed(),
 				is(equalTo(true)));
 		assertThat(fileScanner.getFailureCount(),
 				is(equalTo(2)));
+		assertThat(fileScanner.getRequestCount(),
+				is(equalTo(4)));
 	}
 
 	@Test
 	public void jtlFileWithNoFailures() throws Exception {
 		File resultsFile = new File(passingResultsFileURL.toURI());
 		FailureScanner fileScanner = new FailureScanner(reportAllFailures);
+		fileScanner.parseResults(resultsFile);
 
-		assertThat(fileScanner.hasTestFailed(resultsFile),
+		assertThat(fileScanner.hasTestFailed(),
 				is(equalTo(false)));
 		assertThat(fileScanner.getFailureCount(),
 				is(equalTo(0)));
+		assertThat(fileScanner.getRequestCount(),
+				is(equalTo(4)));
 	}
 
 	@Test
 	public void jtlFileWithFailuresIgnored() throws Exception {
 		File resultsFile = new File(failingResultsFileURL.toURI());
 		FailureScanner fileScanner = new FailureScanner(ignoreAllFailures);
+		fileScanner.parseResults(resultsFile);
 
-		assertThat(fileScanner.hasTestFailed(resultsFile),
+		assertThat(fileScanner.hasTestFailed(),
 				is(equalTo(false)));
 		assertThat(fileScanner.getFailureCount(),
 				is(equalTo(0)));
+		assertThat(fileScanner.getRequestCount(),
+				is(equalTo(4)));
 	}
 
 

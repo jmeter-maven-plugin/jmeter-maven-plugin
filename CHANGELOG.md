@@ -2,6 +2,7 @@
 
 ##Next Version (Release Date TBC) Release Notes
 
+* Issue #125 - Console output is now clearer when talking about failures.
 * Merge pull request #111 (Thanks [Gordon](https://github.com/gordon00) - Add support for opening a test file in jmeter:gui
 * **BREAKING CHANGE:** Merge pull request #161 (Thanks [Irek P](https://github.com/automatictester)) - Add support for multiple custom properties files 
 

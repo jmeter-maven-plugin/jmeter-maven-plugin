@@ -77,12 +77,13 @@ public class JMeterMojo extends JMeterAbstractMojo {
 			}
 		}
 		getLog().info(" ");
-		getLog().info("Test Results:");
+		getLog().info("Performance Test Results:");
 		getLog().info(" ");
-		getLog().info("Tests Run: " + results.size() + ", Failures: " + totalFailureCount);
+		getLog().info("Total tests: " + results.size());
+		getLog().info("Failed requests: " + totalFailureCount);
 		getLog().info(" ");
 		if (failed) {
-			throw new MojoFailureException("There were " + totalFailureCount + " test failures.  See the JMeter logs at '" + logsDir.getAbsolutePath() + "' for details.");
+			throw new MojoFailureException("There were " + totalFailureCount + " request failures.  See the JMeter logs at '" + logsDir.getAbsolutePath() + "' for more details.");
 		}
 	}
 }

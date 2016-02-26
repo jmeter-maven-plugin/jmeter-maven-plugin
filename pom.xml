@@ -23,7 +23,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <jmeter.version>2.13</jmeter.version>
+        <jmeter.version>3.0-SNAPSHOT</jmeter.version>
         <maven.required.version>3.1.1</maven.required.version>
     </properties>
 
@@ -119,12 +119,12 @@
 
     <issueManagement>
         <system>GitHub</system>
-        <url>https://github.com/Ronnie76er/jmeter-maven-plugin/issues</url>
+        <url>https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues</url>
     </issueManagement>
 
     <ciManagement>
-        <system>Teamcity</system>
-        <url>http://build.lazerycode.com</url>
+        <system>Travis CI</system>
+        <url>https://travis-ci.org/jmeter-maven-plugin/jmeter-maven-plugin</url>
     </ciManagement>
 
     <mailingLists>
@@ -141,17 +141,13 @@
     </mailingLists>
 
     <scm>
-        <connection>scm:git:git@github.com:Ronnie76er/jmeter-maven-plugin.git</connection>
-        <developerConnection>scm:git:git@github.com:Ronnie76er/jmeter-maven-plugin.git</developerConnection>
-        <url>https://github.com/Ronnie76er/jmeter-maven-plugin</url>
+        <connection>scm:git:git@github.com:jmeter-maven-plugin/jmeter-maven-plugin.git</connection>
+        <developerConnection>scm:git:git@github.com:jmeter-maven-plugin/jmeter-maven-plugin.git</developerConnection>
+        <url>https://github.com/jmeter-maven-plugin/jmeter-maven-plugin</url>
         <tag>HEAD</tag>
     </scm>
 
     <distributionManagement>
-        <repository>
-            <id>sonatype-nexus-staging</id>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-        </repository>
         <snapshotRepository>
             <id>sonatype-nexus-snapshots</id>
             <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
@@ -195,282 +191,91 @@
             <groupId>org.apache.jmeter</groupId>
             <artifactId>ApacheJMeter</artifactId>
             <version>${jmeter.version}</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>commons-math3</artifactId>
-                    <groupId>commons-math3</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>commons-pool2</artifactId>
-                    <groupId>commons-pool2</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.jmeter</groupId>
             <artifactId>ApacheJMeter_components</artifactId>
             <version>${jmeter.version}</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>commons-math3</artifactId>
-                    <groupId>commons-math3</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>commons-pool2</artifactId>
-                    <groupId>commons-pool2</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.jmeter</groupId>
             <artifactId>ApacheJMeter_config</artifactId>
             <version>${jmeter.version}</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>commons-math3</artifactId>
-                    <groupId>commons-math3</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>commons-pool2</artifactId>
-                    <groupId>commons-pool2</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.jmeter</groupId>
             <artifactId>ApacheJMeter_core</artifactId>
             <version>${jmeter.version}</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>commons-math3</artifactId>
-                    <groupId>commons-math3</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>commons-pool2</artifactId>
-                    <groupId>commons-pool2</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.jmeter</groupId>
             <artifactId>ApacheJMeter_ftp</artifactId>
             <version>${jmeter.version}</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>commons-math3</artifactId>
-                    <groupId>commons-math3</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>commons-pool2</artifactId>
-                    <groupId>commons-pool2</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.jmeter</groupId>
             <artifactId>ApacheJMeter_functions</artifactId>
             <version>${jmeter.version}</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>commons-math3</artifactId>
-                    <groupId>commons-math3</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>commons-pool2</artifactId>
-                    <groupId>commons-pool2</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.jmeter</groupId>
             <artifactId>ApacheJMeter_http</artifactId>
             <version>${jmeter.version}</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>commons-math3</artifactId>
-                    <groupId>commons-math3</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>commons-pool2</artifactId>
-                    <groupId>commons-pool2</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.jmeter</groupId>
             <artifactId>ApacheJMeter_java</artifactId>
             <version>${jmeter.version}</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>commons-math3</artifactId>
-                    <groupId>commons-math3</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>commons-pool2</artifactId>
-                    <groupId>commons-pool2</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.jmeter</groupId>
             <artifactId>ApacheJMeter_jdbc</artifactId>
             <version>${jmeter.version}</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>commons-math3</artifactId>
-                    <groupId>commons-math3</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>commons-pool2</artifactId>
-                    <groupId>commons-pool2</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.jmeter</groupId>
             <artifactId>ApacheJMeter_jms</artifactId>
             <version>${jmeter.version}</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>commons-math3</artifactId>
-                    <groupId>commons-math3</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>commons-pool2</artifactId>
-                    <groupId>commons-pool2</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.jmeter</groupId>
             <artifactId>ApacheJMeter_junit</artifactId>
             <version>${jmeter.version}</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>commons-math3</artifactId>
-                    <groupId>commons-math3</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>commons-pool2</artifactId>
-                    <groupId>commons-pool2</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.jmeter</groupId>
             <artifactId>ApacheJMeter_junit-test</artifactId>
             <version>${jmeter.version}</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>commons-math3</artifactId>
-                    <groupId>commons-math3</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>commons-pool2</artifactId>
-                    <groupId>commons-pool2</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.jmeter</groupId>
             <artifactId>ApacheJMeter_ldap</artifactId>
             <version>${jmeter.version}</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>commons-math3</artifactId>
-                    <groupId>commons-math3</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>commons-pool2</artifactId>
-                    <groupId>commons-pool2</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.jmeter</groupId>
             <artifactId>ApacheJMeter_mail</artifactId>
             <version>${jmeter.version}</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>commons-math3</artifactId>
-                    <groupId>commons-math3</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>commons-pool2</artifactId>
-                    <groupId>commons-pool2</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.jmeter</groupId>
             <artifactId>ApacheJMeter_mongodb</artifactId>
             <version>${jmeter.version}</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>commons-math3</artifactId>
-                    <groupId>commons-math3</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>commons-pool2</artifactId>
-                    <groupId>commons-pool2</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.jmeter</groupId>
             <artifactId>ApacheJMeter_monitors</artifactId>
             <version>${jmeter.version}</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>commons-math3</artifactId>
-                    <groupId>commons-math3</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>commons-pool2</artifactId>
-                    <groupId>commons-pool2</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.jmeter</groupId>
             <artifactId>ApacheJMeter_native</artifactId>
             <version>${jmeter.version}</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>commons-math3</artifactId>
-                    <groupId>commons-math3</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>commons-pool2</artifactId>
-                    <groupId>commons-pool2</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.jmeter</groupId>
             <artifactId>ApacheJMeter_tcp</artifactId>
             <version>${jmeter.version}</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>commons-math3</artifactId>
-                    <groupId>commons-math3</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>commons-pool2</artifactId>
-                    <groupId>commons-pool2</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <!--Workaround for JMeter defect 57734-->
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-math3</artifactId>
-            <version>3.4.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-pool2</artifactId>
-            <version>2.3</version>
         </dependency>
     </dependencies>
 
@@ -514,9 +319,44 @@
         </pluginManagement>
     </build>
 
+    <repositories>
+        <repository>
+            <id>apache-snapshots</id>
+            <name>Apache Snapshots</name>
+            <url>https://repository.apache.org/content/groups/snapshots/</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
     <profiles>
         <profile>
             <id>release</id>
+            <repositories>
+                <repository>
+                    <id>sonatype-nexus-snapshots</id>
+                    <name>Sonatype Nexus Snapshots</name>
+                    <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+                    <snapshots>
+                        <enabled>false</enabled>
+                    </snapshots>
+                </repository>
+                <repository>
+                    <id>apache-snapshots</id>
+                    <name>Apache Snapshots</name>
+                    <url>https://repository.apache.org/content/groups/snapshots/</url>
+                    <snapshots>
+                        <enabled>false</enabled>
+                    </snapshots>
+                </repository>
+            </repositories>
+            <distributionManagement>
+                <repository>
+                    <id>sonatype-nexus-staging</id>
+                    <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+                </repository>
+            </distributionManagement>
             <build>
                 <plugins>
                     <plugin>

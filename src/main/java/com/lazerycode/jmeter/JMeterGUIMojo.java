@@ -28,6 +28,12 @@ public class JMeterGUIMojo extends JMeterAbstractMojo {
 	private File guiTestFile;
 
 	/**
+	 * Convenient to open a test file into the GUI after it is loaded.
+	 */
+	@Parameter
+	private File guiTestFile;
+
+	/**
 	 * Load the JMeter GUI
 	 *
 	 * @throws MojoExecutionException

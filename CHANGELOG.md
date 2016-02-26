@@ -2,14 +2,19 @@
 
 ##Next Version (Release Date TBC) Release Notes
 
-* TBC
+* **BREAKING CHANGE:** Merge pull request #161 (Thanks [Irek P](https://github.com/automatictester)) - Add support for multiple custom properties files 
+
+		<customPropertiesFiles>
+			<customerPropertiesFile>someFile</customerPropertiesFile>
+			<customerPropertiesFile>someOtherFile</customerPropertiesFile>
+		</customPropertiesFiles>
 
 ##Version 1.10.1 Release Notes
 
 * **JMeter version 2.13 support added by hacking about with dependencies.**
 * Issue #108 - Send log output to debug if suppressJMeterOutput is true to prevent buffer overflow
-* Merge pull request #110 from (Thanks [Nanne](https://github.com/nbaars)) - Additional logging.
-* Merge pull request #120 from (Thanks [Irek P](https://github.com/automatictester)) - Make Properties file directory configurable.
+* Merge pull request #110 (Thanks [Nanne](https://github.com/nbaars)) - Additional logging.
+* Merge pull request #120 (Thanks [Irek P](https://github.com/automatictester)) - Make Properties file directory configurable.
 
 ##Version 1.10.0 Release Notes
 

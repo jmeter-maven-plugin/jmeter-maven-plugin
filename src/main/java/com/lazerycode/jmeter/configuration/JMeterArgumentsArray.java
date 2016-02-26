@@ -32,7 +32,7 @@ public class JMeterArgumentsArray {
 	private boolean appendTimestamp = false;
 	private String resultFileExtension = ".jtl";
 	private String remoteStartServerList;
-	private String customPropertiesFile;
+	private List<String> customPropertiesFiles = new ArrayList<>();
 	private String testFile;
 	private String resultsLogFileName;
 	private String jmeterLogFileName;
@@ -106,7 +106,7 @@ public class JMeterArgumentsArray {
 
 	public void setACustomPropertiesFile(File customProperties) {
 		if (isNotSet(customProperties)) return;
-		customPropertiesFile = customProperties.getAbsolutePath();
+		customPropertiesFiles.add(customProperties.getAbsolutePath());
 		argumentList.add(PROPFILE2_OPT);
 	}
 
@@ -207,8 +207,10 @@ public class JMeterArgumentsArray {
 					argumentsArray.add(overrideRootLogLevel.toString());
 					break;
 				case PROPFILE2_OPT:
-					argumentsArray.add(PROPFILE2_OPT.getCommandLineArgument());
-					argumentsArray.add(customPropertiesFile);
+					for (String customPropertiesFile : customPropertiesFiles) {
+						argumentsArray.add(PROPFILE2_OPT.getCommandLineArgument());
+						argumentsArray.add(customPropertiesFile);
+					}
 					break;
 				case REMOTE_OPT:
 					argumentsArray.add(REMOTE_OPT.getCommandLineArgument());

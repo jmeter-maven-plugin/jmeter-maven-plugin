@@ -86,6 +86,20 @@ public class JMeterArgumentsArrayTest {
 	}
 
 	@Test
+	public void validateJMeterCustomPropertiesFiles() throws Exception {
+		JMeterArgumentsArray testArgs = new JMeterArgumentsArray(disableGUI, "target/jmeter/");
+		testArgs.setTestFile(new File(this.testFile.toURI()));
+
+		File testPropFile = new File("test.properties");
+		File secondTestPropFile = new File("secondTest.properties");
+		testArgs.setACustomPropertiesFile(testPropFile);
+		testArgs.setACustomPropertiesFile(secondTestPropFile);
+
+		assertThat(UtilityFunctions.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()),
+				is(equalTo("-n -t " + testFilePath + " -l " + testArgs.getResultsLogFileName() + " -d target/jmeter/ -q " + testPropFile.getAbsolutePath() + " -q " + secondTestPropFile.getAbsolutePath())));
+	}
+
+	@Test
 	public void validateSetRootLogLevel() throws Exception {
 		JMeterArgumentsArray testArgs = new JMeterArgumentsArray(disableGUI, "target/jmeter/");
 		testArgs.setTestFile(new File(this.testFile.toURI()));

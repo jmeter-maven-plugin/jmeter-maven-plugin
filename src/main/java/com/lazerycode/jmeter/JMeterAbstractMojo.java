@@ -135,7 +135,7 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 	 * Absolute path to JMeter custom (test dependent) properties file.
 	 */
 	@Parameter
-	protected File customPropertiesFile;
+	protected List<File> customPropertiesFiles;
 
 	/**
 	 * Replace the default JMeter properties with any custom properties files supplied.
@@ -462,7 +462,9 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 			}
 		}
 		testArgs.setProxyConfig(proxyConfig);
-		testArgs.setACustomPropertiesFile(customPropertiesFile);
+		for (File customPropertiesFile : customPropertiesFiles) {
+			testArgs.setACustomPropertiesFile(customPropertiesFile);
+		}
 		testArgs.setLogRootOverride(overrideRootLogLevel);
 		testArgs.setLogsDirectory(logsDir.getAbsolutePath());
 	}

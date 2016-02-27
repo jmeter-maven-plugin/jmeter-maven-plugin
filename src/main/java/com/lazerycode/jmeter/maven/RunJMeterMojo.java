@@ -1,22 +1,23 @@
-package com.lazerycode.jmeter;
+package com.lazerycode.jmeter.maven;
 
+import com.lazerycode.jmeter.testrunner.ResultScanner;
 import com.lazerycode.jmeter.testrunner.TestManager;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
 /**
  * JMeter Maven plugin.
  */
-@Mojo(name = "jmeter")
-public class JMeterMojo extends JMeterAbstractMojo {
+@Mojo(name = "configure-jmeter", defaultPhase = LifecyclePhase.INTEGRATION_TEST)
+public class RunJMeterMojo extends AbstractJMeterMojo {
 
 	/**
-	 * Run all the JMeter tests.
+	 * Configure a local instance of JMeter
 	 *
 	 * @throws MojoExecutionException
 	 * @throws MojoFailureException
@@ -24,23 +25,14 @@ public class JMeterMojo extends JMeterAbstractMojo {
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		if (skipTests) {
-			getLog().info(" ");
-			getLog().info("-------------------------------------------------------");
-			getLog().info(" S K I P P I N G    P E R F O R M A N C E    T E S T S ");
-			getLog().info("-------------------------------------------------------");
-			getLog().info(" ");
+			getLog().info(" Performance tests are skipped.");
 			return;
 		}
 		getLog().info(" ");
 		getLog().info("-------------------------------------------------------");
 		getLog().info(" P E R F O R M A N C E    T E S T S");
 		getLog().info("-------------------------------------------------------");
-		getLog().info(" ");
-		generateJMeterDirectoryTree();
-		setJMeterResultFileFormat();
-		configureAdvancedLogging();
-		propertyConfiguration();
-		populateJMeterDirectoryTree();
+
 		initialiseJMeterArgumentsArray(true);
 		if (null != remoteConfig) {
 			remoteConfig.setMasterPropertiesMap(pluginProperties.getMasterPropertiesMap());
@@ -56,21 +48,17 @@ public class JMeterMojo extends JMeterAbstractMojo {
 	}
 
 	/**
-	 * Scan JMeter result files for "error" and "failure" messages
+	 * Scan JMeter result files for successful, and failed requests
 	 *
 	 * @param resultFilesLocations List of JMeter result files.
 	 * @throws MojoExecutionException
 	 * @throws MojoFailureException
 	 */
-	void parseTestResults(List<String> resultFilesLocations) throws MojoExecutionException, MojoFailureException {
+	protected void parseTestResults(List<String> resultFilesLocations) throws MojoExecutionException, MojoFailureException {
 		if (scanResultsForSuccessfulRequests || scanResultsForFailedRequests) {
 			ResultScanner resultScanner = new ResultScanner(scanResultsForSuccessfulRequests, scanResultsForFailedRequests);
 			for (String resultFileLocation : resultFilesLocations) {
-				try {
-					resultScanner.parseResultFile(new File(resultFileLocation));
-				} catch (IOException e) {
-					throw new MojoExecutionException(e.getMessage());
-				}
+				resultScanner.parseResultFile(new File(resultFileLocation));
 			}
 			getLog().info(" ");
 			getLog().info("Performance Test Results");

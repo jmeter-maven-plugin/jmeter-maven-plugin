@@ -1,4 +1,6 @@
-package com.lazerycode.jmeter;
+package com.lazerycode.jmeter.testrunner;
+
+import com.lazerycode.jmeter.exceptions.ResultsFileNotFoundException;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -10,7 +12,7 @@ import java.util.Scanner;
  *
  * @author Jon Roberts
  */
-class ResultScanner {
+public class ResultScanner {
 
 	private static final String REQUEST_FAILURE = "s=\"false\"";
 	private static final String REQUEST_SUCCESS = "s=\"true\"";
@@ -30,7 +32,7 @@ class ResultScanner {
 	 * @param file File to parse
 	 * @throws IOException
 	 */
-	public void parseResultFile(File file) throws IOException {
+	public void parseResultFile(File file) throws ResultsFileNotFoundException {
 		if (countFailures) {
 			failureCount = failureCount + scanFileforPattern(file, REQUEST_FAILURE);
 		}
@@ -47,12 +49,14 @@ class ResultScanner {
 	 * @return The number of times the pattern has been found
 	 * @throws FileNotFoundException
 	 */
-	private int scanFileforPattern(File file, String pattern) throws FileNotFoundException {
+	private int scanFileforPattern(File file, String pattern) throws ResultsFileNotFoundException {
 		int patternCount = 0;
 		try (Scanner resultFileScanner = new Scanner(file)) {
 			while (resultFileScanner.findWithinHorizon(pattern, 0) != null) {
 				patternCount++;
 			}
+		} catch (FileNotFoundException ex) {
+			throw new ResultsFileNotFoundException(ex.getMessage(), ex.getCause());
 		}
 
 		return patternCount;

@@ -1,5 +1,6 @@
 package com.lazerycode.jmeter;
 
+import com.lazerycode.jmeter.utility.UtilityFunctions;
 import org.junit.Test;
 
 import java.io.File;

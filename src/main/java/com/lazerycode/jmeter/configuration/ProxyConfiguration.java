@@ -1,7 +1,7 @@
 package com.lazerycode.jmeter.configuration;
 
-import static com.lazerycode.jmeter.UtilityFunctions.isNotSet;
-import static com.lazerycode.jmeter.UtilityFunctions.isSet;
+import static com.lazerycode.jmeter.utility.UtilityFunctions.isNotSet;
+import static com.lazerycode.jmeter.utility.UtilityFunctions.isSet;
 
 /**
  * Is used for configuration of all proxy related configuration.

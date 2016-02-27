@@ -1,5 +1,6 @@
 package com.lazerycode.jmeter;
 
+import com.lazerycode.jmeter.testrunner.ResultScanner;
 import org.joda.time.DateTime;
 import org.joda.time.Duration;
 import org.junit.Ignore;

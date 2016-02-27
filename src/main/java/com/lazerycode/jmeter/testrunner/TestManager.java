@@ -1,6 +1,6 @@
 package com.lazerycode.jmeter.testrunner;
 
-import com.lazerycode.jmeter.UtilityFunctions;
+import com.lazerycode.jmeter.utility.UtilityFunctions;
 import com.lazerycode.jmeter.configuration.JMeterArgumentsArray;
 import com.lazerycode.jmeter.configuration.JMeterProcessJVMSettings;
 import com.lazerycode.jmeter.configuration.RemoteArgumentsArrayBuilder;

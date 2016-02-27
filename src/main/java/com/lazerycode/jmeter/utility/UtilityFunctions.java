@@ -1,4 +1,4 @@
-package com.lazerycode.jmeter;
+package com.lazerycode.jmeter.utility;
 
 import java.io.File;
 import java.util.List;

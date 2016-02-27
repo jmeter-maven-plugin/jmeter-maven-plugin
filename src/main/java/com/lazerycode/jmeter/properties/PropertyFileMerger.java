@@ -1,6 +1,6 @@
 package com.lazerycode.jmeter.properties;
 
-import com.lazerycode.jmeter.JMeterMojo;
+import com.lazerycode.jmeter.maven.RunJMeterMojo;
 
 import java.util.Map;
 import java.util.Properties;
@@ -10,7 +10,7 @@ import java.util.Properties;
  *
  * @author Arne Franken, Mark Collin
  */
-class PropertyFileMerger extends JMeterMojo {
+class PropertyFileMerger extends RunJMeterMojo {
 
 	/**
 	 * Merge two properties files together.

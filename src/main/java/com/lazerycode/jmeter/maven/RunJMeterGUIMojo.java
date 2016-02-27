@@ -1,8 +1,10 @@
-package com.lazerycode.jmeter;
+package com.lazerycode.jmeter.maven;
 
 import com.lazerycode.jmeter.testrunner.JMeterProcessBuilder;
+import com.lazerycode.jmeter.utility.UtilityFunctions;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
@@ -14,9 +16,9 @@ import java.io.IOException;
  *
  * @author Jarrod Ribble
  */
-@Mojo(name = "gui")
+@Mojo(name = "gui", defaultPhase = LifecyclePhase.INTEGRATION_TEST)
 @SuppressWarnings({"UnusedDeclaration"})
-public class JMeterGUIMojo extends JMeterAbstractMojo {
+public class RunJMeterGUIMojo extends AbstractJMeterMojo {
 
 	@Parameter(defaultValue = "false")
 	private boolean runInBackground;
@@ -37,13 +39,8 @@ public class JMeterGUIMojo extends JMeterAbstractMojo {
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		getLog().info(" ");
 		getLog().info("-------------------------------------------------------");
-		getLog().info(" STARTING JMETER GUI");
+		getLog().info(" S T A R T I N G    J M E T E R    G U I ");
 		getLog().info("-------------------------------------------------------");
-		getLog().info(" ");
-		generateJMeterDirectoryTree();
-		configureAdvancedLogging();
-		propertyConfiguration();
-		populateJMeterDirectoryTree();
 		initialiseJMeterArgumentsArray(false);
 		getLog().info("JMeter is called with the following command line arguments: " + UtilityFunctions.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()));
 		//Start The GUI
@@ -52,7 +49,7 @@ public class JMeterGUIMojo extends JMeterAbstractMojo {
 		JMeterProcessBuilder.addArguments(testArgs.buildArgumentsArray());
 		try {
 			final Process process = JMeterProcessBuilder.startProcess();
-			if(!runInBackground) {
+			if (!runInBackground) {
 				process.waitFor();
 			}
 		} catch (InterruptedException ex) {

@@ -1,6 +1,6 @@
 package com.lazerycode.jmeter.properties;
 
-import com.lazerycode.jmeter.UtilityFunctions;
+import com.lazerycode.jmeter.utility.UtilityFunctions;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.slf4j.Logger;
@@ -12,8 +12,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.jar.JarFile;
 
-import static com.lazerycode.jmeter.JMeterAbstractMojo.JMETER_CONFIG_ARTIFACT;
-import static com.lazerycode.jmeter.JMeterAbstractMojo.getArtifactNamed;
+import static com.lazerycode.jmeter.maven.AbstractJMeterMojo.JMETER_CONFIG_ARTIFACT;
+import static com.lazerycode.jmeter.maven.AbstractJMeterMojo.getArtifactNamed;
 
 /**
  * Handler to deal with properties file creation.

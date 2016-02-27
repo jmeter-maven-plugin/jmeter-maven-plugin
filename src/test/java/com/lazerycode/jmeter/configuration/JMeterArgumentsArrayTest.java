@@ -1,6 +1,6 @@
 package com.lazerycode.jmeter.configuration;
 
-import com.lazerycode.jmeter.UtilityFunctions;
+import com.lazerycode.jmeter.utility.UtilityFunctions;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;

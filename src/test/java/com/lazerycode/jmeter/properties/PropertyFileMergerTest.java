@@ -1,6 +1,6 @@
 package com.lazerycode.jmeter.properties;
 
-import com.lazerycode.jmeter.UtilityFunctions;
+import com.lazerycode.jmeter.utility.UtilityFunctions;
 import org.hamcrest.core.IsInstanceOf;
 import org.junit.Test;
 

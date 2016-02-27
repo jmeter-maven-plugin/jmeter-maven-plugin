@@ -11,8 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeSet;
 
-import static com.lazerycode.jmeter.UtilityFunctions.isNotSet;
-import static com.lazerycode.jmeter.UtilityFunctions.isSet;
+import static com.lazerycode.jmeter.utility.UtilityFunctions.isNotSet;
+import static com.lazerycode.jmeter.utility.UtilityFunctions.isSet;
 import static com.lazerycode.jmeter.configuration.JMeterCommandLineArguments.*;
 
 /**

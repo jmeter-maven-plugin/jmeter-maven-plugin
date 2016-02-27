@@ -1,4 +1,4 @@
-package com.lazerycode.jmeter;
+package com.lazerycode.jmeter.maven;
 
 import com.lazerycode.jmeter.configuration.*;
 import com.lazerycode.jmeter.properties.PropertyHandler;
@@ -18,7 +18,7 @@ import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-import static com.lazerycode.jmeter.UtilityFunctions.isSet;
+import static com.lazerycode.jmeter.utility.UtilityFunctions.isSet;
 import static org.apache.commons.io.FileUtils.copyFile;
 import static org.apache.commons.io.FileUtils.copyInputStreamToFile;
 
@@ -29,7 +29,7 @@ import static org.apache.commons.io.FileUtils.copyInputStreamToFile;
  * @author Tim McCune
  */
 @SuppressWarnings({"UnusedDeclaration", "FieldCanBeLocal", "JavaDoc"}) // Mojos get their fields set via reflection
-public abstract class JMeterAbstractMojo extends AbstractMojo {
+public abstract class AbstractJMeterMojo extends AbstractMojo {
 
 	/**
 	 * Sets the list of include patterns to use in directory scan for JMX files.
@@ -483,7 +483,8 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 		testArgs.setLogsDirectory(logsDir.getAbsolutePath());
 	}
 
-	protected void setJMeterResultFileFormat() {
+	protected void
+	setJMeterResultFileFormat() {
 		if (resultsFileFormat.toLowerCase().equals("csv")) {
 			propertiesJMeter.put("jmeter.save.saveservice.output_format", "csv");
 			resultsOutputIsCSVFormat = true;

@@ -76,8 +76,7 @@ public class TestManager extends JMeterMojo {
 	 *
 	 * @param test JMeter test XML
 	 * @return the report file names.
-	 * @throws org.apache.maven.plugin.MojoExecutionException
-	 *          Exception
+	 * @throws org.apache.maven.plugin.MojoExecutionException Exception
 	 */
 	@SuppressWarnings("ResultOfMethodCallIgnored")
 	private String executeSingleTest(File test, JMeterArgumentsArray testArgs) throws MojoExecutionException {
@@ -95,11 +94,12 @@ public class TestManager extends JMeterMojo {
 		JMeterProcessBuilder.addArguments(argumentsArray);
 		try {
 			final Process process = JMeterProcessBuilder.startProcess();
-			//Log process output
-			if (!suppressJMeterOutput) {
-				BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
-				String line;
-				while ((line = br.readLine()) != null) {
+			BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
+			String line;
+			while ((line = br.readLine()) != null) {
+				if (suppressJMeterOutput) {
+					getLog().debug(line);
+				} else {
 					getLog().info(line);
 				}
 			}

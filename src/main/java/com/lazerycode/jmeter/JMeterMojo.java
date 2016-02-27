@@ -65,10 +65,13 @@ public class JMeterMojo extends JMeterAbstractMojo {
 	void parseTestResults(List<String> results) throws MojoExecutionException, MojoFailureException {
 		FailureScanner failureScanner = new FailureScanner(ignoreResultFailures);
 		int totalFailureCount = 0;
+		int totalRequestCount = 0;
 		boolean failed = false;
 		for (String file : results) {
 			try {
-				if (failureScanner.hasTestFailed(new File(file))) {
+				failureScanner.parseResults(new File(file));
+				totalRequestCount += failureScanner.getRequestCount();
+				if (failureScanner.hasTestFailed()) {
 					totalFailureCount += failureScanner.getFailureCount();
 					failed = true;
 				}
@@ -80,6 +83,7 @@ public class JMeterMojo extends JMeterAbstractMojo {
 		getLog().info("Performance Test Results:");
 		getLog().info(" ");
 		getLog().info("Total tests: " + results.size());
+		getLog().info("Total requests: " + totalRequestCount);
 		getLog().info("Failed requests: " + totalFailureCount);
 		getLog().info(" ");
 		if (failed) {

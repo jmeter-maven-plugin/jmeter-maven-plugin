@@ -190,11 +190,25 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 	protected String logConfigFilename;
 
 	/**
-	 * Sets whether FailureScanner should ignore failures in JMeter result file.
+	 * Sets whether build should fail if there are failed requests found in the JMeter result file.
 	 * Failures are for example failed requests
 	 */
 	@Parameter(defaultValue = "false")
 	protected boolean ignoreResultFailures;
+
+	/**
+	 * Sets whether ResultScanner should search for failed requests in the JMeter result file.
+	 * Defaults to false
+	 */
+	@Parameter(defaultValue = "false")
+	protected boolean scanResultForFailedRequests;
+
+	/**
+	 * Sets whether ResultScanner should search for Successful requests in the JMeter result file.
+	 * Defaults to false
+	 */
+	@Parameter(defaultValue = "false")
+	protected boolean scanResultForSuccessfulRequests;
 
 	/**
 	 * Suppress JMeter output

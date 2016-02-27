@@ -58,32 +58,34 @@ public class JMeterMojo extends JMeterAbstractMojo {
 	/**
 	 * Scan JMeter result files for "error" and "failure" messages
 	 *
-	 * @param results List of JMeter result files.
+	 * @param resultFilesLocations List of JMeter result files.
 	 * @throws MojoExecutionException
 	 * @throws MojoFailureException
 	 */
-	void parseTestResults(List<String> results) throws MojoExecutionException, MojoFailureException {
-		FailureScanner failureScanner = new FailureScanner(ignoreResultFailures);
-		int totalFailureCount = 0;
-		boolean failed = false;
-		for (String file : results) {
-			try {
-				if (failureScanner.hasTestFailed(new File(file))) {
-					totalFailureCount += failureScanner.getFailureCount();
-					failed = true;
+	void parseTestResults(List<String> resultFilesLocations) throws MojoExecutionException, MojoFailureException {
+		if (scanResultForSuccessfulRequests || scanResultForFailedRequests) {
+			ResultScanner resultScanner = new ResultScanner(scanResultForSuccessfulRequests, scanResultForFailedRequests);
+			for (String resultFileLocation : resultFilesLocations) {
+				try {
+					resultScanner.parseResultFile(new File(resultFileLocation));
+				} catch (IOException e) {
+					throw new MojoExecutionException(e.getMessage());
 				}
-			} catch (IOException e) {
-				throw new MojoExecutionException(e.getMessage());
 			}
-		}
-		getLog().info(" ");
-		getLog().info("Performance Test Results:");
-		getLog().info(" ");
-		getLog().info("Total tests: " + results.size());
-		getLog().info("Failed requests: " + totalFailureCount);
-		getLog().info(" ");
-		if (failed) {
-			throw new MojoFailureException("There were " + totalFailureCount + " request failures.  See the JMeter logs at '" + logsDir.getAbsolutePath() + "' for more details.");
+			getLog().info(" ");
+			getLog().info("Performance Test Results");
+			getLog().info(" ");
+			getLog().info("Result (.jtl) files scanned:	" + resultFilesLocations.size());
+			getLog().info("Successful requests: 		" + resultScanner.getSuccessCount());
+			getLog().info("Failed requests: 			" + resultScanner.getFailureCount());
+			getLog().info(" ");
+			if (!ignoreResultFailures && resultScanner.getFailureCount() > 0) {
+				throw new MojoFailureException("Failing build because failed requests have been detected.  JMeter logs are available at: '" + logsDir.getAbsolutePath() + "'");
+			}
+		} else {
+			getLog().info(" ");
+			getLog().info("Results of Performance Test(s) have not been scanned.");
+			getLog().info(" ");
 		}
 	}
 }

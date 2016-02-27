@@ -46,6 +46,7 @@ public class JMeterMojo extends JMeterAbstractMojo {
 			remoteConfig.setMasterPropertiesMap(pluginProperties.getMasterPropertiesMap());
 		}
 		TestManager jMeterTestManager = new TestManager(testArgs, testFilesDirectory, testFilesIncluded, testFilesExcluded, remoteConfig, suppressJMeterOutput, binDir, jMeterProcessJVMSettings);
+		jMeterTestManager.setPostTestPauseInSeconds(postTestPauseInSeconds);
 		getLog().info(" ");
 		if (proxyConfig != null) {
 			getLog().info(this.proxyConfig.toString());
@@ -79,12 +80,14 @@ public class JMeterMojo extends JMeterAbstractMojo {
 			}
 		}
 		getLog().info(" ");
-		getLog().info("Test Results:");
+		getLog().info("Performance Test Results:");
 		getLog().info(" ");
-		getLog().info(String.format("JMX Files Run: %s, Tests Run: %s, Failures: %s", results.size(), totalRequestCount, totalFailureCount));
+		getLog().info("Total tests: " + results.size());
+		getLog().info("Total requests: " + totalRequestCount);
+		getLog().info("Failed requests: " + totalFailureCount);
 		getLog().info(" ");
 		if (failed) {
-			throw new MojoFailureException("There were " + totalFailureCount + " test failures.  See the JMeter logs at '" + logsDir.getAbsolutePath() + "' for details.");
+			throw new MojoFailureException("There were " + totalFailureCount + " request failures.  See the JMeter logs at '" + logsDir.getAbsolutePath() + "' for more details.");
 		}
 	}
 }

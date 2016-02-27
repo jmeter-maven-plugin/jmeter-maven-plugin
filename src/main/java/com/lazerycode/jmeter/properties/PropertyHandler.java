@@ -1,9 +1,10 @@
 package com.lazerycode.jmeter.properties;
 
-import com.lazerycode.jmeter.JMeterMojo;
 import com.lazerycode.jmeter.UtilityFunctions;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.util.EnumMap;
@@ -11,21 +12,24 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.jar.JarFile;
 
+import static com.lazerycode.jmeter.JMeterAbstractMojo.JMETER_CONFIG_ARTIFACT;
+import static com.lazerycode.jmeter.JMeterAbstractMojo.getArtifactNamed;
+
 /**
  * Handler to deal with properties file creation.
  *
  * @author Arne Franken, Mark Collin
  */
-public class PropertyHandler extends JMeterMojo {
+public class PropertyHandler {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(PropertyHandler.class);
 	private final EnumMap<JMeterPropertiesFiles, PropertyContainer> masterPropertiesMap = new EnumMap<JMeterPropertiesFiles, PropertyContainer>(JMeterPropertiesFiles.class);
 
 	private File propertySourceDirectory;
 	private File propertyOutputDirectory;
 	private boolean replaceDefaultProperties;
 
-	public PropertyHandler(File sourceDirectory, File outputDirectory, Artifact jMeterConfigArtifact, boolean replaceDefaultProperties) throws MojoExecutionException {
-		//Initialise the enum map
+	public PropertyHandler(File sourceDirectory, File outputDirectory, boolean replaceDefaultProperties) throws MojoExecutionException {
 		for (JMeterPropertiesFiles propertyFile : JMeterPropertiesFiles.values()) {
 			this.masterPropertiesMap.put(propertyFile, new PropertyContainer());
 		}
@@ -33,10 +37,10 @@ public class PropertyHandler extends JMeterMojo {
 		setOutputDirectory(outputDirectory);
 		this.replaceDefaultProperties = replaceDefaultProperties;
 		try {
-			this.loadDefaultProperties(jMeterConfigArtifact);
+			this.loadDefaultProperties(getArtifactNamed(JMETER_CONFIG_ARTIFACT));
 			this.loadCustomProperties();
 		} catch (Exception ex) {
-			getLog().error("Error loading properties: " + ex);
+			LOGGER.error("Error loading properties: " + ex);
 		}
 	}
 
@@ -78,14 +82,13 @@ public class PropertyHandler extends JMeterMojo {
 			}
 		}
 	}
-	
+
 	/**
-	 *  
 	 * @param props a properties file
-	 * @return PropertyContainer for jvm property access / non file based. 
+	 * @return PropertyContainer for jvm property access / non file based.
 	 */
-	public PropertyContainer getPropertyContainer(JMeterPropertiesFiles props) { 
-		return masterPropertiesMap.get(props); 
+	public PropertyContainer getPropertyContainer(JMeterPropertiesFiles props) {
+		return masterPropertiesMap.get(props);
 	}
 
 	/**
@@ -118,14 +121,13 @@ public class PropertyHandler extends JMeterMojo {
 	}
 
 	/**
-	 * 
 	 * @return full property map for the application.
 	 */
 	//doesnt make sense to use the files for remote access as jmeter wont pick it up 
 	public EnumMap<JMeterPropertiesFiles, PropertyContainer> getMasterPropertiesMap() {
 		return masterPropertiesMap;
 	}
-	
+
 	public void setJMeterProperties(Map<String, String> value) {
 		if (UtilityFunctions.isNotSet(value)) return;
 		this.getPropertyObject(JMeterPropertiesFiles.JMETER_PROPERTIES).setCustomPropertyMap(value);
@@ -164,7 +166,6 @@ public class PropertyHandler extends JMeterMojo {
 	 * Create/Copy the properties files used by JMeter into the JMeter directory tree.
 	 *
 	 * @throws org.apache.maven.plugin.MojoExecutionException
-	 *
 	 */
 	public void configureJMeterPropertiesFiles() throws MojoExecutionException {
 		for (JMeterPropertiesFiles propertyFile : JMeterPropertiesFiles.values()) {

@@ -1,0 +1,17 @@
+architect:
+  - ardesco
+  - afranken
+decrypt:
+  settings.xml: "repo/settings.xml.asc"
+  pubring.gpg: "repo/pubring.gpg.asc"
+  secring.gpg: "repo/secring.gpg.asc"
+release:
+  pre: false
+  script: |-
+    mkdir /home/r/gpg
+    mv /home/r/pubring.gpg /home/r/gpg/pubring.gpg
+    mv /home/r/secring.gpg /home/r/gpg/secring.gpg
+    sudo chmod -R 700 /home/r/gpg
+    mvn versions:set "-DnewVersion=${tag}"
+    git commit -am "${tag}"
+    mvn clean deploy -Prelease --settings /home/r/settings.xml

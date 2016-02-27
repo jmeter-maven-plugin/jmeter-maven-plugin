@@ -2,7 +2,7 @@ package com.lazerycode.jmeter.configuration;
 
 /**
  * An Enum holding all of the command line arguments accepted by JMeter
- * The values are defined in a specific order to ensure the order attributes are applied to the ocmmand line.
+ * The values are defined in a specific order to ensure the order attributes are applied to the command line.
  *
  * @author Mark Collin
  */

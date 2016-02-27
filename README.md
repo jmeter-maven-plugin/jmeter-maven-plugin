@@ -1,18 +1,16 @@
 #JMeter Maven Plugin
+=================================
 
----
+[![Join the chat at https://gitter.im/jmeter-maven-plugin/jmeter-maven-plugin](https://badges.gitter.im/jmeter-maven-plugin/jmeter-maven-plugin.svg)](https://gitter.im/jmeter-maven-plugin/jmeter-maven-plugin?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Build Status](https://travis-ci.org/jmeter-maven-plugin/jmeter-maven-plugin.svg?branch=master)](https://travis-ci.org/jmeter-maven-plugin/jmeter-maven-plugin)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.lazerycode.jmeter/jmeter-maven-plugin/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.lazerycode.jmeter/jmeter-maven-plugin)
+[![Javadoc](https://javadoc-emblem.rhcloud.com/doc/com.lazerycode.jmeter/jmeter-maven-plugin/badge.svg)](http://www.javadoc.io/doc/com.lazerycode.jmeter/jmeter-maven-plugin)
 
-The JMeter Maven Plugin allows you to automate JMeter tests in Maven.
+A Maven plugin that provides the ability to run JMeter tests as part of your build
 
-Current Version In Maven Central: **1.10.1** See the [release notes](https://github.com/Ronnie76er/jmeter-maven-plugin/wiki/Release-Notes) for change information.  This plugin requires **JDK 1.6** or higher.
+See the [CHANGELOG](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/blob/master/CHANGELOG.md) for change information.  
 
----
-
-**PLEASE NOTE:** _The Group ID and Artifact ID have changed since version 1.4!_
-
-This is to bring the project in line with maven naming practice for non-maven plugins and to enable us to upload to the Sonatype OSS repository.  This project is now in the maven central repository.
-
----
+This plugin requires **JDK 1.7** or higher.
 
 #Basic Usage
 -----
@@ -73,10 +71,6 @@ A place to discuss the development of the maven-jmeter-plugin, or ask about feat
 Homepage: [http://groups.google.com/group/maven-jmeter-plugin-devs]( http://groups.google.com/group/maven-jmeter-plugin-devs)
 
 Group Email: [maven-jmeter-plugin-devs@googlegroups.com](mailto:maven-jmeter-plugin-devs@googlegroups.com)
-
-## Build Server
-
-You can see the state of the current codebase by looking at the [CI Server](http://build.lazerycode.com/overview.html).
 
 ## Website
 

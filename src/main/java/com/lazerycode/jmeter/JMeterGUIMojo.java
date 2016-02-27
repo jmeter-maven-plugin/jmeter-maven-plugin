@@ -4,7 +4,9 @@ import com.lazerycode.jmeter.testrunner.JMeterProcessBuilder;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 
+import java.io.File;
 import java.io.IOException;
 
 /**
@@ -13,7 +15,17 @@ import java.io.IOException;
  * @author Jarrod Ribble
  */
 @Mojo(name = "gui")
+@SuppressWarnings({"UnusedDeclaration"})
 public class JMeterGUIMojo extends JMeterAbstractMojo {
+
+	@Parameter(defaultValue = "false")
+	private boolean runInBackground;
+
+	/**
+	 * Supply a test file to open in the GUI once it is loaded.
+	 */
+	@Parameter
+	private File guiTestFile;
 
 	/**
 	 * Load the JMeter GUI
@@ -40,7 +52,9 @@ public class JMeterGUIMojo extends JMeterAbstractMojo {
 		JMeterProcessBuilder.addArguments(testArgs.buildArgumentsArray());
 		try {
 			final Process process = JMeterProcessBuilder.startProcess();
-			process.waitFor();
+			if(!runInBackground) {
+				process.waitFor();
+			}
 		} catch (InterruptedException ex) {
 			getLog().info(" ");
 			getLog().info("System Exit Detected!  Stopping GUI...");
@@ -48,5 +62,11 @@ public class JMeterGUIMojo extends JMeterAbstractMojo {
 		} catch (IOException e) {
 			getLog().error(e.getMessage());
 		}
+	}
+
+	@Override
+	protected void initialiseJMeterArgumentsArray(boolean disableGUI) throws MojoExecutionException {
+		super.initialiseJMeterArgumentsArray(disableGUI);
+		testArgs.setTestFile(guiTestFile);
 	}
 }

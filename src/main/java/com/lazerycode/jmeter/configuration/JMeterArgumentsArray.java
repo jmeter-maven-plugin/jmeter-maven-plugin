@@ -23,7 +23,7 @@ import static com.lazerycode.jmeter.configuration.JMeterCommandLineArguments.*;
 public class JMeterArgumentsArray {
 
 	private final String jMeterHome;
-	private final boolean disableTests;
+	private boolean disableTests;
 
 	private final TreeSet<JMeterCommandLineArguments> argumentList = new TreeSet<JMeterCommandLineArguments>();
 	private DateTimeFormatter dateFormat = ISODateTimeFormat.basicDate();
@@ -32,7 +32,7 @@ public class JMeterArgumentsArray {
 	private boolean appendTimestamp = false;
 	private String resultFileExtension = ".jtl";
 	private String remoteStartServerList;
-	private String customPropertiesFile;
+	private List<String> customPropertiesFiles = new ArrayList<>();
 	private String testFile;
 	private String resultsLogFileName;
 	private String jmeterLogFileName;
@@ -106,7 +106,7 @@ public class JMeterArgumentsArray {
 
 	public void setACustomPropertiesFile(File customProperties) {
 		if (isNotSet(customProperties)) return;
-		customPropertiesFile = customProperties.getAbsolutePath();
+		customPropertiesFiles.add(customProperties.getAbsolutePath());
 		argumentList.add(PROPFILE2_OPT);
 	}
 
@@ -153,7 +153,7 @@ public class JMeterArgumentsArray {
 	}
 
 	public void setTestFile(File value) {
-		if (isNotSet(value) || disableTests) return;
+		if (isNotSet(value)) return;
 		testFile = value.getAbsolutePath();
 		if (timestampResults) {
 			//TODO investigate when timestamp is generated.
@@ -171,6 +171,7 @@ public class JMeterArgumentsArray {
 		}
 		argumentList.add(TESTFILE_OPT);
 		argumentList.add(LOGFILE_OPT);
+		disableTests = false;
 	}
 
 
@@ -207,8 +208,10 @@ public class JMeterArgumentsArray {
 					argumentsArray.add(overrideRootLogLevel.toString());
 					break;
 				case PROPFILE2_OPT:
-					argumentsArray.add(PROPFILE2_OPT.getCommandLineArgument());
-					argumentsArray.add(customPropertiesFile);
+					for (String customPropertiesFile : customPropertiesFiles) {
+						argumentsArray.add(PROPFILE2_OPT.getCommandLineArgument());
+						argumentsArray.add(customPropertiesFile);
+					}
 					break;
 				case REMOTE_OPT:
 					argumentsArray.add(REMOTE_OPT.getCommandLineArgument());

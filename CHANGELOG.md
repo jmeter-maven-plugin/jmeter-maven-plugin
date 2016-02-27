@@ -2,10 +2,11 @@
 
 ##Next Version (Release Date TBC) Release Notes
 
+* **JMeter version 3.0.0 support added.** 
 * Issue #117 - You now have the option to scan results files for failed requests and successful requests.  Both are disabled by default since they do have a performance hit.
 
-		<scanResultForFailedRequests>true</scanResultForFailedRequests>
-		<scanResultForSuccessfulRequests>true</scanResultForSuccessfulRequests>
+		<scanResultsForFailedRequests>true</scanResultsForFailedRequests>
+		<scanResultsForSuccessfulRequests>true</scanResultsForSuccessfulRequests>
 
 * Issue #125 - Console output is now clearer when talking about failures.
 * Merge pull request #111 (Thanks [Gordon](https://github.com/gordon00) - Add support for opening a test file in jmeter:gui

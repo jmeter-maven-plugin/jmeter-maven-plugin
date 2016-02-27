@@ -63,8 +63,8 @@ public class JMeterMojo extends JMeterAbstractMojo {
 	 * @throws MojoFailureException
 	 */
 	void parseTestResults(List<String> resultFilesLocations) throws MojoExecutionException, MojoFailureException {
-		if (scanResultForSuccessfulRequests || scanResultForFailedRequests) {
-			ResultScanner resultScanner = new ResultScanner(scanResultForSuccessfulRequests, scanResultForFailedRequests);
+		if (scanResultsForSuccessfulRequests || scanResultsForFailedRequests) {
+			ResultScanner resultScanner = new ResultScanner(scanResultsForSuccessfulRequests, scanResultsForFailedRequests);
 			for (String resultFileLocation : resultFilesLocations) {
 				try {
 					resultScanner.parseResultFile(new File(resultFileLocation));

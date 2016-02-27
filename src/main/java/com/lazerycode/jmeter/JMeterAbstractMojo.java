@@ -201,14 +201,14 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 	 * Defaults to false
 	 */
 	@Parameter(defaultValue = "false")
-	protected boolean scanResultForFailedRequests;
+	protected boolean scanResultsForFailedRequests;
 
 	/**
 	 * Sets whether ResultScanner should search for Successful requests in the JMeter result file.
 	 * Defaults to false
 	 */
 	@Parameter(defaultValue = "false")
-	protected boolean scanResultForSuccessfulRequests;
+	protected boolean scanResultsForSuccessfulRequests;
 
 	/**
 	 * Suppress JMeter output
@@ -340,10 +340,10 @@ public abstract class JMeterAbstractMojo extends AbstractMojo {
 		}
 	}
 
-	private void copyArtifact(Artifact artifact, File destination) throws IOException{
-		if ( getLog().isDebugEnabled() ) {
+	private void copyArtifact(Artifact artifact, File destination) throws IOException {
+		if (getLog().isDebugEnabled()) {
 			List<String> trail = artifact.getDependencyTrail();
-			for ( int i = 0; i < trail.size(); i++) {
+			for (int i = 0; i < trail.size(); i++) {
 				getLog().debug(StringUtils.leftPad("", i) + trail.get(i));
 			}
 		}

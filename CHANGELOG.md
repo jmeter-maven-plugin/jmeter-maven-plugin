@@ -13,8 +13,8 @@
 * **BREAKING CHANGE:** Merge pull request #161 (Thanks [Irek P](https://github.com/automatictester)) - Add support for multiple custom properties files 
 
 		<customPropertiesFiles>
-			<customerPropertiesFile>someFile</customerPropertiesFile>
-			<customerPropertiesFile>someOtherFile</customerPropertiesFile>
+			<file>someFile</file>
+			<file>someOtherFile</file>
 		</customPropertiesFiles>
 
 ##Version 1.10.1 Release Notes

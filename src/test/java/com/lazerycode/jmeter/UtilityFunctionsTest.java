@@ -8,7 +8,6 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
-import static junit.framework.Assert.assertTrue;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertEquals;
@@ -33,34 +32,34 @@ public class UtilityFunctionsTest {
 	@Test
 	public void isNotSetMapTest() {
 		Map testMap = null;
-		assertTrue("null value returns false", UtilityFunctions.isNotSet(testMap));
+		assertThat(UtilityFunctions.isNotSet(testMap), is(equalTo(true)));
 
 		Map testMap2 = Collections.emptyMap();
-		assertTrue("empty value returns false", UtilityFunctions.isNotSet(testMap2));
+		assertThat(UtilityFunctions.isNotSet(testMap2), is(equalTo(true)));
 	}
 
 	@Test
 	public void isNotSetStringTest() {
 		String testString = null;
-		assertTrue("null value returns false", UtilityFunctions.isNotSet(testString));
+		assertThat(UtilityFunctions.isNotSet(testString), is(equalTo(true)));
 
 		String testString2 = "";
-		assertTrue("empty value returns false", UtilityFunctions.isNotSet(testString2));
+		assertThat(UtilityFunctions.isNotSet(testString2), is(equalTo(true)));
 
 		String testString3 = "    ";
-		assertTrue("blank value returns false", UtilityFunctions.isNotSet(testString3));
+		assertThat(UtilityFunctions.isNotSet(testString3), is(equalTo(true)));
 	}
 
 	@Test
 	public void isNotSetFile() {
 		File testFile = null;
-		assertTrue("null value returns false", UtilityFunctions.isNotSet(testFile));
+		assertThat(UtilityFunctions.isNotSet(testFile), is(equalTo(true)));
 
 		File testFile2 = new File("   ");
-		assertTrue("blank value returns false", UtilityFunctions.isNotSet(testFile2));
+		assertThat(UtilityFunctions.isNotSet(testFile2), is(equalTo(true)));
 
 		File testFile3 = new File("");
-		assertTrue("empty value returns false", UtilityFunctions.isNotSet(testFile3));
+		assertThat(UtilityFunctions.isNotSet(testFile3), is(equalTo(true)));
 	}
 
 	@Test

@@ -3,13 +3,28 @@
 ##Next Version (Release Date TBC) Release Notes
 
 * **JMeter version 3.0.0 support added.** 
-* Issue #117 - You now have the option to scan results files for failed requests and successful requests.  Both are disabled by default since they do have a performance hit.
+* **BREAKING CHANGE:** Dependency resolution is now performed using the Eclipse Aether libraries.  
+	To add artifacts to the lib/ext directory you now need to use:
+
+		<jmeterExtensions>
+			<artifact>kg.apc:jmeter-plugins:1.3.1</artifact>
+		<jmeterExtensions>
+		
+	To add libraries to the lib/junit folder you now need to use:
+		
+		<junitLibraries>
+			<artifact>com.lazerycode.junit:junit-test:1.0.0</artifact>
+		<junitLibraries>
+
+	The format for artifact elements is: \<groupId\>:\<artifactId\>[:\<extension\>[:\<classifier\>]]:\<version\>
+
+* **Issue #117** - You now have the option to scan results files for failed requests and successful requests.  Both are disabled by default since they do have a performance hit.
 
 		<scanResultsForFailedRequests>true</scanResultsForFailedRequests>
 		<scanResultsForSuccessfulRequests>true</scanResultsForSuccessfulRequests>
 
-* Issue #125 - Console output is now clearer when talking about failures.
-* Merge pull request #111 (Thanks [Gordon](https://github.com/gordon00) - Add support for opening a test file in jmeter:gui
+* **Issue #125** - Console output is now clearer when talking about failures.
+* **Merge pull request #111** (Thanks [Gordon](https://github.com/gordon00) - Add support for opening a test file in jmeter:gui
 * **BREAKING CHANGE:** Merge pull request #161 (Thanks [Irek P](https://github.com/automatictester)) - Add support for multiple custom properties files 
 
 		<customPropertiesFiles>
@@ -20,14 +35,14 @@
 ##Version 1.10.1 Release Notes
 
 * **JMeter version 2.13 support added by hacking about with dependencies.**
-* Issue #108 - Send log output to debug if suppressJMeterOutput is true to prevent buffer overflow
-* Merge pull request #110 (Thanks [Nanne](https://github.com/nbaars)) - Additional logging.
-* Merge pull request #120 (Thanks [Irek P](https://github.com/automatictester)) - Make Properties file directory configurable.
+* **Issue #108** - Send log output to debug if suppressJMeterOutput is true to prevent buffer overflow
+* **Merge pull request #110** (Thanks [Nanne](https://github.com/nbaars)) - Additional logging.
+* **Merge pull request #120** (Thanks [Irek P](https://github.com/automatictester)) - Make Properties file directory configurable.
 
 ##Version 1.10.0 Release Notes
 
 * **JMeter version 2.11 support added.**
-* Merge pull request #100 (Thanks [Sascha Theves](https://github.com/sath1982)) - Add support for `<junitPlugins>` element to let you copy libraries into the  `jmeter/lib/junit` directory.
+* **Merge pull request #100** (Thanks [Sascha Theves](https://github.com/sath1982)) - Add support for `<junitPlugins>` element to let you copy libraries into the  `jmeter/lib/junit` directory.
 
 		<configuration>
 		    <junitPlugins>
@@ -38,36 +53,36 @@
 		    </junitPlugins>
 		</configuration>
 
-* Issue #103 - system.properties and user.properties from JMeter used if custom ones are not specified.
+* **Issue #103** - system.properties and user.properties from JMeter used if custom ones are not specified.
 
 ##Version 1.9.1 Release Notes
 
-* Merge pull request #99 (Thanks [Peter Murray](https://github.com/peter-murray)) - Set Java runtime
+* **Merge pull request #99** (Thanks [Peter Murray](https://github.com/peter-murray)) - Set Java runtime
 
 ##Version 1.9.0 Release Notes
 
 * **JMeter version 2.10 support added.**
-* Issue #56 - Now using a ProcessBuilder to isolate the JVM JMeter runs in.
-* Issue #63 - Fixed remote configuration documentation errors.
-* Issue #64 - Remote execution seems to be stopping before agent stops running the tests.
-* Issue #66 - Jmeter lib directory contains additional jars.
-* Merge pull request #70 (Thanks [Erik G. H. Meade](https://github.com/eghm)) - Add requiresDirectInvocation true to JMeterMojo.
-* Issue #71 - Fixed documentation errors.
-* Issue #72 - Remove the maven site from the plugin.
-* Merge pull request #73 (Thanks [Zmicier Zaleznicenka](https://github.com/dzzh)) - Added missed dependency causing file not found / error in NonGUIDriver error.
-* Issue #73 - Add missing dependency for ApacheJMeter-native.
-* Issue #75 - Allow empty propertiesUser properties.
-* Issue #80 - Integration Tests Failing With Maven 2.
-* Issue #82 - Allow users to specify the resultsDir:
+* **Issue #56** - Now using a ProcessBuilder to isolate the JVM JMeter runs in.
+* **Issue #63** - Fixed remote configuration documentation errors.
+* **Issue #64** - Remote execution seems to be stopping before agent stops running the tests.
+* **Issue #66** - Jmeter lib directory contains additional jars.
+* **Merge pull request #70** (Thanks [Erik G. H. Meade](https://github.com/eghm)) - Add requiresDirectInvocation true to JMeterMojo.
+* **Issue #71** - Fixed documentation errors.
+* **Issue #72** - Remove the maven site from the plugin.
+* **Merge pull request #73** (Thanks [Zmicier Zaleznicenka](https://github.com/dzzh)) - Added missed dependency causing file not found / error in NonGUIDriver error.
+* **Issue #73** - Add missing dependency for ApacheJMeter-native.
+* **Issue #75** - Allow empty propertiesUser properties.
+* **Issue #80** - Integration Tests Failing With Maven 2.
+* **Issue #82** - Allow users to specify the resultsDir:
 
 		<configuration>
 		    <resultsDirectory>/tmp/jmeter</resultsDirectory>
 		</configuration>
 		
-* Merge pull request #85 to fix Issues #77 and #84
-* Issue #77 - JMeter plugins artifacts now placed in lib/ext directory (Thanks [Michael Lex](https://github.com/mlex)).  You can specify which artifacts are JMeter plugins using the new jmeterPlugins configuration setting:
-* Merge pull request #78 (Thanks [Mike Patel](https://github.com/patelm5)) - Changes to allow system / global jmeter properties to be sent to remote clients.
-* Issue #84 - Correctly place explicit dependencies in the /lib directory (Thanks [Michael Lex](https://github.com/mlex)).
+* **Merge pull request #85** to fix Issues #77 and #84
+* **Issue #77** - JMeter plugins artifacts now placed in lib/ext directory (Thanks [Michael Lex](https://github.com/mlex)).  You can specify which artifacts are JMeter plugins using the new jmeterPlugins configuration setting:
+* **Merge pull request #78** (Thanks [Mike Patel](https://github.com/patelm5)) - Changes to allow system / global jmeter properties to be sent to remote clients.
+* **Issue #84** - Correctly place explicit dependencies in the /lib directory (Thanks [Michael Lex](https://github.com/mlex)).
 
 		<configuration>
 		    <jmeterPlugins>
@@ -92,8 +107,8 @@
 		</configuration>
 
 
-* Issue #88 - ApacheJMeter_mongodb dependency is not in POM
-* Issue #89 - Add support for advanced log config.  If you add a "logkit.xml" into the `<testFilesDirectory>` it will now be copied into the /bin folder.  If one does not exist the default one supplied with JMeter will be used instead.  If you don't want to call your advanced log config file "logkit.xml", you can specify the filename using:
+* **Issue #88** - ApacheJMeter_mongodb dependency is not in POM
+* **Issue #89** - Add support for advanced log config.  If you add a "logkit.xml" into the `<testFilesDirectory>` it will now be copied into the /bin folder.  If one does not exist the default one supplied with JMeter will be used instead.  If you don't want to call your advanced log config file "logkit.xml", you can specify the filename using:
 
 		<configuration>
 		    <logConfigFilename>myFile.xml</logConfigFilename>
@@ -101,13 +116,13 @@
 
 ##Version 1.8.1 Release Notes
 
-* Issue #62 - Fixed bug where testResultsTimestamp was ignored.
+* **Issue #62** - Fixed bug where testResultsTimestamp was ignored.
 
 ##Version 1.8.0 Release Notes
 
 * **JMeter version 2.9 support added.**
-* Issue #58/Issue #59 - Add dependencies with custom function to /lib/ext folder.
-* Issue #61 - Added skipTests ability.
+* **Issue #58/Issue #59** - Add dependencies with custom function to /lib/ext folder.
+* **Issue #61** - Added skipTests ability.
 * Removed jmx file sorting code as it was not sorting files into a determinalistic order.
 * Removed checks for **`<error>true</error>`** and **`<failure>true</failure>`** in .jtl files, these elements do not occur in JMeter 2.9.
 * Added ability to choose whether to Append or Prepend date to filename, new configuration option added: **`<appendResultsTimestamp>false</appendResultsTimestamp>`**
@@ -127,11 +142,11 @@
 ##Version 1.7.0 Release Notes
 
 * **JMeter version 2.8 support added (Issue #57).**
-* Issue #54 - Build directory ignored - Fix applied
+* **Issue #54** - Build directory ignored - Fix applied
 
 ##Version 1.6.1 Release Notes
 
-* Issue #54 - Build directory ignored - Fix applied
+* **Issue #54** - Build directory ignored - Fix applied
 
 ## Version 1.6.0 Release Notes
 
@@ -144,16 +159,16 @@
 
 ## Version 1.5.0 Release Notes
 
-* Issue #41 - Removed deprecated log scanning code.
-* Issue #42 - Reporting disabled by default (Takes a long time to parse the logs, so you need to explicitly turn it on now).
-* Issue #45 - Fixed intermittant test end detection bug (Major refactor using thread detection to detect test end).
-* Issue #49 - Added jmeter:gui goal so that you can start the GUI using maven.
+* **Issue #41** - Removed deprecated log scanning code.
+* **Issue #42** - Reporting disabled by default (Takes a long time to parse the logs, so you need to explicitly turn it on now).
+* **Issue #45** - Fixed intermittant test end detection bug (Major refactor using thread detection to detect test end).
+* **Issue #49** - Added jmeter:gui goal so that you can start the GUI using maven.
 * Reporting is now marked as deprecated in preparation for bringing in a new reporting module.
 
 ## Version 1.4.1 Release Notes
 
-* Issue #34 - plugin now uses the jmeter.exit.check.pause set in the final jmeter.properties used by the plugin and is no longer hard coded to 2000.
-* Issue #37 - plugin now uses a listener instead of scanning log files to work out when test has completed.
+* **Issue #34** - plugin now uses the jmeter.exit.check.pause set in the final jmeter.properties used by the plugin and is no longer hard coded to 2000.
+* **Issue #37** - plugin now uses a listener instead of scanning log files to work out when test has completed.
 
 ## Version 1.4.0 Release Notes
 

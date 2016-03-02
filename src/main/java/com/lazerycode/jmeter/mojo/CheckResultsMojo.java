@@ -1,4 +1,4 @@
-package com.lazerycode.jmeter.maven;
+package com.lazerycode.jmeter.mojo;
 
 import com.lazerycode.jmeter.testrunner.ResultScanner;
 import org.apache.maven.plugin.MojoExecutionException;

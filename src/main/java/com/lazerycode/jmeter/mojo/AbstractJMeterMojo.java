@@ -1,4 +1,4 @@
-package com.lazerycode.jmeter.maven;
+package com.lazerycode.jmeter.mojo;
 
 import com.lazerycode.jmeter.configuration.JMeterArgumentsArray;
 import com.lazerycode.jmeter.configuration.JMeterProcessJVMSettings;

@@ -1,6 +1,6 @@
 package com.lazerycode.jmeter.properties;
 
-import com.lazerycode.jmeter.maven.RunJMeterMojo;
+import com.lazerycode.jmeter.mojo.RunJMeterMojo;
 
 import java.util.Map;
 import java.util.Properties;

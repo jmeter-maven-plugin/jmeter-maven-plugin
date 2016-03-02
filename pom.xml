@@ -181,6 +181,11 @@
             <version>2.2</version>
         </dependency>
         <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.4</version>
+        </dependency>
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.11</version>
@@ -276,6 +281,20 @@
             <groupId>org.apache.jmeter</groupId>
             <artifactId>ApacheJMeter_tcp</artifactId>
             <version>${jmeter.version}</version>
+        </dependency>
+
+
+        <dependency>
+            <!-- required in all cases -->
+            <groupId>org.eclipse.aether</groupId>
+            <artifactId>aether-api</artifactId>
+            <version>1.1.0</version>
+        </dependency>
+        <dependency>
+            <!-- optional helpers, might be superfluous depending on your use case -->
+            <groupId>org.eclipse.aether</groupId>
+            <artifactId>aether-util</artifactId>
+            <version>1.1.0</version>
         </dependency>
     </dependencies>
 

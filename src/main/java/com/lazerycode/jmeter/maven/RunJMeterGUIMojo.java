@@ -17,7 +17,6 @@ import java.io.IOException;
  * @author Jarrod Ribble
  */
 @Mojo(name = "gui", defaultPhase = LifecyclePhase.INTEGRATION_TEST)
-@SuppressWarnings({"UnusedDeclaration"})
 public class RunJMeterGUIMojo extends AbstractJMeterMojo {
 
 	@Parameter(defaultValue = "false")
@@ -36,14 +35,23 @@ public class RunJMeterGUIMojo extends AbstractJMeterMojo {
 	 * @throws MojoFailureException
 	 */
 	@Override
-	public void execute() throws MojoExecutionException, MojoFailureException {
+	public void doExecute() throws MojoExecutionException, MojoFailureException {
 		getLog().info(" ");
 		getLog().info("-------------------------------------------------------");
 		getLog().info(" S T A R T I N G    J M E T E R    G U I ");
 		getLog().info("-------------------------------------------------------");
 		initialiseJMeterArgumentsArray(false);
-		getLog().info("JMeter is called with the following command line arguments: " + UtilityFunctions.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()));
-		//Start The GUI
+		getLog().debug("JMeter is called with the following command line arguments: " + UtilityFunctions.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()));
+		startJMeterGUI();
+	}
+
+	@Override
+	protected void initialiseJMeterArgumentsArray(boolean disableGUI) throws MojoExecutionException {
+		super.initialiseJMeterArgumentsArray(disableGUI);
+		testArgs.setTestFile(guiTestFile);
+	}
+
+	private void startJMeterGUI() throws MojoExecutionException {
 		JMeterProcessBuilder JMeterProcessBuilder = new JMeterProcessBuilder(jMeterProcessJVMSettings);
 		JMeterProcessBuilder.setWorkingDirectory(binDir);
 		JMeterProcessBuilder.addArguments(testArgs.buildArgumentsArray());
@@ -59,11 +67,5 @@ public class RunJMeterGUIMojo extends AbstractJMeterMojo {
 		} catch (IOException e) {
 			getLog().error(e.getMessage());
 		}
-	}
-
-	@Override
-	protected void initialiseJMeterArgumentsArray(boolean disableGUI) throws MojoExecutionException {
-		super.initialiseJMeterArgumentsArray(disableGUI);
-		testArgs.setTestFile(guiTestFile);
 	}
 }

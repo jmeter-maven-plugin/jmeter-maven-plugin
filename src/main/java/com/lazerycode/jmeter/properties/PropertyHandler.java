@@ -12,8 +12,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.jar.JarFile;
 
-import static com.lazerycode.jmeter.maven.AbstractJMeterMojo.JMETER_CONFIG_ARTIFACT;
-import static com.lazerycode.jmeter.maven.AbstractJMeterMojo.getArtifactNamed;
+//import static com.lazerycode.jmeter.maven.AbstractJMeterMojo.JMETER_CONFIG_ARTIFACT;
+//import static com.lazerycode.jmeter.maven.AbstractJMeterMojo.getArtifactNamed;
 
 /**
  * Handler to deal with properties file creation.
@@ -23,7 +23,7 @@ import static com.lazerycode.jmeter.maven.AbstractJMeterMojo.getArtifactNamed;
 public class PropertyHandler {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(PropertyHandler.class);
-	private final EnumMap<JMeterPropertiesFiles, PropertyContainer> masterPropertiesMap = new EnumMap<JMeterPropertiesFiles, PropertyContainer>(JMeterPropertiesFiles.class);
+	private final EnumMap<JMeterPropertiesFiles, PropertyContainer> masterPropertiesMap = new EnumMap<>(JMeterPropertiesFiles.class);
 
 	private File propertySourceDirectory;
 	private File propertyOutputDirectory;
@@ -37,7 +37,8 @@ public class PropertyHandler {
 		setOutputDirectory(outputDirectory);
 		this.replaceDefaultProperties = replaceDefaultProperties;
 		try {
-			this.loadDefaultProperties(getArtifactNamed(JMETER_CONFIG_ARTIFACT));
+			//FIXME fix loading of default properties
+//			this.loadDefaultProperties(getArtifactNamed(JMETER_CONFIG_ARTIFACT));
 			this.loadCustomProperties();
 		} catch (Exception ex) {
 			LOGGER.error("Error loading properties: " + ex);

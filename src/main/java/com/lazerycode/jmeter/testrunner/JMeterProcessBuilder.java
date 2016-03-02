@@ -19,7 +19,7 @@ public class JMeterProcessBuilder {
 	private String workingDirectory;
 	private String javaRuntime;
 	private List<String> userSuppliedArguments;
-	private List<String> mainClassArguments = new ArrayList<String>();
+	private List<String> mainClassArguments = new ArrayList<>();
 
 	public JMeterProcessBuilder(JMeterProcessJVMSettings settings) {
 		if (null == settings) {
@@ -46,9 +46,9 @@ public class JMeterProcessBuilder {
 	}
 
 	private String[] constructArgumentsList() {
-		String mainClass = "ApacheJMeter.jar";
+		String mainClass = "ApacheJMeter-3.0-SNAPSHOT.jar";
 
-		List<String> argumentsList = new ArrayList<String>();
+		List<String> argumentsList = new ArrayList<>();
 		argumentsList.add(javaRuntime);
 		argumentsList.add(MessageFormat.format("-Xms{0}M", String.valueOf(this.initialHeapSizeInMegaBytes)));
 		argumentsList.add(MessageFormat.format("-Xmx{0}M", String.valueOf(this.maximumHeapSizeInMegaBytes)));

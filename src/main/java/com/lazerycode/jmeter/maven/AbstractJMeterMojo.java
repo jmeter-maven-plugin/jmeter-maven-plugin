@@ -1,10 +1,10 @@
 package com.lazerycode.jmeter.maven;
 
-import com.lazerycode.jmeter.configuration.*;
+import com.lazerycode.jmeter.configuration.JMeterArgumentsArray;
+import com.lazerycode.jmeter.configuration.JMeterProcessJVMSettings;
+import com.lazerycode.jmeter.configuration.ProxyConfiguration;
+import com.lazerycode.jmeter.configuration.RemoteConfiguration;
 import com.lazerycode.jmeter.properties.PropertyHandler;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -14,13 +14,13 @@ import org.joda.time.format.DateTimeFormat;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static com.lazerycode.jmeter.utility.UtilityFunctions.isSet;
 import static org.apache.commons.io.FileUtils.copyFile;
-import static org.apache.commons.io.FileUtils.copyInputStreamToFile;
 
 /**
  * JMeter Maven plugin.
@@ -36,14 +36,14 @@ public abstract class AbstractJMeterMojo extends AbstractMojo {
 	 * Relative to testFilesDirectory.
 	 */
 	@Parameter
-	protected List<String> testFilesIncluded;
+	protected List<String> testFilesIncluded = new ArrayList<>();
 
 	/**
 	 * Sets the list of exclude patterns to use in directory scan for JMX files.
 	 * Relative to testFilesDirectory.
 	 */
 	@Parameter
-	protected List<String> testFilesExcluded;
+	protected List<String> testFilesExcluded = new ArrayList<>();
 
 	/**
 	 * Path under which JMX files are stored.
@@ -95,26 +95,26 @@ public abstract class AbstractJMeterMojo extends AbstractMojo {
 	 * Absolute path to JMeter custom (test dependent) properties file.
 	 */
 	@Parameter
-	protected Map<String, String> propertiesJMeter = new HashMap<String, String>();
+	protected Map<String, String> propertiesJMeter = new HashMap<>();
 
 	/**
 	 * JMeter Properties that are merged with precedence into default JMeter file in saveservice.properties
 	 */
 	@Parameter
-	protected Map<String, String> propertiesSaveService = new HashMap<String, String>();
+	protected Map<String, String> propertiesSaveService = new HashMap<>();
 
 	/**
 	 * JMeter Properties that are merged with precedence into default JMeter file in upgrade.properties
 	 */
 	@Parameter
-	protected Map<String, String> propertiesUpgrade = new HashMap<String, String>();
+	protected Map<String, String> propertiesUpgrade = new HashMap<>();
 
 	/**
 	 * JMeter Properties that are merged with precedence into default JMeter file in user.properties
 	 * user.properties takes precedence over jmeter.properties
 	 */
 	@Parameter
-	protected Map<String, String> propertiesUser = new HashMap<String, String>();
+	protected Map<String, String> propertiesUser = new HashMap<>();
 
 	/**
 	 * JMeter Global Properties that override those given in jmeterProps. <br>
@@ -122,20 +122,20 @@ public abstract class AbstractJMeterMojo extends AbstractMojo {
 	 * and overrides any local/remote properties already set
 	 */
 	@Parameter
-	protected Map<String, String> propertiesGlobal = new HashMap<String, String>();
+	protected Map<String, String> propertiesGlobal = new HashMap<>();
 
 	/**
 	 * (Java) System properties set for the test run.
 	 * Properties are merged with precedence into default JMeter file system.properties
 	 */
 	@Parameter
-	protected Map<String, String> propertiesSystem = new HashMap<String, String>();
+	protected Map<String, String> propertiesSystem = new HashMap<>();
 
 	/**
 	 * Absolute path to JMeter custom (test dependent) properties file.
 	 */
 	@Parameter
-	protected List<File> customPropertiesFiles;
+	protected List<File> customPropertiesFiles = new ArrayList<>();
 
 	/**
 	 * Replace the default JMeter properties with any custom properties files supplied.
@@ -155,18 +155,6 @@ public abstract class AbstractJMeterMojo extends AbstractMojo {
 	 */
 	@Parameter
 	protected RemoteConfiguration remoteConfig;
-
-	/**
-	 * Value class that wraps all remote configurations.
-	 */
-	@Parameter
-	protected Set<JMeterPlugins> jmeterPlugins;
-
-	/**
-	 * Value class that wraps all remote configurations.
-	 */
-	@Parameter
-	protected Set<JMeterPlugins> junitLibraries;
 
 	/**
 	 * Value class that wraps all JMeter Process JVM settings.
@@ -217,12 +205,6 @@ public abstract class AbstractJMeterMojo extends AbstractMojo {
 	protected boolean suppressJMeterOutput;
 
 	/**
-	 * Get a list of artifacts used by this plugin
-	 */
-	@Parameter(defaultValue = "${plugin.artifacts}", required = true, readonly = true)
-	protected static List<Artifact> pluginArtifacts;
-
-	/**
 	 * The information extracted from the Mojo being currently executed
 	 */
 	@Parameter(defaultValue = "${mojoExecution}", required = true, readonly = true)
@@ -251,209 +233,32 @@ public abstract class AbstractJMeterMojo extends AbstractMojo {
 	/**
 	 * Other directories will be created by this plugin and used by JMeter
 	 */
-	protected File binDir;
-	protected File libDir;
-	protected File libExtDir;
-	protected File libJUnitDir;
-	protected File logsDir;
-	protected File resultsDir;
+	protected static File binDir;
+	protected static File libDir;
+	protected static File libExtDir;
+	protected static File libJUnitDir;
+	protected static File logsDir;
+	protected static File resultsDir;
 
-	protected JMeterArgumentsArray testArgs;
-	protected PropertyHandler pluginProperties;
+	protected static JMeterArgumentsArray testArgs;
 	protected boolean resultsOutputIsCSVFormat = false;
-
-	/**
-	 * All property files are stored in this artifact, comes with JMeter library
-	 */
-	public static final String JMETER_CONFIG_ARTIFACT = "ApacheJMeter_config";
+	protected List<String> resultFilesLocations;
+	protected PropertyHandler pluginProperties;
 
 	//==================================================================================================================
 
-	/**
-	 * Generate the directory tree utilised by JMeter.
-	 */
-	@SuppressWarnings("ResultOfMethodCallIgnored")
-	protected void generateJMeterDirectoryTree() {
-		logsDir = new File(workDir, "logs");
-		logsDir.mkdirs();
-		binDir = new File(workDir, "bin");
-		binDir.mkdirs();
-		if (null != resultsDirectory) {
-			resultsDir = new File(resultsDirectory.replaceAll("\\|/", File.separator));
-		} else {
-			resultsDir = new File(workDir, "results");
+	@Override
+	public final void execute() throws MojoExecutionException, MojoFailureException {
+		if (skipTests) {
+			getLog().info("Performance tests are skipped.");
+			//TODO don't skip if trying to run gui?
+			return;
 		}
-		resultsDir.mkdirs();
-		libDir = new File(workDir, "lib");
-		libExtDir = new File(libDir, "ext");
-		libExtDir.mkdirs();
-		libJUnitDir = new File(libDir, "junit");
-		libJUnitDir.mkdirs();
+
+		doExecute();
 	}
 
-	protected void propertyConfiguration() throws MojoExecutionException {
-		pluginProperties = new PropertyHandler(propertiesFilesDirectory, binDir, propertiesReplacedByCustomFiles);
-		pluginProperties.setJMeterProperties(propertiesJMeter);
-		pluginProperties.setJMeterGlobalProperties(propertiesGlobal);
-		pluginProperties.setJMeterSaveServiceProperties(propertiesSaveService);
-		pluginProperties.setJMeterUpgradeProperties(propertiesUpgrade);
-		pluginProperties.setJmeterUserProperties(propertiesUser);
-		pluginProperties.setJMeterSystemProperties(propertiesSystem);
-		pluginProperties.configureJMeterPropertiesFiles();
-		pluginProperties.setDefaultPluginProperties(binDir.getAbsolutePath());
-	}
-
-	/**
-	 * Create the JMeter directory tree and copy all compile time JMeter dependencies into it.
-	 * Generic compile time artifacts are copied into the libDir
-	 * ApacheJMeter_* artifacts are copied into the libExtDir
-	 * Runtime dependencies set by the user are also copied into the libExtDir
-	 *
-	 * @throws MojoExecutionException
-	 */
-	protected void populateJMeterDirectoryTree() throws MojoExecutionException {
-		getLog().debug("Copying artifacts, showing dependency trail: ");
-		for (Artifact artifact : pluginArtifacts) {
-			try {
-				if (Artifact.SCOPE_COMPILE.equals(artifact.getScope()) || Artifact.SCOPE_RUNTIME.equals(artifact.getScope())) {
-					if (artifact.getArtifactId().equals(JMETER_CONFIG_ARTIFACT)) {
-						extractConfigSettings(artifact);
-					} else if (artifact.getArtifactId().equals("ApacheJMeter")) {
-						copyArtifact(artifact, new File(binDir + File.separator + artifact.getArtifactId() + ".jar"));
-					} else if (artifact.getArtifactId().startsWith("ApacheJMeter_")) {
-						copyArtifact(artifact, new File(libExtDir + File.separator + artifact.getFile().getName()));
-					} else if (isArtifactAJMeterDependency(artifact)) {
-						copyArtifact(artifact, new File(libDir + File.separator + artifact.getFile().getName()));
-					} else if (isArtifactAnExplicitDependency(artifact)) {
-						if (isArtifactMarkedAsAJMeterPlugin(artifact)) {
-							copyArtifact(artifact, new File(libExtDir + File.separator + artifact.getFile().getName()));
-						} else if (isArtifactMarkedAsAJUnitLib(artifact)) {
-							copyArtifact(artifact, new File(libJUnitDir + File.separator + artifact.getFile().getName()));
-						} else {
-							copyArtifact(artifact, new File(libDir + File.separator + artifact.getFile().getName()));
-						}
-					}
-				}
-			} catch (IOException e) {
-				throw new MojoExecutionException("Unable to populate the JMeter directory tree: " + e);
-			}
-		}
-	}
-
-	private void copyArtifact(Artifact artifact, File destination) throws IOException {
-		if (getLog().isDebugEnabled()) {
-			List<String> trail = artifact.getDependencyTrail();
-			for (int i = 0; i < trail.size(); i++) {
-				getLog().debug(StringUtils.leftPad("", i) + trail.get(i));
-			}
-		}
-		copyFile(artifact.getFile(), destination);
-	}
-
-	/**
-	 * Extract the configuration settings (not properties files) form the configuration artifact and load them into the /bin directory
-	 *
-	 * @param artifact Configuration artifact
-	 * @throws IOException
-	 */
-	private void extractConfigSettings(Artifact artifact) throws IOException {
-		JarFile configSettings = new JarFile(artifact.getFile());
-		Enumeration<JarEntry> entries = configSettings.entries();
-		while (entries.hasMoreElements()) {
-			JarEntry jarFileEntry = entries.nextElement();
-			// Only interested in files in the /bin directory that are not properties files
-			if (!jarFileEntry.isDirectory() && jarFileEntry.getName().startsWith("bin") && !jarFileEntry.getName().endsWith(".properties")) {
-				File fileToCreate = new File(workDir.getCanonicalPath() + File.separator + jarFileEntry.getName());
-				if (jarFileEntry.getName().endsWith(logConfigFilename) && fileToCreate.exists()) {
-					break;
-				}
-				copyInputStreamToFile(configSettings.getInputStream(jarFileEntry), fileToCreate);
-			}
-		}
-		configSettings.close();
-	}
-
-	protected boolean isArtifactMarkedAsAJMeterPlugin(Artifact artifact) {
-		return isMarkedAs(jmeterPlugins, artifact);
-	}
-
-	protected boolean isArtifactMarkedAsAJUnitLib(Artifact artifact) {
-		return isMarkedAs(junitLibraries, artifact);
-	}
-
-	private boolean isMarkedAs(Set<JMeterPlugins> plugins, Artifact artifact) {
-		if (null != plugins) {
-			for (JMeterPlugins identifiedPlugin : plugins) {
-				if (identifiedPlugin.toString().equals(artifact.getGroupId() + ":" + artifact.getArtifactId())) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-
-	/**
-	 * Check if the given artifact is needed by an explicit dependency (a dependency, that is explicitly defined in
-	 * the pom of the project using the jmeter-maven-plugin).
-	 *
-	 * @param artifact Artifact to examine
-	 * @return true if the given artifact is needed by a explicit dependency.
-	 */
-	protected boolean isArtifactAnExplicitDependency(Artifact artifact) {
-		try {
-			//Maven 3
-			List<Dependency> pluginDependencies = mojoExecution.getPlugin().getDependencies();
-			for (Dependency dependency : pluginDependencies) {
-				for (String parent : artifact.getDependencyTrail()) {
-					if (parent.contains(dependency.getGroupId() + ":" + dependency.getArtifactId()) && parent.contains(dependency.getVersion())) {
-						return true;
-					}
-				}
-			}
-		} catch (NoSuchMethodError ignored) {
-			//Maven 2
-			Set<Artifact> pluginDependentArtifacts = mojoExecution.getMojoDescriptor().getPluginDescriptor().getIntroducedDependencyArtifacts();
-			for (Artifact dependency : pluginDependentArtifacts) {
-				for (String parent : artifact.getDependencyTrail()) {
-					if (parent.contains(dependency.getGroupId() + ":" + dependency.getArtifactId()) && parent.contains(dependency.getBaseVersion())) {
-						return true;
-					}
-				}
-			}
-		}
-		return false;
-	}
-
-	/**
-	 * Work out if an artifact is a JMeter dependency
-	 *
-	 * @param artifact Artifact to examine
-	 * @return true if a Jmeter dependency, false if a plugin dependency.
-	 */
-	protected boolean isArtifactAJMeterDependency(Artifact artifact) {
-		for (String dependency : artifact.getDependencyTrail()) {
-			if (dependency.contains("org.apache.jmeter")) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	/**
-	 * Search the list of plugin artifacts for an artifact with a specific name
-	 *
-	 * @param artifactName
-	 * @return
-	 * @throws MojoExecutionException
-	 */
-	public static Artifact getArtifactNamed(String artifactName) throws MojoExecutionException {
-		for (Artifact artifact : pluginArtifacts) {
-			if (artifact.getArtifactId().equals(artifactName)) {
-				return artifact;
-			}
-		}
-		throw new MojoExecutionException("Unable to find artifact '" + artifactName + "'!");
-	}
+	protected abstract void doExecute() throws MojoExecutionException, MojoFailureException;
 
 	/**
 	 * Generate the initial JMeter Arguments array that is used to create the command line that we pass to JMeter.

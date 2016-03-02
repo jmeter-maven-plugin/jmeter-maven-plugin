@@ -30,7 +30,7 @@ public class ResultScanner {
 	 * Work out how to parse the file (if at all)
 	 *
 	 * @param file File to parse
-	 * @throws IOException
+	 * @throws ResultsFileNotFoundException
 	 */
 	public void parseResultFile(File file) throws ResultsFileNotFoundException {
 		if (countFailures) {
@@ -47,7 +47,7 @@ public class ResultScanner {
 	 * @param file    The file to parse
 	 * @param pattern The pattern to look for
 	 * @return The number of times the pattern has been found
-	 * @throws FileNotFoundException
+	 * @throws ResultsFileNotFoundException
 	 */
 	private int scanFileforPattern(File file, String pattern) throws ResultsFileNotFoundException {
 		int patternCount = 0;

@@ -89,11 +89,8 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 	@Parameter
 	protected List<MavenArtifact> junitLibraries = new ArrayList<>();
 
-	/**
-	 * All property files are stored in this artifact, it comes with JMeter library
-	 */
 	public static final String JMETER_CONFIG_ARTIFACT = "ApacheJMeter_config";
-	private static final String GROUP_ID = "org.apache.jmeter";
+	private static final String JMETER_GROUP_ID = "org.apache.jmeter";
 
 	/**
 	 * Configure a local instance of JMeter
@@ -155,23 +152,23 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 	 */
 	private void configureJMeterArtifacts() {
 		if (jmeterArtifacts.size() == 0) {
-			jmeterArtifacts.add(new MavenArtifact(GROUP_ID + ":ApacheJMeter:" + jmeterVersion));
-			jmeterArtifacts.add(new MavenArtifact(GROUP_ID + ":ApacheJMeter_components:" + jmeterVersion));
-			jmeterArtifacts.add(new MavenArtifact(GROUP_ID + ":ApacheJMeter_config:" + jmeterVersion));
-			jmeterArtifacts.add(new MavenArtifact(GROUP_ID + ":ApacheJMeter_core:" + jmeterVersion));
-			jmeterArtifacts.add(new MavenArtifact(GROUP_ID + ":ApacheJMeter_ftp:" + jmeterVersion));
-			jmeterArtifacts.add(new MavenArtifact(GROUP_ID + ":ApacheJMeter_functions:" + jmeterVersion));
-			jmeterArtifacts.add(new MavenArtifact(GROUP_ID + ":ApacheJMeter_http:" + jmeterVersion));
-			jmeterArtifacts.add(new MavenArtifact(GROUP_ID + ":ApacheJMeter_java:" + jmeterVersion));
-			jmeterArtifacts.add(new MavenArtifact(GROUP_ID + ":ApacheJMeter_jdbc:" + jmeterVersion));
-			jmeterArtifacts.add(new MavenArtifact(GROUP_ID + ":ApacheJMeter_jms:" + jmeterVersion));
-			jmeterArtifacts.add(new MavenArtifact(GROUP_ID + ":ApacheJMeter_junit:" + jmeterVersion));
-			jmeterArtifacts.add(new MavenArtifact(GROUP_ID + ":ApacheJMeter_ldap:" + jmeterVersion));
-			jmeterArtifacts.add(new MavenArtifact(GROUP_ID + ":ApacheJMeter_mail:" + jmeterVersion));
-			jmeterArtifacts.add(new MavenArtifact(GROUP_ID + ":ApacheJMeter_mongodb:" + jmeterVersion));
-			jmeterArtifacts.add(new MavenArtifact(GROUP_ID + ":ApacheJMeter_monitors:" + jmeterVersion));
-			jmeterArtifacts.add(new MavenArtifact(GROUP_ID + ":ApacheJMeter_native:" + jmeterVersion));
-			jmeterArtifacts.add(new MavenArtifact(GROUP_ID + ":ApacheJMeter_tcp:" + jmeterVersion));
+			jmeterArtifacts.add(new MavenArtifact(JMETER_GROUP_ID + ":ApacheJMeter:" + jmeterVersion));
+			jmeterArtifacts.add(new MavenArtifact(JMETER_GROUP_ID + ":ApacheJMeter_components:" + jmeterVersion));
+			jmeterArtifacts.add(new MavenArtifact(JMETER_GROUP_ID + ":ApacheJMeter_config:" + jmeterVersion));
+			jmeterArtifacts.add(new MavenArtifact(JMETER_GROUP_ID + ":ApacheJMeter_core:" + jmeterVersion));
+			jmeterArtifacts.add(new MavenArtifact(JMETER_GROUP_ID + ":ApacheJMeter_ftp:" + jmeterVersion));
+			jmeterArtifacts.add(new MavenArtifact(JMETER_GROUP_ID + ":ApacheJMeter_functions:" + jmeterVersion));
+			jmeterArtifacts.add(new MavenArtifact(JMETER_GROUP_ID + ":ApacheJMeter_http:" + jmeterVersion));
+			jmeterArtifacts.add(new MavenArtifact(JMETER_GROUP_ID + ":ApacheJMeter_java:" + jmeterVersion));
+			jmeterArtifacts.add(new MavenArtifact(JMETER_GROUP_ID + ":ApacheJMeter_jdbc:" + jmeterVersion));
+			jmeterArtifacts.add(new MavenArtifact(JMETER_GROUP_ID + ":ApacheJMeter_jms:" + jmeterVersion));
+			jmeterArtifacts.add(new MavenArtifact(JMETER_GROUP_ID + ":ApacheJMeter_junit:" + jmeterVersion));
+			jmeterArtifacts.add(new MavenArtifact(JMETER_GROUP_ID + ":ApacheJMeter_ldap:" + jmeterVersion));
+			jmeterArtifacts.add(new MavenArtifact(JMETER_GROUP_ID + ":ApacheJMeter_mail:" + jmeterVersion));
+			jmeterArtifacts.add(new MavenArtifact(JMETER_GROUP_ID + ":ApacheJMeter_mongodb:" + jmeterVersion));
+			jmeterArtifacts.add(new MavenArtifact(JMETER_GROUP_ID + ":ApacheJMeter_monitors:" + jmeterVersion));
+			jmeterArtifacts.add(new MavenArtifact(JMETER_GROUP_ID + ":ApacheJMeter_native:" + jmeterVersion));
+			jmeterArtifacts.add(new MavenArtifact(JMETER_GROUP_ID + ":ApacheJMeter_tcp:" + jmeterVersion));
 		}
 	}
 
@@ -200,8 +197,8 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 	/**
 	 * Copy a list of libraries to a specific folder.
 	 *
-	 * @param desiredArtifacts 	A list of artifacts
-	 * @param destination		A destination folder to copy these artifacts to
+	 * @param desiredArtifacts A list of artifacts
+	 * @param destination      A destination folder to copy these artifacts to
 	 * @throws DependencyResolutionException
 	 * @throws IOException
 	 */
@@ -216,7 +213,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 	/**
 	 * Find a specific artifact in a remote repository
 	 *
-	 * @param desiredArtifact 	The artifact that we want to find
+	 * @param desiredArtifact The artifact that we want to find
 	 * @return Will return an ArtifactResult object
 	 * @throws DependencyResolutionException
 	 */
@@ -234,7 +231,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 	/**
 	 * Collate a list of transitive runtime dependencies that need to be copied to the /lib directory and then copy them there.
 	 *
-	 * @param artifact	The artifact that is a transitive dependency
+	 * @param artifact The artifact that is a transitive dependency
 	 * @throws DependencyResolutionException
 	 * @throws IOException
 	 */
@@ -261,8 +258,8 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 	/**
 	 * Copy an Artifact to a directory
 	 *
-	 * @param artifact				Artifact that needs to be copied.
-	 * @param destinationDirectory	Directory to copy the artifact to.
+	 * @param artifact             Artifact that needs to be copied.
+	 * @param destinationDirectory Directory to copy the artifact to.
 	 * @throws IOException
 	 */
 	private void copyArtifact(Artifact artifact, File destinationDirectory) throws IOException {
@@ -306,5 +303,4 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 			throw new IOException(e.getMessage(), e);
 		}
 	}
-
 }

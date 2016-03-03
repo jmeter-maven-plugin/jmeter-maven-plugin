@@ -17,6 +17,8 @@
 		<junitLibraries>
 
 	The format for artifact elements is: \<groupId\>:\<artifactId\>[:\<extension\>[:\<classifier\>]]:\<version\>
+	
+	You should no longer need to make these artifacts dependencies of the plugin, we will just got and get the artifact and its associated dependencies.  This should make configuration much easier and less verbose. 
 
 * **Issue #117** - You now have the option to scan results files for failed requests and successful requests.  Both are disabled by default since they do have a performance hit.
 

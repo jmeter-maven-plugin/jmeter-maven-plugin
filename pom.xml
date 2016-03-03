@@ -25,9 +25,9 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <required.maven.version>3.1.1</required.maven.version>
         <supported.java.version>1.7</supported.java.version>
         <supported.jmeter.version>3.0-SNAPSHOT</supported.jmeter.version>
-        <required.maven.version>3.1.1</required.maven.version>
 
         <!--Dependency versions-->
         <aether.version>1.1.0</aether.version>

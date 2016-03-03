@@ -323,6 +323,7 @@
                         <artifactId>maven-invoker-plugin</artifactId>
                         <version>${maven-invoker-plugin.version}</version>
                         <configuration>
+                            <skipInvocation>${skipTests}</skipInvocation>
                             <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
                             <postBuildHookScript>verify</postBuildHookScript>
                             <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>

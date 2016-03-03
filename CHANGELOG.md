@@ -3,11 +3,11 @@
 ##Next Version (Release Date TBC) Release Notes
 
 * **JMeter version 3.0.0 support added.** 
-* **BREAKING CHANGE: Issue 131** Dependency resolution is now performed using the Eclipse Aether libraries.  
+* **BREAKING CHANGE: Issue #131/Issue#160** Dependency resolution is now performed using the Eclipse Aether libraries.  
 	To add artifacts to the lib/ext directory you now need to use:
 
 		<jmeterExtensions>
-			<artifact>kg.apc:jmeter-plugins:1.3.1</artifact>
+			<artifact>kg.apc:jmeter-plugins:pom:1.3.1</artifact>
 		<jmeterExtensions>
 		
 	To add libraries to the lib/junit folder you now need to use:

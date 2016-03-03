@@ -44,7 +44,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 	private RepositorySystemSession repositorySystemSession;
 
 	@Parameter(defaultValue = "${project.remoteProjectRepositories}", readonly = true)
-	private List<RemoteRepository> remoteRepositories;
+	private List<RemoteRepository> repositoryList;
 
 	/**
 	 * The version of JMeter that this plugin will use to run tests.
@@ -216,11 +216,11 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 	 * @throws DependencyResolutionException
 	 */
 	private ArtifactResult getArtifactResult(org.eclipse.aether.artifact.Artifact desiredArtifact) throws DependencyResolutionException {
-		ArtifactRequest request = new ArtifactRequest();
-		request.setArtifact(desiredArtifact);
-		request.setRepositories(remoteRepositories);
+		ArtifactRequest artifactRequest = new ArtifactRequest();
+		artifactRequest.setArtifact(desiredArtifact);
+		artifactRequest.setRepositories(repositoryList);
 		try {
-			return repositorySystem.resolveArtifact(repositorySystemSession, request);
+			return repositorySystem.resolveArtifact(repositorySystemSession, artifactRequest);
 		} catch (ArtifactResolutionException e) {
 			throw new DependencyResolutionException(e.getMessage(), e);
 		}
@@ -236,7 +236,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 	private void copyTransitiveRuntimeDependenciesToLibDirectory(org.eclipse.aether.artifact.Artifact artifact) throws DependencyResolutionException, IOException {
 		CollectRequest collectRequest = new CollectRequest();
 		collectRequest.setRoot(new Dependency(artifact, JavaScopes.RUNTIME));
-		collectRequest.setRepositories(remoteRepositories);
+		collectRequest.setRepositories(repositoryList);
 		DependencyFilter dependencyFilter = DependencyFilterUtils.classpathFilter();
 		DependencyRequest dependencyRequest = new DependencyRequest(collectRequest, dependencyFilter);
 

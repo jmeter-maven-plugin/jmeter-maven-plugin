@@ -243,6 +243,11 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 		try {
 			List<DependencyNode> artifactDependencies = repositorySystem.resolveDependencies(repositorySystemSession, dependencyRequest).getRoot().getChildren();
 			for (DependencyNode dependency : artifactDependencies) {
+				if (getLog().isDebugEnabled()) {
+					getLog().debug("Dependency name: " + dependency.toString());
+					getLog().debug("Dependency request trace: " + dependencyRequest.getCollectRequest().getTrace().toString());
+					getLog().debug("-------------------------------------------------------");
+				}
 				ArtifactResult result = getArtifactResult(dependency.getArtifact());
 				if (!result.getArtifact().getArtifactId().startsWith("ApacheJMeter_")) {
 					copyArtifact(result.getArtifact(), libDir);
@@ -261,13 +266,6 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 	 * @throws IOException
 	 */
 	private void copyArtifact(org.eclipse.aether.artifact.Artifact artifact, File destinationDirectory) throws IOException {
-		if (getLog().isDebugEnabled()) {
-			//TODO work out how to implement this in Aether
-//			List<String> trail = artifact.getDependencyTrail();
-//			for (int i = 0; i < trail.size(); i++) {
-//				getLog().debug(StringUtils.leftPad("", i) + trail.get(i));
-//			}
-		}
 		try {
 			FileUtils.copyFileToDirectory(artifact.getFile(), destinationDirectory);
 		} catch (java.io.IOException e) {

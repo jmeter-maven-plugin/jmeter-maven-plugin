@@ -1,6 +1,5 @@
 package com.lazerycode.jmeter.mojo;
 
-import com.lazerycode.jmeter.configuration.MavenArtifact;
 import com.lazerycode.jmeter.exceptions.DependencyResolutionException;
 import com.lazerycode.jmeter.exceptions.IOException;
 import com.lazerycode.jmeter.properties.PropertyHandler;
@@ -13,7 +12,6 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.RepositorySystemSession;
-import org.eclipse.aether.artifact.Artifact;
 import org.eclipse.aether.artifact.DefaultArtifact;
 import org.eclipse.aether.collection.CollectRequest;
 import org.eclipse.aether.graph.Dependency;
@@ -67,7 +65,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 	 * &lt;jmeterExtensions&gt;
 	 */
 	@Parameter
-	private List<MavenArtifact> jmeterArtifacts = new ArrayList<>();
+	private List<String> jmeterArtifacts = new ArrayList<>();
 
 	/**
 	 * A list of artifacts that should be copied into the lib/ext directory e.g.
@@ -77,7 +75,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 	 * &lt;jmeterExtensions&gt;
 	 */
 	@Parameter
-	protected List<MavenArtifact> jmeterExtensions = new ArrayList<>();
+	protected List<String> jmeterExtensions = new ArrayList<>();
 
 	/**
 	 * A list of artifacts that should be copied into the lib/junit directory e.g.
@@ -87,7 +85,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 	 * &lt;junitLibraries&gt;
 	 */
 	@Parameter
-	protected List<MavenArtifact> junitLibraries = new ArrayList<>();
+	protected List<String> junitLibraries = new ArrayList<>();
 
 	public static final String JMETER_CONFIG_ARTIFACT = "ApacheJMeter_config";
 	private static final String JMETER_GROUP_ID = "org.apache.jmeter";
@@ -152,23 +150,23 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 	 */
 	private void configureJMeterArtifacts() {
 		if (jmeterArtifacts.size() == 0) {
-			jmeterArtifacts.add(new MavenArtifact(JMETER_GROUP_ID + ":ApacheJMeter:" + jmeterVersion));
-			jmeterArtifacts.add(new MavenArtifact(JMETER_GROUP_ID + ":ApacheJMeter_components:" + jmeterVersion));
-			jmeterArtifacts.add(new MavenArtifact(JMETER_GROUP_ID + ":ApacheJMeter_config:" + jmeterVersion));
-			jmeterArtifacts.add(new MavenArtifact(JMETER_GROUP_ID + ":ApacheJMeter_core:" + jmeterVersion));
-			jmeterArtifacts.add(new MavenArtifact(JMETER_GROUP_ID + ":ApacheJMeter_ftp:" + jmeterVersion));
-			jmeterArtifacts.add(new MavenArtifact(JMETER_GROUP_ID + ":ApacheJMeter_functions:" + jmeterVersion));
-			jmeterArtifacts.add(new MavenArtifact(JMETER_GROUP_ID + ":ApacheJMeter_http:" + jmeterVersion));
-			jmeterArtifacts.add(new MavenArtifact(JMETER_GROUP_ID + ":ApacheJMeter_java:" + jmeterVersion));
-			jmeterArtifacts.add(new MavenArtifact(JMETER_GROUP_ID + ":ApacheJMeter_jdbc:" + jmeterVersion));
-			jmeterArtifacts.add(new MavenArtifact(JMETER_GROUP_ID + ":ApacheJMeter_jms:" + jmeterVersion));
-			jmeterArtifacts.add(new MavenArtifact(JMETER_GROUP_ID + ":ApacheJMeter_junit:" + jmeterVersion));
-			jmeterArtifacts.add(new MavenArtifact(JMETER_GROUP_ID + ":ApacheJMeter_ldap:" + jmeterVersion));
-			jmeterArtifacts.add(new MavenArtifact(JMETER_GROUP_ID + ":ApacheJMeter_mail:" + jmeterVersion));
-			jmeterArtifacts.add(new MavenArtifact(JMETER_GROUP_ID + ":ApacheJMeter_mongodb:" + jmeterVersion));
-			jmeterArtifacts.add(new MavenArtifact(JMETER_GROUP_ID + ":ApacheJMeter_monitors:" + jmeterVersion));
-			jmeterArtifacts.add(new MavenArtifact(JMETER_GROUP_ID + ":ApacheJMeter_native:" + jmeterVersion));
-			jmeterArtifacts.add(new MavenArtifact(JMETER_GROUP_ID + ":ApacheJMeter_tcp:" + jmeterVersion));
+			jmeterArtifacts.add(JMETER_GROUP_ID + ":ApacheJMeter:" + jmeterVersion);
+			jmeterArtifacts.add(JMETER_GROUP_ID + ":ApacheJMeter_components:" + jmeterVersion);
+			jmeterArtifacts.add(JMETER_GROUP_ID + ":ApacheJMeter_config:" + jmeterVersion);
+			jmeterArtifacts.add(JMETER_GROUP_ID + ":ApacheJMeter_core:" + jmeterVersion);
+			jmeterArtifacts.add(JMETER_GROUP_ID + ":ApacheJMeter_ftp:" + jmeterVersion);
+			jmeterArtifacts.add(JMETER_GROUP_ID + ":ApacheJMeter_functions:" + jmeterVersion);
+			jmeterArtifacts.add(JMETER_GROUP_ID + ":ApacheJMeter_http:" + jmeterVersion);
+			jmeterArtifacts.add(JMETER_GROUP_ID + ":ApacheJMeter_java:" + jmeterVersion);
+			jmeterArtifacts.add(JMETER_GROUP_ID + ":ApacheJMeter_jdbc:" + jmeterVersion);
+			jmeterArtifacts.add(JMETER_GROUP_ID + ":ApacheJMeter_jms:" + jmeterVersion);
+			jmeterArtifacts.add(JMETER_GROUP_ID + ":ApacheJMeter_junit:" + jmeterVersion);
+			jmeterArtifacts.add(JMETER_GROUP_ID + ":ApacheJMeter_ldap:" + jmeterVersion);
+			jmeterArtifacts.add(JMETER_GROUP_ID + ":ApacheJMeter_mail:" + jmeterVersion);
+			jmeterArtifacts.add(JMETER_GROUP_ID + ":ApacheJMeter_mongodb:" + jmeterVersion);
+			jmeterArtifacts.add(JMETER_GROUP_ID + ":ApacheJMeter_monitors:" + jmeterVersion);
+			jmeterArtifacts.add(JMETER_GROUP_ID + ":ApacheJMeter_native:" + jmeterVersion);
+			jmeterArtifacts.add(JMETER_GROUP_ID + ":ApacheJMeter_tcp:" + jmeterVersion);
 		}
 	}
 
@@ -176,8 +174,8 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 		if (jmeterArtifacts.size() == 0) {
 			throw new DependencyResolutionException("No JMeter dependencies specified!");
 		}
-		for (MavenArtifact desiredArtifact : jmeterArtifacts) {
-			ArtifactResult result = getArtifactResult(new DefaultArtifact(desiredArtifact.getDependency()));
+		for (String desiredArtifact : jmeterArtifacts) {
+			ArtifactResult result = getArtifactResult(new DefaultArtifact(desiredArtifact));
 			switch (result.getArtifact().getArtifactId()) {
 				case JMETER_CONFIG_ARTIFACT:
 					extractConfigSettings(result.getArtifact());
@@ -202,9 +200,9 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 	 * @throws DependencyResolutionException
 	 * @throws IOException
 	 */
-	private void copyExplicitLibraries(List<MavenArtifact> desiredArtifacts, File destination) throws DependencyResolutionException, IOException {
-		for (MavenArtifact desiredArtifact : desiredArtifacts) {
-			ArtifactResult result = getArtifactResult(new DefaultArtifact(desiredArtifact.getDependency()));
+	private void copyExplicitLibraries(List<String> desiredArtifacts, File destination) throws DependencyResolutionException, IOException {
+		for (String desiredArtifact : desiredArtifacts) {
+			ArtifactResult result = getArtifactResult(new DefaultArtifact(desiredArtifact));
 			copyArtifact(result.getArtifact(), destination);
 			copyTransitiveRuntimeDependenciesToLibDirectory(result.getArtifact());
 		}
@@ -217,7 +215,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 	 * @return Will return an ArtifactResult object
 	 * @throws DependencyResolutionException
 	 */
-	private ArtifactResult getArtifactResult(Artifact desiredArtifact) throws DependencyResolutionException {
+	private ArtifactResult getArtifactResult(org.eclipse.aether.artifact.Artifact desiredArtifact) throws DependencyResolutionException {
 		ArtifactRequest request = new ArtifactRequest();
 		request.setArtifact(desiredArtifact);
 		request.setRepositories(remoteRepositories);
@@ -235,7 +233,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 	 * @throws DependencyResolutionException
 	 * @throws IOException
 	 */
-	private void copyTransitiveRuntimeDependenciesToLibDirectory(Artifact artifact) throws DependencyResolutionException, IOException {
+	private void copyTransitiveRuntimeDependenciesToLibDirectory(org.eclipse.aether.artifact.Artifact artifact) throws DependencyResolutionException, IOException {
 		CollectRequest collectRequest = new CollectRequest();
 		collectRequest.setRoot(new Dependency(artifact, JavaScopes.RUNTIME));
 		collectRequest.setRepositories(remoteRepositories);
@@ -262,7 +260,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 	 * @param destinationDirectory Directory to copy the artifact to.
 	 * @throws IOException
 	 */
-	private void copyArtifact(Artifact artifact, File destinationDirectory) throws IOException {
+	private void copyArtifact(org.eclipse.aether.artifact.Artifact artifact, File destinationDirectory) throws IOException {
 		if (getLog().isDebugEnabled()) {
 			//TODO work out how to implement this in Aether
 //			List<String> trail = artifact.getDependencyTrail();
@@ -283,7 +281,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 	 * @param artifact Configuration artifact
 	 * @throws IOException
 	 */
-	private void extractConfigSettings(Artifact artifact) throws IOException {
+	private void extractConfigSettings(org.eclipse.aether.artifact.Artifact artifact) throws IOException {
 		try {
 			JarFile configSettings = new JarFile(artifact.getFile());
 			Enumeration<JarEntry> entries = configSettings.entries();

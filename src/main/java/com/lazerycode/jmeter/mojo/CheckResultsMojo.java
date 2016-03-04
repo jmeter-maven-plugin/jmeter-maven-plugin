@@ -5,6 +5,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 
 import java.io.File;
 
@@ -13,6 +14,27 @@ import java.io.File;
  */
 @Mojo(name = "results", defaultPhase = LifecyclePhase.VERIFY)
 public class CheckResultsMojo extends AbstractJMeterMojo {
+
+	/**
+	 * Sets whether build should fail if there are failed requests found in the JMeter result file.
+	 * Failures are for example failed requests
+	 */
+	@Parameter(defaultValue = "false")
+	protected boolean ignoreResultFailures;
+
+	/**
+	 * Sets whether ResultScanner should search for failed requests in the JMeter result file.
+	 * Defaults to false
+	 */
+	@Parameter(defaultValue = "false")
+	protected boolean scanResultsForFailedRequests;
+
+	/**
+	 * Sets whether ResultScanner should search for Successful requests in the JMeter result file.
+	 * Defaults to false
+	 */
+	@Parameter(defaultValue = "false")
+	protected boolean scanResultsForSuccessfulRequests;
 
 	/**
 	 * Scan JMeter result files for successful, and failed requests/

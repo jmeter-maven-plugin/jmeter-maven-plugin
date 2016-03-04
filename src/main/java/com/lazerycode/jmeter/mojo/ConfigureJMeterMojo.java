@@ -12,6 +12,7 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.RepositorySystemSession;
+import org.eclipse.aether.artifact.Artifact;
 import org.eclipse.aether.artifact.DefaultArtifact;
 import org.eclipse.aether.collection.CollectRequest;
 import org.eclipse.aether.graph.Dependency;
@@ -87,8 +88,9 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 	@Parameter
 	protected List<String> junitLibraries = new ArrayList<>();
 
-	public static final String JMETER_CONFIG_ARTIFACT = "ApacheJMeter_config";
+	public static final String JMETER_CONFIG_ARTIFACT_NAME = "ApacheJMeter_config";
 	private static final String JMETER_GROUP_ID = "org.apache.jmeter";
+	protected static Artifact jmeterConfigArtifact;
 
 	/**
 	 * Configure a local instance of JMeter
@@ -134,6 +136,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 
 	protected void propertyConfiguration() throws MojoExecutionException {
 		PropertyHandler pluginProperties = new PropertyHandler(propertiesFilesDirectory, binDir, propertiesReplacedByCustomFiles);
+		pluginProperties.setJMeterConfigArtifact(jmeterConfigArtifact);
 		pluginProperties.setJMeterProperties(propertiesJMeter);
 		pluginProperties.setJMeterGlobalProperties(propertiesGlobal);
 		pluginProperties.setJMeterSaveServiceProperties(propertiesSaveService);
@@ -177,8 +180,10 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 		for (String desiredArtifact : jmeterArtifacts) {
 			ArtifactResult result = getArtifactResult(new DefaultArtifact(desiredArtifact));
 			switch (result.getArtifact().getArtifactId()) {
-				case JMETER_CONFIG_ARTIFACT:
-					extractConfigSettings(result.getArtifact());
+				case JMETER_CONFIG_ARTIFACT_NAME:
+					jmeterConfigArtifact = result.getArtifact();
+					//TODO Could move the below elsewhere if required.
+					extractConfigSettings(jmeterConfigArtifact);
 					break;
 				case "ApacheJMeter":
 					//TODO set the following for JMeterProcessBuilder: result.getArtifact().getFile().getName()
@@ -279,7 +284,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 	 * @param artifact Configuration artifact
 	 * @throws IOException
 	 */
-	private void extractConfigSettings(org.eclipse.aether.artifact.Artifact artifact) throws IOException {
+	private void extractConfigSettings(Artifact artifact) throws IOException {
 		try {
 			JarFile configSettings = new JarFile(artifact.getFile());
 			Enumeration<JarEntry> entries = configSettings.entries();

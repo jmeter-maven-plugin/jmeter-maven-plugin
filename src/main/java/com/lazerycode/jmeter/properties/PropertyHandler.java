@@ -1,8 +1,8 @@
 package com.lazerycode.jmeter.properties;
 
 import com.lazerycode.jmeter.utility.UtilityFunctions;
-import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.eclipse.aether.artifact.Artifact;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,9 +11,6 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.jar.JarFile;
-
-//import static com.lazerycode.jmeter.maven.AbstractJMeterMojo.JMETER_CONFIG_ARTIFACT;
-//import static com.lazerycode.jmeter.maven.AbstractJMeterMojo.getArtifactNamed;
 
 /**
  * Handler to deal with properties file creation.
@@ -25,6 +22,7 @@ public class PropertyHandler {
 	private static final Logger LOGGER = LoggerFactory.getLogger(PropertyHandler.class);
 	private final EnumMap<JMeterPropertiesFiles, PropertyContainer> masterPropertiesMap = new EnumMap<>(JMeterPropertiesFiles.class);
 
+	private Artifact jmeterConfigArtifact;
 	private File propertySourceDirectory;
 	private File propertyOutputDirectory;
 	private boolean replaceDefaultProperties;
@@ -37,8 +35,7 @@ public class PropertyHandler {
 		setOutputDirectory(outputDirectory);
 		this.replaceDefaultProperties = replaceDefaultProperties;
 		try {
-			//FIXME fix loading of default properties
-//			this.loadDefaultProperties(getArtifactNamed(JMETER_CONFIG_ARTIFACT));
+			this.loadDefaultPropertiesIfAvailable();
 			this.loadCustomProperties();
 		} catch (Exception ex) {
 			LOGGER.error("Error loading properties: " + ex);
@@ -48,13 +45,15 @@ public class PropertyHandler {
 	/**
 	 * Load in the default properties held in the JMeter artifact
 	 *
-	 * @param jMeterConfigArtifact Configuration Artifact
 	 * @throws IOException
 	 */
-	private void loadDefaultProperties(Artifact jMeterConfigArtifact) throws IOException {
+	private void loadDefaultPropertiesIfAvailable() throws IOException {
+		if (null == jmeterConfigArtifact) {
+			return;
+		}
 		for (JMeterPropertiesFiles propertyFile : JMeterPropertiesFiles.values()) {
 			if (propertyFile.createFileIfItDoesNotExist()) {
-				JarFile propertyJar = new JarFile(jMeterConfigArtifact.getFile());
+				JarFile propertyJar = new JarFile(jmeterConfigArtifact.getFile());
 				InputStream sourceFile = propertyJar.getInputStream(propertyJar.getEntry("bin/" + propertyFile.getPropertiesFileName()));
 				Properties defaultPropertySet = new Properties();
 				defaultPropertySet.load(sourceFile);
@@ -193,5 +192,9 @@ public class PropertyHandler {
 		//Prevent JMeter from throwing some System.exit() calls
 		System.setProperty("jmeterengine.remote.system.exit", "false");
 		System.setProperty("jmeterengine.stopfail.system.exit", "false");
+	}
+
+	public void setJMeterConfigArtifact(Artifact jmeterConfigArtifact) {
+		this.jmeterConfigArtifact = jmeterConfigArtifact;
 	}
 }

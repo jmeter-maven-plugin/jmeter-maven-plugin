@@ -19,6 +19,8 @@ import java.util.jar.JarFile;
  */
 public class PropertyHandler {
 
+	//TODO finish replacing this and remove it
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(PropertyHandler.class);
 	private final EnumMap<JMeterPropertiesFiles, PropertyContainer> masterPropertiesMap = new EnumMap<>(JMeterPropertiesFiles.class);
 
@@ -54,7 +56,7 @@ public class PropertyHandler {
 		for (JMeterPropertiesFiles propertyFile : JMeterPropertiesFiles.values()) {
 			if (propertyFile.createFileIfItDoesNotExist()) {
 				JarFile propertyJar = new JarFile(jmeterConfigArtifact.getFile());
-				InputStream sourceFile = propertyJar.getInputStream(propertyJar.getEntry("bin/" + propertyFile.getPropertiesFileName()));
+				InputStream sourceFile = propertyJar.getInputStream(propertyJar.getEntry("bin/" + propertyFile.getFilename()));
 				Properties defaultPropertySet = new Properties();
 				defaultPropertySet.load(sourceFile);
 				sourceFile.close();
@@ -72,7 +74,7 @@ public class PropertyHandler {
 	 */
 	private void loadCustomProperties() throws IOException {
 		for (JMeterPropertiesFiles propertyFile : JMeterPropertiesFiles.values()) {
-			File sourceFile = new File(this.propertySourceDirectory.getCanonicalFile() + File.separator + propertyFile.getPropertiesFileName());
+			File sourceFile = new File(this.propertySourceDirectory.getCanonicalFile() + File.separator + propertyFile.getFilename());
 			if (sourceFile.exists()) {
 				InputStream sourceInputStream = new FileInputStream(sourceFile);
 				Properties sourcePropertySet = new Properties();
@@ -123,7 +125,7 @@ public class PropertyHandler {
 	/**
 	 * @return full property map for the application.
 	 */
-	//doesnt make sense to use the files for remote access as jmeter wont pick it up 
+	//doesnt make sense to use the files for remote access as jmeter wont pick it up
 	public EnumMap<JMeterPropertiesFiles, PropertyContainer> getMasterPropertiesMap() {
 		return masterPropertiesMap;
 	}
@@ -176,12 +178,12 @@ public class PropertyHandler {
 			}
 			try {
 				//Write out final properties file.
-				FileOutputStream writeOutFinalPropertiesFile = new FileOutputStream(new File(this.propertyOutputDirectory.getCanonicalFile() + File.separator + propertyFile.getPropertiesFileName()));
+				FileOutputStream writeOutFinalPropertiesFile = new FileOutputStream(new File(this.propertyOutputDirectory.getCanonicalFile() + File.separator + propertyFile.getFilename()));
 				getPropertyObject(propertyFile).getFinalPropertyObject().store(writeOutFinalPropertiesFile, null);
 				writeOutFinalPropertiesFile.flush();
 				writeOutFinalPropertiesFile.close();
 			} catch (IOException e) {
-				throw new MojoExecutionException("Error creating consolidated properties file " + propertyFile.getPropertiesFileName() + ": " + e);
+				throw new MojoExecutionException("Error creating consolidated properties file " + propertyFile.getFilename() + ": " + e);
 			}
 		}
 	}

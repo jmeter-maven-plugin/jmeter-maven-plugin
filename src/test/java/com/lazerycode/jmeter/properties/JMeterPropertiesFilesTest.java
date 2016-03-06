@@ -10,7 +10,7 @@ public class JMeterPropertiesFilesTest {
 
 	@Test
 	public void getPropertiesFileNameReturnsExpectedFilename() {
-		assertThat(JMeterPropertiesFiles.JMETER_PROPERTIES.getPropertiesFileName(),
+		assertThat(JMeterPropertiesFiles.JMETER_PROPERTIES.getFilename(),
 				is(equalTo("jmeter.properties")));
 	}
 

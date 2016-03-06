@@ -23,7 +23,7 @@ public enum JMeterPropertiesFiles {
 		this.isRequired = isRequired;
 	}
 
-	public String getPropertiesFileName() {
+	public String getFilename() {
 		return propertiesFilename;
 	}
 

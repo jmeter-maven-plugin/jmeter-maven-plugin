@@ -8,16 +8,25 @@ package com.lazerycode.jmeter.properties;
  */
 public enum ReservedProperties {
 
-	JAVA_CLASS_PATH("java.class.path"),
-	USER_DIR("user.dir");
+	JAVA_CLASS_PATH("java.class.path", null),
+	USER_DIR("user.dir", null),
+	JMETER_SAVE_SAVESERVICE_OUTPUT_FORMAT("jmeter.save.saveservice.output_format", null),
+	JMETERENGINE_REMOTE_SYSTEM_EXIT("jmeterengine.remote.system.exit", "false"),
+	JMETERENGINE_STOPFAIL_SYSTEM_EXIT("jmeterengine.stopfail.system.exit", "false");
 
 	private final String propertyKey;
+	private final String requiredValue;
 
-	ReservedProperties(String propertyKey) {
+	ReservedProperties(String propertyKey, String requiredValue) {
 		this.propertyKey = propertyKey;
+		this.requiredValue = requiredValue;
 	}
 
 	public String getPropertyKey() {
 		return propertyKey;
+	}
+
+	public String getRequiredValue() {
+		return requiredValue;
 	}
 }

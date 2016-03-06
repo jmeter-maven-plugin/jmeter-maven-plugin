@@ -5,6 +5,8 @@ import com.lazerycode.jmeter.mojo.RunJMeterMojo;
 import java.util.Map;
 import java.util.Properties;
 
+//TODO remove this, PropertiesFiles will replace it
+
 /**
  * Handler that can merge Properties objects and Maps
  *

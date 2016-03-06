@@ -4,6 +4,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 
+//TODO remove this, PropertiesFiles will replace it
+
 public class PropertyContainer {
 
     private Map<String, String> customPropertyMap = null;

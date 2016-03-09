@@ -3,7 +3,7 @@ package com.lazerycode.jmeter.mojo;
 import com.lazerycode.jmeter.exceptions.DependencyResolutionException;
 import com.lazerycode.jmeter.exceptions.IOException;
 import com.lazerycode.jmeter.properties.ConfigurationFiles;
-import com.lazerycode.jmeter.properties.PropertiesFiles;
+import com.lazerycode.jmeter.properties.PropertiesFile;
 import com.lazerycode.jmeter.properties.PropertiesMapping;
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -205,7 +205,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 			File suppliedPropertiesFile = new File(propertiesFilesDirectory, configurationFile.getFilename());
 			File propertiesFileToWrite = new File(binDirectory.getAbsolutePath(), configurationFile.getFilename());
 
-			PropertiesFiles somePropertiesFile = new PropertiesFiles(jmeterConfigArtifact, configurationFile);
+			PropertiesFile somePropertiesFile = new PropertiesFile(jmeterConfigArtifact, configurationFile);
 			somePropertiesFile.loadProvidedPropertiesIfAvailable(suppliedPropertiesFile, propertiesReplacedByCustomFiles);
 			somePropertiesFile.addAndOverwriteProperties(propertiesMap.get(configurationFile).getAdditionalProperties());
 			somePropertiesFile.writePropertiesToFile(propertiesFileToWrite);
@@ -214,7 +214,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 		}
 
 		for (File customPropertiesFile : customPropertiesFiles) {
-			PropertiesFiles customProperties = new PropertiesFiles(customPropertiesFile);
+			PropertiesFile customProperties = new PropertiesFile(customPropertiesFile);
 			//TODO separate folder for custom properties?
 			//TODO check file names
 			customProperties.writePropertiesToFile(new File(binDirectory.getAbsolutePath(), customPropertiesFile.getName()));

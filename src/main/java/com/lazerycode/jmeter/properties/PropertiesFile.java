@@ -14,15 +14,15 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.jar.JarFile;
 
-public class PropertiesFiles {
+public class PropertiesFile {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(PropertiesFiles.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(PropertiesFile.class);
 	private Properties properties;
 
 	/**
 	 * Basic constructor for testing purposes.
 	 */
-	public PropertiesFiles() {
+	public PropertiesFile() {
 		this.properties = new Properties();
 	}
 
@@ -32,7 +32,7 @@ public class PropertiesFiles {
 	 * @param propertiesFile The file to use to create a PropertiesFiles object
 	 * @throws IOException
 	 */
-	public PropertiesFiles(File propertiesFile) throws IOException {
+	public PropertiesFile(File propertiesFile) throws IOException {
 		this.properties = loadPropertiesFile(propertiesFile);
 	}
 
@@ -43,7 +43,7 @@ public class PropertiesFiles {
 	 * @param jMeterPropertiesFile The properties file that we want to find in the jmeterConfigArtifact
 	 * @throws IOException
 	 */
-	public PropertiesFiles(Artifact jmeterConfigArtifact, ConfigurationFiles jMeterPropertiesFile) throws IOException {
+	public PropertiesFile(Artifact jmeterConfigArtifact, ConfigurationFiles jMeterPropertiesFile) throws IOException {
 		Properties defaultPropertySet = new Properties();
 		if (null != jmeterConfigArtifact && jMeterPropertiesFile.createFileIfItDoesNotExist()) {
 			try {

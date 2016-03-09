@@ -4,7 +4,7 @@ import java.util.Map;
 
 public class PropertiesMapping {
 	private Map<String, String> additionalProperties;
-	private PropertiesFiles propertiesFile;
+	private PropertiesFile propertiesFile;
 
 	public PropertiesMapping(Map<String, String> additionalProperties) {
 		this.additionalProperties = additionalProperties;
@@ -14,11 +14,11 @@ public class PropertiesMapping {
 		return additionalProperties;
 	}
 
-	public PropertiesFiles getPropertiesFile() {
+	public PropertiesFile getPropertiesFile() {
 		return propertiesFile;
 	}
 
-	public void setPropertiesFile(PropertiesFiles propertiesFile) {
+	public void setPropertiesFile(PropertiesFile propertiesFile) {
 		this.propertiesFile = propertiesFile;
 	}
 }

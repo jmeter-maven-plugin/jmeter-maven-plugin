@@ -37,12 +37,12 @@ public class PropertiesFileTest {
 
 	@Test(expected = IOException.class)
 	public void invalidPropertiesFileThrowsIOException() throws Exception {
-		new PropertiesFiles(invalidPropertiesFile);
+		new PropertiesFile(invalidPropertiesFile);
 	}
 
 	@Test
 	public void canCreateAValidPropertiesFilesObject() throws Exception {
-		PropertiesFiles propertiesFile = new PropertiesFiles(new File(sourcePropertiesFile.toURI()));
+		PropertiesFile propertiesFile = new PropertiesFile(new File(sourcePropertiesFile.toURI()));
 		Properties initialProperties = propertiesFile.getProperties();
 
 		assertThat(initialProperties.getProperty("log_level.jmeter"), is(equalTo("INFO")));
@@ -52,7 +52,7 @@ public class PropertiesFileTest {
 
 	@Test
 	public void emptyPropertiesObjectIsCreatedIfArtifactDoesNotExist() throws Exception {
-		PropertiesFiles propertiesFile = new PropertiesFiles(null, JMETER_PROPERTIES);
+		PropertiesFile propertiesFile = new PropertiesFile(null, JMETER_PROPERTIES);
 		Properties initialProperties = propertiesFile.getProperties();
 
 		assertThat(initialProperties.size(), is(equalTo(0)));
@@ -61,7 +61,7 @@ public class PropertiesFileTest {
 	@Test(expected = IOException.class)
 	public void ifTheArtifactIsInvalidAnIOExceptionWillBeThrown() throws Exception {
 		Artifact artifact = new DefaultArtifact("g.i.d:a.i.d:1.0-SNAPSHOT").setFile(invalidPropertiesFile);
-		PropertiesFiles propertiesFile = new PropertiesFiles(artifact, JMETER_PROPERTIES);
+		PropertiesFile propertiesFile = new PropertiesFile(artifact, JMETER_PROPERTIES);
 		Properties initialProperties = propertiesFile.getProperties();
 
 		assertThat(initialProperties.size(), is(equalTo(0)));
@@ -70,7 +70,7 @@ public class PropertiesFileTest {
 	@Test
 	public void emptyPropertiesObjectIsCreatedIfFileShouldNotBeCreatedIfItDoesNotExist() throws Exception {
 		Artifact artifact = new DefaultArtifact("g.i.d:a.i.d:1.0-SNAPSHOT").setFile(invalidPropertiesFile);
-		PropertiesFiles propertiesFile = new PropertiesFiles(artifact, GLOBAL_PROPERTIES);
+		PropertiesFile propertiesFile = new PropertiesFile(artifact, GLOBAL_PROPERTIES);
 		Properties initialProperties = propertiesFile.getProperties();
 
 		assertThat(initialProperties.size(), is(equalTo(0)));
@@ -79,7 +79,7 @@ public class PropertiesFileTest {
 	@Test
 	public void createAPropertiesFileObjectUsingAnArtifact() throws Exception {
 		Artifact jarFile = new DefaultArtifact("g.i.d:a.i.d:1.0-SNAPSHOT").setFile(new File(fakeJAR.getFile()));
-		PropertiesFiles propertiesFile = new PropertiesFiles(jarFile, JMETER_PROPERTIES);
+		PropertiesFile propertiesFile = new PropertiesFile(jarFile, JMETER_PROPERTIES);
 		Properties initialProperties = propertiesFile.getProperties();
 
 		assertThat(initialProperties.size(), is(equalTo(73)));
@@ -92,7 +92,7 @@ public class PropertiesFileTest {
 		customProperties.put("log_level.jmeter", "");
 		customProperties.put("log_level.jmeter.junit", "    ");
 
-		PropertiesFiles propertiesFile = new PropertiesFiles(new File(sourcePropertiesFile.toURI()));
+		PropertiesFile propertiesFile = new PropertiesFile(new File(sourcePropertiesFile.toURI()));
 		propertiesFile.addAndOverwriteProperties(customProperties);
 		Properties modifiedProperties = propertiesFile.getProperties();
 
@@ -107,7 +107,7 @@ public class PropertiesFileTest {
 		customProperties.put("log_level.jmeter.control", "INFO");
 		customProperties.put("log_level.jmeter", "DEBUG");
 
-		PropertiesFiles propertiesFile = new PropertiesFiles(new File(sourcePropertiesFile.toURI()));
+		PropertiesFile propertiesFile = new PropertiesFile(new File(sourcePropertiesFile.toURI()));
 		propertiesFile.addAndOverwriteProperties(customProperties);
 		Properties modifiedProperties = propertiesFile.getProperties();
 
@@ -123,7 +123,7 @@ public class PropertiesFileTest {
 		customProperties.put("log_level.jmeter.control", "INFO");
 		customProperties.put("log_level.jmeter", "DEBUG");
 
-		PropertiesFiles propertiesFile = new PropertiesFiles(new File(sourcePropertiesFile.toURI()));
+		PropertiesFile propertiesFile = new PropertiesFile(new File(sourcePropertiesFile.toURI()));
 		propertiesFile.loadProvidedPropertiesIfAvailable(new File(additionsPropertiesFile.getFile()), MERGE_PROPERTIES);
 		Properties modifiedProperties = propertiesFile.getProperties();
 
@@ -140,7 +140,7 @@ public class PropertiesFileTest {
 		customProperties.put("log_level.jmeter.control", "INFO");
 		customProperties.put("log_level.jmeter", "DEBUG");
 
-		PropertiesFiles propertiesFile = new PropertiesFiles(new File(sourcePropertiesFile.toURI()));
+		PropertiesFile propertiesFile = new PropertiesFile(new File(sourcePropertiesFile.toURI()));
 		propertiesFile.loadProvidedPropertiesIfAvailable(new File(additionsPropertiesFile.getFile()), REPLACE_ALL_PROPERTIES);
 		Properties modifiedProperties = propertiesFile.getProperties();
 
@@ -156,7 +156,7 @@ public class PropertiesFileTest {
 		customProperties.put("log_level.jmeter.control", "INFO");
 		customProperties.put("log_level.jmeter", "DEBUG");
 
-		PropertiesFiles propertiesFile = new PropertiesFiles(new File(sourcePropertiesFile.toURI()));
+		PropertiesFile propertiesFile = new PropertiesFile(new File(sourcePropertiesFile.toURI()));
 		propertiesFile.loadProvidedPropertiesIfAvailable(invalidPropertiesFile, MERGE_PROPERTIES);
 		Properties modifiedProperties = propertiesFile.getProperties();
 
@@ -168,7 +168,7 @@ public class PropertiesFileTest {
 
 	@Test(expected = IOException.class)
 	public void tryingToWriteToAnInvalidFileThrowsAnIOException() throws Exception {
-		PropertiesFiles propertiesFile = new PropertiesFiles(new File(sourcePropertiesFile.toURI()));
+		PropertiesFile propertiesFile = new PropertiesFile(new File(sourcePropertiesFile.toURI()));
 		propertiesFile.writePropertiesToFile(invalidPropertiesFile);
 	}
 
@@ -176,7 +176,7 @@ public class PropertiesFileTest {
 	public void canWritePropertiesToAFile() throws Exception {
 		File writtenProperties = File.createTempFile("output", ".properties");
 		writtenProperties.deleteOnExit();
-		PropertiesFiles propertiesFile = new PropertiesFiles(new File(sourcePropertiesFile.toURI()));
+		PropertiesFile propertiesFile = new PropertiesFile(new File(sourcePropertiesFile.toURI()));
 		propertiesFile.writePropertiesToFile(writtenProperties);
 
 		Properties readWrittenProperties = new Properties();
@@ -191,7 +191,7 @@ public class PropertiesFileTest {
 
 	@Test
 	public void nothingWrittenToFileIfThereAreNoProperties() throws Exception {
-		PropertiesFiles propertiesFile = new PropertiesFiles(new File(emptyPropertiesFile.toURI()));
+		PropertiesFile propertiesFile = new PropertiesFile(new File(emptyPropertiesFile.toURI()));
 
 		assertThat(propertiesFile.getProperties().size(), is(equalTo(0)));
 
@@ -211,7 +211,7 @@ public class PropertiesFileTest {
 
 		File writtenProperties = File.createTempFile("output", ".properties");
 		writtenProperties.deleteOnExit();
-		PropertiesFiles propertiesFile = new PropertiesFiles(new File(sourcePropertiesFile.toURI()));
+		PropertiesFile propertiesFile = new PropertiesFile(new File(sourcePropertiesFile.toURI()));
 		propertiesFile.addAndOverwriteProperties(reservedProperties);
 
 		assertThat(propertiesFile.getProperties().size(), is(equalTo(7)));
@@ -237,7 +237,7 @@ public class PropertiesFileTest {
 		reservedProperties.put("jmeterengine.remote.system.exit", "true");
 		reservedProperties.put("jmeterengine.stopfail.system.exit", "true");
 
-		PropertiesFiles propertiesFile = new PropertiesFiles(new File(emptyPropertiesFile.toURI()));
+		PropertiesFile propertiesFile = new PropertiesFile(new File(emptyPropertiesFile.toURI()));
 		propertiesFile.addAndOverwriteProperties(reservedProperties);
 
 		assertThat(propertiesFile.getProperties().size(), is(equalTo(5)));
@@ -260,7 +260,7 @@ public class PropertiesFileTest {
 		HashMap<String, String> customProperties = new HashMap<>();
 		customProperties.put("log_level.JMETER", "DEBUG");
 
-		PropertiesFiles propertiesFile = new PropertiesFiles(new File(sourcePropertiesFile.toURI()));
+		PropertiesFile propertiesFile = new PropertiesFile(new File(sourcePropertiesFile.toURI()));
 		propertiesFile.addAndOverwriteProperties(customProperties);
 
 		verify(mockAppender).doAppend(argThat(new ArgumentMatcher() {

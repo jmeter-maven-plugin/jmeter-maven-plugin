@@ -1,7 +1,7 @@
 package com.lazerycode.jmeter.configuration;
 
 import com.lazerycode.jmeter.properties.ConfigurationFiles;
-import com.lazerycode.jmeter.properties.PropertiesFiles;
+import com.lazerycode.jmeter.properties.PropertiesFile;
 import com.lazerycode.jmeter.properties.PropertiesMapping;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,7 +25,7 @@ public class RemoteArgumentsArrayBuilderTest {
 		Map<String, String> additionalProperties = new HashMap<>();
 		additionalProperties.put("hello", "world");
 		propertiesMapping = new PropertiesMapping(additionalProperties);
-		PropertiesFiles propertiesFile = new PropertiesFiles();
+		PropertiesFile propertiesFile = new PropertiesFile();
 		propertiesFile.addAndOverwriteProperties(additionalProperties);
 		propertiesMapping.setPropertiesFile(propertiesFile);
 	}

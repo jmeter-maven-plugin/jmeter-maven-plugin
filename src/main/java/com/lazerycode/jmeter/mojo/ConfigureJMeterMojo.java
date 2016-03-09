@@ -2,8 +2,9 @@ package com.lazerycode.jmeter.mojo;
 
 import com.lazerycode.jmeter.exceptions.DependencyResolutionException;
 import com.lazerycode.jmeter.exceptions.IOException;
+import com.lazerycode.jmeter.properties.ConfigurationFiles;
 import com.lazerycode.jmeter.properties.PropertiesFiles;
-import com.lazerycode.jmeter.properties.PropertyHandler;
+import com.lazerycode.jmeter.properties.PropertiesMapping;
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -32,7 +33,6 @@ import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-import static com.lazerycode.jmeter.properties.JMeterPropertiesFiles.*;
 import static org.apache.commons.io.FileUtils.copyFile;
 import static org.apache.commons.io.FileUtils.copyInputStreamToFile;
 
@@ -167,92 +167,68 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 		getLog().info(" Configuring JMeter...");
 		getLog().info("-------------------------------------------------------");
 		generateJMeterDirectoryTree();
-		propertyConfiguration();
 		configureJMeterArtifacts();
 		populateJMeterDirectoryTree();
-		copyExplicitLibraries(jmeterExtensions, libExtDir);
-		copyExplicitLibraries(junitLibraries, libJUnitDir);
+		copyExplicitLibraries(jmeterExtensions, libExtDirectory);
+		copyExplicitLibraries(junitLibraries, libJUnitDirectory);
+		propertyConfiguration();
 	}
 
 	/**
 	 * Generate the directory tree utilised by JMeter.
 	 */
 	protected void generateJMeterDirectoryTree() {
-		logsDir = new File(workDir, "logs");
-		logsDir.mkdirs();
-		binDir = new File(workDir, "bin");
-		binDir.mkdirs();
-		if (null != resultsDirectory) {
-			resultsDir = new File(resultsDirectory.replaceAll("\\|/", File.separator));
-		} else {
-			resultsDir = new File(workDir, "results");
-		}
-		resultsDir.mkdirs();
-		libDir = new File(workDir, "lib");
-		libExtDir = new File(libDir, "ext");
-		libExtDir.mkdirs();
-		libJUnitDir = new File(libDir, "junit");
-		libJUnitDir.mkdirs();
+		logsDirectory = new File(jmeterDirectory, "logs");
+		logsDirectory.mkdirs();
+		binDirectory = new File(jmeterDirectory, "bin");
+		binDirectory.mkdirs();
+		libDirectory = new File(jmeterDirectory, "lib");
+		libExtDirectory = new File(libDirectory, "ext");
+		libExtDirectory.mkdirs();
+		libJUnitDirectory = new File(libDirectory, "junit");
+		libJUnitDirectory.mkdirs();
+		resultsDirectory.mkdirs();
 	}
 
-	//TODO replace with newPropertyConfiguration
 	protected void propertyConfiguration() throws MojoExecutionException, MojoFailureException {
-		PropertyHandler pluginProperties = new PropertyHandler(propertiesFilesDirectory, binDir, propertiesReplacedByCustomFiles);  //TODO old, remove
-		pluginProperties.setJMeterConfigArtifact(jmeterConfigArtifact);
-
-		configureAdvancedLogging();
 		setJMeterResultFileFormat();
+		configureAdvancedLogging();
 
-		pluginProperties.setJMeterProperties(propertiesJMeter);
-		pluginProperties.setJMeterGlobalProperties(propertiesGlobal);
-		pluginProperties.setJMeterSaveServiceProperties(propertiesSaveService);
-		pluginProperties.setJMeterUpgradeProperties(propertiesUpgrade);
-		pluginProperties.setJmeterUserProperties(propertiesUser);
-		pluginProperties.setJMeterSystemProperties(propertiesSystem);
-		pluginProperties.configureJMeterPropertiesFiles();
-		pluginProperties.setDefaultPluginProperties(binDir.getAbsolutePath());
+		propertiesMap.put(ConfigurationFiles.JMETER_PROPERTIES, new PropertiesMapping(propertiesJMeter));
+		propertiesMap.put(ConfigurationFiles.SAVE_SERVICE_PROPERTIES, new PropertiesMapping(propertiesSaveService));
+		propertiesMap.put(ConfigurationFiles.UPGRADE_PROPERTIES, new PropertiesMapping(propertiesUpgrade));
+		propertiesMap.put(ConfigurationFiles.SYSTEM_PROPERTIES, new PropertiesMapping(propertiesSystem));
+		propertiesMap.put(ConfigurationFiles.USER_PROPERTIES, new PropertiesMapping(propertiesUser));
+		propertiesMap.put(ConfigurationFiles.GLOBAL_PROPERTIES, new PropertiesMapping(propertiesGlobal));
 
-	}
+		for (ConfigurationFiles configurationFile : ConfigurationFiles.values()) {
+			File suppliedPropertiesFile = new File(propertiesFilesDirectory, configurationFile.getFilename());
+			File propertiesFileToWrite = new File(binDirectory.getAbsolutePath(), configurationFile.getFilename());
 
-	//TODO refactor this to make it smaller if possible and start using it instead of propertyConfiguration
-	protected void newPropertyConfiguration() throws MojoExecutionException, MojoFailureException {
-		PropertiesFiles jMeterPropertiesFiles = new PropertiesFiles(jmeterConfigArtifact, JMETER_PROPERTIES);
-		jMeterPropertiesFiles.loadProvidedPropertiesIfAvailable(new File(propertiesFilesDirectory, JMETER_PROPERTIES.getFilename()), propertiesReplacedByCustomFiles);
-		jMeterPropertiesFiles.addAndOverwriteProperties(propertiesJMeter);
-		jMeterPropertiesFiles.writePropertiesToFile(new File(binDir.getAbsolutePath(), JMETER_PROPERTIES.getFilename()));
+			PropertiesFiles somePropertiesFile = new PropertiesFiles(jmeterConfigArtifact, configurationFile);
+			somePropertiesFile.loadProvidedPropertiesIfAvailable(suppliedPropertiesFile, propertiesReplacedByCustomFiles);
+			somePropertiesFile.addAndOverwriteProperties(propertiesMap.get(configurationFile).getAdditionalProperties());
+			somePropertiesFile.writePropertiesToFile(propertiesFileToWrite);
 
-		PropertiesFiles saveServicePropertiesFiles = new PropertiesFiles(jmeterConfigArtifact, SAVE_SERVICE_PROPERTIES);
-		saveServicePropertiesFiles.loadProvidedPropertiesIfAvailable(new File(propertiesFilesDirectory, SAVE_SERVICE_PROPERTIES.getFilename()), propertiesReplacedByCustomFiles);
-		saveServicePropertiesFiles.addAndOverwriteProperties(propertiesSaveService);
-		saveServicePropertiesFiles.writePropertiesToFile(new File(binDir.getAbsolutePath(), SAVE_SERVICE_PROPERTIES.getFilename()));
-
-		PropertiesFiles upgradePropertiesFiles = new PropertiesFiles(jmeterConfigArtifact, UPGRADE_PROPERTIES);
-		upgradePropertiesFiles.loadProvidedPropertiesIfAvailable(new File(propertiesFilesDirectory, UPGRADE_PROPERTIES.getFilename()), propertiesReplacedByCustomFiles);
-		upgradePropertiesFiles.addAndOverwriteProperties(propertiesUpgrade);
-		upgradePropertiesFiles.writePropertiesToFile(new File(binDir.getAbsolutePath(), UPGRADE_PROPERTIES.getFilename()));
-
-		PropertiesFiles systemPropertiesFiles = new PropertiesFiles(jmeterConfigArtifact, SYSTEM_PROPERTIES);
-		systemPropertiesFiles.loadProvidedPropertiesIfAvailable(new File(propertiesFilesDirectory, SYSTEM_PROPERTIES.getFilename()), propertiesReplacedByCustomFiles);
-		systemPropertiesFiles.addAndOverwriteProperties(propertiesSystem);
-		systemPropertiesFiles.writePropertiesToFile(new File(binDir.getAbsolutePath(), SYSTEM_PROPERTIES.getFilename()));
-
-		PropertiesFiles userPropertiesFiles = new PropertiesFiles(jmeterConfigArtifact, USER_PROPERTIES);
-		userPropertiesFiles.loadProvidedPropertiesIfAvailable(new File(propertiesFilesDirectory, USER_PROPERTIES.getFilename()), propertiesReplacedByCustomFiles);
-		userPropertiesFiles.addAndOverwriteProperties(propertiesUser);
-		userPropertiesFiles.writePropertiesToFile(new File(binDir.getAbsolutePath(), USER_PROPERTIES.getFilename()));
-
-		PropertiesFiles globalPropertiesFiles = new PropertiesFiles(jmeterConfigArtifact, GLOBAL_PROPERTIES);
-		globalPropertiesFiles.loadProvidedPropertiesIfAvailable(new File(propertiesFilesDirectory, GLOBAL_PROPERTIES.getFilename()), propertiesReplacedByCustomFiles);
-		globalPropertiesFiles.addAndOverwriteProperties(propertiesGlobal);
-		globalPropertiesFiles.writePropertiesToFile(new File(binDir.getAbsolutePath(), GLOBAL_PROPERTIES.getFilename()));
+			propertiesMap.get(configurationFile).setPropertiesFile(somePropertiesFile);
+		}
 
 		for (File customPropertiesFile : customPropertiesFiles) {
 			PropertiesFiles customProperties = new PropertiesFiles(customPropertiesFile);
 			//TODO separate folder for custom properties?
 			//TODO check file names
-			customProperties.writePropertiesToFile(new File(binDir.getAbsolutePath(), customPropertiesFile.getName()));
+			customProperties.writePropertiesToFile(new File(binDirectory.getAbsolutePath(), customPropertiesFile.getName()));
 		}
 
+		setDefaultPluginProperties(binDirectory.getAbsolutePath());
+	}
+
+	public void setDefaultPluginProperties(String userDirectory) {
+		//JMeter uses the system property "user.dir" to set its base working directory
+		System.setProperty("user.dir", userDirectory);
+		//Prevent JMeter from throwing some System.exit() calls
+		System.setProperty("jmeterengine.remote.system.exit", "false");
+		System.setProperty("jmeterengine.stopfail.system.exit", "false");
 	}
 
 
@@ -270,7 +246,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 		File advancedLoggingSetting = new File(propertiesFilesDirectory + File.separator + logConfigFilename);
 		if (advancedLoggingSetting.exists()) {
 			try {
-				copyFile(advancedLoggingSetting, new File(binDir + File.separator + logConfigFilename));
+				copyFile(advancedLoggingSetting, new File(binDirectory + File.separator + logConfigFilename));
 			} catch (java.io.IOException ex) {
 				throw new MojoFailureException(ex.getMessage());
 			}
@@ -319,11 +295,11 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 					break;
 				case "ApacheJMeter":
 					//TODO set the following for JMeterProcessBuilder: result.getArtifact().getFile().getName()
-					copyArtifact(result.getArtifact(), binDir);
+					copyArtifact(result.getArtifact(), binDirectory);
 					copyTransitiveRuntimeDependenciesToLibDirectory(result.getArtifact());
 					break;
 				default:
-					copyArtifact(result.getArtifact(), libExtDir);
+					copyArtifact(result.getArtifact(), libExtDirectory);
 					copyTransitiveRuntimeDependenciesToLibDirectory(result.getArtifact());
 			}
 		}
@@ -387,7 +363,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 				}
 				ArtifactResult result = getArtifactResult(dependency.getArtifact());
 				if (!result.getArtifact().getArtifactId().startsWith("ApacheJMeter_")) {
-					copyArtifact(result.getArtifact(), libDir);
+					copyArtifact(result.getArtifact(), libDirectory);
 				}
 			}
 		} catch (org.eclipse.aether.resolution.DependencyResolutionException e) {
@@ -424,7 +400,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 				JarEntry jarFileEntry = entries.nextElement();
 				// Only interested in files in the /bin directory that are not properties files
 				if (!jarFileEntry.isDirectory() && jarFileEntry.getName().startsWith("bin") && !jarFileEntry.getName().endsWith(".properties")) {
-					File fileToCreate = new File(workDir.getCanonicalPath() + File.separator + jarFileEntry.getName());
+					File fileToCreate = new File(jmeterDirectory.getCanonicalPath() + File.separator + jarFileEntry.getName());
 					if (jarFileEntry.getName().endsWith(logConfigFilename) && fileToCreate.exists()) {
 						break;
 					}

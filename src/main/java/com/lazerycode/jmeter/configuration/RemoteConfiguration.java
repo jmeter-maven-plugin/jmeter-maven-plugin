@@ -1,7 +1,7 @@
 package com.lazerycode.jmeter.configuration;
 
-import com.lazerycode.jmeter.properties.JMeterPropertiesFiles;
-import com.lazerycode.jmeter.properties.PropertyContainer;
+import com.lazerycode.jmeter.properties.ConfigurationFiles;
+import com.lazerycode.jmeter.properties.PropertiesMapping;
 
 import java.util.Map;
 
@@ -29,7 +29,7 @@ public class RemoteConfiguration {
 	private boolean stopServersAfterTests = false;
 	private boolean startAndStopServersForEachTest = false;
 	private String serverList = null;
-	private Map<JMeterPropertiesFiles, PropertyContainer> masterPropertiesMap = null;
+	private Map<ConfigurationFiles, PropertiesMapping> propertiesMap = null;
 
 
 	/**
@@ -114,12 +114,11 @@ public class RemoteConfiguration {
 	/**
 	 * @return propertycontainers with information specified in the various property sources.
 	 */
-	public Map<JMeterPropertiesFiles, PropertyContainer> getMasterPropertiesMap() {
-		return masterPropertiesMap;
+	public Map<ConfigurationFiles, PropertiesMapping> getPropertiesMap() {
+		return propertiesMap;
 	}
 
-	public void setMasterPropertiesMap(
-			Map<JMeterPropertiesFiles, PropertyContainer> masterPropertiesMap) {
-		this.masterPropertiesMap = masterPropertiesMap;
+	public void setPropertiesMap(Map<ConfigurationFiles, PropertiesMapping> propertiesMap) {
+		this.propertiesMap = propertiesMap;
 	}
 }

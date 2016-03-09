@@ -27,9 +27,9 @@ public class RunJMeterMojo extends AbstractJMeterMojo {
 
 		initialiseJMeterArgumentsArray(true);
 		if (null != remoteConfig) {
-			remoteConfig.setMasterPropertiesMap(pluginProperties.getMasterPropertiesMap());
+			remoteConfig.setPropertiesMap(propertiesMap);
 		}
-		TestManager jMeterTestManager = new TestManager(testArgs, testFilesDirectory, testFilesIncluded, testFilesExcluded, remoteConfig, suppressJMeterOutput, binDir, jMeterProcessJVMSettings);
+		TestManager jMeterTestManager = new TestManager(testArgs, testFilesDirectory, testFilesIncluded, testFilesExcluded, remoteConfig, suppressJMeterOutput, binDirectory, jMeterProcessJVMSettings);
 		jMeterTestManager.setPostTestPauseInSeconds(postTestPauseInSeconds);
 		getLog().info(" ");
 		if (proxyConfig != null) {

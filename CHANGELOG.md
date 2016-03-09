@@ -3,6 +3,9 @@
 ##Next Version (Release Date TBC) Release Notes
 
 * **JMeter version 3.0.0 support added.** 
+* **Issue #162** - Reserved properties are now stripped out of custom properties files.
+* **Issue #136** - The default JMeter user.properties is always used as a base file that is then modified now.
+* **BREAKING CHANGE:** \<workDir\> has been renamed to \<jmeterDirectory\>
 * **BREAKING CHANGE: Issue #131/Issue#160** Dependency resolution is now performed using the Eclipse Aether libraries.  
 	To add artifacts to the lib/ext directory you now need to use:
 

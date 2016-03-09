@@ -1,6 +1,5 @@
 package com.lazerycode.jmeter.configuration;
 
-import com.lazerycode.jmeter.properties.PropertyHandler;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.joda.time.LocalDateTime;
 import org.joda.time.format.DateTimeFormatter;
@@ -11,9 +10,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeSet;
 
+import static com.lazerycode.jmeter.configuration.JMeterCommandLineArguments.*;
 import static com.lazerycode.jmeter.utility.UtilityFunctions.isNotSet;
 import static com.lazerycode.jmeter.utility.UtilityFunctions.isSet;
-import static com.lazerycode.jmeter.configuration.JMeterCommandLineArguments.*;
 
 /**
  * Creates an arguments array to pass to the JMeter object to run tests.
@@ -38,7 +37,6 @@ public class JMeterArgumentsArray {
 	private String jmeterLogFileName;
 	private String logsDirectory;
 	private String resultsDirectory;
-	private PropertyHandler propertyHandler;
 	private LogLevel overrideRootLogLevel;
 
 
@@ -60,16 +58,6 @@ public class JMeterArgumentsArray {
 			disableTests = true;
 		}
 	}
-
-
-	public PropertyHandler getPropertyHandler() {
-		return propertyHandler;
-	}
-
-	public void setPropertyHandler(PropertyHandler propertyHandler) {
-		this.propertyHandler = propertyHandler;
-	}
-
 
 	public void setRemoteStop() {
 		argumentList.add(REMOTE_STOP);

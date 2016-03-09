@@ -6,7 +6,7 @@ package com.lazerycode.jmeter.properties;
  *
  * @author Mark Collin
  */
-public enum JMeterPropertiesFiles {
+public enum ConfigurationFiles {
 
 	JMETER_PROPERTIES("jmeter.properties", true),
 	SAVE_SERVICE_PROPERTIES("saveservice.properties", true),
@@ -18,7 +18,7 @@ public enum JMeterPropertiesFiles {
 	private final String propertiesFilename;
 	private final boolean isRequired;
 
-	JMeterPropertiesFiles(String propertiesFilename, boolean isRequired) {
+	ConfigurationFiles(String propertiesFilename, boolean isRequired) {
 		this.propertiesFilename = propertiesFilename;
 		this.isRequired = isRequired;
 	}

@@ -4,7 +4,8 @@ import com.lazerycode.jmeter.configuration.JMeterArgumentsArray;
 import com.lazerycode.jmeter.configuration.JMeterProcessJVMSettings;
 import com.lazerycode.jmeter.configuration.ProxyConfiguration;
 import com.lazerycode.jmeter.configuration.RemoteConfiguration;
-import com.lazerycode.jmeter.properties.PropertyHandler;
+import com.lazerycode.jmeter.properties.ConfigurationFiles;
+import com.lazerycode.jmeter.properties.PropertiesMapping;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -14,7 +15,9 @@ import org.joda.time.format.DateTimeFormat;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.lazerycode.jmeter.utility.UtilityFunctions.isSet;
 
@@ -71,8 +74,8 @@ public abstract class AbstractJMeterMojo extends AbstractMojo {
 	/**
 	 * Set the directory that JMeter results are saved to.
 	 */
-	@Parameter
-	protected String resultsDirectory;
+	@Parameter(defaultValue = "${project.build.directory}/jmeter/results")
+	protected File resultsDirectory;
 
 	/**
 	 * Absolute path to JMeter custom (test dependent) properties file.
@@ -143,23 +146,21 @@ public abstract class AbstractJMeterMojo extends AbstractMojo {
 	 * Place where the JMeter files will be generated.
 	 */
 	@Parameter(defaultValue = "${project.build.directory}/jmeter")
-	protected transient File workDir;
+	protected transient File jmeterDirectory;
 
 	/**
 	 * Other directories will be created by this plugin and used by JMeter
 	 */
-	protected static File binDir;
-	protected static File libDir;
-	protected static File libExtDir;
-	protected static File libJUnitDir;
-	protected static File logsDir;
-	protected static File resultsDir;
+	protected static File binDirectory;
+	protected static File libDirectory;
+	protected static File libExtDirectory;
+	protected static File libJUnitDirectory;
+	protected static File logsDirectory;
 
 	protected static JMeterArgumentsArray testArgs;
 	protected boolean resultsOutputIsCSVFormat = false;
 	protected List<String> resultFilesLocations;
-
-	protected PropertyHandler pluginProperties; //TODO remove this when all functionality replaced
+	protected static Map<ConfigurationFiles, PropertiesMapping> propertiesMap = new HashMap<>();
 
 	//==================================================================================================================
 
@@ -182,8 +183,8 @@ public abstract class AbstractJMeterMojo extends AbstractMojo {
 	 * @throws MojoExecutionException
 	 */
 	protected void initialiseJMeterArgumentsArray(boolean disableGUI) throws MojoExecutionException {
-		testArgs = new JMeterArgumentsArray(disableGUI, workDir.getAbsolutePath());
-		testArgs.setResultsDirectory(resultsDir.getAbsolutePath());
+		testArgs = new JMeterArgumentsArray(disableGUI, jmeterDirectory.getAbsolutePath());
+		testArgs.setResultsDirectory(resultsDirectory.getAbsolutePath());
 		testArgs.setResultFileOutputFormatIsCSV(resultsOutputIsCSVFormat);
 		if (testResultsTimestamp) {
 			testArgs.setResultsTimestamp(testResultsTimestamp);
@@ -201,6 +202,6 @@ public abstract class AbstractJMeterMojo extends AbstractMojo {
 			testArgs.setACustomPropertiesFile(customPropertiesFile);
 		}
 		testArgs.setLogRootOverride(overrideRootLogLevel);
-		testArgs.setLogsDirectory(logsDir.getAbsolutePath());
+		testArgs.setLogsDirectory(logsDirectory.getAbsolutePath());
 	}
 }

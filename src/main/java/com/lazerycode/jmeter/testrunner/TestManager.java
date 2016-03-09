@@ -145,7 +145,7 @@ public class TestManager {
 		if (remoteConfig == null) {
 			return Collections.emptyList();
 		}
-		return new RemoteArgumentsArrayBuilder().buildRemoteArgumentsArray(remoteConfig.getMasterPropertiesMap());
+		return new RemoteArgumentsArrayBuilder().buildRemoteArgumentsArray(remoteConfig.getPropertiesMap());
 	}
 
 	/**

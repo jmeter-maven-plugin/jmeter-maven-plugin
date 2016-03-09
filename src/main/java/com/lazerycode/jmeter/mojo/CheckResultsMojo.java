@@ -57,7 +57,7 @@ public class CheckResultsMojo extends AbstractJMeterMojo {
 			getLog().info("Failed requests: 			" + resultScanner.getFailureCount());
 			getLog().info(" ");
 			if (!ignoreResultFailures && resultScanner.getFailureCount() > 0) {
-				throw new MojoFailureException("Failing build because failed requests have been detected.  JMeter logs are available at: '" + logsDir.getAbsolutePath() + "'");
+				throw new MojoFailureException("Failing build because failed requests have been detected.  JMeter logs are available at: '" + logsDirectory.getAbsolutePath() + "'");
 			}
 		} else {
 			getLog().info(" ");

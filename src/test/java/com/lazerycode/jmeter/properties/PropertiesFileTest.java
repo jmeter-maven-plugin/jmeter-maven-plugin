@@ -16,8 +16,8 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Properties;
 
-import static com.lazerycode.jmeter.properties.JMeterPropertiesFiles.GLOBAL_PROPERTIES;
-import static com.lazerycode.jmeter.properties.JMeterPropertiesFiles.JMETER_PROPERTIES;
+import static com.lazerycode.jmeter.properties.ConfigurationFiles.GLOBAL_PROPERTIES;
+import static com.lazerycode.jmeter.properties.ConfigurationFiles.JMETER_PROPERTIES;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
@@ -25,7 +25,7 @@ import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.*;
 import static org.slf4j.Logger.ROOT_LOGGER_NAME;
 
-public class PropertiesFilesTest {
+public class PropertiesFileTest {
 
 	private final URL sourcePropertiesFile = this.getClass().getResource("/testSource.properties");
 	private final URL additionsPropertiesFile = this.getClass().getResource("/testAdditions.properties");

@@ -20,6 +20,13 @@ public class PropertiesFiles {
 	private Properties properties;
 
 	/**
+	 * Basic constructor for testing purposes.
+	 */
+	public PropertiesFiles() {
+		this.properties = new Properties();
+	}
+
+	/**
 	 * Create a new PropertiesFiles object from a properties file
 	 *
 	 * @param propertiesFile The file to use to create a PropertiesFiles object
@@ -36,7 +43,7 @@ public class PropertiesFiles {
 	 * @param jMeterPropertiesFile The properties file that we want to find in the jmeterConfigArtifact
 	 * @throws IOException
 	 */
-	public PropertiesFiles(Artifact jmeterConfigArtifact, JMeterPropertiesFiles jMeterPropertiesFile) throws IOException {
+	public PropertiesFiles(Artifact jmeterConfigArtifact, ConfigurationFiles jMeterPropertiesFile) throws IOException {
 		Properties defaultPropertySet = new Properties();
 		if (null != jmeterConfigArtifact && jMeterPropertiesFile.createFileIfItDoesNotExist()) {
 			try {
@@ -110,6 +117,7 @@ public class PropertiesFiles {
 	 */
 	public void writePropertiesToFile(File outputFile) throws IOException {
 		stripOutReservedProperties();
+		//TODO if jmeter.properties write properties that are required for plugin
 		if (properties.size() == 0) {
 			return;
 		}
@@ -155,7 +163,7 @@ public class PropertiesFiles {
 	 *
 	 * @return this.properties
 	 */
-	protected Properties getProperties() {
+	public Properties getProperties() {
 		return properties;
 	}
 }

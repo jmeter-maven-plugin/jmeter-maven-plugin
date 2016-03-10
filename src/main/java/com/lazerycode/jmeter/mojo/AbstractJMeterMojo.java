@@ -78,6 +78,12 @@ public abstract class AbstractJMeterMojo extends AbstractMojo {
 	protected File resultsDirectory;
 
 	/**
+	 * Set the directory that JMeter logs are saved to.
+	 */
+	@Parameter(defaultValue = "${project.build.directory}/jmeter/logs")
+	protected File logsDirectory;
+
+	/**
 	 * Absolute path to JMeter custom (test dependent) properties file.
 	 */
 	@Parameter
@@ -148,17 +154,9 @@ public abstract class AbstractJMeterMojo extends AbstractMojo {
 	@Parameter(defaultValue = "${project.build.directory}/jmeter")
 	protected transient File jmeterDirectory;
 
-	/**
-	 * Other directories will be created by this plugin and used by JMeter
-	 */
-	protected static File binDirectory;
-	protected static File libDirectory;
-	protected static File libExtDirectory;
-	protected static File libJUnitDirectory;
-	protected static File logsDirectory;
-
 	protected static JMeterArgumentsArray testArgs;
 	protected boolean resultsOutputIsCSVFormat = false;
+	protected static File workingDirectory;
 	protected List<String> resultFilesLocations;
 	protected static Map<ConfigurationFiles, PropertiesMapping> propertiesMap = new HashMap<>();
 

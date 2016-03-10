@@ -3,6 +3,10 @@
 ##Next Version (Release Date TBC) Release Notes
 
 * **JMeter version 3.0.0 support added.** 
+* You can now specify where logs are saved using the \<logsDirectory\> tag.  This will default to `${project.build.directory}/jmeter/logs`
+
+		<logsDirectory>${project.build.directory}/jmeter/logs</logsDirectory>
+		
 * **Issue #162** - Reserved properties are now stripped out of custom properties files.
 * **Issue #136** - The default JMeter user.properties is always used as a base file that is then modified now.
 * **BREAKING CHANGE:** \<workDir\> has been renamed to \<jmeterDirectory\>
@@ -11,13 +15,13 @@
 
 		<jmeterExtensions>
 			<artifact>kg.apc:jmeter-plugins:pom:1.3.1</artifact>
-		<jmeterExtensions>
+		</jmeterExtensions>
 		
 	To add libraries to the lib/junit folder you now need to use:
 		
 		<junitLibraries>
 			<artifact>com.lazerycode.junit:junit-test:1.0.0</artifact>
-		<junitLibraries>
+		</junitLibraries>
 
 	The format for artifact elements is: \<groupId\>:\<artifactId\>[:\<extension\>[:\<classifier\>]]:\<version\>
 	

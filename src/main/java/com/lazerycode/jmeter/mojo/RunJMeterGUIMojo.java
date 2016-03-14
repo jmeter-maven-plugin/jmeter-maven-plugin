@@ -52,7 +52,7 @@ public class RunJMeterGUIMojo extends AbstractJMeterMojo {
 	}
 
 	private void startJMeterGUI() throws MojoExecutionException {
-		JMeterProcessBuilder JMeterProcessBuilder = new JMeterProcessBuilder(jMeterProcessJVMSettings);
+		JMeterProcessBuilder JMeterProcessBuilder = new JMeterProcessBuilder(jMeterProcessJVMSettings, runtimeJarName);
 		JMeterProcessBuilder.setWorkingDirectory(workingDirectory);
 		JMeterProcessBuilder.addArguments(testArgs.buildArgumentsArray());
 		try {

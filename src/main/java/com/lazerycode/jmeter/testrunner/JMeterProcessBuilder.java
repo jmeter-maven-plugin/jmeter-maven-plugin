@@ -16,15 +16,17 @@ public class JMeterProcessBuilder {
 	private static final Logger LOGGER = LoggerFactory.getLogger(JMeterProcessBuilder.class);
 	private int initialHeapSizeInMegaBytes;
 	private int maximumHeapSizeInMegaBytes;
+	private final String runtimeJarName;
 	private String workingDirectory;
 	private String javaRuntime;
 	private List<String> userSuppliedArguments;
 	private List<String> mainClassArguments = new ArrayList<>();
 
-	public JMeterProcessBuilder(JMeterProcessJVMSettings settings) {
+	public JMeterProcessBuilder(JMeterProcessJVMSettings settings, String runtimeJarName) {
 		if (null == settings) {
 			settings = new JMeterProcessJVMSettings();
 		}
+		this.runtimeJarName = runtimeJarName;
 		this.initialHeapSizeInMegaBytes = settings.getXms();
 		this.maximumHeapSizeInMegaBytes = settings.getXmx();
 		this.userSuppliedArguments = settings.getArguments();
@@ -46,8 +48,6 @@ public class JMeterProcessBuilder {
 	}
 
 	private String[] constructArgumentsList() {
-		String mainClass = "ApacheJMeter-3.0-SNAPSHOT.jar";
-
 		List<String> argumentsList = new ArrayList<>();
 		argumentsList.add(javaRuntime);
 		argumentsList.add(MessageFormat.format("-Xms{0}M", String.valueOf(this.initialHeapSizeInMegaBytes)));
@@ -57,7 +57,7 @@ public class JMeterProcessBuilder {
 		}
 
 		argumentsList.add("-jar");
-		argumentsList.add(mainClass);
+		argumentsList.add(runtimeJarName);
 		for (String arg : mainClassArguments) {
 			argumentsList.add(arg);
 		}

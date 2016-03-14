@@ -24,7 +24,6 @@ import org.eclipse.aether.graph.DependencyNode;
 import org.eclipse.aether.repository.RemoteRepository;
 import org.eclipse.aether.resolution.ArtifactRequest;
 import org.eclipse.aether.resolution.ArtifactResolutionException;
-import org.eclipse.aether.resolution.ArtifactResult;
 import org.eclipse.aether.resolution.DependencyRequest;
 import org.eclipse.aether.util.artifact.JavaScopes;
 import org.eclipse.aether.util.filter.DependencyFilterUtils;
@@ -292,21 +291,21 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 			throw new DependencyResolutionException("No JMeter dependencies specified!");
 		}
 		for (String desiredArtifact : jmeterArtifacts) {
-			ArtifactResult result = getArtifactResult(new DefaultArtifact(desiredArtifact));
-			switch (result.getArtifact().getArtifactId()) {
+			Artifact returnedArtifact = getArtifactResult(new DefaultArtifact(desiredArtifact));
+			switch (returnedArtifact.getArtifactId()) {
 				case JMETER_CONFIG_ARTIFACT_NAME:
-					jmeterConfigArtifact = result.getArtifact();
+					jmeterConfigArtifact = returnedArtifact;
 					//TODO Could move the below elsewhere if required.
 					extractConfigSettings(jmeterConfigArtifact);
 					break;
 				case "ApacheJMeter":
-					//TODO set the following for JMeterProcessBuilder: result.getArtifact().getFile().getName()
-					copyArtifact(result.getArtifact(), workingDirectory);
-					copyTransitiveRuntimeDependenciesToLibDirectory(result.getArtifact());
+					runtimeJarName = returnedArtifact.getFile().getName();
+					copyArtifact(returnedArtifact, workingDirectory);
+					copyTransitiveRuntimeDependenciesToLibDirectory(returnedArtifact);
 					break;
 				default:
-					copyArtifact(result.getArtifact(), libExtDirectory);
-					copyTransitiveRuntimeDependenciesToLibDirectory(result.getArtifact());
+					copyArtifact(returnedArtifact, libExtDirectory);
+					copyTransitiveRuntimeDependenciesToLibDirectory(returnedArtifact);
 			}
 		}
 	}
@@ -321,9 +320,9 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 	 */
 	private void copyExplicitLibraries(List<String> desiredArtifacts, File destination) throws DependencyResolutionException, IOException {
 		for (String desiredArtifact : desiredArtifacts) {
-			ArtifactResult result = getArtifactResult(new DefaultArtifact(desiredArtifact));
-			copyArtifact(result.getArtifact(), destination);
-			copyTransitiveRuntimeDependenciesToLibDirectory(result.getArtifact());
+			Artifact returnedArtifact = getArtifactResult(new DefaultArtifact(desiredArtifact));
+			copyArtifact(returnedArtifact, destination);
+			copyTransitiveRuntimeDependenciesToLibDirectory(returnedArtifact);
 		}
 	}
 
@@ -334,12 +333,12 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 	 * @return Will return an ArtifactResult object
 	 * @throws DependencyResolutionException
 	 */
-	private ArtifactResult getArtifactResult(org.eclipse.aether.artifact.Artifact desiredArtifact) throws DependencyResolutionException {
+	private Artifact getArtifactResult(Artifact desiredArtifact) throws DependencyResolutionException {
 		ArtifactRequest artifactRequest = new ArtifactRequest();
 		artifactRequest.setArtifact(desiredArtifact);
 		artifactRequest.setRepositories(repositoryList);
 		try {
-			return repositorySystem.resolveArtifact(repositorySystemSession, artifactRequest);
+			return repositorySystem.resolveArtifact(repositorySystemSession, artifactRequest).getArtifact();
 		} catch (ArtifactResolutionException e) {
 			throw new DependencyResolutionException(e.getMessage(), e);
 		}
@@ -352,7 +351,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 	 * @throws DependencyResolutionException
 	 * @throws IOException
 	 */
-	private void copyTransitiveRuntimeDependenciesToLibDirectory(org.eclipse.aether.artifact.Artifact artifact) throws DependencyResolutionException, IOException {
+	private void copyTransitiveRuntimeDependenciesToLibDirectory(Artifact artifact) throws DependencyResolutionException, IOException {
 		CollectRequest collectRequest = new CollectRequest();
 		collectRequest.setRoot(new Dependency(artifact, JavaScopes.RUNTIME));
 		collectRequest.setRepositories(repositoryList);
@@ -367,9 +366,9 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 					getLog().debug("Dependency request trace: " + dependencyRequest.getCollectRequest().getTrace().toString());
 					getLog().debug("-------------------------------------------------------");
 				}
-				ArtifactResult result = getArtifactResult(dependency.getArtifact());
-				if (!result.getArtifact().getArtifactId().startsWith("ApacheJMeter_")) {
-					copyArtifact(result.getArtifact(), libDirectory);
+				Artifact returnedArtifact = getArtifactResult(dependency.getArtifact());
+				if (!returnedArtifact.getArtifactId().startsWith("ApacheJMeter_")) {
+					copyArtifact(returnedArtifact, libDirectory);
 				}
 			}
 		} catch (org.eclipse.aether.resolution.DependencyResolutionException e) {
@@ -384,7 +383,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 	 * @param destinationDirectory Directory to copy the artifact to.
 	 * @throws IOException
 	 */
-	private void copyArtifact(org.eclipse.aether.artifact.Artifact artifact, File destinationDirectory) throws IOException {
+	private void copyArtifact(Artifact artifact, File destinationDirectory) throws IOException {
 		try {
 			FileUtils.copyFileToDirectory(artifact.getFile(), destinationDirectory);
 		} catch (java.io.IOException e) {

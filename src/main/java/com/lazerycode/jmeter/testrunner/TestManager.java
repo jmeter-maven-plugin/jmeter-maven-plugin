@@ -35,8 +35,9 @@ public class TestManager {
 	private final RemoteConfiguration remoteServerConfiguration;
 	private final JMeterProcessJVMSettings jMeterProcessJVMSettings;
 	private long postTestPauseInSeconds;
+	private final String runtimeJarName;
 
-	public TestManager(JMeterArgumentsArray baseTestArgs, File testFilesDirectory, List<String> testFilesIncluded, List<String> testFilesExcluded, RemoteConfiguration remoteServerConfiguration, boolean suppressJMeterOutput, File binDir, JMeterProcessJVMSettings jMeterProcessJVMSettings) {
+	public TestManager(JMeterArgumentsArray baseTestArgs, File testFilesDirectory, List<String> testFilesIncluded, List<String> testFilesExcluded, RemoteConfiguration remoteServerConfiguration, boolean suppressJMeterOutput, File binDir, JMeterProcessJVMSettings jMeterProcessJVMSettings, String runtimeJarName) {
 		this.binDir = binDir;
 		this.baseTestArgs = baseTestArgs;
 		this.testFilesDirectory = testFilesDirectory;
@@ -45,6 +46,7 @@ public class TestManager {
 		this.remoteServerConfiguration = remoteServerConfiguration;
 		this.suppressJMeterOutput = suppressJMeterOutput;
 		this.jMeterProcessJVMSettings = jMeterProcessJVMSettings;
+		this.runtimeJarName = runtimeJarName;
 	}
 
 	/**
@@ -112,7 +114,7 @@ public class TestManager {
 		LOGGER.debug("JMeter is called with the following command line arguments: " + UtilityFunctions.humanReadableCommandLineOutput(argumentsArray));
 		LOGGER.info("Executing test: " + test.getName());
 		//Start the test.
-		JMeterProcessBuilder JMeterProcessBuilder = new JMeterProcessBuilder(jMeterProcessJVMSettings);
+		JMeterProcessBuilder JMeterProcessBuilder = new JMeterProcessBuilder(jMeterProcessJVMSettings, runtimeJarName);
 		JMeterProcessBuilder.setWorkingDirectory(binDir);
 		JMeterProcessBuilder.addArguments(argumentsArray);
 		try {

@@ -154,6 +154,7 @@ public abstract class AbstractJMeterMojo extends AbstractMojo {
 	@Parameter(defaultValue = "${project.build.directory}/jmeter")
 	protected transient File jmeterDirectory;
 
+	protected static String runtimeJarName;
 	protected static JMeterArgumentsArray testArgs;
 	protected boolean resultsOutputIsCSVFormat = false;
 	protected static File workingDirectory;

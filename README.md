@@ -5,6 +5,7 @@
 [![Build Status](https://travis-ci.org/jmeter-maven-plugin/jmeter-maven-plugin.svg?branch=master)](https://travis-ci.org/jmeter-maven-plugin/jmeter-maven-plugin)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.lazerycode.jmeter/jmeter-maven-plugin/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.lazerycode.jmeter/jmeter-maven-plugin)
 [![Javadoc](https://javadoc-emblem.rhcloud.com/doc/com.lazerycode.jmeter/jmeter-maven-plugin/badge.svg)](http://www.javadoc.io/doc/com.lazerycode.jmeter/jmeter-maven-plugin)
+[![Dependency Status](https://www.versioneye.com/user/projects/56e686a3df573d00495abe1d/badge.svg?style=flat)](https://www.versioneye.com/user/projects/56e686a3df573d00495abe1d)
 
 A Maven plugin that provides the ability to run JMeter tests as part of your build
 

@@ -4,6 +4,7 @@ import com.lazerycode.jmeter.testrunner.JMeterProcessBuilder;
 import com.lazerycode.jmeter.utility.UtilityFunctions;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Execute;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -16,7 +17,8 @@ import java.io.IOException;
  *
  * @author Jarrod Ribble
  */
-@Mojo(name = "gui", defaultPhase = LifecyclePhase.INTEGRATION_TEST)
+@Mojo(name = "gui")
+@Execute(phase = LifecyclePhase.TEST)
 public class RunJMeterGUIMojo extends AbstractJMeterMojo {
 
 	@Parameter(defaultValue = "false")

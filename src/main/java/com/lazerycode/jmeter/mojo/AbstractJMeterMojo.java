@@ -6,6 +6,7 @@ import com.lazerycode.jmeter.configuration.ProxyConfiguration;
 import com.lazerycode.jmeter.configuration.RemoteConfiguration;
 import com.lazerycode.jmeter.properties.ConfigurationFiles;
 import com.lazerycode.jmeter.properties.PropertiesMapping;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -134,10 +135,13 @@ public abstract class AbstractJMeterMojo extends AbstractMojo {
 	@Parameter(defaultValue = "${mojoExecution}", required = true, readonly = true)
 	protected MojoExecution mojoExecution;
 
+	@Parameter(defaultValue = "${session}", readonly = true)
+	private MavenSession session;
+
 	/**
 	 * Skip the JMeter tests
 	 */
-	@Parameter(defaultValue = "false")
+	@Parameter(defaultValue = "${skipTests}")
 	protected boolean skipTests;
 
 	/**
@@ -166,9 +170,15 @@ public abstract class AbstractJMeterMojo extends AbstractMojo {
 	@Override
 	public final void execute() throws MojoExecutionException, MojoFailureException {
 		if (skipTests) {
-			getLog().info("Performance tests are skipped.");
-			//TODO don't skip if trying to run gui?
-			return;
+			if (session.getGoals().contains("jmeter:gui")) {
+				if (!mojoExecution.getExecutionId().equals("default-cli") && !mojoExecution.getLifecyclePhase().equals("compile")) {
+					getLog().info("Performance tests are skipped.");
+					return;
+				}
+			} else {
+				getLog().info("Performance tests are skipped.");
+				return;
+			}
 		}
 
 		doExecute();

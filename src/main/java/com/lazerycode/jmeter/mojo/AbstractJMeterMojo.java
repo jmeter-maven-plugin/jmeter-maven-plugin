@@ -12,6 +12,8 @@ import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.settings.Proxy;
+import org.apache.maven.settings.Settings;
 import org.joda.time.format.DateTimeFormat;
 
 import java.io.File;
@@ -90,6 +92,19 @@ public abstract class AbstractJMeterMojo extends AbstractMojo {
 	@Parameter
 	protected List<File> customPropertiesFiles = new ArrayList<>();
 
+	/**
+	 * Use maven proxy configuration if no specific proxy configuration provided
+	 */
+	@Parameter
+	protected boolean useMavenProxy;
+	
+	/**
+	 * Maven settings
+	 */
+	@Parameter( defaultValue = "${settings}", readonly = true )
+	protected Settings settings;
+
+	
 	/**
 	 * Value class that wraps all proxy configurations.
 	 */
@@ -180,6 +195,11 @@ public abstract class AbstractJMeterMojo extends AbstractMojo {
 				return;
 			}
 		}
+		
+		// load maven proxy if needed
+		if (useMavenProxy && proxyConfig == null) {
+			loadMavenProxy();
+		}
 
 		doExecute();
 	}
@@ -213,4 +233,37 @@ public abstract class AbstractJMeterMojo extends AbstractMojo {
 		testArgs.setLogRootOverride(overrideRootLogLevel);
 		testArgs.setLogsDirectory(logsDirectory.getAbsolutePath());
 	}
+	
+	/**
+	 * Try to load the active maven proxy.
+	 *  
+	 */
+	protected void loadMavenProxy() {
+		if (settings == null)
+			return;
+		
+		try {
+			Proxy mvnProxy = settings.getActiveProxy();
+			
+			if (mvnProxy != null) {
+
+				ProxyConfiguration newProxyConf = new ProxyConfiguration();
+				newProxyConf.setHost(mvnProxy.getHost());
+				newProxyConf.setPort(mvnProxy.getPort());
+				newProxyConf.setUsername(mvnProxy.getUsername());
+				newProxyConf.setPassword(mvnProxy.getPassword());
+				newProxyConf.setHostExclusions(mvnProxy.getNonProxyHosts());
+				proxyConfig = newProxyConf;
+				
+				getLog().info("Maven proxy loaded successfully");
+			} else {
+				getLog().warn("No maven proxy found, but useMavenProxy set to true.");
+			}
+		} catch (Exception e) {
+			getLog().error("Error while loading maven proxy", e);
+		}
+		
+		
+	}
+	
 }

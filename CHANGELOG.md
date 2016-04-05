@@ -2,16 +2,15 @@
 
 ##Next Version (Release Date TBC) Release Notes
 
-* You can now use the maven proxy using \<useMavenProxy\>true\</useMavenProxy\> tag. Only the first active proxy will be used. \<useMavenProxy\> have less priority than \<proxyConfiguration\>
-
 * **JMeter version 3.0.0 support added.** 
-* You can now specify where logs are saved using the \<logsDirectory\> tag.  This will default to `${project.build.directory}/jmeter/logs`
+* **Merge pull request #167** (Thanks [Pascal Treilhes](https://github.com/treilhes)) - You can now use your current maven proxy with the `<useMavenProxy>true</useMavenProxy>` tag, only the first active proxy will be used. `<useMavenProxy>` have a lower priority than `<proxyConfiguration>`.
+* You can now specify where logs are saved using the `<logsDirectory>` tag.  This will default to `${project.build.directory}/jmeter/logs`
 
 		<logsDirectory>${project.build.directory}/jmeter/logs</logsDirectory>
 		
 * **Issue #162** - Reserved properties are now stripped out of custom properties files.
 * **Issue #136** - The default JMeter user.properties is always used as a base file that is then modified now.
-* **BREAKING CHANGE:** \<workDir\> has been renamed to \<jmeterDirectory\>
+* **BREAKING CHANGE:** `<workDir>` has been renamed to `<jmeterDirectory>`
 * **BREAKING CHANGE: Issue #131/Issue#160** Dependency resolution is now performed using the Eclipse Aether libraries.  
 	To add artifacts to the lib/ext directory you now need to use:
 
@@ -35,7 +34,7 @@
 		<scanResultsForSuccessfulRequests>true</scanResultsForSuccessfulRequests>
 
 * **Issue #125** - Console output is now clearer when talking about failures.
-* **Merge pull request #111** (Thanks [Gordon](https://github.com/gordon00) - Add support for opening a test file in jmeter:gui
+* **Merge pull request #111** (Thanks [Gordon](https://github.com/gordon00)) - Add support for opening a test file in jmeter:gui
 * **BREAKING CHANGE: Merge pull request #161** (Thanks [Irek P](https://github.com/automatictester)) - Add support for multiple custom properties files 
 
 		<customPropertiesFiles>

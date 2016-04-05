@@ -2,6 +2,8 @@
 
 ##Next Version (Release Date TBC) Release Notes
 
+* You can now use the maven proxy using \<useMavenProxy\>true\</useMavenProxy\> tag. Only the first active proxy will be used. \<useMavenProxy\> have less priority than \<proxyConfiguration\>
+
 * **JMeter version 3.0.0 support added.** 
 * You can now specify where logs are saved using the \<logsDirectory\> tag.  This will default to `${project.build.directory}/jmeter/logs`
 

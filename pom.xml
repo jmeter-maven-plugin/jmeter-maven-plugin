@@ -32,7 +32,7 @@
         <!--Dependency versions-->
         <aether.version>1.1.0</aether.version>
         <ant.version>1.9.7</ant.version>
-        <commons-io.version>2.4</commons-io.version>
+        <commons-io.version>2.5</commons-io.version>
         <junit.version>4.12</junit.version>
         <joda-time.version>2.9.3</joda-time.version>
         <logback.version>1.1.7</logback.version>

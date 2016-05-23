@@ -35,7 +35,7 @@
 
 * **Issue #125** - Console output is now clearer when talking about failures.
 * **Merge pull request #111** (Thanks [Gordon](https://github.com/gordon00)) - Add support for opening a test file in jmeter:gui
-* **BREAKING CHANGE: Merge pull request #161** (Thanks [Irek P](https://github.com/automatictester)) - Add support for multiple custom properties files 
+* **BREAKING CHANGE: Merge pull request #161** (Thanks [Irek Pastusiak](https://github.com/automatictester)) - Add support for multiple custom properties files 
 
 		<customPropertiesFiles>
 			<file>someFile</file>
@@ -47,7 +47,7 @@
 * **JMeter version 2.13 support added by hacking about with dependencies.**
 * **Issue #108** - Send log output to debug if suppressJMeterOutput is true to prevent buffer overflow
 * **Merge pull request #110** (Thanks [Nanne](https://github.com/nbaars)) - Additional logging.
-* **Merge pull request #120** (Thanks [Irek P](https://github.com/automatictester)) - Make Properties file directory configurable.
+* **Merge pull request #120** (Thanks [Irek Pastusiak](https://github.com/automatictester)) - Make Properties file directory configurable.
 
 ##Version 1.10.0 Release Notes
 

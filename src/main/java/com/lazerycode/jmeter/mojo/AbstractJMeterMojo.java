@@ -81,6 +81,12 @@ public abstract class AbstractJMeterMojo extends AbstractMojo {
 	protected File resultsDirectory;
 
 	/**
+	 * Set the directory that JMeter test files are copied into as part of the build.
+	 */
+	@Parameter(defaultValue = "${project.build.directory}/jmeter/testFiles")
+	protected File testFilesBuildDirectory;
+
+	/**
 	 * Set the directory that JMeter logs are saved to.
 	 */
 	@Parameter(defaultValue = "${project.build.directory}/jmeter/logs")
@@ -97,14 +103,14 @@ public abstract class AbstractJMeterMojo extends AbstractMojo {
 	 */
 	@Parameter
 	protected boolean useMavenProxy;
-	
+
 	/**
 	 * Maven settings
 	 */
-	@Parameter( defaultValue = "${settings}", readonly = true )
+	@Parameter(defaultValue = "${settings}", readonly = true)
 	protected Settings settings;
 
-	
+
 	/**
 	 * Value class that wraps all proxy configurations.
 	 */
@@ -195,7 +201,7 @@ public abstract class AbstractJMeterMojo extends AbstractMojo {
 				return;
 			}
 		}
-		
+
 		// load maven proxy if needed
 		if (useMavenProxy && proxyConfig == null) {
 			loadMavenProxy();
@@ -233,18 +239,17 @@ public abstract class AbstractJMeterMojo extends AbstractMojo {
 		testArgs.setLogRootOverride(overrideRootLogLevel);
 		testArgs.setLogsDirectory(logsDirectory.getAbsolutePath());
 	}
-	
+
 	/**
 	 * Try to load the active maven proxy.
-	 *  
 	 */
 	protected void loadMavenProxy() {
 		if (settings == null)
 			return;
-		
+
 		try {
 			Proxy mvnProxy = settings.getActiveProxy();
-			
+
 			if (mvnProxy != null) {
 
 				ProxyConfiguration newProxyConf = new ProxyConfiguration();
@@ -254,7 +259,7 @@ public abstract class AbstractJMeterMojo extends AbstractMojo {
 				newProxyConf.setPassword(mvnProxy.getPassword());
 				newProxyConf.setHostExclusions(mvnProxy.getNonProxyHosts());
 				proxyConfig = newProxyConf;
-				
+
 				getLog().info("Maven proxy loaded successfully");
 			} else {
 				getLog().warn("No maven proxy found, but useMavenProxy set to true.");
@@ -262,8 +267,8 @@ public abstract class AbstractJMeterMojo extends AbstractMojo {
 		} catch (Exception e) {
 			getLog().error("Error while loading maven proxy", e);
 		}
-		
-		
+
+
 	}
-	
+
 }

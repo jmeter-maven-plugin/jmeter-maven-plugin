@@ -192,6 +192,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 		libExtDirectory.mkdirs();
 		libJUnitDirectory = new File(libDirectory, "junit");
 		libJUnitDirectory.mkdirs();
+		testFilesBuildDirectory.mkdirs();
 		resultsDirectory.mkdirs();
 		logsDirectory.mkdirs();
 	}

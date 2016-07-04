@@ -26,7 +26,18 @@
 
 	The format for artifact elements is: \<groupId\>:\<artifactId\>[:\<extension\>[:\<classifier\>]]:\<version\>
 	
-	You should no longer need to make these artifacts dependencies of the plugin, we will just got and get the artifact and its associated dependencies.  This should make configuration much easier and less verbose. 
+	You should no longer need to make these artifacts dependencies of the plugin, we will just got and get the artifact and its associated dependencies.  This should make configuration much easier and less verbose.
+	
+	This will also allow you to choose the version of JMeter that you use with the plugin, bear in mind that different versions of JMeter depend on a different list of artifacts, you will have to change `<jmeterVersion>` and `<jmeterArtifacts>`:
+	
+		<jmeterVersion>3.0</jmeterVersion>
+	
+		<jmeterArtifacts>
+			<artifact>com.lazerycode.junit:junit-test:1.0.0</artifact>
+		</jmeterArtifacts>
+		
+	The `<jmeterArtifacts>` list is hard coded by default, if you specify your own version of JMeter you will also have to provide your own list of dependencies. 	
+	
 
 * **Issue #117** - You now have the option to scan results files for failed requests and successful requests.  Both are disabled by default since they do have a performance hit.
 

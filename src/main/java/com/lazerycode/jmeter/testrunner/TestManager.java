@@ -119,6 +119,15 @@ public class TestManager {
 		JMeterProcessBuilder.addArguments(argumentsArray);
 		try {
 			final Process process = JMeterProcessBuilder.startProcess();
+
+			Runtime.getRuntime().addShutdownHook(new Thread() {
+				@Override
+				public void run() {
+					LOGGER.info("Shutdown detected, destroying JMeter process...");
+					process.destroy();
+				}
+			});
+
 			BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
 			String line;
 			while ((line = br.readLine()) != null) {

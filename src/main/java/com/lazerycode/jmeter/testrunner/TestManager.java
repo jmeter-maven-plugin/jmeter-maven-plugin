@@ -1,10 +1,10 @@
 package com.lazerycode.jmeter.testrunner;
 
-import com.lazerycode.jmeter.utility.UtilityFunctions;
 import com.lazerycode.jmeter.configuration.JMeterArgumentsArray;
 import com.lazerycode.jmeter.configuration.JMeterProcessJVMSettings;
 import com.lazerycode.jmeter.configuration.RemoteArgumentsArrayBuilder;
 import com.lazerycode.jmeter.configuration.RemoteConfiguration;
+import com.lazerycode.jmeter.utility.UtilityFunctions;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.tools.ant.DirectoryScanner;
 import org.slf4j.Logger;

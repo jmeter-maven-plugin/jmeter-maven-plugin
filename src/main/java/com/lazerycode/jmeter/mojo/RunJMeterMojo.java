@@ -27,10 +27,20 @@ public class RunJMeterMojo extends AbstractJMeterMojo {
 		getLog().info(" P E R F O R M A N C E    T E S T S");
 		getLog().info("-------------------------------------------------------");
 
+		if (!testFilesDirectory.exists()) {
+			getLog().info("<testFilesDirectory>" + testFilesDirectory.getAbsolutePath() + "</testFilesDirectory> does not exist...");
+			getLog().info("Performance tests are skipped.");
+			return;
+		}
+
 		initialiseJMeterArgumentsArray(true);
 		if (null != remoteConfig) {
 			remoteConfig.setPropertiesMap(propertiesMap);
 		}
+
+		//TODO copy files from <testFilesDirectory> to somewhere in build directory and flatten the sirectory structure while making sure test names are unique
+		//TODO pass this new directory into TestManager
+
 		TestManager jMeterTestManager = new TestManager(testArgs, testFilesDirectory, testFilesIncluded, testFilesExcluded, remoteConfig, suppressJMeterOutput, workingDirectory, jMeterProcessJVMSettings, runtimeJarName);
 		jMeterTestManager.setPostTestPauseInSeconds(postTestPauseInSeconds);
 		getLog().info(" ");

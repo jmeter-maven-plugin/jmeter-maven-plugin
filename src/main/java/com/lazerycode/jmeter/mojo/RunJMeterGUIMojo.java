@@ -17,8 +17,8 @@ import java.io.IOException;
  *
  * @author Jarrod Ribble
  */
-@Mojo(name = "gui")
-@Execute(phase = LifecyclePhase.TEST)
+@Mojo(name = "gui", defaultPhase = LifecyclePhase.TEST)
+@Execute(goal = "configure")
 public class RunJMeterGUIMojo extends AbstractJMeterMojo {
 
 	@Parameter(defaultValue = "false")

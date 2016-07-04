@@ -3,6 +3,7 @@ package com.lazerycode.jmeter.mojo;
 import com.lazerycode.jmeter.testrunner.TestManager;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Execute;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 
@@ -10,6 +11,7 @@ import org.apache.maven.plugins.annotations.Mojo;
  * JMeter Maven plugin.
  */
 @Mojo(name = "jmeter", defaultPhase = LifecyclePhase.INTEGRATION_TEST)
+@Execute(goal = "configure")
 public class RunJMeterMojo extends AbstractJMeterMojo {
 
 	/**

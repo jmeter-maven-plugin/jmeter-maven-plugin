@@ -5,6 +5,12 @@
 ##Version 2.0.0 Release Notes
 
 * **JMeter version 3.0.0 support added.** 
+* **BREAKING CHANGE:** Location of the .jmx files is now set by using the configuration option `<testFilesDirectory>`:
+
+		<configuration>
+    		<testFilesDirectory>my/jmx/file/directory</testFilesDirectory>
+		</configuration>
+
 * **Issue #170** - add a shutdown hook to destroy the JMeter process if the parent thread is terminated.
 * **Issue #165** - Enabled the plugin to continue execution if there are no tests or properties, you will now get a message telling you a test run was skipped if not test files are available.
 * **Merge pull request #167** (Thanks [Pascal Treilhes](https://github.com/treilhes)) - You can now use your current maven proxy with the `<useMavenProxy>true</useMavenProxy>` tag, only the first active proxy will be used. `<useMavenProxy>` have a lower priority than `<proxyConfiguration>`.

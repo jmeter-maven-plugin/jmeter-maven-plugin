@@ -205,7 +205,6 @@ public class PropertiesFileTest {
 		HashMap<String, String> reservedProperties = new HashMap<>();
 		reservedProperties.put("java.class.path", "/foo/bar");
 		reservedProperties.put("user.dir", "/bar/foo");
-		reservedProperties.put("jmeter.save.saveservice.output_format", "pink");
 		reservedProperties.put("jmeterengine.remote.system.exit", "true");
 		reservedProperties.put("jmeterengine.stopfail.system.exit", "true");
 
@@ -214,7 +213,7 @@ public class PropertiesFileTest {
 		PropertiesFile propertiesFile = new PropertiesFile(new File(sourcePropertiesFile.toURI()));
 		propertiesFile.addAndOverwriteProperties(reservedProperties);
 
-		assertThat(propertiesFile.getProperties().size(), is(equalTo(7)));
+		assertThat(propertiesFile.getProperties().size(), is(equalTo(6)));
 
 		propertiesFile.writePropertiesToFile(writtenProperties);
 
@@ -233,14 +232,13 @@ public class PropertiesFileTest {
 		HashMap<String, String> reservedProperties = new HashMap<>();
 		reservedProperties.put("java.class.path", "/foo/bar");
 		reservedProperties.put("user.dir", "/bar/foo");
-		reservedProperties.put("jmeter.save.saveservice.output_format", "pink");
 		reservedProperties.put("jmeterengine.remote.system.exit", "true");
 		reservedProperties.put("jmeterengine.stopfail.system.exit", "true");
 
 		PropertiesFile propertiesFile = new PropertiesFile(new File(emptyPropertiesFile.toURI()));
 		propertiesFile.addAndOverwriteProperties(reservedProperties);
 
-		assertThat(propertiesFile.getProperties().size(), is(equalTo(5)));
+		assertThat(propertiesFile.getProperties().size(), is(equalTo(4)));
 
 		propertiesFile.writePropertiesToFile(invalidPropertiesFile);
 

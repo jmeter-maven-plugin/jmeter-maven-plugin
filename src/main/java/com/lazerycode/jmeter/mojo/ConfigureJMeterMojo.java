@@ -198,15 +198,15 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 	}
 
 	protected void configurePropertiesFiles() throws MojoExecutionException, MojoFailureException {
-		setJMeterResultFileFormat();
-		configureAdvancedLogging();
-
 		propertiesMap.put(JMETER_PROPERTIES, new PropertiesMapping(propertiesJMeter));
 		propertiesMap.put(SAVE_SERVICE_PROPERTIES, new PropertiesMapping(propertiesSaveService));
 		propertiesMap.put(UPGRADE_PROPERTIES, new PropertiesMapping(propertiesUpgrade));
 		propertiesMap.put(SYSTEM_PROPERTIES, new PropertiesMapping(propertiesSystem));
 		propertiesMap.put(USER_PROPERTIES, new PropertiesMapping(propertiesUser));
 		propertiesMap.put(GLOBAL_PROPERTIES, new PropertiesMapping(propertiesGlobal));
+
+		setJMeterResultFileFormat();
+		configureAdvancedLogging();
 
 		for (ConfigurationFiles configurationFile : values()) {
 			File suppliedPropertiesFile = new File(propertiesFilesDirectory, configurationFile.getFilename());

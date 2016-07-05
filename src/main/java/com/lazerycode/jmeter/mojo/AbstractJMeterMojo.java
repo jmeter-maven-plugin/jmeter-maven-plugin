@@ -147,7 +147,7 @@ public abstract class AbstractJMeterMojo extends AbstractMojo {
 	/**
 	 * Suppress JMeter output
 	 */
-	@Parameter(defaultValue = "true")
+	@Parameter(defaultValue = "false")
 	protected boolean suppressJMeterOutput;
 
 	/**

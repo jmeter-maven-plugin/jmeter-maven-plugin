@@ -2,6 +2,10 @@
 
 ##Next Version (Release Date TBC) Release Notes
 
+##Version 2.0.1 Release Notes
+
+* **Issue #183** - <resultsFileFormat> is no longer ignored.
+
 ##Version 2.0.0 Release Notes
 
 * **JMeter version 3.0.0 support added.** 

@@ -10,7 +10,6 @@ public enum ReservedProperties {
 
 	JAVA_CLASS_PATH("java.class.path", null),
 	USER_DIR("user.dir", null),
-	JMETER_SAVE_SAVESERVICE_OUTPUT_FORMAT("jmeter.save.saveservice.output_format", null),
 	JMETERENGINE_REMOTE_SYSTEM_EXIT("jmeterengine.remote.system.exit", "false"),
 	JMETERENGINE_STOPFAIL_SYSTEM_EXIT("jmeterengine.stopfail.system.exit", "false");
 

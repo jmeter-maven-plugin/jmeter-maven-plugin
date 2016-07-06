@@ -2,6 +2,10 @@
 
 ##Next Version (Release Date TBC) Release Notes
 
+##Version 2.0.2 Release Notes
+
+* **Issue #184** - use .replace() instead of .replaceAll() since File.separator is not a valid regex on windows machines.
+
 ##Version 2.0.1 Release Notes
 
 * **Issue #183** - <resultsFileFormat> is no longer ignored.

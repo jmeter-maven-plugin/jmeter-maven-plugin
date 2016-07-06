@@ -29,8 +29,8 @@ public class TestManager {
 	private final JMeterArgumentsArray baseTestArgs;
 	private final File binDir;
 	private final File testFilesDirectory;
-	private final List<String> testFilesIncluded;
-	private final List<String> testFilesExcluded;
+	private final String[] testFilesIncluded;
+	private final String[] testFilesExcluded;
 	private final boolean suppressJMeterOutput;
 	private final RemoteConfiguration remoteServerConfiguration;
 	private final JMeterProcessJVMSettings jMeterProcessJVMSettings;
@@ -41,12 +41,17 @@ public class TestManager {
 		this.binDir = binDir;
 		this.baseTestArgs = baseTestArgs;
 		this.testFilesDirectory = testFilesDirectory;
-		this.testFilesIncluded = testFilesIncluded;
-		this.testFilesExcluded = testFilesExcluded;
 		this.remoteServerConfiguration = remoteServerConfiguration;
 		this.suppressJMeterOutput = suppressJMeterOutput;
 		this.jMeterProcessJVMSettings = jMeterProcessJVMSettings;
 		this.runtimeJarName = runtimeJarName;
+		this.testFilesExcluded = testFilesExcluded.toArray(new String[0]);
+
+		if (testFilesIncluded.size() > 0) {
+			this.testFilesIncluded = testFilesIncluded.toArray(new String[0]);
+		} else {
+			this.testFilesIncluded = new String[]{"**/*.jmx"};
+		}
 	}
 
 	/**
@@ -165,16 +170,12 @@ public class TestManager {
 	 * @return found JMeter tests
 	 */
 	private List<String> generateTestList() {
-		List<String> jmeterTestFiles = new ArrayList<String>();
 		DirectoryScanner scanner = new DirectoryScanner();
 		scanner.setBasedir(this.testFilesDirectory);
-		scanner.setIncludes(this.testFilesIncluded == null ? new String[]{"**/*.jmx"} : this.testFilesIncluded.toArray(new String[jmeterTestFiles.size()]));
-		if (this.testFilesExcluded != null) {
-			scanner.setExcludes(this.testFilesExcluded.toArray(new String[testFilesExcluded.size()]));
-		}
+		scanner.setIncludes(this.testFilesIncluded);
+		scanner.setExcludes(this.testFilesExcluded);
 		scanner.scan();
-		final List<String> includedFiles = Arrays.asList(scanner.getIncludedFiles());
-		jmeterTestFiles.addAll(includedFiles);
-		return jmeterTestFiles;
+
+		return Arrays.asList(scanner.getIncludedFiles());
 	}
 }

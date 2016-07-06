@@ -2,6 +2,10 @@
 
 ##Next Version (Release Date TBC) Release Notes
 
+##Version 2.0.3 Release Notes
+
+* **Issue #182** - We are now correctly picking up all .jmx files if no test files are specified
+
 ##Version 2.0.2 Release Notes
 
 * **Issue #184** - use .replace() instead of .replaceAll() since File.separator is not a valid regex on windows machines.

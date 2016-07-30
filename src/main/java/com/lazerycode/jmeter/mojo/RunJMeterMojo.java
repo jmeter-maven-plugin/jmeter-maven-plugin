@@ -63,7 +63,7 @@ public class RunJMeterMojo extends AbstractJMeterMojo {
 			Files.walkFileTree(sourcePath, EnumSet.of(FileVisitOption.FOLLOW_LINKS), Integer.MAX_VALUE, new SimpleFileVisitor<Path>() {
 				@Override
 				public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws java.io.IOException {
-					FileUtils.copyFile(file.toFile(), new File(destinationPath.toFile(), sourcePath.relativize(file).toString().replace(File.separator, "_")));
+					FileUtils.copyFile(file.toFile(), new File(destinationPath.toFile(), sourcePath.relativize(file).toString()));
 					return FileVisitResult.CONTINUE;
 				}
 			});

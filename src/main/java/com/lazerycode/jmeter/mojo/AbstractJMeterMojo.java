@@ -183,7 +183,6 @@ public abstract class AbstractJMeterMojo extends AbstractMojo {
 	protected static JMeterArgumentsArray testArgs;
 	protected boolean resultsOutputIsCSVFormat = false;
 	protected static File workingDirectory;
-	protected List<String> resultFilesLocations;
 	protected static Map<ConfigurationFiles, PropertiesMapping> propertiesMap = new HashMap<>();
 
 	//==================================================================================================================

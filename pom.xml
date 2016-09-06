@@ -46,7 +46,7 @@
         <maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
         <maven-invoker-plugin.version>2.0.0</maven-invoker-plugin.version>
         <maven-javadoc-plugin.version>2.10.4</maven-javadoc-plugin.version>
-        <maven-plugin.version>3.4</maven-plugin.version>
+        <maven-plugin.version>3.5</maven-plugin.version>
         <maven-source-plugin.version>3.0.1</maven-source-plugin.version>
         <nexus-staging-maven-plugin.version>1.6.7</nexus-staging-maven-plugin.version>
     </properties>

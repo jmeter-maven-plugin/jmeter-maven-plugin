@@ -17,6 +17,9 @@
         </option>
         <option name="LINE_SEPARATOR" value="&#10;" />
         <option name="RIGHT_MARGIN" value="140" />
+        <MarkdownNavigatorCodeStyleSettings>
+          <option name="RIGHT_MARGIN" value="72" />
+        </MarkdownNavigatorCodeStyleSettings>
         <XML>
           <option name="XML_LEGACY_SETTINGS_IMPORTED" value="true" />
         </XML>

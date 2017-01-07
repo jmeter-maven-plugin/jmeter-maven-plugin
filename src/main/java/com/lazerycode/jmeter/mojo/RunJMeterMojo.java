@@ -53,7 +53,7 @@ public class RunJMeterMojo extends AbstractJMeterMojo {
 		if (proxyConfig != null) {
 			getLog().info(this.proxyConfig.toString());
 		}
-		resultFilesLocations = jMeterTestManager.executeTests();
+		jMeterTestManager.executeTests();
 	}
 
 	static void CopyFilesInTestDirectory(File sourceDirectory, File destinationDirectory) throws IOException {

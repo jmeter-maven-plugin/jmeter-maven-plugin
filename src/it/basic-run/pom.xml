@@ -35,6 +35,8 @@
                 <version>@project.version@</version>
                 <configuration>
                     <suppressJMeterOutput>false</suppressJMeterOutput>
+                    <scanResultsForFailedRequests>true</scanResultsForFailedRequests>
+                    <scanResultsForSuccessfulRequests>true</scanResultsForSuccessfulRequests>
                     <testFilesIncluded>
                         <testFilesIncluded>test.jmx</testFilesIncluded>
                     </testFilesIncluded>

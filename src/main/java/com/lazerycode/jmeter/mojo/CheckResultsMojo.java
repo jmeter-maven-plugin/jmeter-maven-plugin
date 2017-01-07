@@ -1,6 +1,8 @@
 package com.lazerycode.jmeter.mojo;
 
+import com.lazerycode.jmeter.exceptions.ResultsFileNotFoundException;
 import com.lazerycode.jmeter.testrunner.ResultScanner;
+import org.apache.commons.io.FileUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -8,12 +10,15 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
 import java.io.File;
+import java.util.Collection;
 
 /**
  * JMeter Maven plugin.
  */
 @Mojo(name = "results", defaultPhase = LifecyclePhase.VERIFY)
 public class CheckResultsMojo extends AbstractJMeterMojo {
+
+	private static final String RESULT_FILE_EXT = "jtl";
 
 	/**
 	 * Sets whether build should fail if there are failed requests found in the JMeter result file.
@@ -45,14 +50,12 @@ public class CheckResultsMojo extends AbstractJMeterMojo {
 	@Override
 	public void doExecute() throws MojoExecutionException, MojoFailureException {
 		if (scanResultsForSuccessfulRequests || scanResultsForFailedRequests) {
-			ResultScanner resultScanner = new ResultScanner(scanResultsForSuccessfulRequests, scanResultsForFailedRequests);
-			for (String resultFileLocation : resultFilesLocations) {
-				resultScanner.parseResultFile(new File(resultFileLocation));
-			}
+			final Collection<File> resultFiles = getResultFiles();
+			final ResultScanner resultScanner = parseResultFiles(resultFiles);
 			getLog().info(" ");
 			getLog().info("Performance Test Results");
 			getLog().info(" ");
-			getLog().info("Result (.jtl) files scanned:	" + resultFilesLocations.size());
+			getLog().info("Result (.jtl) files scanned:	" + resultFiles.size());
 			getLog().info("Successful requests: 		" + resultScanner.getSuccessCount());
 			getLog().info("Failed requests: 			" + resultScanner.getFailureCount());
 			getLog().info(" ");
@@ -64,5 +67,17 @@ public class CheckResultsMojo extends AbstractJMeterMojo {
 			getLog().info("Results of Performance Test(s) have not been scanned.");
 			getLog().info(" ");
 		}
+	}
+
+	private ResultScanner parseResultFiles(Collection<File> files) throws ResultsFileNotFoundException {
+		final ResultScanner resultScanner = new ResultScanner(scanResultsForSuccessfulRequests, scanResultsForFailedRequests);
+		for (File resultFile : files) {
+			resultScanner.parseResultFile(resultFile);
+		}
+		return resultScanner;
+	}
+
+	private Collection<File> getResultFiles() {
+		return FileUtils.listFiles(resultsDirectory, new String[]{RESULT_FILE_EXT}, false);
 	}
 }

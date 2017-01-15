@@ -1,5 +1,6 @@
 package com.lazerycode.jmeter.mojo;
 
+import com.lazerycode.jmeter.json.TestConfig;
 import com.lazerycode.jmeter.testrunner.JMeterProcessBuilder;
 import com.lazerycode.jmeter.utility.UtilityFunctions;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -47,9 +48,9 @@ public class RunJMeterGUIMojo extends AbstractJMeterMojo {
 		startJMeterGUI();
 	}
 
-	@Override
 	protected void initialiseJMeterArgumentsArray(boolean disableGUI) throws MojoExecutionException {
-		super.initialiseJMeterArgumentsArray(disableGUI);
+		TestConfig testConfig = new TestConfig(new File(testConfigFile));
+		super.initialiseJMeterArgumentsArray(disableGUI, testConfig.getResultsOutputIsCSVFormat());
 		testArgs.setTestFile(guiTestFile);
 	}
 

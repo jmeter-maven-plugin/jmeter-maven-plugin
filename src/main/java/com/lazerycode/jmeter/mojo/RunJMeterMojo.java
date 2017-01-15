@@ -1,6 +1,7 @@
 package com.lazerycode.jmeter.mojo;
 
 import com.lazerycode.jmeter.exceptions.IOException;
+import com.lazerycode.jmeter.json.TestConfig;
 import com.lazerycode.jmeter.testrunner.TestManager;
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -40,7 +41,9 @@ public class RunJMeterMojo extends AbstractJMeterMojo {
 			return;
 		}
 
-		initialiseJMeterArgumentsArray(true);
+		TestConfig testConfig = new TestConfig(new File(testConfigFile));
+		initialiseJMeterArgumentsArray(true, testConfig.getResultsOutputIsCSVFormat());
+
 		if (null != remoteConfig) {
 			remoteConfig.setPropertiesMap(propertiesMap);
 		}
@@ -53,8 +56,11 @@ public class RunJMeterMojo extends AbstractJMeterMojo {
 		if (proxyConfig != null) {
 			getLog().info(this.proxyConfig.toString());
 		}
-		resultFilesLocations = jMeterTestManager.executeTests();
+
+		testConfig.setResultsFileLocations(jMeterTestManager.executeTests());
+		testConfig.writeResultFilesConfigTo(testConfigFile);
 	}
+
 
 	static void CopyFilesInTestDirectory(File sourceDirectory, File destinationDirectory) throws IOException {
 		final Path sourcePath = Paths.get(sourceDirectory.getAbsolutePath());

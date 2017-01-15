@@ -1,5 +1,6 @@
 package com.lazerycode.jmeter.mojo;
 
+import com.lazerycode.jmeter.json.TestConfig;
 import com.lazerycode.jmeter.testrunner.ResultScanner;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -46,13 +47,14 @@ public class CheckResultsMojo extends AbstractJMeterMojo {
 	public void doExecute() throws MojoExecutionException, MojoFailureException {
 		if (scanResultsForSuccessfulRequests || scanResultsForFailedRequests) {
 			ResultScanner resultScanner = new ResultScanner(scanResultsForSuccessfulRequests, scanResultsForFailedRequests);
-			for (String resultFileLocation : resultFilesLocations) {
+			TestConfig testConfig = new TestConfig(new File(testConfigFile));
+			for (String resultFileLocation : testConfig.getResultsFileLocations()) {
 				resultScanner.parseResultFile(new File(resultFileLocation));
 			}
 			getLog().info(" ");
 			getLog().info("Performance Test Results");
 			getLog().info(" ");
-			getLog().info("Result (.jtl) files scanned:	" + resultFilesLocations.size());
+			getLog().info("Result (.jtl) files scanned:	" + testConfig.getResultsFileLocations().size());
 			getLog().info("Successful requests: 		" + resultScanner.getSuccessCount());
 			getLog().info("Failed requests: 			" + resultScanner.getFailureCount());
 			getLog().info(" ");

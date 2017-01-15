@@ -171,6 +171,12 @@ public abstract class AbstractJMeterMojo extends AbstractMojo {
 	@Parameter(defaultValue = "0")
 	protected String postTestPauseInSeconds;
 
+	/**
+	 * The filename used to store the results config
+	 */
+	@Parameter(defaultValue = "${project.build.directory}/config.json")
+	protected String testConfigFile;
+
 	//------------------------------------------------------------------------------------------------------------------
 
 	/**
@@ -179,11 +185,15 @@ public abstract class AbstractJMeterMojo extends AbstractMojo {
 	@Parameter(defaultValue = "${project.build.directory}/jmeter")
 	protected transient File jmeterDirectory;
 
+	/**
+	 * The project build directory
+	 */
+	@Parameter(defaultValue = "${project.build.directory}")
+	transient File projectBuildDirectory;
+
 	protected static String runtimeJarName;
 	protected static JMeterArgumentsArray testArgs;
-	protected boolean resultsOutputIsCSVFormat = false;
 	protected static File workingDirectory;
-	protected List<String> resultFilesLocations;
 	protected static Map<ConfigurationFiles, PropertiesMapping> propertiesMap = new HashMap<>();
 
 	//==================================================================================================================
@@ -217,10 +227,10 @@ public abstract class AbstractJMeterMojo extends AbstractMojo {
 	 *
 	 * @throws MojoExecutionException
 	 */
-	protected void initialiseJMeterArgumentsArray(boolean disableGUI) throws MojoExecutionException {
+	protected void initialiseJMeterArgumentsArray(boolean disableGUI, boolean isCSVFormat) throws MojoExecutionException {
 		testArgs = new JMeterArgumentsArray(disableGUI, jmeterDirectory.getAbsolutePath());
 		testArgs.setResultsDirectory(resultsDirectory.getAbsolutePath());
-		testArgs.setResultFileOutputFormatIsCSV(resultsOutputIsCSVFormat);
+		testArgs.setResultFileOutputFormatIsCSV(isCSVFormat);
 		if (testResultsTimestamp) {
 			testArgs.setResultsTimestamp(testResultsTimestamp);
 			testArgs.appendTimestamp(appendResultsTimestamp);

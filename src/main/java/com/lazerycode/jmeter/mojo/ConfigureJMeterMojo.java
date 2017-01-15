@@ -2,6 +2,7 @@ package com.lazerycode.jmeter.mojo;
 
 import com.lazerycode.jmeter.exceptions.DependencyResolutionException;
 import com.lazerycode.jmeter.exceptions.IOException;
+import com.lazerycode.jmeter.json.TestConfig;
 import com.lazerycode.jmeter.properties.ConfigurationFiles;
 import com.lazerycode.jmeter.properties.PropertiesFile;
 import com.lazerycode.jmeter.properties.PropertiesMapping;
@@ -29,6 +30,7 @@ import org.eclipse.aether.util.artifact.JavaScopes;
 import org.eclipse.aether.util.filter.DependencyFilterUtils;
 
 import java.io.File;
+import java.io.InputStream;
 import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -48,6 +50,11 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 
 	@Parameter(defaultValue = "${project.remoteProjectRepositories}", readonly = true)
 	private List<RemoteRepository> repositoryList;
+
+	/**
+	 * Name of the base config json file
+	 */
+	private final String baseConfigFile = "/config.json";
 
 	/**
 	 * The version of JMeter that this plugin will use to run tests.
@@ -152,6 +159,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 	@Parameter(defaultValue = "xml")
 	protected String resultsFileFormat;
 
+	protected boolean resultsOutputIsCSVFormat = false;
 	public static final String JMETER_CONFIG_ARTIFACT_NAME = "ApacheJMeter_config";
 	private static final String JMETER_GROUP_ID = "org.apache.jmeter";
 	protected static Artifact jmeterConfigArtifact;
@@ -177,6 +185,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 		copyExplicitLibraries(jmeterExtensions, libExtDirectory);
 		copyExplicitLibraries(junitLibraries, libJUnitDirectory);
 		configurePropertiesFiles();
+		generateTestConfig();
 	}
 
 	/**
@@ -229,6 +238,13 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 		setDefaultPluginProperties(workingDirectory.getAbsolutePath());
 	}
 
+	protected void generateTestConfig() throws MojoExecutionException {
+		InputStream configFile = this.getClass().getResourceAsStream(baseConfigFile);
+		TestConfig testConfig = new TestConfig(configFile);
+		testConfig.setResultsOutputIsCSVFormat(resultsOutputIsCSVFormat);
+		testConfig.writeResultFilesConfigTo(testConfigFile);
+	}
+
 	public void setDefaultPluginProperties(String userDirectory) {
 		//JMeter uses the system property "user.dir" to set its base working directory
 		System.setProperty("user.dir", userDirectory);
@@ -254,7 +270,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 			try {
 				copyFile(advancedLoggingSetting, new File(workingDirectory, logConfigFilename));
 			} catch (java.io.IOException ex) {
-				throw new MojoFailureException(ex.getMessage());
+				throw new MojoFailureException(ex.getMessage(), ex);
 			}
 			propertiesJMeter.put("log_config", logConfigFilename);
 		}

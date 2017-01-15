@@ -62,7 +62,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 	 * if you change this version number the list of artifacts required to run JMeter may change.
 	 * If this happens you will need to override the &lt;jmeterArtifacts&gt; element.
 	 */
-	@Parameter(defaultValue = "3.0")
+	@Parameter(defaultValue = "3.1")
 	private String jmeterVersion;
 
 	/**
@@ -299,7 +299,9 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 			jmeterArtifacts.add(JMETER_GROUP_ID + ":ApacheJMeter_mongodb:" + jmeterVersion);
 			jmeterArtifacts.add(JMETER_GROUP_ID + ":ApacheJMeter_monitors:" + jmeterVersion);
 			jmeterArtifacts.add(JMETER_GROUP_ID + ":ApacheJMeter_native:" + jmeterVersion);
+			jmeterArtifacts.add(JMETER_GROUP_ID + ":ApacheJMeter_slf4j_logkit:" + jmeterVersion);
 			jmeterArtifacts.add(JMETER_GROUP_ID + ":ApacheJMeter_tcp:" + jmeterVersion);
+			jmeterArtifacts.add(JMETER_GROUP_ID + ":jorphan:" + jmeterVersion);
 		}
 	}
 

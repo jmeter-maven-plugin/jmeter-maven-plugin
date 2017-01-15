@@ -2,6 +2,11 @@
 
 ##Next Version (Release Date TBC) Release Notes
 
+* **Issue #204** - We know support JMeter 3.1 by default (See https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/wiki/Specifying-JMeter-Version if you want to change the version of JMeter used)
+* **Issue #203** - The list of files read by the CheckResultsMojo is now stored on disk in a config.json file in the ${project.build.directory}.  This does mean you could theoretically change the contents of this file before running the results phase to specify the files you want to check.
+* **Issue #195** - The results file format is now stored in a config.json file in the ${project.build.directory}.
+* **Issue #190** - The list of results files was previously null since in memory data is not shared between MOJO's. They are now stored in a config.json file in the ${project.build.directory}. 
+
 ##Version 2.0.3 Release Notes
 
 * **Issue #182** - We are now correctly picking up all .jmx files if no test files are specified

@@ -372,7 +372,9 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 		for (String desiredArtifact : desiredArtifacts) {
 			Artifact returnedArtifact = getArtifactResult(new DefaultArtifact(desiredArtifact));
 			copyArtifact(returnedArtifact, destination);
-			copyTransitiveRuntimeDependenciesToLibDirectory(returnedArtifact, downloadDependencies);
+			if(downloadDependencies) {
+				copyTransitiveRuntimeDependenciesToLibDirectory(returnedArtifact, true);
+			}
 		}
 	}
 

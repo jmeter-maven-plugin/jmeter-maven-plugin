@@ -430,7 +430,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 					getLog().debug("-------------------------------------------------------");
 				}
 				Artifact returnedArtifact = getArtifactResult(dependency.getArtifact());
-				if (!returnedArtifact.getArtifactId().startsWith("ApacheJMeter_")) {
+				if (!returnedArtifact.getArtifactId().startsWith("ApacheJMeter_") && !isArtefactContainedInExtensions(returnedArtifact)) {
 					copyArtifact(returnedArtifact, libDirectory);
 				}
 
@@ -442,6 +442,24 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 			throw new DependencyResolutionException(e.getMessage(), e);
 		}
 	}
+
+	/**
+	 * Is the given artifact contained in the given extensions
+	 *
+	 * @param artifact the artifact to be checked
+	 * @return is the given artifact contained in the extensions
+	 * @throws DependencyResolutionException
+	 */
+	private boolean isArtefactContainedInExtensions(Artifact artifact) throws DependencyResolutionException {
+		for (String extensionArtifactStr : jmeterExtensions)	{
+			Artifact extensionArtifact = getArtifactResult(new DefaultArtifact(extensionArtifactStr));
+			if (artifact.getGroupId().equals(extensionArtifact.getGroupId()) && artifact.getArtifactId().equals(extensionArtifact.getArtifactId())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 
 	/**
 	 * Copy an Artifact to a directory

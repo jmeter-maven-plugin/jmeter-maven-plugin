@@ -5,6 +5,12 @@
 ##Version 2.1.0 Release Notes
 
 * **JMeter version 3.1.0 support added.**
+* Add the ability to provide a list of artifacts that should be ignored when populating the JMeter directory tree:
+	```
+	<ignoredArtifacts>
+		<artifact>org.bouncycastle:bcprov-jdk15on:1.49</artifact>
+	</ignoredArtifacts>
+	```
 * **Issue #202** - The `<ignoreResultFailures>` config setting is no longer being ignored.
 * **Issue #201** - Don't copy any artifact dependencies for jmeterExtensions and junitLibraries if `<downloadExtensionDependencies>` and `<downloadLibraryDependencies>` are set to false. 
 * You now have an option to try and download all transitive dependencies for the JMeter artifacts (This is disabled by default since the transitive dependency tree for JMeter 3.1 is currently broken). You can toggle this using `<downloadJMeterDependencies>`.

@@ -78,6 +78,17 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 	private List<String> jmeterArtifacts = new ArrayList<>();
 
 	/**
+	 * A list of artifacts that the plugin should ignore.
+	 * This would be useful if you don't want specific dependencies brought down by JMeter (or any used defined artifacts) copied into the JMeter directory structure.
+	 * <p/>
+	 * &lt;ignoredArtifacts&gt;
+	 * &nbsp;&nbsp;&lt;artifact&gt;org.bouncycastle:bcprov-jdk15on:1.49&lt;/artifact&gt;
+	 * &lt;ignoredArtifacts&gt;
+	 */
+	@Parameter
+	private List<String> ignoredArtifacts = new ArrayList<>();
+
+	/**
 	 * Download all dependencies of files you want to add to lib/ext and copy them to lib/ext too
 	 * <p/>
 	 * &lt;downloadExtensionDependencies&gt;
@@ -372,7 +383,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 		for (String desiredArtifact : desiredArtifacts) {
 			Artifact returnedArtifact = getArtifactResult(new DefaultArtifact(desiredArtifact));
 			copyArtifact(returnedArtifact, destination);
-			if(downloadDependencies) {
+			if (downloadDependencies) {
 				copyTransitiveRuntimeDependenciesToLibDirectory(returnedArtifact, true);
 			}
 		}
@@ -437,9 +448,17 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 	 *
 	 * @param artifact             Artifact that needs to be copied.
 	 * @param destinationDirectory Directory to copy the artifact to.
-	 * @throws IOException
+	 * @throws IOException Unable to copy file
+	 * @throws DependencyResolutionException Unable to resolve dependency
 	 */
-	private void copyArtifact(Artifact artifact, File destinationDirectory) throws IOException {
+	private void copyArtifact(Artifact artifact, File destinationDirectory) throws IOException, DependencyResolutionException {
+		for (String ignoredArtifact : ignoredArtifacts) {
+			Artifact artifactToIgnore = getArtifactResult(new DefaultArtifact(ignoredArtifact));
+			if (artifact.getFile().getName().equals(artifactToIgnore.getFile().getName())) {
+				getLog().debug(artifact.getFile().getName() + " has not been copied over because it is in the ignore list.");
+				return;
+			}
+		}
 		try {
 			File artifactToCopy = new File(destinationDirectory + File.separator + artifact.getFile().getName());
 			getLog().debug("Checking: " + artifactToCopy.getAbsolutePath() + "...");

@@ -98,6 +98,17 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 	protected List<String> jmeterExtensions = new ArrayList<>();
 
 	/**
+	 * Download all transitive dependencies of the JMeter artifacts.
+	 * (Disabled by default since historically JMeter has depended on artifacts that aren't available in Maven Central)
+	 * <p/>
+	 * &lt;downloadJMeterDependencies&gt;
+	 * &nbsp;&nbsp;&lt;true&gt;
+	 * &lt;downloadJMeterDependencies&gt;
+	 */
+	@Parameter(defaultValue = "false")
+	protected boolean downloadJMeterDependencies;
+
+	/**
 	 * Download all dependencies of files you want to add to lib/junit and copy them to lib/junit too
 	 * <p/>
 	 * &lt;downloadLibraryDependencies&gt;
@@ -340,11 +351,11 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 				case "ApacheJMeter":
 					runtimeJarName = returnedArtifact.getFile().getName();
 					copyArtifact(returnedArtifact, workingDirectory);
-					copyTransitiveRuntimeDependenciesToLibDirectory(returnedArtifact, false);
+					copyTransitiveRuntimeDependenciesToLibDirectory(returnedArtifact, downloadJMeterDependencies);
 					break;
 				default:
 					copyArtifact(returnedArtifact, libExtDirectory);
-					copyTransitiveRuntimeDependenciesToLibDirectory(returnedArtifact, false);
+					copyTransitiveRuntimeDependenciesToLibDirectory(returnedArtifact, downloadJMeterDependencies);
 			}
 		}
 	}

@@ -78,6 +78,16 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 	private List<String> jmeterArtifacts = new ArrayList<>();
 
 	/**
+	 * Download all dependencies of files you want to add to lib/ext and copy them to lib/ext too
+	 * <p/>
+	 * &lt;downloadExtensionDependencies&gt;
+	 * &nbsp;&nbsp;&lt;true&gt;
+	 * &lt;downloadExtensionDependencies&gt;
+	 */
+	@Parameter(defaultValue = "true")
+	protected boolean downloadExtensionDependencies;
+
+	/**
 	 * A list of artifacts that should be copied into the lib/ext directory e.g.
 	 * <p/>
 	 * &lt;jmeterExtensions&gt;
@@ -86,6 +96,16 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 	 */
 	@Parameter
 	protected List<String> jmeterExtensions = new ArrayList<>();
+
+	/**
+	 * Download all dependencies of files you want to add to lib/junit and copy them to lib/junit too
+	 * <p/>
+	 * &lt;downloadLibraryDependencies&gt;
+	 * &nbsp;&nbsp;&lt;true&gt;
+	 * &lt;downloadLibraryDependencies&gt;
+	 */
+	@Parameter(defaultValue = "true")
+	protected boolean downloadLibraryDependencies;
 
 	/**
 	 * A list of artifacts that should be copied into the lib/junit directory e.g.
@@ -182,8 +202,8 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 		generateJMeterDirectoryTree();
 		configureJMeterArtifacts();
 		populateJMeterDirectoryTree();
-		copyExplicitLibraries(jmeterExtensions, libExtDirectory);
-		copyExplicitLibraries(junitLibraries, libJUnitDirectory);
+		copyExplicitLibraries(jmeterExtensions, libExtDirectory, downloadExtensionDependencies);
+		copyExplicitLibraries(junitLibraries, libJUnitDirectory, downloadLibraryDependencies);
 		configurePropertiesFiles();
 		generateTestConfig();
 	}
@@ -320,11 +340,11 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 				case "ApacheJMeter":
 					runtimeJarName = returnedArtifact.getFile().getName();
 					copyArtifact(returnedArtifact, workingDirectory);
-					copyTransitiveRuntimeDependenciesToLibDirectory(returnedArtifact);
+					copyTransitiveRuntimeDependenciesToLibDirectory(returnedArtifact, false);
 					break;
 				default:
 					copyArtifact(returnedArtifact, libExtDirectory);
-					copyTransitiveRuntimeDependenciesToLibDirectory(returnedArtifact);
+					copyTransitiveRuntimeDependenciesToLibDirectory(returnedArtifact, false);
 			}
 		}
 	}
@@ -337,11 +357,11 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 	 * @throws DependencyResolutionException
 	 * @throws IOException
 	 */
-	private void copyExplicitLibraries(List<String> desiredArtifacts, File destination) throws DependencyResolutionException, IOException {
+	private void copyExplicitLibraries(List<String> desiredArtifacts, File destination, boolean downloadDependencies) throws DependencyResolutionException, IOException {
 		for (String desiredArtifact : desiredArtifacts) {
 			Artifact returnedArtifact = getArtifactResult(new DefaultArtifact(desiredArtifact));
 			copyArtifact(returnedArtifact, destination);
-			copyTransitiveRuntimeDependenciesToLibDirectory(returnedArtifact);
+			copyTransitiveRuntimeDependenciesToLibDirectory(returnedArtifact, downloadDependencies);
 		}
 	}
 
@@ -370,7 +390,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 	 * @throws DependencyResolutionException
 	 * @throws IOException
 	 */
-	private void copyTransitiveRuntimeDependenciesToLibDirectory(Artifact artifact) throws DependencyResolutionException, IOException {
+	private void copyTransitiveRuntimeDependenciesToLibDirectory(Artifact artifact, boolean getDependenciesOfDependency) throws DependencyResolutionException, IOException {
 		CollectRequest collectRequest = new CollectRequest();
 		collectRequest.setRoot(new Dependency(artifact, JavaScopes.RUNTIME));
 		collectRequest.setRepositories(repositoryList);
@@ -389,6 +409,10 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 				if (!returnedArtifact.getArtifactId().startsWith("ApacheJMeter_")) {
 					copyArtifact(returnedArtifact, libDirectory);
 				}
+
+				if (getDependenciesOfDependency) {
+					copyTransitiveRuntimeDependenciesToLibDirectory(returnedArtifact, true);
+				}
 			}
 		} catch (org.eclipse.aether.resolution.DependencyResolutionException e) {
 			throw new DependencyResolutionException(e.getMessage(), e);
@@ -404,7 +428,12 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 	 */
 	private void copyArtifact(Artifact artifact, File destinationDirectory) throws IOException {
 		try {
-			FileUtils.copyFileToDirectory(artifact.getFile(), destinationDirectory);
+			File artifactToCopy = new File(destinationDirectory + File.separator + artifact.getFile().getName());
+			getLog().info("Checking: " + artifactToCopy.getAbsolutePath() + "...");
+			if (!artifactToCopy.exists()) {
+				getLog().info("Copying: " + artifactToCopy.getAbsolutePath() + "...");
+				FileUtils.copyFileToDirectory(artifact.getFile(), destinationDirectory);
+			}
 		} catch (java.io.IOException e) {
 			throw new IOException(e.getMessage(), e);
 		}

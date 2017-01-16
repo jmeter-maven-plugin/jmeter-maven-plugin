@@ -51,7 +51,7 @@ public class RunJMeterGUIMojo extends AbstractJMeterMojo {
 	protected void initialiseJMeterArgumentsArray(boolean disableGUI) throws MojoExecutionException {
 		TestConfig testConfig = new TestConfig(new File(testConfigFile));
 		super.initialiseJMeterArgumentsArray(disableGUI, testConfig.getResultsOutputIsCSVFormat());
-		testArgs.setTestFile(guiTestFile);
+		testArgs.setTestFile(guiTestFile, testFilesDirectory);
 	}
 
 	private void startJMeterGUI() throws MojoExecutionException {

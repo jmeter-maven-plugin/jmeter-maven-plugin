@@ -11,9 +11,6 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 
 import java.io.File;
-import java.nio.file.*;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.util.EnumSet;
 
 /**
  * JMeter Maven plugin.
@@ -63,16 +60,8 @@ public class RunJMeterMojo extends AbstractJMeterMojo {
 
 
 	static void CopyFilesInTestDirectory(File sourceDirectory, File destinationDirectory) throws IOException {
-		final Path sourcePath = Paths.get(sourceDirectory.getAbsolutePath());
-		final Path destinationPath = Paths.get(destinationDirectory.getAbsolutePath());
 		try {
-			Files.walkFileTree(sourcePath, EnumSet.of(FileVisitOption.FOLLOW_LINKS), Integer.MAX_VALUE, new SimpleFileVisitor<Path>() {
-				@Override
-				public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws java.io.IOException {
-					FileUtils.copyFile(file.toFile(), new File(destinationPath.toFile(), sourcePath.relativize(file).toString().replace(File.separator, "_")));
-					return FileVisitResult.CONTINUE;
-				}
-			});
+			FileUtils.copyDirectory(sourceDirectory, destinationDirectory);
 		} catch (java.io.IOException e) {
 			throw new IOException(e.getMessage(), e);
 		}

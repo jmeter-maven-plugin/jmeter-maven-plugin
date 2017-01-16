@@ -22,13 +22,21 @@ public class RunJMeterMojoTest {
 		File sourceDirectory = new File(sourceDirectoryFile.toURI());
 		File destinationDirectory = Files.createTempDirectory(Paths.get(systemTempDirectory), "temp_destination_").toFile();
 		destinationDirectory.deleteOnExit();
-		String[] expectedResult = new String[]{"one_fake.jmx", "two_fake2.jmx", "three_fake.jmx", "one_four_fake4.jmx"};
+		String[] expectedResult = new String[]{"one", "two", "three"};
 
 		assertThat(destinationDirectory.list().length, is(equalTo(0)));
 
 		RunJMeterMojo.CopyFilesInTestDirectory(sourceDirectory, destinationDirectory);
 
-		assertThat(destinationDirectory.list().length, is(equalTo(4)));
+		assertThat(destinationDirectory.list().length, is(equalTo(3)));
 		assertThat(destinationDirectory.list(), arrayContainingInAnyOrder(expectedResult));
+		assertThat(new File(destinationDirectory, "one").list().length, is(equalTo(2)));
+		assertThat(new File(destinationDirectory, "one").list(), arrayContainingInAnyOrder("four", "fake.jmx"));
+		assertThat(new File(destinationDirectory, "two").list().length, is(equalTo(1)));
+		assertThat(new File(destinationDirectory, "two").list(), arrayContainingInAnyOrder("fake2.jmx"));
+		assertThat(new File(destinationDirectory, "three").list().length, is(equalTo(1)));
+		assertThat(new File(destinationDirectory, "three").list(), arrayContainingInAnyOrder("fake.jmx"));
+		assertThat(new File(destinationDirectory, "one/four").list().length, is(equalTo(1)));
+		assertThat(new File(destinationDirectory, "one/four").list(), arrayContainingInAnyOrder("fake4.jmx"));
 	}
 }

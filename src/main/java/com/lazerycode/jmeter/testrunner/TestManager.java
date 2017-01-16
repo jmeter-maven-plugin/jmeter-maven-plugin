@@ -111,7 +111,7 @@ public class TestManager {
 	@SuppressWarnings("ResultOfMethodCallIgnored")
 	private String executeSingleTest(File test, JMeterArgumentsArray testArgs) throws MojoExecutionException {
 		LOGGER.info(" ");
-		testArgs.setTestFile(test);
+		testArgs.setTestFile(test, testFilesDirectory);
 		//Delete results file if it already exists
 		new File(testArgs.getResultsLogFileName()).delete();
 		List<String> argumentsArray = testArgs.buildArgumentsArray();

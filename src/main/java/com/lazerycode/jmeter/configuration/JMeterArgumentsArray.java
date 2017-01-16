@@ -1,5 +1,6 @@
 package com.lazerycode.jmeter.configuration;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.joda.time.LocalDateTime;
 import org.joda.time.format.DateTimeFormatter;
@@ -140,18 +141,21 @@ public class JMeterArgumentsArray {
 		}
 	}
 
-	public void setTestFile(File value) {
+	public void setTestFile(File value, File testFilesDirectory) {
 		if (isNotSet(value)) return;
 		testFile = value.getAbsolutePath();
+
+		String resultFilename = FilenameUtils.removeExtension(testFilesDirectory.toURI().relativize(value.toURI()).getPath().replace(File.separator, "_"));
+		resultsLogFileName = resultsDirectory + File.separator;
 		if (timestampResults) {
 			//TODO investigate when timestamp is generated.
 			if (appendTimestamp) {
-				resultsLogFileName = resultsDirectory + File.separator + value.getName().substring(0, value.getName().lastIndexOf(".")) + "-" + dateFormat.print(new LocalDateTime()) + resultFileExtension;
+				resultsLogFileName += resultFilename + "-" + dateFormat.print(new LocalDateTime()) + resultFileExtension;
 			} else {
-				resultsLogFileName = resultsDirectory + File.separator + dateFormat.print(new LocalDateTime()) + "-" + value.getName().substring(0, value.getName().lastIndexOf(".")) + resultFileExtension;
+				resultsLogFileName += dateFormat.print(new LocalDateTime()) + "-" + resultFilename + resultFileExtension;
 			}
 		} else {
-			resultsLogFileName = resultsDirectory + File.separator + value.getName().substring(0, value.getName().lastIndexOf(".")) + resultFileExtension;
+			resultsLogFileName += resultFilename + resultFileExtension;
 		}
 		if (isSet(logsDirectory)) {
 			jmeterLogFileName = logsDirectory + File.separator + value.getName() + ".log";

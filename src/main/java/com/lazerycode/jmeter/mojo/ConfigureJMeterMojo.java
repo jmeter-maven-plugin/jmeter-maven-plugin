@@ -442,9 +442,9 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 	private void copyArtifact(Artifact artifact, File destinationDirectory) throws IOException {
 		try {
 			File artifactToCopy = new File(destinationDirectory + File.separator + artifact.getFile().getName());
-			getLog().info("Checking: " + artifactToCopy.getAbsolutePath() + "...");
+			getLog().debug("Checking: " + artifactToCopy.getAbsolutePath() + "...");
 			if (!artifactToCopy.exists()) {
-				getLog().info("Copying: " + artifactToCopy.getAbsolutePath() + "...");
+				getLog().debug("Copying: " + artifactToCopy.getAbsolutePath() + "...");
 				FileUtils.copyFileToDirectory(artifact.getFile(), destinationDirectory);
 			}
 		} catch (java.io.IOException e) {

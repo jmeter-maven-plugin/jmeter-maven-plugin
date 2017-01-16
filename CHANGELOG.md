@@ -5,7 +5,7 @@
 ##Version 2.1.0 Release Notes
 
 * **JMeter version 3.1.0 support added.**
-Fix #188 - directory structure is now preserved.  Test results will use the relative path of the test file (with the file seperators replaced with _) as its filename.
+* Fix #188 - directory structure is now preserved.  Test results will use the relative path of the test file (with the file seperators replaced with _) as its filename.
 * Add the ability to provide a list of artifacts that should be ignored when populating the JMeter directory tree:
 	```
 	<ignoredArtifacts>
@@ -16,7 +16,7 @@ Fix #188 - directory structure is now preserved.  Test results will use the rela
 * **Issue #201** - Don't copy any artifact dependencies for jmeterExtensions and junitLibraries if `<downloadExtensionDependencies>` and `<downloadLibraryDependencies>` are set to false. 
 * You now have an option to try and download all transitive dependencies for the JMeter artifacts (This is disabled by default since the transitive dependency tree for JMeter 3.1 is currently broken). You can toggle this using `<downloadJMeterDependencies>`.
 * **Issue #186** - Transitive dependencies for all files you add via jmeterExtensions and junitLibraries are now all downloaded by default.  You can toggle this using `<downloadExtensionDependencies>` and `downloadLibraryDependencies`. 
-* **Issue #204** - We know support JMeter 3.1 by default (See https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/wiki/Specifying-JMeter-Version if you want to change the version of JMeter used)
+* **Issue #204** - We now support JMeter 3.1 by default (See https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/wiki/Specifying-JMeter-Version if you want to change the version of JMeter used)
 * **Issue #203** - The list of files read by the CheckResultsMojo is now stored on disk in a config.json file in the ${project.build.directory}.  This does mean you could theoretically change the contents of this file before running the results phase to specify the files you want to check.
 * **Issue #195** - The results file format is now stored in a config.json file in the ${project.build.directory}.
 * **Issue #190** - The list of results files was previously null since in memory data is not shared between MOJO's. They are now stored in a config.json file in the ${project.build.directory}. 

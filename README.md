@@ -23,7 +23,7 @@ This plugin requires **JDK 1.7** or higher.
 		<plugin>
 			<groupId>com.lazerycode.jmeter</groupId>
 			<artifactId>jmeter-maven-plugin</artifactId>
-			<version>2.0.3</version>
+			<version>2.1.0</version>
 			<executions>
 				<execution>
 					<id>jmeter-tests</id>

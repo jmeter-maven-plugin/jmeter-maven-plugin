@@ -6,6 +6,7 @@ import com.lazerycode.jmeter.configuration.ProxyConfiguration;
 import com.lazerycode.jmeter.configuration.RemoteConfiguration;
 import com.lazerycode.jmeter.properties.ConfigurationFiles;
 import com.lazerycode.jmeter.properties.PropertiesMapping;
+import com.lazerycode.jmeter.utils.ChecksumCalculator;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecution;
@@ -212,6 +213,10 @@ public abstract class AbstractJMeterMojo extends AbstractMojo {
 			}
 		}
 
+		if(hasExecutedBefore()) {
+			return;
+		}
+
 		// load maven proxy if needed
 		if (useMavenProxy && proxyConfig == null) {
 			loadMavenProxy();
@@ -279,6 +284,47 @@ public abstract class AbstractJMeterMojo extends AbstractMojo {
 		}
 
 
+	}
+
+	private void addPluginSpecificChecksumItems(ChecksumCalculator checksum) {
+
+	}
+
+	private String getConfigChecksum() {
+		ChecksumCalculator checksum = new ChecksumCalculator();
+		checksum.add(getClass().getSimpleName());
+		checksum.add(testFilesIncluded);
+		checksum.add(testFilesExcluded);
+		checksum.add(testFilesDirectory);
+		checksum.add(testResultsTimestamp);
+		checksum.add(appendResultsTimestamp);
+		checksum.add(resultsFileNameDateFormat);
+		checksum.add(resultsDirectory);
+		checksum.add(testFilesBuildDirectory);
+		checksum.add(logsDirectory);
+		checksum.add(customPropertiesFiles);
+		checksum.add(useMavenProxy);
+		checksum.add(overrideRootLogLevel);
+		checksum.add(logConfigFilename);
+		checksum.add(suppressJMeterOutput);
+		checksum.add(skipTests);
+		checksum.add(postTestPauseInSeconds);
+		checksum.add(testConfigFile);
+		checksum.add(jmeterDirectory);
+		checksum.add(projectBuildDirectory);
+		addPluginSpecificChecksumItems(checksum);
+		return checksum.getSha1();
+	}
+
+	private boolean hasExecutedBefore() {
+		String configChecksum = getConfigChecksum();
+		@SuppressWarnings("unchecked") Map<String, String> pluginContext = getPluginContext();
+		if (pluginContext.containsKey(configChecksum)) {
+			getLog().info("Skipping execution of jmeter because it has already been run for this configuration");
+			return true;
+		}
+		pluginContext.put(configChecksum, configChecksum);
+		return false;
 	}
 
 }

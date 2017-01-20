@@ -318,7 +318,6 @@ public abstract class AbstractJMeterMojo extends AbstractMojo {
 
 	private boolean hasExecutedBefore() {
 		String configChecksum = getConfigChecksum();
-		System.out.println(configChecksum + "--------------------------------------------" + getClass().getSimpleName());
 		@SuppressWarnings("unchecked") Map<String, String> pluginContext = getPluginContext();
 		if (pluginContext.containsKey(configChecksum)) {
 			getLog().info("Skipping execution of jmeter because it has already been run for this configuration");

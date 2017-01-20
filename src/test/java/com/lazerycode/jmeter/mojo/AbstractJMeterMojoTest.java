@@ -11,6 +11,8 @@ import org.mockito.Mockito;
 
 import com.lazerycode.jmeter.configuration.ProxyConfiguration;
 
+import java.util.HashMap;
+
 import static org.junit.Assert.*;
 
 @Generated(value = "org.junit-tools-1.0.2")
@@ -23,11 +25,13 @@ public class AbstractJMeterMojoTest {
 	private static final String nonHost = "h1,h2";
 
 	private AbstractJMeterMojo createTestSubject() {
-		return new AbstractJMeterMojo() {
+		AbstractJMeterMojo jMeterMojo = new AbstractJMeterMojo() {
 			@Override
 			protected void doExecute() throws MojoExecutionException, MojoFailureException {
 			}
 		};
+		jMeterMojo.setPluginContext(new HashMap());
+		return jMeterMojo;
 	}
 	
 	private Proxy createTestProxy() {

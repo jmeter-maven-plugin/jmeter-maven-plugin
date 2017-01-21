@@ -9,7 +9,7 @@
     <artifactId>ignore-result-failures-integration-test</artifactId>
     <version>DEV-SNAPSHOT</version>
 
-    <description>Check that results can be set as CSV format, and scanned</description>
+    <description>Check that results failures can be ignored</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

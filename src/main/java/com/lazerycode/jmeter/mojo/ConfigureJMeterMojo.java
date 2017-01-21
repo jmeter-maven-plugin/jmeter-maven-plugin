@@ -152,6 +152,12 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 	protected Map<String, String> propertiesSaveService = new HashMap<>();
 
 	/**
+	 * JMeter Properties that are merged with precedence into default JMeter file in reportgenerator.properties
+	 */
+	@Parameter
+	protected Map<String, String> propertiesReportGenerator = new HashMap<>();
+
+	/**
 	 * JMeter Properties that are merged with precedence into default JMeter file in upgrade.properties
 	 */
 	@Parameter
@@ -200,8 +206,8 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 	 */
 	@Parameter(defaultValue = "xml")
 	protected String resultsFileFormat;
-
 	protected boolean resultsOutputIsCSVFormat = false;
+
 	public static final String JMETER_CONFIG_ARTIFACT_NAME = "ApacheJMeter_config";
 	private static final String JMETER_GROUP_ID = "org.apache.jmeter";
 	protected static Artifact jmeterConfigArtifact;
@@ -253,6 +259,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 		propertiesMap.put(SAVE_SERVICE_PROPERTIES, new PropertiesMapping(propertiesSaveService));
 		propertiesMap.put(UPGRADE_PROPERTIES, new PropertiesMapping(propertiesUpgrade));
 		propertiesMap.put(SYSTEM_PROPERTIES, new PropertiesMapping(propertiesSystem));
+		propertiesMap.put(REPORT_GENERATOR_PROPERTIES, new PropertiesMapping(propertiesReportGenerator));
 		propertiesMap.put(USER_PROPERTIES, new PropertiesMapping(propertiesUser));
 		propertiesMap.put(GLOBAL_PROPERTIES, new PropertiesMapping(propertiesGlobal));
 
@@ -287,23 +294,23 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 		testConfig.writeResultFilesConfigTo(testConfigFile);
 	}
 
-	public void setDefaultPluginProperties(String userDirectory) {
-		//JMeter uses the system property "user.dir" to set its base working directory
-		System.setProperty("user.dir", userDirectory);
-		//Prevent JMeter from throwing some System.exit() calls
-		System.setProperty("jmeterengine.remote.system.exit", "false");
-		System.setProperty("jmeterengine.stopfail.system.exit", "false");
-	}
-
-
 	protected void setJMeterResultFileFormat() {
-		if (resultsFileFormat.toLowerCase().equals("csv")) {
+		if (generateReports || resultsFileFormat.toLowerCase().equals("csv")) {
 			propertiesJMeter.put("jmeter.save.saveservice.output_format", "csv");
 			resultsOutputIsCSVFormat = true;
 		} else {
 			propertiesJMeter.put("jmeter.save.saveservice.output_format", "xml");
 			resultsOutputIsCSVFormat = false;
 		}
+	}
+
+
+	public void setDefaultPluginProperties(String userDirectory) {
+		//JMeter uses the system property "user.dir" to set its base working directory
+		System.setProperty("user.dir", userDirectory);
+		//Prevent JMeter from throwing some System.exit() calls
+		System.setProperty("jmeterengine.remote.system.exit", "false");
+		System.setProperty("jmeterengine.stopfail.system.exit", "false");
 	}
 
 	protected void configureAdvancedLogging() throws MojoFailureException {
@@ -448,7 +455,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 	 *
 	 * @param artifact             Artifact that needs to be copied.
 	 * @param destinationDirectory Directory to copy the artifact to.
-	 * @throws IOException Unable to copy file
+	 * @throws IOException                   Unable to copy file
 	 * @throws DependencyResolutionException Unable to resolve dependency
 	 */
 	private void copyArtifact(Artifact artifact, File destinationDirectory) throws IOException, DependencyResolutionException {
@@ -490,6 +497,10 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 						break;
 					}
 					copyInputStreamToFile(configSettings.getInputStream(jarFileEntry), fileToCreate);
+				}
+				else if(!jarFileEntry.isDirectory() && jarFileEntry.getName().startsWith("bin")){
+					getLog().info(jarFileEntry.getName());
+					//todo report generation directory?
 				}
 			}
 			configSettings.close();

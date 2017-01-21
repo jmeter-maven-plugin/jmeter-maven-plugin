@@ -38,6 +38,7 @@ public class JMeterArgumentsArray {
 	private String jmeterLogFileName;
 	private String logsDirectory;
 	private String resultsDirectory;
+	private String reportDirectory;
 	private LogLevel overrideRootLogLevel;
 
 
@@ -118,6 +119,7 @@ public class JMeterArgumentsArray {
 	}
 
 	public void setResultsTimestamp(boolean addTimestamp) {
+		//TODO just make this set it true when it's called?
 		timestampResults = addTimestamp;
 	}
 
@@ -166,6 +168,11 @@ public class JMeterArgumentsArray {
 		disableTests = false;
 	}
 
+	public void setReportsDirectory(String reportDirectory) {
+		argumentList.add(REPORT_AT_END_OPT);
+		argumentList.add(REPORT_OUTPUT_FOLDER_OPT);
+		this.reportDirectory = reportDirectory;
+	}
 
 	/**
 	 * Generate an arguments array representing the command line options you want to send to JMeter.
@@ -239,6 +246,12 @@ public class JMeterArgumentsArray {
 					argumentsArray.add(JMLOGFILE_OPT.getCommandLineArgument());
 					argumentsArray.add(jmeterLogFileName);
 					break;
+				case REPORT_AT_END_OPT:
+					argumentsArray.add(REPORT_AT_END_OPT.getCommandLineArgument());
+					break;
+				case REPORT_OUTPUT_FOLDER_OPT:
+					argumentsArray.add(REPORT_OUTPUT_FOLDER_OPT.getCommandLineArgument());
+					argumentsArray.add(reportDirectory);
 			}
 		}
 		return argumentsArray;

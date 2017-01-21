@@ -13,6 +13,7 @@ public enum ConfigurationFiles {
 	UPGRADE_PROPERTIES("upgrade.properties", true),
 	SYSTEM_PROPERTIES("system.properties", true),
 	USER_PROPERTIES("user.properties", true),
+	REPORT_GENERATOR_PROPERTIES("reportgenerator.properties", true),
 	GLOBAL_PROPERTIES("global.properties", false);
 
 	private final String propertiesFilename;

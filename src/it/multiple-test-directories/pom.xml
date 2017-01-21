@@ -6,10 +6,10 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.lazerycode.jmeter</groupId>
-    <artifactId>basic-integration-test</artifactId>
+    <artifactId>multiple-test-directories-integration-test</artifactId>
     <version>DEV-SNAPSHOT</version>
 
-    <description>Basic Jmeter test to check that the plugin works</description>
+    <description>Check that the whole directory structure is copied over</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

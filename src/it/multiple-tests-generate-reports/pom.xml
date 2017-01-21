@@ -6,10 +6,10 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.lazerycode.jmeter</groupId>
-    <artifactId>change-results-format-integration-test</artifactId>
+    <artifactId>multiple-tests-generate-reports-integration-test</artifactId>
     <version>DEV-SNAPSHOT</version>
 
-    <description>Check that results can be set as CSV format, and scanned</description>
+    <description>Check that report generation works</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -36,10 +36,9 @@
                 <configuration>
                     <suppressJMeterOutput>false</suppressJMeterOutput>
                     <testFilesIncluded>
-                        <testFilesIncluded>test.jmx</testFilesIncluded>
+                        <testFilesIncluded>**/*.jmx</testFilesIncluded>
                     </testFilesIncluded>
-                    <resultsFileFormat>csv</resultsFileFormat>
-                    <scanResultsForFailedRequests>true</scanResultsForFailedRequests>
+                    <generateReports>true</generateReports>
                 </configuration>
                 <executions>
                     <execution>

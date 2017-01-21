@@ -81,6 +81,18 @@ public abstract class AbstractJMeterMojo extends AbstractMojo {
 	protected File resultsDirectory;
 
 	/**
+	 * Generate Jmeter Reports (this will force your .jtl's into .csv mmode)
+	 */
+	@Parameter(defaultValue = "false")
+	protected boolean generateReports;
+
+	/**
+	 * Set the directory that JMeter reports are saved to.
+	 */
+	@Parameter(defaultValue = "${project.build.directory}/jmeter/reports")
+	protected File reportDirectory;
+
+	/**
 	 * Set the directory that JMeter test files are copied into as part of the build.
 	 */
 	@Parameter(defaultValue = "${project.build.directory}/jmeter/testFiles")
@@ -231,8 +243,11 @@ public abstract class AbstractJMeterMojo extends AbstractMojo {
 		testArgs = new JMeterArgumentsArray(disableGUI, jmeterDirectory.getAbsolutePath());
 		testArgs.setResultsDirectory(resultsDirectory.getAbsolutePath());
 		testArgs.setResultFileOutputFormatIsCSV(isCSVFormat);
+		if (generateReports) {
+			testArgs.setReportsDirectory(reportDirectory.getAbsolutePath());
+		}
 		if (testResultsTimestamp) {
-			testArgs.setResultsTimestamp(testResultsTimestamp);
+			testArgs.setResultsTimestamp(true);
 			testArgs.appendTimestamp(appendResultsTimestamp);
 			if (isSet(resultsFileNameDateFormat)) {
 				try {

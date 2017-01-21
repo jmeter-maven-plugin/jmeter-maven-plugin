@@ -2,10 +2,14 @@
 
 ##Next Version (Release Date TBC) Release Notes
 
+* **Issue #179** - The plugin will now copy everything in the `${basedir}/src/test/conf` directory into the `jmeter/bin/` directory.  You can configure this by setting
+	```
+	<confFilesDirectory>${basedir}/src/test/some_conf_dir</confFilesDirectory>
+	```
 ##Version 2.1.0 Release Notes
 
 * **JMeter version 3.1.0 support added.**
-* Fix #188 - directory structure is now preserved.  Test results will use the relative path of the test file (with the file seperators replaced with _) as its filename.
+* **Issue #188** - Directory structure is now preserved.  Test results will use the relative path of the test file (with the file seperators replaced with _) as its filename.
 * Add the ability to provide a list of artifacts that should be ignored when populating the JMeter directory tree:
 	```
 	<ignoredArtifacts>

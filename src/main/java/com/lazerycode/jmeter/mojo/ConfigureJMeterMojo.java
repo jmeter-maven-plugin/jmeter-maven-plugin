@@ -376,6 +376,10 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 					copyTransitiveRuntimeDependenciesToLibDirectory(returnedArtifact, downloadJMeterDependencies);
 			}
 		}
+
+		if (confFilesDirectory.exists()) {
+			CopyFilesInTestDirectory(confFilesDirectory, new File(jmeterDirectory, "bin"));
+		}
 	}
 
 	/**
@@ -497,10 +501,8 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 						break;
 					}
 					copyInputStreamToFile(configSettings.getInputStream(jarFileEntry), fileToCreate);
-				}
-				else if(!jarFileEntry.isDirectory() && jarFileEntry.getName().startsWith("bin")){
-					getLog().info(jarFileEntry.getName());
-					//todo report generation directory?
+				} else if (!jarFileEntry.isDirectory() && jarFileEntry.getName().startsWith("bin")) {
+					//TODO populate report generation directory
 				}
 			}
 			configSettings.close();

@@ -4,8 +4,10 @@ import com.lazerycode.jmeter.configuration.JMeterArgumentsArray;
 import com.lazerycode.jmeter.configuration.JMeterProcessJVMSettings;
 import com.lazerycode.jmeter.configuration.ProxyConfiguration;
 import com.lazerycode.jmeter.configuration.RemoteConfiguration;
+import com.lazerycode.jmeter.exceptions.IOException;
 import com.lazerycode.jmeter.properties.ConfigurationFiles;
 import com.lazerycode.jmeter.properties.PropertiesMapping;
+import org.apache.commons.io.FileUtils;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecution;
@@ -46,6 +48,12 @@ public abstract class AbstractJMeterMojo extends AbstractMojo {
 	 */
 	@Parameter
 	protected List<String> testFilesExcluded = new ArrayList<>();
+
+	/**
+	 * Path under which .conf files are stored.
+	 */
+	@Parameter(defaultValue = "${basedir}/src/test/conf")
+	protected File confFilesDirectory;
 
 	/**
 	 * Path under which JMX files are stored.
@@ -292,8 +300,14 @@ public abstract class AbstractJMeterMojo extends AbstractMojo {
 		} catch (Exception e) {
 			getLog().error("Error while loading maven proxy", e);
 		}
-
-
 	}
 
+	static void CopyFilesInTestDirectory(File sourceDirectory, File destinationDirectory) throws IOException {
+		try {
+			FileUtils.copyDirectory(sourceDirectory, destinationDirectory);
+		} catch (java.io.IOException e) {
+			throw new IOException(e.getMessage(), e);
+		}
+
+	}
 }

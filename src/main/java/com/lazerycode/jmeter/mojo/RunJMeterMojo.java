@@ -57,14 +57,4 @@ public class RunJMeterMojo extends AbstractJMeterMojo {
 		testConfig.setResultsFileLocations(jMeterTestManager.executeTests());
 		testConfig.writeResultFilesConfigTo(testConfigFile);
 	}
-
-
-	static void CopyFilesInTestDirectory(File sourceDirectory, File destinationDirectory) throws IOException {
-		try {
-			FileUtils.copyDirectory(sourceDirectory, destinationDirectory);
-		} catch (java.io.IOException e) {
-			throw new IOException(e.getMessage(), e);
-		}
-
-	}
 }

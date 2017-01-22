@@ -110,14 +110,23 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 
 	/**
 	 * Download all transitive dependencies of the JMeter artifacts.
-	 * (Disabled by default since historically JMeter has depended on artifacts that aren't available in Maven Central)
 	 * <p/>
 	 * &lt;downloadJMeterDependencies&gt;
-	 * &nbsp;&nbsp;&lt;true&gt;
+	 * &nbsp;&nbsp;&lt;false&gt;
 	 * &lt;downloadJMeterDependencies&gt;
 	 */
 	@Parameter(defaultValue = "false")
 	protected boolean downloadJMeterDependencies;
+
+	/**
+	 * Download all optional transitive dependencies of artifacts.
+	 * <p/>
+	 * &lt;downloadOptionalDependencies&gt;
+	 * &nbsp;&nbsp;&lt;true&gt;
+	 * &lt;downloadOptionalDependencies&gt;
+	 */
+	@Parameter(defaultValue = "false")
+	protected boolean downloadOptionalDependencies;
 
 	/**
 	 * Download all dependencies of files you want to add to lib/junit and copy them to lib/junit too
@@ -348,9 +357,9 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 			jmeterArtifacts.add(JMETER_GROUP_ID + ":ApacheJMeter_mongodb:" + jmeterVersion);
 			jmeterArtifacts.add(JMETER_GROUP_ID + ":ApacheJMeter_monitors:" + jmeterVersion);
 			jmeterArtifacts.add(JMETER_GROUP_ID + ":ApacheJMeter_native:" + jmeterVersion);
-			jmeterArtifacts.add(JMETER_GROUP_ID + ":ApacheJMeter_slf4j_logkit:" + jmeterVersion);
+			jmeterArtifacts.add(JMETER_GROUP_ID + ":ApacheJMeter_slf4j_logkit:" + jmeterVersion);   //TODO move to lib dir
 			jmeterArtifacts.add(JMETER_GROUP_ID + ":ApacheJMeter_tcp:" + jmeterVersion);
-			jmeterArtifacts.add(JMETER_GROUP_ID + ":jorphan:" + jmeterVersion);
+			jmeterArtifacts.add(JMETER_GROUP_ID + ":jorphan:" + jmeterVersion);						//TODO move to lib dir
 		}
 	}
 
@@ -433,20 +442,22 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 		DependencyRequest dependencyRequest = new DependencyRequest(collectRequest, dependencyFilter);
 
 		try {
-			List<DependencyNode> artifactDependencies = repositorySystem.resolveDependencies(repositorySystemSession, dependencyRequest).getRoot().getChildren();
-			for (DependencyNode dependency : artifactDependencies) {
+			List<DependencyNode> artifactDependencyNodes = repositorySystem.resolveDependencies(repositorySystemSession, dependencyRequest).getRoot().getChildren();
+			for (DependencyNode dependencyNode : artifactDependencyNodes) {
 				if (getLog().isDebugEnabled()) {
-					getLog().debug("Dependency name: " + dependency.toString());
+					getLog().debug("Dependency name: " + dependencyNode.toString());
 					getLog().debug("Dependency request trace: " + dependencyRequest.getCollectRequest().getTrace().toString());
 					getLog().debug("-------------------------------------------------------");
 				}
-				Artifact returnedArtifact = getArtifactResult(dependency.getArtifact());
-				if (!returnedArtifact.getArtifactId().startsWith("ApacheJMeter_")) {
-					copyArtifact(returnedArtifact, libDirectory);
-				}
+				if (downloadOptionalDependencies || !dependencyNode.getDependency().isOptional()) {
+					Artifact returnedArtifact = getArtifactResult(dependencyNode.getArtifact());
+					if (!returnedArtifact.getArtifactId().startsWith("ApacheJMeter_")) {
+						copyArtifact(returnedArtifact, libDirectory);
+					}
 
-				if (getDependenciesOfDependency) {
-					copyTransitiveRuntimeDependenciesToLibDirectory(returnedArtifact, true);
+					if (getDependenciesOfDependency) {
+						copyTransitiveRuntimeDependenciesToLibDirectory(returnedArtifact, true);
+					}
 				}
 			}
 		} catch (org.eclipse.aether.resolution.DependencyResolutionException e) {

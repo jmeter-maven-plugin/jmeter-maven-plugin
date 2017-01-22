@@ -250,7 +250,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 	 */
 	protected void generateJMeterDirectoryTree() {
 		workingDirectory = new File(jmeterDirectory, "bin");
-		workingDirectory.mkdirs();
+		workingDirectory.mkdirs(); //TODO remove this, it's covered in extractConfigSettings()
 		customPropertiesDirectory = new File(jmeterDirectory, "custom_properties");
 		customPropertiesDirectory.mkdirs();
 		libDirectory = new File(jmeterDirectory, "lib");
@@ -512,8 +512,9 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 						break;
 					}
 					copyInputStreamToFile(configSettings.getInputStream(jarFileEntry), fileToCreate);
-				} else if (!jarFileEntry.isDirectory() && jarFileEntry.getName().startsWith("bin")) {
-					//TODO populate report generation directory
+				} else if (!jarFileEntry.isDirectory() && jarFileEntry.getName().startsWith("bin/report-template")) {
+					File fileToCreate = new File(jmeterDirectory, jarFileEntry.getName());
+					copyInputStreamToFile(configSettings.getInputStream(jarFileEntry), fileToCreate);
 				}
 			}
 			configSettings.close();

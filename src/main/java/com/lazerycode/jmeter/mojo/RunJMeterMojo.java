@@ -49,7 +49,7 @@ public class RunJMeterMojo extends AbstractJMeterMojo {
 		TestManager jMeterTestManager = 
 		        new TestManager(testArgs, testFilesBuildDirectory, testFilesIncluded, testFilesExcluded, 
 		                remoteConfig, suppressJMeterOutput, workingDirectory, jMeterProcessJVMSettings, 
-		                runtimeJarName, resultsDirectory, generateReports);
+		                runtimeJarName, reportDirectory, generateReports);
 		jMeterTestManager.setPostTestPauseInSeconds(postTestPauseInSeconds);
 		getLog().info(" ");
 		if (proxyConfig != null) {

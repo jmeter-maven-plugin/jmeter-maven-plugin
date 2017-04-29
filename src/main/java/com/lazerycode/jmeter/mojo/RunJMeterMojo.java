@@ -47,7 +47,10 @@ public class RunJMeterMojo extends AbstractJMeterMojo {
 
 		CopyFilesInTestDirectory(testFilesDirectory, testFilesBuildDirectory);
 
-		TestManager jMeterTestManager = new TestManager(testArgs, testFilesBuildDirectory, testFilesIncluded, testFilesExcluded, remoteConfig, suppressJMeterOutput, workingDirectory, jMeterProcessJVMSettings, runtimeJarName);
+		TestManager jMeterTestManager = 
+		        new TestManager(testArgs, testFilesBuildDirectory, testFilesIncluded, testFilesExcluded, 
+		                remoteConfig, suppressJMeterOutput, workingDirectory, jMeterProcessJVMSettings, 
+		                runtimeJarName, resultsDirectory, generateReports);
 		jMeterTestManager.setPostTestPauseInSeconds(postTestPauseInSeconds);
 		getLog().info(" ");
 		if (proxyConfig != null) {

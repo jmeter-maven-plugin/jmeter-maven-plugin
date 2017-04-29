@@ -1,24 +1,28 @@
 package com.lazerycode.jmeter.testrunner;
 
-import com.lazerycode.jmeter.configuration.JMeterArgumentsArray;
-import com.lazerycode.jmeter.configuration.JMeterProcessJVMSettings;
-import com.lazerycode.jmeter.configuration.RemoteArgumentsArrayBuilder;
-import com.lazerycode.jmeter.configuration.RemoteConfiguration;
-import com.lazerycode.jmeter.utility.UtilityFunctions;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import org.apache.commons.io.FilenameUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.tools.ant.DirectoryScanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
+import com.lazerycode.jmeter.configuration.JMeterArgumentsArray;
+import com.lazerycode.jmeter.configuration.JMeterProcessJVMSettings;
+import com.lazerycode.jmeter.configuration.RemoteArgumentsArrayBuilder;
+import com.lazerycode.jmeter.configuration.RemoteConfiguration;
+import com.lazerycode.jmeter.utility.UtilityFunctions;
 
 /**
  * TestManager encapsulates functions that gather JMeter Test files and execute the tests
@@ -26,6 +30,8 @@ import java.util.concurrent.TimeUnit;
 public class TestManager {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(JMeterProcessBuilder.class);
+	
+	private static final String REPORT_DIR_DATE_FORMAT = "yyyyMMddHHmmss";
 	private final JMeterArgumentsArray baseTestArgs;
 	private final File binDir;
 	private final File testFilesDirectory;
@@ -36,8 +42,11 @@ public class TestManager {
 	private final JMeterProcessJVMSettings jMeterProcessJVMSettings;
 	private long postTestPauseInSeconds;
 	private final String runtimeJarName;
+    private File resultsDirectory;
+    private boolean generateReports;
 
-	public TestManager(JMeterArgumentsArray baseTestArgs, File testFilesDirectory, List<String> testFilesIncluded, List<String> testFilesExcluded, RemoteConfiguration remoteServerConfiguration, boolean suppressJMeterOutput, File binDir, JMeterProcessJVMSettings jMeterProcessJVMSettings, String runtimeJarName) {
+	public TestManager(JMeterArgumentsArray baseTestArgs, File testFilesDirectory, List<String> testFilesIncluded, List<String> testFilesExcluded, RemoteConfiguration remoteServerConfiguration, boolean suppressJMeterOutput, File binDir, JMeterProcessJVMSettings jMeterProcessJVMSettings, String runtimeJarName,
+	            File resultsDirectory, boolean generateReports) {
 		this.binDir = binDir;
 		this.baseTestArgs = baseTestArgs;
 		this.testFilesDirectory = testFilesDirectory;
@@ -46,7 +55,8 @@ public class TestManager {
 		this.jMeterProcessJVMSettings = jMeterProcessJVMSettings;
 		this.runtimeJarName = runtimeJarName;
 		this.testFilesExcluded = testFilesExcluded.toArray(new String[0]);
-
+		this.resultsDirectory = resultsDirectory;
+		this.generateReports = generateReports;
 		if (testFilesIncluded.size() > 0) {
 			this.testFilesIncluded = testFilesIncluded.toArray(new String[0]);
 		} else {
@@ -79,7 +89,13 @@ public class TestManager {
 		JMeterArgumentsArray thisTestArgs = baseTestArgs;
 		List<String> tests = generateTestList();
 		List<String> results = new ArrayList<String>();
+		SimpleDateFormat sdf = new SimpleDateFormat(REPORT_DIR_DATE_FORMAT);
 		for (String file : tests) {
+		    if(generateReports) {
+		        thisTestArgs.setReportsDirectory(resultsDirectory+"/"+ 
+		            FilenameUtils.getBaseName(file)+"_"+
+		            sdf.format(new Date()));
+		    }
 			if (remoteServerConfiguration != null) {
 				if ((remoteServerConfiguration.isStartServersBeforeTests() && tests.get(0).equals(file)) || remoteServerConfiguration.isStartAndStopServersForEachTest()) {
 					thisTestArgs.setRemoteStart();
@@ -116,10 +132,12 @@ public class TestManager {
 		new File(testArgs.getResultsLogFileName()).delete();
 		List<String> argumentsArray = testArgs.buildArgumentsArray();
 		argumentsArray.addAll(buildRemoteArgs(remoteServerConfiguration));
-		LOGGER.debug("JMeter is called with the following command line arguments: " + UtilityFunctions.humanReadableCommandLineOutput(argumentsArray));
-		LOGGER.info("Executing test: " + test.getName());
+		LOGGER.debug("JMeter is called with the following command line arguments: {}",
+		        UtilityFunctions.humanReadableCommandLineOutput(argumentsArray));
+		LOGGER.info("Executing test: {}", test.getName());
 		//Start the test.
-		JMeterProcessBuilder JMeterProcessBuilder = new JMeterProcessBuilder(jMeterProcessJVMSettings, runtimeJarName);
+		JMeterProcessBuilder JMeterProcessBuilder = 
+		        new JMeterProcessBuilder(jMeterProcessJVMSettings, runtimeJarName);
 		JMeterProcessBuilder.setWorkingDirectory(binDir);
 		JMeterProcessBuilder.addArguments(argumentsArray);
 		try {
@@ -133,20 +151,21 @@ public class TestManager {
 				}
 			});
 
-			BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
-			String line;
-			while ((line = br.readLine()) != null) {
-				if (suppressJMeterOutput) {
-					LOGGER.debug(line);
-				} else {
-					LOGGER.info(line);
-				}
+			try (BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+    			String line;
+    			while ((line = br.readLine()) != null) {
+    				if (suppressJMeterOutput) {
+    					LOGGER.debug(line);
+    				} else {
+    					LOGGER.info(line);
+    				}
+    			}
+    			int jMeterExitCode = process.waitFor();
+    			if (jMeterExitCode != 0) {
+    				throw new MojoExecutionException("Test failed");
+    			}
+    			LOGGER.info("Completed Test: {}", test.getAbsolutePath());
 			}
-			int jMeterExitCode = process.waitFor();
-			if (jMeterExitCode != 0) {
-				throw new MojoExecutionException("Test failed");
-			}
-			LOGGER.info("Completed Test: " + test.getName());
 		} catch (InterruptedException ex) {
 			LOGGER.info(" ");
 			LOGGER.info("System Exit Detected!  Stopping Test...");

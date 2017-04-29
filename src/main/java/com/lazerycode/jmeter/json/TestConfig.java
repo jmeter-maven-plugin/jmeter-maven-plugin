@@ -1,9 +1,5 @@
 package com.lazerycode.jmeter.json;
 
-import com.jayway.jsonpath.JsonPath;
-import org.apache.commons.io.IOUtils;
-import org.apache.maven.plugin.MojoExecutionException;
-
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -11,6 +7,15 @@ import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.List;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.maven.plugin.MojoExecutionException;
+
+import com.jayway.jsonpath.JsonPath;
+
+/**
+ * Allows user to specify the files he wants to check.
+ *
+ */
 public class TestConfig {
 	private String jsonData;
 
@@ -23,8 +28,7 @@ public class TestConfig {
 	}
 
 	public TestConfig(File jsonFile) throws MojoExecutionException {
-		try {
-			FileReader jsonFileReader = new FileReader(jsonFile);
+		try (FileReader jsonFileReader = new FileReader(jsonFile)) {
 			jsonData = IOUtils.toString(jsonFileReader);
 		} catch (Exception ex) {
 			throw new MojoExecutionException(ex.getMessage(), ex);

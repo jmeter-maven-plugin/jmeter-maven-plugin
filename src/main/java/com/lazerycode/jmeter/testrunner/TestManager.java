@@ -42,11 +42,11 @@ public class TestManager {
 	private final JMeterProcessJVMSettings jMeterProcessJVMSettings;
 	private long postTestPauseInSeconds;
 	private final String runtimeJarName;
-    private File resultsDirectory;
+    private File reportDirectory;
     private boolean generateReports;
 
 	public TestManager(JMeterArgumentsArray baseTestArgs, File testFilesDirectory, List<String> testFilesIncluded, List<String> testFilesExcluded, RemoteConfiguration remoteServerConfiguration, boolean suppressJMeterOutput, File binDir, JMeterProcessJVMSettings jMeterProcessJVMSettings, String runtimeJarName,
-	            File resultsDirectory, boolean generateReports) {
+	            File reportDirectory, boolean generateReports) {
 		this.binDir = binDir;
 		this.baseTestArgs = baseTestArgs;
 		this.testFilesDirectory = testFilesDirectory;
@@ -55,7 +55,7 @@ public class TestManager {
 		this.jMeterProcessJVMSettings = jMeterProcessJVMSettings;
 		this.runtimeJarName = runtimeJarName;
 		this.testFilesExcluded = testFilesExcluded.toArray(new String[0]);
-		this.resultsDirectory = resultsDirectory;
+		this.reportDirectory = reportDirectory;
 		this.generateReports = generateReports;
 		if (testFilesIncluded.size() > 0) {
 			this.testFilesIncluded = testFilesIncluded.toArray(new String[0]);
@@ -92,7 +92,7 @@ public class TestManager {
 		SimpleDateFormat sdf = new SimpleDateFormat(REPORT_DIR_DATE_FORMAT);
 		for (String file : tests) {
 		    if(generateReports) {
-		        thisTestArgs.setReportsDirectory(resultsDirectory+"/"+ 
+		        thisTestArgs.setReportsDirectory(reportDirectory+"/"+ 
 		            FilenameUtils.getBaseName(file)+"_"+
 		            sdf.format(new Date()));
 		    }

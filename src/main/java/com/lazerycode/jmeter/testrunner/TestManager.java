@@ -54,20 +54,25 @@ public class TestManager {
 		}
 	}
 
-	/**
-	 * Sets a pause after each test has been executed.
-	 *
-	 * @param postTestPauseInSeconds Number of seconds to pause after a test has completed
-	 */
-	public void setPostTestPauseInSeconds(String postTestPauseInSeconds) {
-		Long testPause = Long.getLong(postTestPauseInSeconds);
-		if (null == testPause) {
-			LOGGER.info("Invalid value detected for <postTestPauseInSeconds>.  Setting pause to 0...");
-			testPause = 0l;
-		}
+    /**
+     * Sets a pause after each test has been executed.
+     *
+     * @param postTestPauseInSeconds Number of seconds to pause after a test has completed
+     */
+    public void setPostTestPauseInSeconds(String postTestPauseInSeconds) {
+        Long testPause = null;
+        try {
+            testPause = Long.parseLong(postTestPauseInSeconds);
+        } catch(NumberFormatException ex) {
+            LOGGER.error("Error parsing value {} of <postTestPauseInSeconds>, will default to 0", 
+                    postTestPauseInSeconds, ex);
+        }
+        if (null == testPause) {
+            testPause = 0l;
+        }
 
-		this.postTestPauseInSeconds = testPause;
-	}
+        this.postTestPauseInSeconds = testPause;
+    }
 
 	/**
 	 * Executes all tests and returns the resultFile names

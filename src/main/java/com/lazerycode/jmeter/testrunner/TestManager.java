@@ -162,7 +162,7 @@ public class TestManager {
     			}
     			int jMeterExitCode = process.waitFor();
     			if (jMeterExitCode != 0) {
-    				throw new MojoExecutionException("Test failed");
+    				throw new MojoExecutionException("Test failed with exit code:"+jMeterExitCode);
     			}
     			LOGGER.info("Completed Test: {}", test.getAbsolutePath());
 			}

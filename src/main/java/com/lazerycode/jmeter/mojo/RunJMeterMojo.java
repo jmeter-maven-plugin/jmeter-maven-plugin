@@ -1,16 +1,15 @@
 package com.lazerycode.jmeter.mojo;
 
-import com.lazerycode.jmeter.exceptions.IOException;
-import com.lazerycode.jmeter.json.TestConfig;
-import com.lazerycode.jmeter.testrunner.TestManager;
-import org.apache.commons.io.FileUtils;
+import java.io.File;
+
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Execute;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 
-import java.io.File;
+import com.lazerycode.jmeter.json.TestConfig;
+import com.lazerycode.jmeter.testrunner.TestManager;
 
 /**
  * JMeter Maven plugin.

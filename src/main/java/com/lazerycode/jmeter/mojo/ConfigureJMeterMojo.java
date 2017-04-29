@@ -62,7 +62,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 	 * if you change this version number the list of artifacts required to run JMeter may change.
 	 * If this happens you will need to override the &lt;jmeterArtifacts&gt; element.
 	 */
-	@Parameter(defaultValue = "3.1")
+	@Parameter(defaultValue = "3.2")
 	private String jmeterVersion;
 
 	/**
@@ -340,7 +340,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 	 * We only use this default list if &lt;jmeterArtifacts&gt; has not been overridden in the POM.
 	 */
 	private void configureJMeterArtifacts() {
-		if (jmeterArtifacts.size() == 0) {
+		if (jmeterArtifacts.isEmpty()) {
 			jmeterArtifacts.add(JMETER_GROUP_ID + ":ApacheJMeter:" + jmeterVersion);
 			jmeterArtifacts.add(JMETER_GROUP_ID + ":ApacheJMeter_components:" + jmeterVersion);
 			jmeterArtifacts.add(JMETER_GROUP_ID + ":ApacheJMeter_config:" + jmeterVersion);
@@ -355,17 +355,15 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 			jmeterArtifacts.add(JMETER_GROUP_ID + ":ApacheJMeter_ldap:" + jmeterVersion);
 			jmeterArtifacts.add(JMETER_GROUP_ID + ":ApacheJMeter_mail:" + jmeterVersion);
 			jmeterArtifacts.add(JMETER_GROUP_ID + ":ApacheJMeter_mongodb:" + jmeterVersion);
-			jmeterArtifacts.add(JMETER_GROUP_ID + ":ApacheJMeter_monitors:" + jmeterVersion);
 			jmeterArtifacts.add(JMETER_GROUP_ID + ":ApacheJMeter_native:" + jmeterVersion);
-			jmeterArtifacts.add(JMETER_GROUP_ID + ":ApacheJMeter_slf4j_logkit:" + jmeterVersion);   //TODO move to lib dir
 			jmeterArtifacts.add(JMETER_GROUP_ID + ":ApacheJMeter_tcp:" + jmeterVersion);
 			jmeterArtifacts.add(JMETER_GROUP_ID + ":jorphan:" + jmeterVersion);						//TODO move to lib dir
 		}
 	}
 
 	private void populateJMeterDirectoryTree() throws DependencyResolutionException, IOException {
-		if (jmeterArtifacts.size() == 0) {
-			throw new DependencyResolutionException("No JMeter dependencies specified!");
+		if (jmeterArtifacts.isEmpty()) {
+			throw new DependencyResolutionException("No JMeter dependencies specified!, check jmeterArtifacts and jmeterVersion elements");
 		}
 		for (String desiredArtifact : jmeterArtifacts) {
 			Artifact returnedArtifact = getArtifactResult(new DefaultArtifact(desiredArtifact));

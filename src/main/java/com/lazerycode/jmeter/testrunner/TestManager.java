@@ -4,17 +4,18 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.tools.ant.DirectoryScanner;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.DateTimeFormatterBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,7 +32,7 @@ public class TestManager {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(JMeterProcessBuilder.class);
 	
-	private static final String REPORT_DIR_DATE_FORMAT = "yyyyMMddHHmmss";
+	private static final String REPORT_DIR_DATE_FORMAT = "yyyyMMdd_HHmmss";
 	private final JMeterArgumentsArray baseTestArgs;
 	private final File binDir;
 	private final File testFilesDirectory;
@@ -89,12 +90,12 @@ public class TestManager {
 		JMeterArgumentsArray thisTestArgs = baseTestArgs;
 		List<String> tests = generateTestList();
 		List<String> results = new ArrayList<String>();
-		SimpleDateFormat sdf = new SimpleDateFormat(REPORT_DIR_DATE_FORMAT);
+		DateTimeFormatter sdf = new DateTimeFormatterBuilder().appendPattern(REPORT_DIR_DATE_FORMAT).toFormatter();
 		for (String file : tests) {
 		    if(generateReports) {
 		        thisTestArgs.setReportsDirectory(reportDirectory+"/"+ 
 		            FilenameUtils.getBaseName(file)+"_"+
-		            sdf.format(new Date()));
+		            sdf.print(new DateTime()));
 		    }
 			if (remoteServerConfiguration != null) {
 				if ((remoteServerConfiguration.isStartServersBeforeTests() && tests.get(0).equals(file)) || remoteServerConfiguration.isStartAndStopServersForEachTest()) {

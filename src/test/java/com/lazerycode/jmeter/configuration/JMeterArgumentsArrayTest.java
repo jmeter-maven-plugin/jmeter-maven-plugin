@@ -388,7 +388,7 @@ public class JMeterArgumentsArrayTest {
 		assertThat(testArgs.getResultsLogFileName(),
 				is(not(equalTo(null))));
 		assertThat(UtilityFunctions.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()),
-				is(equalTo("-d target/jmeter/" + " -l " + "temp/test.jtl" + " -n -t " + testFile.getAbsolutePath())));
+				is(equalTo("-d target/jmeter/" + " -l " + "temp" + File.separator + "test.jtl" + " -n -t " + testFile.getAbsolutePath())));
 	}
 
 	@Test
@@ -418,7 +418,7 @@ public class JMeterArgumentsArrayTest {
 		assertThat(testArgs.getResultsLogFileName(),
 				is(not(equalTo(null))));
 		assertThat(UtilityFunctions.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()),
-				is(equalTo("-d target/jmeter/" + " -j /target/jmeter/logs/test.jmx.log -l " + testArgs.getResultsLogFileName() + " -n -t " + testFilePath)));
+				is(equalTo("-d target/jmeter/" + " -j /target/jmeter/logs" + File.separator + "test.jmx.log -l " + testArgs.getResultsLogFileName() + " -n -t " + testFilePath)));
 	}
 
 

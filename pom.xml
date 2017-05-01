@@ -31,25 +31,25 @@
 
         <!--Dependency versions-->
         <aether.version>1.1.0</aether.version>
-        <ant.version>1.9.8</ant.version>
+        <ant.version>1.10.1</ant.version>
         <commons-io.version>2.5</commons-io.version>
         <junit.version>4.12</junit.version>
         <joda-time.version>2.9.9</joda-time.version>
         <json-path.version>2.2.0</json-path.version>
-        <logback.version>1.1.8</logback.version>
+        <logback.version>1.2.3</logback.version>
         <mockito-core.version>2.5.5</mockito-core.version>
         <slf4j-api.version>1.7.25</slf4j-api.version>
 
         <!--Plugin versions-->
-        <maven-compiler-plugin.version>3.6.0</maven-compiler-plugin.version>
+        <maven-compiler-plugin.version>3.6.1</maven-compiler-plugin.version>
         <maven-enforcer-plugin.version>1.4.1</maven-enforcer-plugin.version>
-        <maven-failsafe-plugin.version>2.19.1</maven-failsafe-plugin.version>
+        <maven-failsafe-plugin.version>2.20</maven-failsafe-plugin.version>
         <maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
         <maven-invoker-plugin.version>2.0.0</maven-invoker-plugin.version>
         <maven-javadoc-plugin.version>2.10.4</maven-javadoc-plugin.version>
         <maven-plugin.version>3.5</maven-plugin.version>
         <maven-source-plugin.version>3.0.1</maven-source-plugin.version>
-        <nexus-staging-maven-plugin.version>1.6.7</nexus-staging-maven-plugin.version>
+        <nexus-staging-maven-plugin.version>1.6.8</nexus-staging-maven-plugin.version>
     </properties>
 
     <licenses>

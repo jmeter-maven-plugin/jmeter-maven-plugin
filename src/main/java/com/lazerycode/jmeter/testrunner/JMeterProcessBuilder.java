@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class JMeterProcessBuilder {
@@ -68,7 +69,9 @@ public class JMeterProcessBuilder {
 	}
 
 	public Process startProcess() throws IOException {
-		ProcessBuilder processBuilder = new ProcessBuilder(constructArgumentsList());
+	    String[] arguments = constructArgumentsList();
+	    LOGGER.info("Starting process with:{}", Arrays.asList(arguments));
+		ProcessBuilder processBuilder = new ProcessBuilder(arguments);
 		processBuilder.redirectErrorStream(true);
 		processBuilder.directory(new File(this.workingDirectory));
 		return processBuilder.start();

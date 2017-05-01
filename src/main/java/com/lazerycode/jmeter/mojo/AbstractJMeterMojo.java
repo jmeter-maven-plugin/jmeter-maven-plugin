@@ -151,18 +151,11 @@ public abstract class AbstractJMeterMojo extends AbstractMojo {
 
 	/**
 	 * Set a root log level to override all log levels used by JMeter
-	 * Valid log levels are: FATAL_ERROR, ERROR, WARN, INFO, DEBUG (They are not case sensitive);
+	 * Valid log levels are: ERROR, WARN, INFO, DEBUG (They are not case sensitive);
 	 * If you try to set an invalid log level it will be ignored
 	 */
 	@Parameter
 	protected String overrideRootLogLevel;
-
-	/**
-	 * Name of advanced logging configuration file that is in the <testFilesDirectory>
-	 * Defaults to "logkit.xml"
-	 */
-	@Parameter(defaultValue = "logkit.xml")
-	protected String logConfigFilename;
 
 	/**
 	 * Suppress JMeter output

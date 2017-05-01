@@ -1,11 +1,26 @@
 package com.lazerycode.jmeter.mojo;
 
-import com.lazerycode.jmeter.exceptions.DependencyResolutionException;
-import com.lazerycode.jmeter.exceptions.IOException;
-import com.lazerycode.jmeter.json.TestConfig;
-import com.lazerycode.jmeter.properties.ConfigurationFiles;
-import com.lazerycode.jmeter.properties.PropertiesFile;
-import com.lazerycode.jmeter.properties.PropertiesMapping;
+import static com.lazerycode.jmeter.properties.ConfigurationFiles.GLOBAL_PROPERTIES;
+import static com.lazerycode.jmeter.properties.ConfigurationFiles.JMETER_PROPERTIES;
+import static com.lazerycode.jmeter.properties.ConfigurationFiles.REPORT_GENERATOR_PROPERTIES;
+import static com.lazerycode.jmeter.properties.ConfigurationFiles.SAVE_SERVICE_PROPERTIES;
+import static com.lazerycode.jmeter.properties.ConfigurationFiles.SYSTEM_PROPERTIES;
+import static com.lazerycode.jmeter.properties.ConfigurationFiles.UPGRADE_PROPERTIES;
+import static com.lazerycode.jmeter.properties.ConfigurationFiles.USER_PROPERTIES;
+import static com.lazerycode.jmeter.properties.ConfigurationFiles.values;
+import static org.apache.commons.io.FileUtils.copyInputStreamToFile;
+
+import java.io.File;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -29,15 +44,12 @@ import org.eclipse.aether.resolution.DependencyRequest;
 import org.eclipse.aether.util.artifact.JavaScopes;
 import org.eclipse.aether.util.filter.DependencyFilterUtils;
 
-import java.io.File;
-import java.io.InputStream;
-import java.util.*;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
-
-import static com.lazerycode.jmeter.properties.ConfigurationFiles.*;
-import static org.apache.commons.io.FileUtils.copyFile;
-import static org.apache.commons.io.FileUtils.copyInputStreamToFile;
+import com.lazerycode.jmeter.exceptions.DependencyResolutionException;
+import com.lazerycode.jmeter.exceptions.IOException;
+import com.lazerycode.jmeter.json.TestConfig;
+import com.lazerycode.jmeter.properties.ConfigurationFiles;
+import com.lazerycode.jmeter.properties.PropertiesFile;
+import com.lazerycode.jmeter.properties.PropertiesMapping;
 
 @Mojo(name = "configure", defaultPhase = LifecyclePhase.COMPILE)
 public class ConfigureJMeterMojo extends AbstractJMeterMojo {
@@ -62,7 +74,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 	 * if you change this version number the list of artifacts required to run JMeter may change.
 	 * If this happens you will need to override the &lt;jmeterArtifacts&gt; element.
 	 */
-	@Parameter(defaultValue = "3.1")
+	@Parameter(defaultValue = "3.2")
 	private String jmeterVersion;
 
 	/**
@@ -260,6 +272,9 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 		libJUnitDirectory.mkdirs();
 		testFilesBuildDirectory.mkdirs();
 		resultsDirectory.mkdirs();
+		if(generateReports) {
+		    reportDirectory.mkdirs();
+		}
 		logsDirectory.mkdirs();
 	}
 
@@ -273,7 +288,6 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 		propertiesMap.put(GLOBAL_PROPERTIES, new PropertiesMapping(propertiesGlobal));
 
 		setJMeterResultFileFormat();
-		configureAdvancedLogging();
 
 		for (ConfigurationFiles configurationFile : values()) {
 			File suppliedPropertiesFile = new File(propertiesFilesDirectory, configurationFile.getFilename());
@@ -322,25 +336,12 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 		System.setProperty("jmeterengine.stopfail.system.exit", "false");
 	}
 
-	protected void configureAdvancedLogging() throws MojoFailureException {
-		File advancedLoggingSetting = new File(propertiesFilesDirectory, logConfigFilename);
-		if (advancedLoggingSetting.exists()) {
-			try {
-				copyFile(advancedLoggingSetting, new File(workingDirectory, logConfigFilename));
-			} catch (java.io.IOException ex) {
-				throw new MojoFailureException(ex.getMessage(), ex);
-			}
-			propertiesJMeter.put("log_config", logConfigFilename);
-		}
-	}
-
-
 	/**
 	 * This sets the default list of artifacts that we use to set up a local instance of JMeter.
 	 * We only use this default list if &lt;jmeterArtifacts&gt; has not been overridden in the POM.
 	 */
 	private void configureJMeterArtifacts() {
-		if (jmeterArtifacts.size() == 0) {
+		if (jmeterArtifacts.isEmpty()) {
 			jmeterArtifacts.add(JMETER_GROUP_ID + ":ApacheJMeter:" + jmeterVersion);
 			jmeterArtifacts.add(JMETER_GROUP_ID + ":ApacheJMeter_components:" + jmeterVersion);
 			jmeterArtifacts.add(JMETER_GROUP_ID + ":ApacheJMeter_config:" + jmeterVersion);
@@ -355,17 +356,15 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 			jmeterArtifacts.add(JMETER_GROUP_ID + ":ApacheJMeter_ldap:" + jmeterVersion);
 			jmeterArtifacts.add(JMETER_GROUP_ID + ":ApacheJMeter_mail:" + jmeterVersion);
 			jmeterArtifacts.add(JMETER_GROUP_ID + ":ApacheJMeter_mongodb:" + jmeterVersion);
-			jmeterArtifacts.add(JMETER_GROUP_ID + ":ApacheJMeter_monitors:" + jmeterVersion);
 			jmeterArtifacts.add(JMETER_GROUP_ID + ":ApacheJMeter_native:" + jmeterVersion);
-			jmeterArtifacts.add(JMETER_GROUP_ID + ":ApacheJMeter_slf4j_logkit:" + jmeterVersion);   //TODO move to lib dir
 			jmeterArtifacts.add(JMETER_GROUP_ID + ":ApacheJMeter_tcp:" + jmeterVersion);
 			jmeterArtifacts.add(JMETER_GROUP_ID + ":jorphan:" + jmeterVersion);						//TODO move to lib dir
 		}
 	}
 
 	private void populateJMeterDirectoryTree() throws DependencyResolutionException, IOException {
-		if (jmeterArtifacts.size() == 0) {
-			throw new DependencyResolutionException("No JMeter dependencies specified!");
+		if (jmeterArtifacts.isEmpty()) {
+			throw new DependencyResolutionException("No JMeter dependencies specified!, check jmeterArtifacts and jmeterVersion elements");
 		}
 		for (String desiredArtifact : jmeterArtifacts) {
 			Artifact returnedArtifact = getArtifactResult(new DefaultArtifact(desiredArtifact));
@@ -508,9 +507,6 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 				// Only interested in files in the /bin directory that are not properties files
 				if (!jarFileEntry.isDirectory() && jarFileEntry.getName().startsWith("bin") && !jarFileEntry.getName().endsWith(".properties")) {
 					File fileToCreate = new File(jmeterDirectory, jarFileEntry.getName());
-					if (jarFileEntry.getName().endsWith(logConfigFilename) && fileToCreate.exists()) {
-						break;
-					}
 					copyInputStreamToFile(configSettings.getInputStream(jarFileEntry), fileToCreate);
 				} else if (!jarFileEntry.isDirectory() && jarFileEntry.getName().startsWith("bin/report-template")) {
 					File fileToCreate = new File(jmeterDirectory, jarFileEntry.getName());

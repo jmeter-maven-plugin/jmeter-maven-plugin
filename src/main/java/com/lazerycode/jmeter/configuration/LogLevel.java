@@ -4,7 +4,6 @@ package com.lazerycode.jmeter.configuration;
  * Enum containing the log levels supported by JMeter
  */
 public enum LogLevel {
-	FATAL_ERROR,
 	ERROR,
 	WARN,
 	INFO,

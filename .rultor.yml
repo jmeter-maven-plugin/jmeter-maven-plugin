@@ -18,6 +18,7 @@ release:
     mv /home/r/secring.gpg /home/r/gpg/secring.gpg
     sudo chmod -R 700 /home/r/gpg
     mvn versions:set "-DnewVersion=${tag}"
+    export PATH=$JAVA_HOME/bin:$PATH
     set
     javac -version
     git commit -am "${tag}"

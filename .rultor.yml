@@ -15,5 +15,7 @@ release:
     mv /home/r/secring.gpg /home/r/gpg/secring.gpg
     sudo chmod -R 700 /home/r/gpg
     mvn versions:set "-DnewVersion=${tag}"
+    export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+    javac -version
     git commit -am "${tag}"
     mvn clean deploy -Prelease --settings /home/r/settings.xml

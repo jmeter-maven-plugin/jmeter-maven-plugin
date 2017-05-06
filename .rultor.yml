@@ -21,3 +21,6 @@ release:
     javac -version
     git commit -am "${tag}"
     mvn clean deploy -Prelease --settings /home/r/settings.xml
+  commanders:
+  - ardesco
+  - pmouawad

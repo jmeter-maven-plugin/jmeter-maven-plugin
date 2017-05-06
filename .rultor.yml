@@ -7,6 +7,8 @@ decrypt:
   settings.xml: "repo/settings.xml.asc"
   pubring.gpg: "repo/pubring.gpg.asc"
   secring.gpg: "repo/secring.gpg.asc"
+env:
+ JAVA_HOME: /usr/lib/jvm/java-8-openjdk-amd64 
 release:
   pre: false
   script: |-
@@ -15,7 +17,7 @@ release:
     mv /home/r/secring.gpg /home/r/gpg/secring.gpg
     sudo chmod -R 700 /home/r/gpg
     mvn versions:set "-DnewVersion=${tag}"
-    export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+    set
     javac -version
     git commit -am "${tag}"
     mvn clean deploy -Prelease --settings /home/r/settings.xml

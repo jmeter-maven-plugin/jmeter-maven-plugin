@@ -2,11 +2,20 @@
 
 ##Next Version (Release Date TBC) Release Notes
 
+##Version 2.2.0 Release Notes
+
+* **Issue #222** - Upgrade to JMeter 3.2
+
+* **Issue #221** - Fix error `[INFO] Invalid value detected for <postTestPauseInSeconds>. Setting pause to 0...]`
+
+* **Issue #208** - Add support for JMeter's built in report generation
+
 * **Issue #210** - When downloading transitive dependencies, optional dependencies are now not pulled down by default.  To change this toggle `<downloadOptionalDependencies>false</downloadOptionalDependencies>`
 * **Issue #179** - The plugin will now copy everything in the `${basedir}/src/test/conf` directory into the `jmeter/bin/` directory.  You can configure this by setting
 	```
 	<confFilesDirectory>${basedir}/src/test/some_conf_dir</confFilesDirectory>
 	```
+
 ##Version 2.1.0 Release Notes
 
 * **JMeter version 3.1.0 support added.**

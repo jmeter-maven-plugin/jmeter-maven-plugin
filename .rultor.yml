@@ -1,6 +1,8 @@
 architect:
   - ardesco
   - afranken
+docker:
+  image: "yegor256/java8"
 decrypt:
   settings.xml: "repo/settings.xml.asc"
   pubring.gpg: "repo/pubring.gpg.asc"

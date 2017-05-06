@@ -1,6 +1,7 @@
 architect:
   - ardesco
   - afranken
+  - pmouawad
 docker:
   image: "velo/rultor8"
 decrypt:

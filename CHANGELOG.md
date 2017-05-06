@@ -4,7 +4,7 @@
 
 ##Version 2.2.0 Release Notes
 
-* **Issue #222** - Upgrade to JMeter 3.2
+* **Issue #222** - JMeter version 3.2.0 support added.
 
 * **Issue #221** - Fix error `[INFO] Invalid value detected for <postTestPauseInSeconds>. Setting pause to 0...]`
 

@@ -79,18 +79,23 @@ public class TestConfig {
      */
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (!(obj instanceof TestConfig))
+        }
+        if (!(obj instanceof TestConfig)) {
             return false;
+        }
         TestConfig other = (TestConfig) obj;
         if (jsonData == null) {
-            if (other.jsonData != null)
+            if (other.jsonData != null) {
                 return false;
-        } else if (!jsonData.equals(other.jsonData))
+            }
+        } else if (!jsonData.equals(other.jsonData)) {
             return false;
+        }
         return true;
     }
 }

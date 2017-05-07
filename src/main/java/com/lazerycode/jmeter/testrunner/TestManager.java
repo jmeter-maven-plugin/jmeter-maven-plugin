@@ -58,7 +58,7 @@ public class TestManager {
 		this.testFilesExcluded = testFilesExcluded.toArray(new String[0]);
 		this.reportDirectory = reportDirectory;
 		this.generateReports = generateReports;
-		if (testFilesIncluded.size() > 0) {
+		if (!testFilesIncluded.isEmpty()) {
 			this.testFilesIncluded = testFilesIncluded.toArray(new String[0]);
 		} else {
 			this.testFilesIncluded = new String[]{"**/*.jmx"};
@@ -157,7 +157,8 @@ public class TestManager {
 				}
 			});
 
-			try (BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+			try (InputStreamReader isr = new InputStreamReader(process.getInputStream());
+			        BufferedReader br = new BufferedReader(isr)) {
     			String line;
     			while ((line = br.readLine()) != null) {
     				if (suppressJMeterOutput) {

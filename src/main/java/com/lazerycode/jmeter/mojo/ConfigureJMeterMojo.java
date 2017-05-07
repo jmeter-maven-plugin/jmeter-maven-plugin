@@ -311,10 +311,13 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 	}
 
 	protected void generateTestConfig() throws MojoExecutionException {
-		InputStream configFile = this.getClass().getResourceAsStream(baseConfigFile);
-		TestConfig testConfig = new TestConfig(configFile);
-		testConfig.setResultsOutputIsCSVFormat(resultsOutputIsCSVFormat);
-		testConfig.writeResultFilesConfigTo(testConfigFile);
+	    try (InputStream configFile = this.getClass().getResourceAsStream(baseConfigFile)) {
+    		TestConfig testConfig = new TestConfig(configFile);
+    		testConfig.setResultsOutputIsCSVFormat(resultsOutputIsCSVFormat);
+    		testConfig.writeResultFilesConfigTo(testConfigFile);
+	    } catch(java.io.IOException ex) {
+	        throw new MojoExecutionException("Exception creating TestConfig", ex);
+	    }
 	}
 
 	protected void setJMeterResultFileFormat() {
@@ -499,8 +502,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 	 * @throws IOException
 	 */
 	private void extractConfigSettings(Artifact artifact) throws IOException {
-		try {
-			JarFile configSettings = new JarFile(artifact.getFile());
+		try (JarFile configSettings = new JarFile(artifact.getFile())) {
 			Enumeration<JarEntry> entries = configSettings.entries();
 			while (entries.hasMoreElements()) {
 				JarEntry jarFileEntry = entries.nextElement();
@@ -513,7 +515,6 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 					copyInputStreamToFile(configSettings.getInputStream(jarFileEntry), fileToCreate);
 				}
 			}
-			configSettings.close();
 		} catch (java.io.IOException e) {
 			throw new IOException(e.getMessage(), e);
 		}

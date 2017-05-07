@@ -1,10 +1,5 @@
 package com.lazerycode.jmeter.properties;
 
-import com.lazerycode.jmeter.exceptions.IOException;
-import org.eclipse.aether.artifact.Artifact;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -13,6 +8,12 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Properties;
 import java.util.jar.JarFile;
+
+import org.eclipse.aether.artifact.Artifact;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.lazerycode.jmeter.exceptions.IOException;
 
 public class PropertiesFile {
 
@@ -46,8 +47,7 @@ public class PropertiesFile {
 	public PropertiesFile(Artifact jmeterConfigArtifact, ConfigurationFiles jMeterPropertiesFile) throws IOException {
 		Properties defaultPropertySet = new Properties();
 		if (null != jmeterConfigArtifact && jMeterPropertiesFile.createFileIfItDoesNotExist()) {
-			try {
-				JarFile propertyJar = new JarFile(jmeterConfigArtifact.getFile());
+			try (JarFile propertyJar = new JarFile(jmeterConfigArtifact.getFile())){
 				try (InputStream sourceFile = propertyJar.getInputStream(propertyJar.getEntry("bin/" + jMeterPropertiesFile.getFilename()))) {
 					defaultPropertySet.load(sourceFile);
 				}
@@ -118,7 +118,7 @@ public class PropertiesFile {
 	public void writePropertiesToFile(File outputFile) throws IOException {
 		stripOutReservedProperties();
 		//TODO if jmeter.properties write properties that are required for plugin
-		if (properties.size() == 0) {
+		if (properties.isEmpty()) {
 			return;
 		}
 		try {

@@ -63,13 +63,34 @@ public class TestConfig {
 		return JsonPath.read(jsonData, "$.resultsOutputIsCSVFormat");
 	}
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
+    /* (non-Javadoc)
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((jsonData == null) ? 0 : jsonData.hashCode());
+        return result;
+    }
 
-		TestConfig that = (TestConfig) o;
-
-		return jsonData != null ? jsonData.equals(that.jsonData) : that.jsonData == null;
-	}
+    /* (non-Javadoc)
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (!(obj instanceof TestConfig))
+            return false;
+        TestConfig other = (TestConfig) obj;
+        if (jsonData == null) {
+            if (other.jsonData != null)
+                return false;
+        } else if (!jsonData.equals(other.jsonData))
+            return false;
+        return true;
+    }
 }

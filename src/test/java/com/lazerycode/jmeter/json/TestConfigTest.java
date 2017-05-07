@@ -1,7 +1,8 @@
 package com.lazerycode.jmeter.json;
 
-import org.apache.maven.plugin.MojoExecutionException;
-import org.junit.Test;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.io.File;
 import java.io.InputStream;
@@ -11,9 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.junit.Test;
 
 public class TestConfigTest {
 
@@ -31,7 +31,7 @@ public class TestConfigTest {
 	@Test(expected = MojoExecutionException.class)
 	public void testConfigFileDoesNotExist() throws MojoExecutionException {
 		File testConfigJSON = new File("/does/not/exist");
-		TestConfig testConfig = new TestConfig(testConfigJSON);
+		new TestConfig(testConfigJSON);
 	}
 
 	@Test
@@ -44,7 +44,7 @@ public class TestConfigTest {
 	@Test(expected = MojoExecutionException.class)
 	public void testConfigResourceDoesNotExist() throws MojoExecutionException {
 		InputStream configFile = this.getClass().getResourceAsStream("/does/not.exist");
-		TestConfig testConfig = new TestConfig(configFile);
+		new TestConfig(configFile);
 	}
 
 	@Test

@@ -98,7 +98,8 @@ public class TestManager {
 		DateTimeFormatter sdf = new DateTimeFormatterBuilder().appendPattern(REPORT_DIR_DATE_FORMAT).toFormatter();
 		for (String file : tests) {
 		    if(generateReports) {
-		        thisTestArgs.setReportsDirectory(reportDirectory+"/"+ 
+		        thisTestArgs.setReportsDirectory(
+		                reportDirectory+File.separator+ 
 		            FilenameUtils.getBaseName(file)+"_"+
 		            sdf.print(new DateTime()));
 		    }

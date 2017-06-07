@@ -45,15 +45,9 @@
                         </goals>
                     </execution>
                     <execution>
-                        <id>performance test</id>
+                        <id>performance test one</id>
                         <goals>
                             <goal>jmeter</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>test_one</id>
-                        <goals>
-                            <goal>results</goal>
                         </goals>
                         <configuration>
                             <testFilesIncluded>
@@ -62,9 +56,9 @@
                         </configuration>
                     </execution>
                     <execution>
-                        <id>test_two</id>
+                        <id>performance test two</id>
                         <goals>
-                            <goal>results</goal>
+                            <goal>jmeter</goal>
                         </goals>
                         <configuration>
                             <testFilesIncluded>

@@ -25,11 +25,11 @@ public final class UtilityFunctions {
 	 * @return String
 	 */
 	public static String humanReadableCommandLineOutput(List<String> arguments) {
-		String debugOutput = "";
+		StringBuilder debugOutput = new StringBuilder();
 		for (String argument : arguments) {
-			debugOutput += argument + " ";
+		    debugOutput.append(argument).append(" ");
 		}
-		return debugOutput.trim();
+		return debugOutput.toString().trim();
 	}
 
 	/**

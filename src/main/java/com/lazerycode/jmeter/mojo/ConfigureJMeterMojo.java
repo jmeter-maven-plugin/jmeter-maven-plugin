@@ -231,11 +231,11 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 
 	public static final String JMETER_CONFIG_ARTIFACT_NAME = "ApacheJMeter_config";
 	private static final String JMETER_GROUP_ID = "org.apache.jmeter";
-	protected Artifact jmeterConfigArtifact;
-	protected File customPropertiesDirectory;
-	protected File libDirectory;
-	protected File libExtDirectory;
-	protected File libJUnitDirectory;
+	protected static Artifact jmeterConfigArtifact;
+	protected static File customPropertiesDirectory;
+	protected static File libDirectory;
+	protected static File libExtDirectory;
+	protected static File libJUnitDirectory;
 
 	/**
 	 * Configure a local instance of JMeter

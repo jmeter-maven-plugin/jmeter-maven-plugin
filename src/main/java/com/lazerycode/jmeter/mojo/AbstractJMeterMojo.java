@@ -205,10 +205,10 @@ public abstract class AbstractJMeterMojo extends AbstractMojo {
 	@Parameter(defaultValue = "${project.build.directory}")
 	protected File projectBuildDirectory;
 
-	protected String runtimeJarName;
-	protected JMeterArgumentsArray testArgs;
-	protected File workingDirectory;
-	protected Map<ConfigurationFiles, PropertiesMapping> propertiesMap = 
+	protected static String runtimeJarName;
+	protected static JMeterArgumentsArray testArgs;
+	protected static File workingDirectory;
+	protected static Map<ConfigurationFiles, PropertiesMapping> propertiesMap = 
 	        new EnumMap<>(ConfigurationFiles.class);
 
 	//==================================================================================================================

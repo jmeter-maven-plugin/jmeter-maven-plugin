@@ -25,7 +25,7 @@ This plugin requires **JDK 1.8** or higher since 2.2.0
 		<plugin>
 			<groupId>com.lazerycode.jmeter</groupId>
 			<artifactId>jmeter-maven-plugin</artifactId>
-			<version>2.2.0</version>
+			<version>2.3.0</version>
 			<executions>
 				<execution>
 					<id>jmeter-tests</id>

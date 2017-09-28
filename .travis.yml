@@ -6,5 +6,5 @@ env:
   - secure: aIw0AaE9hTmmS3Gfpd2/jQmPbwkiUTJKmpFLh2xZOKmCi4tZNXg/+Nw57jGnXn3Vn0RR5JScThjN4uZFLj3MkMECbKH4l3APD4AWm41E2bpZz7DtPo0ppQwGtAYBLwr/cYQvMTSa7WsoP8YYrwyjN50yJSVSO08uWFdNUKwttqk=
   - secure: RZfD/0Ksr8JYLVxXjkTY2Br5zeX//vQZ+EuvK8jnajoG7Cl468n3o6BtvELt9B7/aAFPO6HFPzqWNjQWFIZ3ts3s51vjwnaW6zszF6apVyQlnqG6mqdJtokezoNXJGpz4AD/+mrskN71HRMVVwSI+xrLInpufUjgw7t27Azczw8=
 sudo: false
-script: mvn clean verify
+script: mvn -X clean verify
 after_success: ./deploy_to_sonatype.sh

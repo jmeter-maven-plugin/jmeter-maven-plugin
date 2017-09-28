@@ -25,7 +25,7 @@ public class JMeterArgumentsArray {
 	private final String jMeterHome;
 	private boolean disableTests;
 
-	private final TreeSet<JMeterCommandLineArguments> argumentList = new TreeSet<JMeterCommandLineArguments>();
+	private final TreeSet<JMeterCommandLineArguments> argumentList = new TreeSet<>();
 	private DateTimeFormatter dateFormat = ISODateTimeFormat.basicDate();
 	private ProxyConfiguration proxyConfiguration;
 	private boolean timestampResults = false;
@@ -103,7 +103,7 @@ public class JMeterArgumentsArray {
 	public void setLogRootOverride(String requestedLogLevel) {
 		if (isNotSet(requestedLogLevel)) return;
 		for (LogLevel logLevel : LogLevel.values()) {
-			if (logLevel.toString().equals(requestedLogLevel.toUpperCase())) {
+		    if (logLevel.toString().equals(requestedLogLevel.toUpperCase())) {
 				overrideRootLogLevel = logLevel;
 				argumentList.add(LOGLEVEL);
 			}
@@ -183,7 +183,7 @@ public class JMeterArgumentsArray {
 	 */
 	public List<String> buildArgumentsArray() throws MojoExecutionException {
 		if (!argumentList.contains(TESTFILE_OPT) && !disableTests) throw new MojoExecutionException("No test(s) specified!");
-		List<String> argumentsArray = new ArrayList<String>();
+		List<String> argumentsArray = new ArrayList<>();
 
 		for (JMeterCommandLineArguments argument : argumentList) {
 			switch (argument) {

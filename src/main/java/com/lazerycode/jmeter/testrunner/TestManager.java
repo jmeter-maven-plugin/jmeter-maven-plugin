@@ -94,7 +94,7 @@ public class TestManager {
 	public List<String> executeTests() throws MojoExecutionException {
 		JMeterArgumentsArray thisTestArgs = baseTestArgs;
 		List<String> tests = generateTestList();
-		List<String> results = new ArrayList<String>();
+		List<String> results = new ArrayList<>();
 		DateTimeFormatter sdf = new DateTimeFormatterBuilder().appendPattern(REPORT_DIR_DATE_FORMAT).toFormatter();
 		for (String file : tests) {
 		    if(generateReports) {
@@ -116,6 +116,7 @@ public class TestManager {
 			try {
 				TimeUnit.SECONDS.sleep(postTestPauseInSeconds);
 			} catch (InterruptedException ignored) {
+			    Thread.currentThread().interrupt();
 			}
 		}
 		return results;

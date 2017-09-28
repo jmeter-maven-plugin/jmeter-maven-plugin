@@ -55,7 +55,10 @@ public class ResultScanner {
 				patternCount++;
 			}
 		} catch (FileNotFoundException ex) {
-			throw new ResultsFileNotFoundException(ex.getMessage(), ex.getCause());
+			throw new ResultsFileNotFoundException("File not found for file:"
+			        +file.getAbsolutePath()
+			        +", pattern:"
+			        +pattern, ex);
 		}
 
 		return patternCount;

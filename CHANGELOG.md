@@ -2,6 +2,10 @@
 
 ##Next Version (Release Date TBC) Release Notes
 
+##Version 2.3.0 Release Notes
+
+* **Issue #240 - JMeter version 3.3 support added.**
+
 ##Version 2.2.0 Release Notes
 
 * **Issue #222 - JMeter version 3.2.0 support added.**

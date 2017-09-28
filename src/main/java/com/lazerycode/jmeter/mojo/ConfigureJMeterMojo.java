@@ -66,7 +66,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 	/**
 	 * Name of the base config json file
 	 */
-	private final String baseConfigFile = "/config.json";
+	private static final String baseConfigFile = "/config.json";
 
 	/**
 	 * The version of JMeter that this plugin will use to run tests.
@@ -231,11 +231,11 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 
 	public static final String JMETER_CONFIG_ARTIFACT_NAME = "ApacheJMeter_config";
 	private static final String JMETER_GROUP_ID = "org.apache.jmeter";
-	protected static Artifact jmeterConfigArtifact;
-	protected static File customPropertiesDirectory;
-	protected static File libDirectory;
-	protected static File libExtDirectory;
-	protected static File libJUnitDirectory;
+	protected Artifact jmeterConfigArtifact;
+	protected File customPropertiesDirectory;
+	protected File libDirectory;
+	protected File libExtDirectory;
+	protected File libJUnitDirectory;
 
 	/**
 	 * Configure a local instance of JMeter
@@ -314,6 +314,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 	    try (InputStream configFile = this.getClass().getResourceAsStream(baseConfigFile)) {
     		TestConfig testConfig = new TestConfig(configFile);
     		testConfig.setResultsOutputIsCSVFormat(resultsOutputIsCSVFormat);
+    		testConfig.setGenerateReports(generateReports);
     		testConfig.writeResultFilesConfigTo(testConfigFile);
 	    } catch(java.io.IOException ex) {
 	        throw new MojoExecutionException("Exception creating TestConfig", ex);
@@ -321,7 +322,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 	}
 
 	protected void setJMeterResultFileFormat() {
-		if (generateReports || resultsFileFormat.toLowerCase().equals("csv")) {
+		if (generateReports || "csv".equalsIgnoreCase(resultsFileFormat)) {
 			propertiesJMeter.put("jmeter.save.saveservice.output_format", "csv");
 			resultsOutputIsCSVFormat = true;
 		} else {
@@ -389,7 +390,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 		}
 
 		if (confFilesDirectory.exists()) {
-			CopyFilesInTestDirectory(confFilesDirectory, new File(jmeterDirectory, "bin"));
+			copyFilesInTestDirectory(confFilesDirectory, new File(jmeterDirectory, "bin"));
 		}
 	}
 
@@ -507,10 +508,8 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 			while (entries.hasMoreElements()) {
 				JarEntry jarFileEntry = entries.nextElement();
 				// Only interested in files in the /bin directory that are not properties files
-				if (!jarFileEntry.isDirectory() && jarFileEntry.getName().startsWith("bin") && !jarFileEntry.getName().endsWith(".properties")) {
-					File fileToCreate = new File(jmeterDirectory, jarFileEntry.getName());
-					copyInputStreamToFile(configSettings.getInputStream(jarFileEntry), fileToCreate);
-				} else if (!jarFileEntry.isDirectory() && jarFileEntry.getName().startsWith("bin/report-template")) {
+				if (!jarFileEntry.isDirectory() && jarFileEntry.getName().startsWith("bin") 
+				        && !jarFileEntry.getName().endsWith(".properties")) {
 					File fileToCreate = new File(jmeterDirectory, jarFileEntry.getName());
 					copyInputStreamToFile(configSettings.getInputStream(jarFileEntry), fileToCreate);
 				}

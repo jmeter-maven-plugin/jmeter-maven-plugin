@@ -63,6 +63,13 @@ public class TestConfig {
 		return JsonPath.read(jsonData, "$.resultsOutputIsCSVFormat");
 	}
 
+    public void setGenerateReports(boolean generateReports) {
+        jsonData = JsonPath.parse(jsonData).set("$.generateReports", generateReports).jsonString();
+    }
+    
+    public boolean getGenerateReports() {
+        return JsonPath.read(jsonData, "$.generateReports");
+    }
     /* (non-Javadoc)
      * @see java.lang.Object#hashCode()
      */

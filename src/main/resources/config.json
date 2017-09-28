@@ -1,4 +1,5 @@
 {
   "resultFilesLocations" : [],
-  "resultsOutputIsCSVFormat" : false
+  "resultsOutputIsCSVFormat" : false,
+  "generateReports": false
 }

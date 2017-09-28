@@ -1,8 +1,8 @@
 package com.lazerycode.jmeter.mojo;
 
-import com.lazerycode.jmeter.json.TestConfig;
-import com.lazerycode.jmeter.testrunner.JMeterProcessBuilder;
-import com.lazerycode.jmeter.utility.UtilityFunctions;
+import java.io.File;
+import java.io.IOException;
+
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Execute;
@@ -10,8 +10,9 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
-import java.io.File;
-import java.io.IOException;
+import com.lazerycode.jmeter.json.TestConfig;
+import com.lazerycode.jmeter.testrunner.JMeterProcessBuilder;
+import com.lazerycode.jmeter.utility.UtilityFunctions;
 
 /**
  * JMeter Maven plugin.
@@ -67,8 +68,10 @@ public class RunJMeterGUIMojo extends AbstractJMeterMojo {
 			getLog().info(" ");
 			getLog().info("System Exit Detected!  Stopping GUI...");
 			getLog().info(" ");
+			Thread.currentThread().interrupt();
 		} catch (IOException e) {
-			getLog().error(e.getMessage());
+			getLog().error("Error starting JMeter with args "+testArgs.buildArgumentsArray()
+			    + ", in working directory:"+workingDirectory, e);
 		}
 	}
 }

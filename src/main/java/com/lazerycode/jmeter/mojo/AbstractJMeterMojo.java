@@ -1,12 +1,13 @@
 package com.lazerycode.jmeter.mojo;
 
-import com.lazerycode.jmeter.configuration.JMeterArgumentsArray;
-import com.lazerycode.jmeter.configuration.JMeterProcessJVMSettings;
-import com.lazerycode.jmeter.configuration.ProxyConfiguration;
-import com.lazerycode.jmeter.configuration.RemoteConfiguration;
-import com.lazerycode.jmeter.exceptions.IOException;
-import com.lazerycode.jmeter.properties.ConfigurationFiles;
-import com.lazerycode.jmeter.properties.PropertiesMapping;
+import static com.lazerycode.jmeter.utility.UtilityFunctions.isSet;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
@@ -18,13 +19,13 @@ import org.apache.maven.settings.Proxy;
 import org.apache.maven.settings.Settings;
 import org.joda.time.format.DateTimeFormat;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static com.lazerycode.jmeter.utility.UtilityFunctions.isSet;
+import com.lazerycode.jmeter.configuration.JMeterArgumentsArray;
+import com.lazerycode.jmeter.configuration.JMeterProcessJVMSettings;
+import com.lazerycode.jmeter.configuration.ProxyConfiguration;
+import com.lazerycode.jmeter.configuration.RemoteConfiguration;
+import com.lazerycode.jmeter.exceptions.IOException;
+import com.lazerycode.jmeter.properties.ConfigurationFiles;
+import com.lazerycode.jmeter.properties.PropertiesMapping;
 
 /**
  * JMeter Maven plugin.
@@ -196,18 +197,19 @@ public abstract class AbstractJMeterMojo extends AbstractMojo {
 	 * Place where the JMeter files will be generated.
 	 */
 	@Parameter(defaultValue = "${project.build.directory}/jmeter")
-	protected transient File jmeterDirectory;
+	protected File jmeterDirectory;
 
 	/**
 	 * The project build directory
 	 */
 	@Parameter(defaultValue = "${project.build.directory}")
-	transient File projectBuildDirectory;
+	protected File projectBuildDirectory;
 
-	protected static String runtimeJarName;
-	protected static JMeterArgumentsArray testArgs;
-	protected static File workingDirectory;
-	protected static Map<ConfigurationFiles, PropertiesMapping> propertiesMap = new HashMap<>();
+	protected String runtimeJarName;
+	protected JMeterArgumentsArray testArgs;
+	protected File workingDirectory;
+	protected Map<ConfigurationFiles, PropertiesMapping> propertiesMap = 
+	        new EnumMap<>(ConfigurationFiles.class);
 
 	//==================================================================================================================
 
@@ -215,7 +217,8 @@ public abstract class AbstractJMeterMojo extends AbstractMojo {
 	public final void execute() throws MojoExecutionException, MojoFailureException {
 		if (skipTests) {
 			if (session.getGoals().contains("jmeter:gui")) {
-				if (!mojoExecution.getExecutionId().equals("default-cli") && !mojoExecution.getLifecyclePhase().equals("compile")) {
+				if (!"default-cli".equals(mojoExecution.getExecutionId()) && 
+				        !"compile".equals(mojoExecution.getLifecyclePhase())) {
 					getLog().info("Performance tests are skipped.");
 					return;
 				}
@@ -254,7 +257,7 @@ public abstract class AbstractJMeterMojo extends AbstractMojo {
 				try {
 					testArgs.setResultsFileNameDateFormat(DateTimeFormat.forPattern(resultsFileNameDateFormat));
 				} catch (Exception ex) {
-					getLog().error("'" + resultsFileNameDateFormat + "' is an invalid DateTimeFormat.  Defaulting to Standard ISO_8601.");
+					getLog().error("'" + resultsFileNameDateFormat + "' is an invalid DateTimeFormat.  Defaulting to Standard ISO_8601.", ex);
 				}
 			}
 		}
@@ -295,7 +298,7 @@ public abstract class AbstractJMeterMojo extends AbstractMojo {
 		}
 	}
 
-	static void CopyFilesInTestDirectory(File sourceDirectory, File destinationDirectory) throws IOException {
+	static void copyFilesInTestDirectory(File sourceDirectory, File destinationDirectory) throws IOException {
 		try {
 			FileUtils.copyDirectory(sourceDirectory, destinationDirectory);
 		} catch (java.io.IOException e) {

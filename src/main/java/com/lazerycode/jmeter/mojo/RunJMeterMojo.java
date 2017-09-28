@@ -44,7 +44,7 @@ public class RunJMeterMojo extends AbstractJMeterMojo {
 			remoteConfig.setPropertiesMap(propertiesMap);
 		}
 
-		CopyFilesInTestDirectory(testFilesDirectory, testFilesBuildDirectory);
+		copyFilesInTestDirectory(testFilesDirectory, testFilesBuildDirectory);
 
 		TestManager jMeterTestManager = 
 		        new TestManager(testArgs, testFilesBuildDirectory, testFilesIncluded, testFilesExcluded, 

@@ -27,7 +27,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <required.maven.version>3.1.1</required.maven.version>
         <supported.java.version>1.8</supported.java.version>
-        <supported.jmeter.version>3.2</supported.jmeter.version>
+        <supported.jmeter.version>3.3</supported.jmeter.version>
 
         <!--Dependency versions-->
         <aether.version>1.1.0</aether.version>
@@ -112,6 +112,13 @@
         <developer>
             <id>Ronnie76er</id>
             <name>Ron Alleva</name>
+            <roles>
+                <role>Comitter</role>
+            </roles>
+        </developer>
+        <developer>
+            <id>pmouawad</id>
+            <name>Philippe Mouawad</name>
             <roles>
                 <role>Comitter</role>
             </roles>

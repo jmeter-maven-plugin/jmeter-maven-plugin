@@ -26,7 +26,7 @@ public class RunJMeterMojoTest {
 
 		assertThat(destinationDirectory.list().length, is(equalTo(0)));
 
-		RunJMeterMojo.CopyFilesInTestDirectory(sourceDirectory, destinationDirectory);
+		RunJMeterMojo.copyFilesInTestDirectory(sourceDirectory, destinationDirectory);
 
 		assertThat(destinationDirectory.list().length, is(equalTo(3)));
 		assertThat(destinationDirectory.list(), arrayContainingInAnyOrder(expectedResult));

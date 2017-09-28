@@ -38,7 +38,7 @@ public class JMeterProcessBuilder {
 		try {
 			this.workingDirectory = workingDirectory.getCanonicalPath();
 		} catch (IOException ignored) {
-			throw new MojoExecutionException("Unable to set working directory for JMeter process!");
+			throw new MojoExecutionException("Unable to set working directory for JMeter process!", ignored);
 		}
 	}
 
@@ -63,7 +63,7 @@ public class JMeterProcessBuilder {
 			argumentsList.add(arg);
 		}
 
-		LOGGER.debug("Arguments for forked JMeter JVM: " + argumentsList.toString());
+		LOGGER.debug("Arguments for forked JMeter JVM: {}", argumentsList.toString());
 
 		return argumentsList.toArray(new String[argumentsList.size()]);
 	}

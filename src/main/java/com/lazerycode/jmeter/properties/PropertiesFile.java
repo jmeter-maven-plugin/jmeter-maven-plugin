@@ -103,7 +103,7 @@ public class PropertiesFile {
 	public void addAndOverwriteProperties(Map<String, String> additionalProperties) {
 		additionalProperties.values().removeAll(Collections.singleton(null));
 		for (Map.Entry<String, String> additionalPropertiesMap : additionalProperties.entrySet()) {
-			if (!additionalPropertiesMap.getValue().trim().equals("")) {
+			if (!additionalPropertiesMap.getValue().trim().isEmpty()) {
 				properties.setProperty(additionalPropertiesMap.getKey(), additionalPropertiesMap.getValue());
 				warnUserOfPossibleErrors(additionalPropertiesMap.getKey(), properties);
 			}
@@ -139,8 +139,9 @@ public class PropertiesFile {
 	 */
 	private void warnUserOfPossibleErrors(String newKey, Properties baseProperties) {
 		for (String key : baseProperties.stringPropertyNames()) {
-			if (!key.equals(newKey) && key.toLowerCase().equals(newKey.toLowerCase())) {
-				LOGGER.warn("You have set a property called '" + newKey + "' which is very similar to '" + key + "'!");
+			if (!key.equals(newKey) && key.equalsIgnoreCase(newKey)) {
+				LOGGER.warn("You have set a property called '{}' which is very similar to '{}'!",
+				        newKey, key);
 			}
 		}
 	}

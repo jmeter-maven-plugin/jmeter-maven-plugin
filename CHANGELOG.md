@@ -2,6 +2,8 @@
 
 ##Next Version (Release Date TBC) Release Notes
 
+* **Issue #242 - customPropertiesFiles Tag Drops The Period.**
+
 ##Version 2.3.0 Release Notes
 
 * **Issue #240 - JMeter version 3.3 support added.**

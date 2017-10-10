@@ -2,6 +2,8 @@
 
 ##Next Version (Release Date TBC) Release Notes
 
+* **Issue #244 - Settings ignoreResultFailures will not work if scanResultsForFailedRequests is not set to true.**
+
 * **Issue #243 - Make Result Scanning also work with results in CSV format.**
 
 * **Issue #242 - customPropertiesFiles Tag Drops The Period.**

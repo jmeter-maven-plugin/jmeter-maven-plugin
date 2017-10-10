@@ -45,6 +45,12 @@ public class CheckResultsMojo extends AbstractJMeterMojo {
 	 */
 	@Override
 	public void doExecute() throws MojoExecutionException, MojoFailureException {
+	    if(!ignoreResultFailures && !scanResultsForFailedRequests) {
+	        getLog().warn("current value of scanResultsForFailedRequests("
+	                +scanResultsForFailedRequests+") is incompatible with ignoreResultFailures("
+	                +ignoreResultFailures+", setting scanResultsForFailedRequests to true");
+	        scanResultsForFailedRequests = true;
+	    }
 		if (scanResultsForSuccessfulRequests || scanResultsForFailedRequests) {
 		    TestConfig testConfig = new TestConfig(new File(testConfigFile));
 		    getLog().info("Will scan results using format:"+testConfig.getFullConfig());

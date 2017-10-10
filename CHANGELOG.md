@@ -2,6 +2,8 @@
 
 ##Next Version (Release Date TBC) Release Notes
 
+##Version 2.4.0 Release Notes
+
 * **Issue #244 - Settings ignoreResultFailures will not work if scanResultsForFailedRequests is not set to true.**
 
 * **Issue #243 - Make Result Scanning also work with results in CSV format.**

@@ -2,6 +2,8 @@
 
 ##Next Version (Release Date TBC) Release Notes
 
+* **Issue #243 - Make Result Scanning also work with results in CSV format.**
+
 * **Issue #242 - customPropertiesFiles Tag Drops The Period.**
 
 ##Version 2.3.0 Release Notes

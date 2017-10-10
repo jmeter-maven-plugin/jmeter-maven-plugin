@@ -46,8 +46,10 @@ public class CheckResultsMojo extends AbstractJMeterMojo {
 	@Override
 	public void doExecute() throws MojoExecutionException, MojoFailureException {
 		if (scanResultsForSuccessfulRequests || scanResultsForFailedRequests) {
-			ResultScanner resultScanner = new ResultScanner(scanResultsForSuccessfulRequests, scanResultsForFailedRequests);
-			TestConfig testConfig = new TestConfig(new File(testConfigFile));
+		    TestConfig testConfig = new TestConfig(new File(testConfigFile));
+		    getLog().info("Will scan results using format:"+testConfig.getFullConfig());
+			ResultScanner resultScanner = new ResultScanner(scanResultsForSuccessfulRequests, scanResultsForFailedRequests,
+			        testConfig.getResultsOutputIsCSVFormat());
 			for (String resultFileLocation : testConfig.getResultsFileLocations()) {
 				resultScanner.parseResultFile(new File(resultFileLocation));
 			}

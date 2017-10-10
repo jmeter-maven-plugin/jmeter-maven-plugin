@@ -1,10 +1,13 @@
 package com.lazerycode.jmeter.testrunner;
 
-import com.lazerycode.jmeter.exceptions.ResultsFileNotFoundException;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.lazerycode.jmeter.exceptions.ResultsFileNotFoundException;
 
 /**
  * Handles checking a JMeter results file in XML format for errors and failures.
@@ -12,17 +15,27 @@ import java.util.Scanner;
  * @author Jon Roberts
  */
 public class ResultScanner {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ResultScanner.class);
 
-	private static final String REQUEST_FAILURE = "s=\"false\"";
-	private static final String REQUEST_SUCCESS = "s=\"true\"";
+    private static final String CSV_REQUEST_FAILURE = "\\bfalse\\b";
+    private static final String CSV_REQUEST_SUCCESS = "\\btrue\\b";
+
+	private static final String XML_REQUEST_FAILURE = "s=\"false\"";
+	private static final String XML_REQUEST_SUCCESS = "s=\"true\"";
 	private final boolean countFailures;
 	private final boolean countSuccesses;
 	private int failureCount = 0;
 	private int successCount = 0;
+    private boolean csv;
 
+	public ResultScanner(boolean countSuccesses, boolean countFailures, boolean isCsv) {
+        this.countFailures = countFailures;
+        this.countSuccesses = countSuccesses;
+        this.csv = isCsv;
+    }
+	
 	public ResultScanner(boolean countSuccesses, boolean countFailures) {
-		this.countFailures = countFailures;
-		this.countSuccesses = countSuccesses;
+	    this(countSuccesses, countFailures, false);
 	}
 
 	/**
@@ -32,11 +45,15 @@ public class ResultScanner {
 	 * @throws ResultsFileNotFoundException
 	 */
 	public void parseResultFile(File file) throws ResultsFileNotFoundException {
+	    String failurePattern = this.csv ? CSV_REQUEST_FAILURE : XML_REQUEST_FAILURE;
+	    String successPattern = this.csv ? CSV_REQUEST_SUCCESS : XML_REQUEST_SUCCESS;
+	    LOGGER.info("Parsing results in format '{}' using failurePattern:'{}', successPattern:'{}'", 
+	            this.csv ? "CSV" : "XML", failurePattern, successPattern);
 		if (countFailures) {
-			failureCount = failureCount + scanFileForPattern(file, REQUEST_FAILURE);
+			failureCount = failureCount + scanFileForPattern(file, failurePattern);
 		}
 		if (countSuccesses) {
-			successCount = successCount + scanFileForPattern(file, REQUEST_SUCCESS);
+			successCount = successCount + scanFileForPattern(file, successPattern);
 		}
 	}
 

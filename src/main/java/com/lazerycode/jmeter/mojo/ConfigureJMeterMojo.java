@@ -303,7 +303,10 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 
 		for (File customPropertiesFile : customPropertiesFiles) {
 			PropertiesFile customProperties = new PropertiesFile(customPropertiesFile);
-			String customPropertiesFilename = FilenameUtils.getBaseName(customPropertiesFile.getName()) + "-" + UUID.randomUUID().toString() + FilenameUtils.getExtension(customPropertiesFile.getName());
+			String customPropertiesFilename = 
+			        FilenameUtils.getBaseName(customPropertiesFile.getName()) 
+			        + "-" + UUID.randomUUID().toString() 
+			        + "." + FilenameUtils.getExtension(customPropertiesFile.getName());
 			customProperties.writePropertiesToFile(new File(customPropertiesDirectory, customPropertiesFilename));
 		}
 

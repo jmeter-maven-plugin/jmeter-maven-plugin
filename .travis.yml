@@ -8,3 +8,6 @@ env:
 sudo: false
 script: mvn clean verify
 after_success: ./deploy_to_sonatype.sh
+
+after_success:
+    - bash <(curl -s https://codecov.io/bash)

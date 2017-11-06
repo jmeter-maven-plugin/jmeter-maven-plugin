@@ -239,7 +239,7 @@ public abstract class AbstractJMeterMojo extends AbstractMojo {
 	 *
 	 * @throws MojoExecutionException
 	 */
-	protected JMeterArgumentsArray initialiseJMeterArgumentsArray(boolean disableGUI, boolean isCSVFormat) throws MojoExecutionException {
+	protected JMeterArgumentsArray computeJMeterArgumentsArray(boolean disableGUI, boolean isCSVFormat) throws MojoExecutionException {
 	    JMeterArgumentsArray testArgs = new JMeterArgumentsArray(disableGUI, jmeterDirectory.getAbsolutePath());
 		testArgs.setResultsDirectory(resultsDirectory.getAbsolutePath());
 		testArgs.setResultFileOutputFormatIsCSV(isCSVFormat);

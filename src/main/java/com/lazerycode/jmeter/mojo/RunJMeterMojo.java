@@ -39,7 +39,7 @@ public class RunJMeterMojo extends AbstractJMeterMojo {
 		}
 
 		TestConfig testConfig = new TestConfig(new File(testConfigFile));
-		JMeterArgumentsArray testArgs = initialiseJMeterArgumentsArray(true, testConfig.getResultsOutputIsCSVFormat());
+		JMeterArgumentsArray testArgs = computeJMeterArgumentsArray(true, testConfig.getResultsOutputIsCSVFormat());
 
 		if (null != remoteConfig) {
 			remoteConfig.setPropertiesMap(JMeterConfigurationHolder.getInstance().getPropertiesMap());

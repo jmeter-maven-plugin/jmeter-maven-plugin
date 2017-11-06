@@ -47,7 +47,8 @@ public class ResultScanner {
 	public void parseResultFile(File file) throws ResultsFileNotFoundException {
 	    String failurePattern = this.csv ? CSV_REQUEST_FAILURE : XML_REQUEST_FAILURE;
 	    String successPattern = this.csv ? CSV_REQUEST_SUCCESS : XML_REQUEST_SUCCESS;
-	    LOGGER.info("Parsing results in format '{}' using failurePattern:'{}', successPattern:'{}'", 
+	    LOGGER.info("Parsing results file '{}' in format '{}' using failurePattern:'{}', successPattern:'{}'",
+	            file,
 	            this.csv ? "CSV" : "XML", failurePattern, successPattern);
 		if (countFailures) {
 			failureCount = failureCount + scanFileForPattern(file, failurePattern);
@@ -65,8 +66,10 @@ public class ResultScanner {
 	 * @return The number of times the pattern has been found
 	 * @throws ResultsFileNotFoundException
 	 */
-	private int scanFileForPattern(File file, String pattern) throws ResultsFileNotFoundException {
+	private int scanFileForPattern(File file, String pattern) 
+	        throws ResultsFileNotFoundException { // NOSONAR
 		int patternCount = 0;
+		LOGGER.debug("Scanning file '{}' using pattern '{}'", file.getAbsolutePath(), pattern);
 		try (Scanner resultFileScanner = new Scanner(file)) {
 			while (resultFileScanner.findWithinHorizon(pattern, 0) != null) {
 				patternCount++;
@@ -77,6 +80,7 @@ public class ResultScanner {
 			        +", pattern:"
 			        +pattern, ex);
 		}
+        LOGGER.debug("Scanned file '{}' using pattern '{}', result:'{}'", file.getAbsolutePath(), pattern, patternCount);
 
 		return patternCount;
 	}

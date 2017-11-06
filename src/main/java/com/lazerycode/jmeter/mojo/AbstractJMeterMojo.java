@@ -90,7 +90,7 @@ public abstract class AbstractJMeterMojo extends AbstractMojo {
 	protected File resultsDirectory;
 
 	/**
-	 * Generate Jmeter Reports (this will force your .jtl's into .csv mmode)
+	 * Generate JMeter Reports (this will force your .jtl's into .csv mode)
 	 */
 	@Parameter(defaultValue = "false")
 	protected boolean generateReports;

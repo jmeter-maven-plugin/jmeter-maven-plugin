@@ -229,10 +229,6 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 	protected String resultsFileFormat;
 	protected boolean resultsOutputIsCSVFormat = false;
 
-    public static final String JMETER_ARTIFACT_NAME = "ApacheJMeter";
-	public static final String JMETER_CONFIG_ARTIFACT_NAME = "ApacheJMeter_config";
-	public static final String JORPHAN_ARTIFACT_NAME = "jorphan";
-	private static final String JMETER_GROUP_ID = "org.apache.jmeter";
 	protected static Artifact jmeterConfigArtifact;
 	protected static File customPropertiesDirectory;
 	protected static File libDirectory;

@@ -44,7 +44,8 @@ public class PropertiesFile {
 	 * @param jMeterPropertiesFile The properties file that we want to find in the jmeterConfigArtifact
 	 * @throws IOException
 	 */
-	public PropertiesFile(Artifact jmeterConfigArtifact, ConfigurationFiles jMeterPropertiesFile) throws IOException {
+	public PropertiesFile(Artifact jmeterConfigArtifact, ConfigurationFiles jMeterPropertiesFile) 
+	        throws IOException { // NOSONAR
 		Properties defaultPropertySet = new Properties();
 		if (null != jmeterConfigArtifact && jMeterPropertiesFile.createFileIfItDoesNotExist()) {
 			try (JarFile propertyJar = new JarFile(jmeterConfigArtifact.getFile())){
@@ -66,7 +67,8 @@ public class PropertiesFile {
 	 * @return A properties object
 	 * @throws IOException
 	 */
-	private Properties loadPropertiesFile(File propertiesFile) throws IOException {
+	private Properties loadPropertiesFile(File propertiesFile) 
+	        throws IOException { // NOSONAR
 		try (FileInputStream propertiesFileInputStream = new FileInputStream(propertiesFile)) {
 			Properties loadedProperties = new Properties();
 			loadedProperties.load(propertiesFileInputStream);
@@ -115,7 +117,8 @@ public class PropertiesFile {
 	 *
 	 * @param outputFile The file that our properties object will be written to
 	 */
-	public void writePropertiesToFile(File outputFile) throws IOException {
+	public void writePropertiesToFile(File outputFile) 
+	        throws IOException {// NOSONAR
 		stripOutReservedProperties();
 		//TODO if jmeter.properties write properties that are required for plugin
 		if (properties.isEmpty()) {

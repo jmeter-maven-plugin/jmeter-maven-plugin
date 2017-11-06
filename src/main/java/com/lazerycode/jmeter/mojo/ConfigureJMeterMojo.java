@@ -383,7 +383,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 					//TODO Could move the below elsewhere if required.
 					extractConfigSettings(jmeterConfigArtifact);
 					break;
-				case "jorphan":
+				case JORPHAN_ARTIFACT_NAME:
                     copyArtifact(returnedArtifact, libDirectory);
                     copyTransitiveRuntimeDependenciesToLibDirectory(returnedArtifact, downloadJMeterDependencies);
                     break;

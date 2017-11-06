@@ -53,7 +53,7 @@ import com.lazerycode.jmeter.properties.PropertiesMapping;
 
 @Mojo(name = "configure", defaultPhase = LifecyclePhase.COMPILE)
 public class ConfigureJMeterMojo extends AbstractJMeterMojo {
-
+    private static final String LINE_SEPARATOR = "-------------------------------------------------------";
 	@Component
 	private RepositorySystem repositorySystem;
 
@@ -243,9 +243,9 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 	 */
 	@Override
 	public void doExecute() throws MojoExecutionException, MojoFailureException {
-		getLog().info("-------------------------------------------------------");
+		getLog().info(LINE_SEPARATOR);
 		getLog().info(" Configuring JMeter...");
-		getLog().info("-------------------------------------------------------");
+		getLog().info(LINE_SEPARATOR);
 		generateJMeterDirectoryTree();
 		configureJMeterArtifacts();
 		populateJMeterDirectoryTree();
@@ -260,7 +260,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 	 */
 	protected void generateJMeterDirectoryTree() {
 		workingDirectory = new File(jmeterDirectory, "bin");
-		workingDirectory.mkdirs(); //TODO remove this, it's covered in extractConfigSettings()
+		workingDirectory.mkdirs();
 		customPropertiesDirectory = new File(jmeterDirectory, "custom_properties");
 		customPropertiesDirectory.mkdirs();
 		libDirectory = new File(jmeterDirectory, "lib");
@@ -376,7 +376,6 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 			switch (returnedArtifact.getArtifactId()) {
 				case JMETER_CONFIG_ARTIFACT_NAME:
 					jmeterConfigArtifact = returnedArtifact;
-					//TODO Could move the below elsewhere if required.
 					extractConfigSettings(jmeterConfigArtifact);
 					break;
 				case JORPHAN_ARTIFACT_NAME:
@@ -455,7 +454,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 				if (getLog().isDebugEnabled()) {
 					getLog().debug("Dependency name: " + dependencyNode.toString());
 					getLog().debug("Dependency request trace: " + dependencyRequest.getCollectRequest().getTrace().toString());
-					getLog().debug("-------------------------------------------------------");
+					getLog().debug(LINE_SEPARATOR);
 				}
 				if (downloadOptionalDependencies || !dependencyNode.getDependency().isOptional()) {
 					Artifact returnedArtifact = getArtifactResult(dependencyNode.getArtifact());
@@ -507,7 +506,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 	 * @param artifact Configuration artifact
 	 * @throws IOException
 	 */
-	private void extractConfigSettings(Artifact artifact) throws IOException {
+	private void extractConfigSettings(Artifact artifact) throws IOException  {
 		try (JarFile configSettings = new JarFile(artifact.getFile())) {
 			Enumeration<JarEntry> entries = configSettings.entries();
 			while (entries.hasMoreElements()) {

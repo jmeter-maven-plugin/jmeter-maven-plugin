@@ -50,7 +50,9 @@ public class JMeterArgumentsArray {
 	 * @throws MojoExecutionException
 	 */
 	public JMeterArgumentsArray(boolean disableGUI, String jMeterHomeDirectory) throws MojoExecutionException {
-		if (isNotSet(jMeterHomeDirectory)) throw new MojoExecutionException("Unable to set JMeter Home Directory...");
+		if (isNotSet(jMeterHomeDirectory)) {
+		    throw new MojoExecutionException("Unable to set JMeter Home Directory...");
+		}
 		jMeterHome = jMeterHomeDirectory;
 		argumentList.add(JMETER_HOME_OPT);
 		if (disableGUI) {

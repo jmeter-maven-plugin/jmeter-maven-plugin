@@ -1,19 +1,37 @@
 package com.lazerycode.jmeter.configuration;
 
-import org.apache.commons.io.FilenameUtils;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.joda.time.LocalDateTime;
-import org.joda.time.format.DateTimeFormatter;
-import org.joda.time.format.ISODateTimeFormat;
+import static com.lazerycode.jmeter.configuration.JMeterCommandLineArguments.JMETER_HOME_OPT;
+import static com.lazerycode.jmeter.configuration.JMeterCommandLineArguments.JMLOGFILE_OPT;
+import static com.lazerycode.jmeter.configuration.JMeterCommandLineArguments.LOGFILE_OPT;
+import static com.lazerycode.jmeter.configuration.JMeterCommandLineArguments.LOGLEVEL;
+import static com.lazerycode.jmeter.configuration.JMeterCommandLineArguments.NONGUI_OPT;
+import static com.lazerycode.jmeter.configuration.JMeterCommandLineArguments.NONPROXY_HOSTS;
+import static com.lazerycode.jmeter.configuration.JMeterCommandLineArguments.PROPFILE2_OPT;
+import static com.lazerycode.jmeter.configuration.JMeterCommandLineArguments.PROXY_HOST;
+import static com.lazerycode.jmeter.configuration.JMeterCommandLineArguments.PROXY_PASSWORD;
+import static com.lazerycode.jmeter.configuration.JMeterCommandLineArguments.PROXY_PORT;
+import static com.lazerycode.jmeter.configuration.JMeterCommandLineArguments.PROXY_USERNAME;
+import static com.lazerycode.jmeter.configuration.JMeterCommandLineArguments.REMOTE_OPT;
+import static com.lazerycode.jmeter.configuration.JMeterCommandLineArguments.REMOTE_OPT_PARAM;
+import static com.lazerycode.jmeter.configuration.JMeterCommandLineArguments.REMOTE_STOP;
+import static com.lazerycode.jmeter.configuration.JMeterCommandLineArguments.REPORT_AT_END_OPT;
+import static com.lazerycode.jmeter.configuration.JMeterCommandLineArguments.REPORT_OUTPUT_FOLDER_OPT;
+import static com.lazerycode.jmeter.configuration.JMeterCommandLineArguments.TESTFILE_OPT;
+import static com.lazerycode.jmeter.utility.UtilityFunctions.isNotSet;
+import static com.lazerycode.jmeter.utility.UtilityFunctions.isSet;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeSet;
 
-import static com.lazerycode.jmeter.configuration.JMeterCommandLineArguments.*;
-import static com.lazerycode.jmeter.utility.UtilityFunctions.isNotSet;
-import static com.lazerycode.jmeter.utility.UtilityFunctions.isSet;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.joda.time.LocalDateTime;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.ISODateTimeFormat;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Creates an arguments array to pass to the JMeter object to run tests.
@@ -21,6 +39,7 @@ import static com.lazerycode.jmeter.utility.UtilityFunctions.isSet;
  * @author Mark Collin
  */
 public class JMeterArgumentsArray {
+    private static final Logger LOGGER = LoggerFactory.getLogger(JMeterArgumentsArray.class);
 
 	private final String jMeterHome;
 	private boolean disableTests;
@@ -103,13 +122,17 @@ public class JMeterArgumentsArray {
 	}
 
 	public void setLogRootOverride(String requestedLogLevel) {
-		if (isNotSet(requestedLogLevel)) return;
+		if (isNotSet(requestedLogLevel)) {
+		    return;
+		}
 		for (LogLevel logLevel : LogLevel.values()) {
-		    if (logLevel.toString().equals(requestedLogLevel.toUpperCase())) {
+		    if (logLevel.toString().equalsIgnoreCase(requestedLogLevel)) {
 				overrideRootLogLevel = logLevel;
 				argumentList.add(LOGLEVEL);
+				return;
 			}
 		}
+		LOGGER.warn("Unknown log level {}", requestedLogLevel);
 	}
 
 	public void setResultsDirectory(String resultsDirectory) {
@@ -121,7 +144,6 @@ public class JMeterArgumentsArray {
 	}
 
 	public void setResultsTimestamp(boolean addTimestamp) {
-		//TODO just make this set it true when it's called?
 		timestampResults = addTimestamp;
 	}
 
@@ -254,6 +276,18 @@ public class JMeterArgumentsArray {
 				case REPORT_OUTPUT_FOLDER_OPT:
 					argumentsArray.add(REPORT_OUTPUT_FOLDER_OPT.getCommandLineArgument());
 					argumentsArray.add(reportDirectory);
+					break;
+				case SYSTEM_PROPFILE:
+				case JMETER_PROPERTY:
+				case JMETER_GLOBAL_PROP:
+				case SYSTEM_PROPERTY:
+				case VERSION_OPT:
+				case SERVER_OPT:
+				case PROPFILE_OPT:
+				case REPORT_GENERATING_OPT:
+				case HELP_OPT:
+				    LOGGER.warn("Unhandled option '{}', it will be ignored", argument);
+				    break;
 			}
 		}
 		return argumentsArray;

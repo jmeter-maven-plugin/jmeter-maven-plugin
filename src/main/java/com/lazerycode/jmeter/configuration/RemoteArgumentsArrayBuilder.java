@@ -17,14 +17,12 @@ public class RemoteArgumentsArrayBuilder {
 		for (Entry<ConfigurationFiles, PropertiesMapping> entry : propertiesMap.entrySet()) {
 			Properties properties = entry.getValue().getPropertiesFile().getProperties();
 			switch (entry.getKey()) {
-				case SYSTEM_PROPERTIES: {
+				case SYSTEM_PROPERTIES: 
 					result.addAll(buildTypedPropertiesForContainer(JMeterCommandLineArguments.SYSTEM_PROPERTY, properties));
 					break;
-				}
-				case GLOBAL_PROPERTIES: {
+				case GLOBAL_PROPERTIES: 
 					result.addAll(buildTypedPropertiesForContainer(JMeterCommandLineArguments.JMETER_GLOBAL_PROP, properties));
 					break;
-				}
 				default:
 					break;
 			}

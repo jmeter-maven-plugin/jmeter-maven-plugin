@@ -25,14 +25,15 @@ public class JMeterProcessBuilder {
 	private List<String> mainClassArguments = new ArrayList<>();
 
 	public JMeterProcessBuilder(JMeterProcessJVMSettings settings, String runtimeJarName) {
-		if (null == settings) {
-			settings = new JMeterProcessJVMSettings();
+	    JMeterProcessJVMSettings lSettings = settings;
+		if (null == lSettings) {
+		    lSettings = new JMeterProcessJVMSettings();
 		}
 		this.runtimeJarName = runtimeJarName;
-		this.initialHeapSizeInMegaBytes = settings.getXms();
-		this.maximumHeapSizeInMegaBytes = settings.getXmx();
-		this.userSuppliedArguments = settings.getArguments();
-		this.javaRuntime = settings.getJavaRuntime();
+		this.initialHeapSizeInMegaBytes = lSettings.getXms();
+		this.maximumHeapSizeInMegaBytes = lSettings.getXmx();
+		this.userSuppliedArguments = lSettings.getArguments();
+		this.javaRuntime = lSettings.getJavaRuntime();
 	}
 
 	public void setWorkingDirectory(File workingDirectory) throws MojoExecutionException {

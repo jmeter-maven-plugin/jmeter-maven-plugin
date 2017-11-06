@@ -229,7 +229,9 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 	protected String resultsFileFormat;
 	protected boolean resultsOutputIsCSVFormat = false;
 
+    public static final String JMETER_ARTIFACT_NAME = "ApacheJMeter";
 	public static final String JMETER_CONFIG_ARTIFACT_NAME = "ApacheJMeter_config";
+	public static final String JORPHAN_ARTIFACT_NAME = "jorphan";
 	private static final String JMETER_GROUP_ID = "org.apache.jmeter";
 	protected static Artifact jmeterConfigArtifact;
 	protected static File customPropertiesDirectory;
@@ -365,7 +367,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 			jmeterArtifacts.add(JMETER_GROUP_ID + ":ApacheJMeter_mongodb:" + jmeterVersion);
 			jmeterArtifacts.add(JMETER_GROUP_ID + ":ApacheJMeter_native:" + jmeterVersion);
 			jmeterArtifacts.add(JMETER_GROUP_ID + ":ApacheJMeter_tcp:" + jmeterVersion);
-			jmeterArtifacts.add(JMETER_GROUP_ID + ":jorphan:" + jmeterVersion);						//TODO move to lib dir
+			jmeterArtifacts.add(JMETER_GROUP_ID + ":jorphan:" + jmeterVersion);
 		}
 	}
 
@@ -381,7 +383,11 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 					//TODO Could move the below elsewhere if required.
 					extractConfigSettings(jmeterConfigArtifact);
 					break;
-				case "ApacheJMeter":
+				case "jorphan":
+                    copyArtifact(returnedArtifact, libDirectory);
+                    copyTransitiveRuntimeDependenciesToLibDirectory(returnedArtifact, downloadJMeterDependencies);
+                    break;
+				case JMETER_ARTIFACT_NAME:
 					runtimeJarName = returnedArtifact.getFile().getName();
 					copyArtifact(returnedArtifact, workingDirectory);
 					copyTransitiveRuntimeDependenciesToLibDirectory(returnedArtifact, downloadJMeterDependencies);

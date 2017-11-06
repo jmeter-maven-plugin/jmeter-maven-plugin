@@ -243,7 +243,7 @@ public abstract class AbstractJMeterMojo extends AbstractMojo {
 	    JMeterArgumentsArray testArgs = new JMeterArgumentsArray(disableGUI, jmeterDirectory.getAbsolutePath());
 		testArgs.setResultsDirectory(resultsDirectory.getAbsolutePath());
 		testArgs.setResultFileOutputFormatIsCSV(isCSVFormat);
-		if (generateReports) {
+		if (generateReports && disableGUI) {
 			testArgs.setReportsDirectory(reportDirectory.getAbsolutePath());
 		}
 		if (testResultsTimestamp) {

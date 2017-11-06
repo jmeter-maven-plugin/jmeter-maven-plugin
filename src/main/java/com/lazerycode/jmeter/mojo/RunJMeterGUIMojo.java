@@ -41,9 +41,9 @@ public class RunJMeterGUIMojo extends AbstractJMeterMojo {
 	@Override
 	public void doExecute() throws MojoExecutionException, MojoFailureException {
 		getLog().info(" ");
-		getLog().info("-------------------------------------------------------");
+		getLog().info(LINE_SEPARATOR);
 		getLog().info(" S T A R T I N G    J M E T E R    G U I ");
-		getLog().info("-------------------------------------------------------");
+		getLog().info(LINE_SEPARATOR);
 		initialiseJMeterArgumentsArray(false);
 		getLog().debug("JMeter is called with the following command line arguments: " + UtilityFunctions.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()));
 		startJMeterGUI();

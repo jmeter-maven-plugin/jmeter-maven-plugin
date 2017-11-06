@@ -35,6 +35,8 @@ import com.lazerycode.jmeter.properties.PropertiesMapping;
  */
 @SuppressWarnings({"UnusedDeclaration", "FieldCanBeLocal", "JavaDoc"}) // Mojos get their fields set via reflection
 public abstract class AbstractJMeterMojo extends AbstractMojo {
+    protected static final String LINE_SEPARATOR = "-------------------------------------------------------";
+
     protected static final String JMETER_ARTIFACT_NAME = "ApacheJMeter";
     protected static final String JMETER_CONFIG_ARTIFACT_NAME = "ApacheJMeter_config";
     protected static final String JORPHAN_ARTIFACT_NAME = "jorphan";

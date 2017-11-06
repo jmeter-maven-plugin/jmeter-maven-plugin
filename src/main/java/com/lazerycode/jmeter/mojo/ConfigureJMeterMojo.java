@@ -53,7 +53,6 @@ import com.lazerycode.jmeter.properties.PropertiesMapping;
 
 @Mojo(name = "configure", defaultPhase = LifecyclePhase.COMPILE)
 public class ConfigureJMeterMojo extends AbstractJMeterMojo {
-    private static final String LINE_SEPARATOR = "-------------------------------------------------------";
 	@Component
 	private RepositorySystem repositorySystem;
 

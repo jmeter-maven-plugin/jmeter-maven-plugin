@@ -27,9 +27,9 @@ public class RunJMeterMojo extends AbstractJMeterMojo {
 	@Override
 	public void doExecute() throws MojoExecutionException, MojoFailureException {
 		getLog().info(" ");
-		getLog().info("-------------------------------------------------------");
+		getLog().info(LINE_SEPARATOR);
 		getLog().info(" P E R F O R M A N C E    T E S T S");
-		getLog().info("-------------------------------------------------------");
+		getLog().info(LINE_SEPARATOR);
 
 		if (!testFilesDirectory.exists()) {
 			getLog().info("<testFilesDirectory>" + testFilesDirectory.getAbsolutePath() + "</testFilesDirectory> does not exist...");

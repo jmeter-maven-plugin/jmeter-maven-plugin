@@ -8,6 +8,7 @@ import org.apache.maven.plugins.annotations.Execute;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 
+import com.lazerycode.jmeter.configuration.JMeterArgumentsArray;
 import com.lazerycode.jmeter.json.TestConfig;
 import com.lazerycode.jmeter.testrunner.TestManager;
 
@@ -38,18 +39,18 @@ public class RunJMeterMojo extends AbstractJMeterMojo {
 		}
 
 		TestConfig testConfig = new TestConfig(new File(testConfigFile));
-		initialiseJMeterArgumentsArray(true, testConfig.getResultsOutputIsCSVFormat());
+		JMeterArgumentsArray testArgs = initialiseJMeterArgumentsArray(true, testConfig.getResultsOutputIsCSVFormat());
 
 		if (null != remoteConfig) {
-			remoteConfig.setPropertiesMap(propertiesMap);
+			remoteConfig.setPropertiesMap(JMeterConfigurationHolder.getInstance().getPropertiesMap());
 		}
 
 		copyFilesInTestDirectory(testFilesDirectory, testFilesBuildDirectory);
 
 		TestManager jMeterTestManager = 
 		        new TestManager(testArgs, testFilesBuildDirectory, testFilesIncluded, testFilesExcluded, 
-		                remoteConfig, suppressJMeterOutput, workingDirectory, jMeterProcessJVMSettings, 
-		                runtimeJarName, reportDirectory, generateReports);
+		                remoteConfig, suppressJMeterOutput, JMeterConfigurationHolder.getInstance().getWorkingDirectory(), jMeterProcessJVMSettings, 
+		                JMeterConfigurationHolder.getInstance().getRuntimeJarName(), reportDirectory, generateReports);
 		jMeterTestManager.setPostTestPauseInSeconds(postTestPauseInSeconds);
 		getLog().info(" ");
 		if (proxyConfig != null) {

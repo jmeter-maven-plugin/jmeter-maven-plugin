@@ -13,6 +13,7 @@ import static org.apache.commons.io.FileUtils.copyInputStreamToFile;
 import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
@@ -65,7 +66,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 	/**
 	 * Name of the base config json file
 	 */
-	private static final String baseConfigFile = "/config.json";
+	private static final String BASE_CONFIG_FILE = "/config.json";
 
 	/**
 	 * The version of JMeter that this plugin will use to run tests.
@@ -228,11 +229,11 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 	protected String resultsFileFormat;
 	protected boolean resultsOutputIsCSVFormat = false;
 
-	protected static Artifact jmeterConfigArtifact;
-	protected static File customPropertiesDirectory;
-	protected static File libDirectory;
-	protected static File libExtDirectory;
-	protected static File libJUnitDirectory;
+	protected Artifact jmeterConfigArtifact;
+	protected File customPropertiesDirectory;
+	protected File libDirectory;
+	protected File libExtDirectory;
+	protected File libJUnitDirectory;
 
 	/**
 	 * Configure a local instance of JMeter
@@ -242,6 +243,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 	 */
 	@Override
 	public void doExecute() throws MojoExecutionException, MojoFailureException {
+	    JMeterConfigurationHolder.getInstance().resetConfiguration();
 		getLog().info(LINE_SEPARATOR);
 		getLog().info(" Configuring JMeter...");
 		getLog().info(LINE_SEPARATOR);
@@ -252,14 +254,16 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 		copyExplicitLibraries(junitLibraries, libJUnitDirectory, downloadLibraryDependencies);
 		configurePropertiesFiles();
 		generateTestConfig();
+		JMeterConfigurationHolder.getInstance().freezeConfiguration();
 	}
 
 	/**
 	 * Generate the directory tree utilised by JMeter.
 	 */
-	protected void generateJMeterDirectoryTree() {
-		workingDirectory = new File(jmeterDirectory, "bin");
+	private void generateJMeterDirectoryTree() {
+		File workingDirectory = new File(jmeterDirectory, "bin");
 		workingDirectory.mkdirs();
+		JMeterConfigurationHolder.getInstance().setWorkingDirectory(workingDirectory);
 		customPropertiesDirectory = new File(jmeterDirectory, "custom_properties");
 		customPropertiesDirectory.mkdirs();
 		libDirectory = new File(jmeterDirectory, "lib");
@@ -275,7 +279,10 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 		logsDirectory.mkdirs();
 	}
 
-	protected void configurePropertiesFiles() throws MojoExecutionException, MojoFailureException {
+	private void configurePropertiesFiles() throws MojoExecutionException {
+	    Map<ConfigurationFiles, PropertiesMapping> propertiesMap = 
+	            new EnumMap<>(ConfigurationFiles.class);
+	    JMeterConfigurationHolder.getInstance().setPropertiesMap(propertiesMap);
 		propertiesMap.put(JMETER_PROPERTIES, new PropertiesMapping(propertiesJMeter));
 		propertiesMap.put(SAVE_SERVICE_PROPERTIES, new PropertiesMapping(propertiesSaveService));
 		propertiesMap.put(UPGRADE_PROPERTIES, new PropertiesMapping(propertiesUpgrade));
@@ -288,7 +295,8 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 
 		for (ConfigurationFiles configurationFile : values()) {
 			File suppliedPropertiesFile = new File(propertiesFilesDirectory, configurationFile.getFilename());
-			File propertiesFileToWrite = new File(workingDirectory, configurationFile.getFilename());
+			File propertiesFileToWrite = new File(
+			        JMeterConfigurationHolder.getInstance().getWorkingDirectory(), configurationFile.getFilename());
 
 			PropertiesFile somePropertiesFile = new PropertiesFile(jmeterConfigArtifact, configurationFile);
 			somePropertiesFile.loadProvidedPropertiesIfAvailable(suppliedPropertiesFile, propertiesReplacedByCustomFiles);
@@ -307,11 +315,11 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 			customProperties.writePropertiesToFile(new File(customPropertiesDirectory, customPropertiesFilename));
 		}
 
-		setDefaultPluginProperties(workingDirectory.getAbsolutePath());
+		setDefaultPluginProperties(JMeterConfigurationHolder.getInstance().getWorkingDirectory().getAbsolutePath());
 	}
 
 	protected void generateTestConfig() throws MojoExecutionException {
-	    try (InputStream configFile = this.getClass().getResourceAsStream(baseConfigFile)) {
+	    try (InputStream configFile = this.getClass().getResourceAsStream(BASE_CONFIG_FILE)) {
     		TestConfig testConfig = new TestConfig(configFile);
     		testConfig.setResultsOutputIsCSVFormat(resultsOutputIsCSVFormat);
     		testConfig.setGenerateReports(generateReports);
@@ -382,8 +390,8 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
                     copyTransitiveRuntimeDependenciesToLibDirectory(returnedArtifact, downloadJMeterDependencies);
                     break;
 				case JMETER_ARTIFACT_NAME:
-					runtimeJarName = returnedArtifact.getFile().getName();
-					copyArtifact(returnedArtifact, workingDirectory);
+				    JMeterConfigurationHolder.getInstance().setRuntimeJarName(returnedArtifact.getFile().getName());
+					copyArtifact(returnedArtifact, JMeterConfigurationHolder.getInstance().getWorkingDirectory());
 					copyTransitiveRuntimeDependenciesToLibDirectory(returnedArtifact, downloadJMeterDependencies);
 					break;
 				default:
@@ -422,7 +430,8 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 	 * @return Will return an ArtifactResult object
 	 * @throws DependencyResolutionException
 	 */
-	private Artifact getArtifactResult(Artifact desiredArtifact) throws DependencyResolutionException {
+	private Artifact getArtifactResult(Artifact desiredArtifact) 
+	        throws DependencyResolutionException {// NOSONAR
 		ArtifactRequest artifactRequest = new ArtifactRequest();
 		artifactRequest.setArtifact(desiredArtifact);
 		artifactRequest.setRepositories(repositoryList);
@@ -479,7 +488,8 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 	 * @throws IOException                   Unable to copy file
 	 * @throws DependencyResolutionException Unable to resolve dependency
 	 */
-	private void copyArtifact(Artifact artifact, File destinationDirectory) throws IOException, DependencyResolutionException {
+	private void copyArtifact(Artifact artifact, File destinationDirectory) 
+	        throws IOException, DependencyResolutionException {// NOSONAR
 		for (String ignoredArtifact : ignoredArtifacts) {
 			Artifact artifactToIgnore = getArtifactResult(new DefaultArtifact(ignoredArtifact));
 			if (artifact.getFile().getName().equals(artifactToIgnore.getFile().getName())) {
@@ -505,7 +515,8 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 	 * @param artifact Configuration artifact
 	 * @throws IOException
 	 */
-	private void extractConfigSettings(Artifact artifact) throws IOException  {
+	private void extractConfigSettings(Artifact artifact) 
+	        throws IOException  {// NOSONAR
 		try (JarFile configSettings = new JarFile(artifact.getFile())) {
 			Enumeration<JarEntry> entries = configSettings.entries();
 			while (entries.hasMoreElements()) {

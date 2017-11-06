@@ -4,9 +4,7 @@ import static com.lazerycode.jmeter.utility.UtilityFunctions.isSet;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.EnumMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.execution.MavenSession;
@@ -24,8 +22,6 @@ import com.lazerycode.jmeter.configuration.JMeterProcessJVMSettings;
 import com.lazerycode.jmeter.configuration.ProxyConfiguration;
 import com.lazerycode.jmeter.configuration.RemoteConfiguration;
 import com.lazerycode.jmeter.exceptions.IOException;
-import com.lazerycode.jmeter.properties.ConfigurationFiles;
-import com.lazerycode.jmeter.properties.PropertiesMapping;
 
 /**
  * JMeter Maven plugin.
@@ -211,12 +207,6 @@ public abstract class AbstractJMeterMojo extends AbstractMojo {
 	@Parameter(defaultValue = "${project.build.directory}")
 	protected File projectBuildDirectory;
 
-	protected static String runtimeJarName;
-	protected static JMeterArgumentsArray testArgs;
-	protected static File workingDirectory;
-	protected static Map<ConfigurationFiles, PropertiesMapping> propertiesMap = 
-	        new EnumMap<>(ConfigurationFiles.class);
-
 	//==================================================================================================================
 
 	@Override
@@ -249,8 +239,8 @@ public abstract class AbstractJMeterMojo extends AbstractMojo {
 	 *
 	 * @throws MojoExecutionException
 	 */
-	protected void initialiseJMeterArgumentsArray(boolean disableGUI, boolean isCSVFormat) throws MojoExecutionException {
-		testArgs = new JMeterArgumentsArray(disableGUI, jmeterDirectory.getAbsolutePath());
+	protected JMeterArgumentsArray initialiseJMeterArgumentsArray(boolean disableGUI, boolean isCSVFormat) throws MojoExecutionException {
+	    JMeterArgumentsArray testArgs = new JMeterArgumentsArray(disableGUI, jmeterDirectory.getAbsolutePath());
 		testArgs.setResultsDirectory(resultsDirectory.getAbsolutePath());
 		testArgs.setResultFileOutputFormatIsCSV(isCSVFormat);
 		if (generateReports) {
@@ -273,6 +263,7 @@ public abstract class AbstractJMeterMojo extends AbstractMojo {
 		}
 		testArgs.setLogRootOverride(overrideRootLogLevel);
 		testArgs.setLogsDirectory(logsDirectory.getAbsolutePath());
+		return testArgs;
 	}
 
 	/**
@@ -304,7 +295,7 @@ public abstract class AbstractJMeterMojo extends AbstractMojo {
 		}
 	}
 
-	static void copyFilesInTestDirectory(File sourceDirectory, File destinationDirectory) throws IOException {
+	static void copyFilesInTestDirectory(File sourceDirectory, File destinationDirectory) throws IOException { // NOSONAR
 		try {
 			FileUtils.copyDirectory(sourceDirectory, destinationDirectory);
 		} catch (java.io.IOException e) {

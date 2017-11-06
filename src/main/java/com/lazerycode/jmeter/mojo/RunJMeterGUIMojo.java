@@ -10,6 +10,7 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
+import com.lazerycode.jmeter.configuration.JMeterArgumentsArray;
 import com.lazerycode.jmeter.json.TestConfig;
 import com.lazerycode.jmeter.testrunner.JMeterProcessBuilder;
 import com.lazerycode.jmeter.utility.UtilityFunctions;
@@ -31,6 +32,8 @@ public class RunJMeterGUIMojo extends AbstractJMeterMojo {
 	 */
 	@Parameter
 	private File guiTestFile;
+	
+	private JMeterArgumentsArray testArgs;
 
 	/**
 	 * Load the JMeter GUI
@@ -45,22 +48,25 @@ public class RunJMeterGUIMojo extends AbstractJMeterMojo {
 		getLog().info(" S T A R T I N G    J M E T E R    G U I ");
 		getLog().info(LINE_SEPARATOR);
 		initialiseJMeterArgumentsArray(false);
-		getLog().debug("JMeter is called with the following command line arguments: " + UtilityFunctions.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()));
+		getLog().debug("JMeter is called with the following command line arguments: " + 
+		        UtilityFunctions.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()));
 		startJMeterGUI();
 	}
 
 	protected void initialiseJMeterArgumentsArray(boolean disableGUI) throws MojoExecutionException {
 		TestConfig testConfig = new TestConfig(new File(testConfigFile));
-		super.initialiseJMeterArgumentsArray(disableGUI, testConfig.getResultsOutputIsCSVFormat());
-		testArgs.setTestFile(guiTestFile, testFilesDirectory);
+		JMeterArgumentsArray localTestArgs = super.initialiseJMeterArgumentsArray(disableGUI, testConfig.getResultsOutputIsCSVFormat());
+		localTestArgs.setTestFile(guiTestFile, testFilesDirectory);
+		this.testArgs = localTestArgs;
 	}
 
 	private void startJMeterGUI() throws MojoExecutionException {
-		JMeterProcessBuilder JMeterProcessBuilder = new JMeterProcessBuilder(jMeterProcessJVMSettings, runtimeJarName);
-		JMeterProcessBuilder.setWorkingDirectory(workingDirectory);
-		JMeterProcessBuilder.addArguments(testArgs.buildArgumentsArray());
+		JMeterProcessBuilder jmeterProcessBuilder = new JMeterProcessBuilder(jMeterProcessJVMSettings, 
+		        JMeterConfigurationHolder.getInstance().getRuntimeJarName());
+		jmeterProcessBuilder.setWorkingDirectory(JMeterConfigurationHolder.getInstance().getWorkingDirectory());
+		jmeterProcessBuilder.addArguments(testArgs.buildArgumentsArray());
 		try {
-			final Process process = JMeterProcessBuilder.startProcess();
+			final Process process = jmeterProcessBuilder.startProcess();
 			if (!runInBackground) {
 				process.waitFor();
 			}
@@ -71,7 +77,8 @@ public class RunJMeterGUIMojo extends AbstractJMeterMojo {
 			Thread.currentThread().interrupt();
 		} catch (IOException e) {
 			getLog().error("Error starting JMeter with args "+testArgs.buildArgumentsArray()
-			    + ", in working directory:"+workingDirectory, e);
+			    + ", in working directory:"+JMeterConfigurationHolder.getInstance().getWorkingDirectory()
+			    , e);
 		}
 	}
 }

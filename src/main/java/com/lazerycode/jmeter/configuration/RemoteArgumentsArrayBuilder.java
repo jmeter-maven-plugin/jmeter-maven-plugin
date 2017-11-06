@@ -13,7 +13,7 @@ public class RemoteArgumentsArrayBuilder {
 			return Collections.emptyList();
 		}
 
-		List<String> result = new ArrayList<String>();
+		List<String> result = new ArrayList<>();
 		for (Entry<ConfigurationFiles, PropertiesMapping> entry : propertiesMap.entrySet()) {
 			Properties properties = entry.getValue().getPropertiesFile().getProperties();
 			switch (entry.getKey()) {
@@ -33,7 +33,7 @@ public class RemoteArgumentsArrayBuilder {
 	}
 
 	private List<String> buildTypedPropertiesForContainer(JMeterCommandLineArguments cmdLineArg, Properties props) {
-		List<String> result = new ArrayList<String>();
+		List<String> result = new ArrayList<>();
 		for (Entry<Object, Object> e : props.entrySet()) {
 			if (cmdLineArg == JMeterCommandLineArguments.SYSTEM_PROPERTY) {
 				result.add(cmdLineArg.getCommandLineArgument() + e.getKey());

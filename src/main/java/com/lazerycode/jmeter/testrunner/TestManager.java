@@ -137,19 +137,24 @@ public class TestManager {
 		LOGGER.info(" ");
 		testArgs.setTestFile(test, testFilesDirectory);
 		//Delete results file if it already exists
-		new File(testArgs.getResultsLogFileName()).delete();
+		File currentResultsFile = new File(testArgs.getResultsLogFileName());
+		if(currentResultsFile.exists() && !currentResultsFile.delete()) {
+		    throw new MojoExecutionException("Failed to delete existing results file:"+currentResultsFile.getAbsolutePath());
+		}
 		List<String> argumentsArray = testArgs.buildArgumentsArray();
 		argumentsArray.addAll(buildRemoteArgs(remoteServerConfiguration));
-		LOGGER.debug("JMeter is called with the following command line arguments: {}",
+		if(LOGGER.isDebugEnabled()) {
+		    LOGGER.debug("JMeter is called with the following command line arguments: {}",
 		        UtilityFunctions.humanReadableCommandLineOutput(argumentsArray));
+		}
 		LOGGER.info("Executing test: {}", test.getName());
 		//Start the test.
-		JMeterProcessBuilder JMeterProcessBuilder = 
+		JMeterProcessBuilder jmeterProcessBuilder = 
 		        new JMeterProcessBuilder(jMeterProcessJVMSettings, runtimeJarName);
-		JMeterProcessBuilder.setWorkingDirectory(binDir);
-		JMeterProcessBuilder.addArguments(argumentsArray);
+		jmeterProcessBuilder.setWorkingDirectory(binDir);
+		jmeterProcessBuilder.addArguments(argumentsArray);
 		try {
-			final Process process = JMeterProcessBuilder.startProcess();
+			final Process process = jmeterProcessBuilder.startProcess();
 
 			Runtime.getRuntime().addShutdownHook(new Thread() {
 				@Override
@@ -179,6 +184,7 @@ public class TestManager {
 			LOGGER.info(" ");
 			LOGGER.info("System Exit Detected!  Stopping Test...");
 			LOGGER.info(" ");
+            Thread.currentThread().interrupt();
 		} catch (IOException e) {
 			LOGGER.error(e.getMessage());
 		}

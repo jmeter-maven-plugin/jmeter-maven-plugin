@@ -16,7 +16,9 @@ A Maven plugin that provides the ability to run JMeter tests as part of your bui
 
 See the [CHANGELOG](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/blob/master/CHANGELOG.md) for change information.  
 
-This plugin requires **JDK 1.8** or higher since 2.2.0
+All the documentation you need to configure the plugin is available on the [github wiki](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/wiki).
+
+This plugin requires **JDK 1.8** or higher since 2.2.0. Last version is **2.4.1** and is compatible with **Apache JMeter 3.3**
 
 #Basic Usage
 -----
@@ -28,7 +30,7 @@ This plugin requires **JDK 1.8** or higher since 2.2.0
 		<plugin>
 			<groupId>com.lazerycode.jmeter</groupId>
 			<artifactId>jmeter-maven-plugin</artifactId>
-			<version>2.4.0</version>
+			<version>2.4.1</version>
 			<executions>
 				<execution>
 					<id>jmeter-tests</id>
@@ -53,11 +55,11 @@ All your tests will run in maven!
 #Documentation
 -----
 
-All the documentation you need to configure the plugin is available on the [github wiki](https://github.com/Ronnie76er/jmeter-maven-plugin/wiki).
+All the documentation you need to configure the plugin is available on the [github wiki](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/wiki).
 
-Beginners should start with the [Basic Configuration](https://github.com/Ronnie76er/jmeter-maven-plugin/wiki/Basic-Configuration) section.
+Beginners should start with the [Basic Configuration](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/wiki/Basic-Configuration) section.
 
-For advanced POM configuration settings have a look at the [Advanced Configuration](https://github.com/Ronnie76er/jmeter-maven-plugin/wiki/Advanced-Configuration) section.
+For advanced POM configuration settings have a look at the [Advanced Configuration](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/wiki/Advanced-Configuration) section.
 
 #Community
 -----
@@ -89,5 +91,5 @@ The official website is available at [http://jmeter.lazerycode.com](http://jmete
 2. Create a branch (`git checkout -b my_plugin`)
 3. Commit your changes (`git commit -am "Added feature"`)
 4. Push to the branch (`git push origin my_plugin`)
-5. Create a new [Issue](https://github.com/Ronnie76er/jmeter-maven-plugin/issues/new) with a link to your branch, or just make a Pull Request.
-6. Enjoy a refreshing Diet Coke and wait
+5. Create a new [Issue](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues) with a link to your branch, or just make a Pull Request.
+6. Enjoy a refreshing Coffee or Tea or orange juice and wait

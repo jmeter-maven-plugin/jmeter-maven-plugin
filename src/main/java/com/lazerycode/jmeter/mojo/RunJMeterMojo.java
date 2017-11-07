@@ -13,7 +13,8 @@ import com.lazerycode.jmeter.json.TestConfig;
 import com.lazerycode.jmeter.testrunner.TestManager;
 
 /**
- * JMeter Maven plugin.
+ * Goal that runs jmeter based on configuration defined in your pom.<br/>
+ * This goal runs within Lifecycle phase {@link LifecyclePhase#INTEGRATION_TEST}.
  */
 @Mojo(name = "jmeter", defaultPhase = LifecyclePhase.INTEGRATION_TEST)
 @Execute(goal = "configure")

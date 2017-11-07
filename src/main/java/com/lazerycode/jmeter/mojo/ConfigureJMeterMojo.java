@@ -51,7 +51,11 @@ import com.lazerycode.jmeter.json.TestConfig;
 import com.lazerycode.jmeter.properties.ConfigurationFiles;
 import com.lazerycode.jmeter.properties.PropertiesFile;
 import com.lazerycode.jmeter.properties.PropertiesMapping;
-
+/**
+ * Goal that configures Apache JMeter bundle.<br/>
+ * This goal is also called by other goals.<br/>
+ * This goal runs within Lifecycle phase {@link LifecyclePhase#COMPILE}.
+ */
 @Mojo(name = "configure", defaultPhase = LifecyclePhase.COMPILE)
 public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 	@Component
@@ -433,6 +437,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 	private Artifact getArtifactResult(Artifact desiredArtifact) 
 	        throws DependencyResolutionException {// NOSONAR
 		ArtifactRequest artifactRequest = new ArtifactRequest();
+		
 		artifactRequest.setArtifact(desiredArtifact);
 		artifactRequest.setRepositories(repositoryList);
 		try {
@@ -450,6 +455,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 	 * @throws IOException
 	 */
 	private void copyTransitiveRuntimeDependenciesToLibDirectory(Artifact artifact, boolean getDependenciesOfDependency) throws DependencyResolutionException, IOException {
+	    getLog().debug("Copying transitive dependencies of "+artifact.getGroupId()+":"+artifact.getArtifactId()+":"+artifact.getVersion());
 		CollectRequest collectRequest = new CollectRequest();
 		collectRequest.setRoot(new Dependency(artifact, JavaScopes.RUNTIME));
 		collectRequest.setRepositories(repositoryList);
@@ -465,6 +471,10 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 					getLog().debug(LINE_SEPARATOR);
 				}
 				if (downloadOptionalDependencies || !dependencyNode.getDependency().isOptional()) {
+				    if(isKnownBrokenDependency(dependencyNode)) {
+				        getLog().warn("Ignoring known broken dependency:"+dependencyNode.getArtifact());
+				        continue;
+				    }
 					Artifact returnedArtifact = getArtifactResult(dependencyNode.getArtifact());
 					if (!returnedArtifact.getArtifactId().startsWith("ApacheJMeter_")) {
 						copyArtifact(returnedArtifact, libDirectory);
@@ -480,7 +490,16 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 		}
 	}
 
-	/**
+	private boolean isKnownBrokenDependency(DependencyNode dependencyNode) {
+	    if(dependencyNode.getArtifact().getGroupId().equals("commons-math3") ||
+                dependencyNode.getArtifact().getGroupId().equals("commons-pool2")||
+                dependencyNode.getArtifact().getGroupId().equals("d-haven-managed-pool")) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
 	 * Copy an Artifact to a directory
 	 *
 	 * @param artifact             Artifact that needs to be copied.

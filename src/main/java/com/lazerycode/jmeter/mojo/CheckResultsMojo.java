@@ -11,7 +11,9 @@ import org.apache.maven.plugins.annotations.Parameter;
 import java.io.File;
 
 /**
- * JMeter Maven plugin.
+ * Goal that computes successes/failures from CSV or XML results files.<br/>
+ * This goal runs within Lifecycle phase {@link LifecyclePhase#VERIFY}.<br/>
+ * Ensure you set 'scanResultsForSuccessfulRequests' and 'scanResultsForFailedRequests' to true.
  */
 @Mojo(name = "results", defaultPhase = LifecyclePhase.VERIFY)
 public class CheckResultsMojo extends AbstractJMeterMojo {

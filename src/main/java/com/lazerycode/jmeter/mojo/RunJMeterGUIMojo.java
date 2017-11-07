@@ -16,8 +16,8 @@ import com.lazerycode.jmeter.testrunner.JMeterProcessBuilder;
 import com.lazerycode.jmeter.utility.UtilityFunctions;
 
 /**
- * JMeter Maven plugin.
- *
+ * Goal that runs JMeter in GUI mode.<br/>
+ * This goal runs within Lifecycle phase {@link LifecyclePhase#TEST}.
  * @author Jarrod Ribble
  */
 @Mojo(name = "gui", defaultPhase = LifecyclePhase.TEST)

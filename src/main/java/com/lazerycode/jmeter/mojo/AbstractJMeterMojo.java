@@ -33,6 +33,7 @@ import com.lazerycode.jmeter.exceptions.IOException;
 public abstract class AbstractJMeterMojo extends AbstractMojo {
     protected static final String LINE_SEPARATOR = "-------------------------------------------------------";
 
+    protected static final String JMETER_ARTIFACT_PREFIX = "ApacheJMeter_";
     protected static final String JMETER_ARTIFACT_NAME = "ApacheJMeter";
     protected static final String JMETER_CONFIG_ARTIFACT_NAME = "ApacheJMeter_config";
     protected static final String JORPHAN_ARTIFACT_NAME = "jorphan";

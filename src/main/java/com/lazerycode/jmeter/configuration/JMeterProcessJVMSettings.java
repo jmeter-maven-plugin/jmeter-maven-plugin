@@ -30,8 +30,26 @@ public class JMeterProcessJVMSettings {
 	private int xms = 512;
 	private int xmx = 512;
 	private String java = "java";
-	private List<String> arguments = new ArrayList<String>();
+	private List<String> arguments = new ArrayList<>();
 
+	/**
+	 * Empty constructor
+	 */
+	public JMeterProcessJVMSettings() {
+	    super();
+	}
+	
+	/**
+	 * Copy constructor
+	 * @param source {@link JMeterProcessJVMSettings}
+	 */
+	public JMeterProcessJVMSettings(JMeterProcessJVMSettings source) {
+	    this.xmx = source.xms;
+	    this.xms = source.xms;
+	    this.java = source.java;
+	    this.arguments = new ArrayList<>();
+        this.arguments.addAll(source.arguments);
+	}
 	public int getXms() {
 		return xms;
 	}

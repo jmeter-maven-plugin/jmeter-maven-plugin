@@ -4,6 +4,8 @@
 
 ##Version 2.5.0 Release Notes
 
+* **Issue #94 Add the ability to start a remote server that is ready to accept connections.**
+
 * **Issue #256 Add an option to exclude a dependency.**
 
 * **Issue #255 Improve javadocs of mojo so that help displays useful info.**

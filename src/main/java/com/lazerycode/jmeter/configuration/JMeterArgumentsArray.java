@@ -16,6 +16,7 @@ import static com.lazerycode.jmeter.configuration.JMeterCommandLineArguments.REM
 import static com.lazerycode.jmeter.configuration.JMeterCommandLineArguments.REMOTE_STOP;
 import static com.lazerycode.jmeter.configuration.JMeterCommandLineArguments.REPORT_AT_END_OPT;
 import static com.lazerycode.jmeter.configuration.JMeterCommandLineArguments.REPORT_OUTPUT_FOLDER_OPT;
+import static com.lazerycode.jmeter.configuration.JMeterCommandLineArguments.SERVER_OPT;
 import static com.lazerycode.jmeter.configuration.JMeterCommandLineArguments.TESTFILE_OPT;
 import static com.lazerycode.jmeter.utility.UtilityFunctions.isNotSet;
 import static com.lazerycode.jmeter.utility.UtilityFunctions.isSet;
@@ -197,6 +198,19 @@ public class JMeterArgumentsArray {
 		argumentList.add(REPORT_OUTPUT_FOLDER_OPT);
 		this.reportDirectory = reportDirectory;
 	}
+	
+	/**
+	 * Set server mode
+	 */
+	public void setServerMode(String exportedHostname, int port) {
+	    argumentList.add(SERVER_OPT);
+	    disableTests = true;
+	    if (isSet(logsDirectory)) {
+            jmeterLogFileName = logsDirectory + File.separator + 
+                    (exportedHostname == null ? "localhost" : exportedHostname+"_"+port + ".log");
+            argumentList.add(JMLOGFILE_OPT);
+        }
+	}
 
 	/**
 	 * Generate an arguments array representing the command line options you want to send to JMeter.
@@ -206,7 +220,9 @@ public class JMeterArgumentsArray {
 	 * @throws MojoExecutionException
 	 */
 	public List<String> buildArgumentsArray() throws MojoExecutionException {
-		if (!argumentList.contains(TESTFILE_OPT) && !disableTests) throw new MojoExecutionException("No test(s) specified!");
+		if (!argumentList.contains(TESTFILE_OPT) && !disableTests) {
+		    throw new MojoExecutionException("No test(s) specified!");
+		}
 		List<String> argumentsArray = new ArrayList<>();
 
 		for (JMeterCommandLineArguments argument : argumentList) {
@@ -277,12 +293,14 @@ public class JMeterArgumentsArray {
 					argumentsArray.add(REPORT_OUTPUT_FOLDER_OPT.getCommandLineArgument());
 					argumentsArray.add(reportDirectory);
 					break;
+                case SERVER_OPT:
+                    argumentsArray.add(SERVER_OPT.getCommandLineArgument());
+                    break;
 				case SYSTEM_PROPFILE:
 				case JMETER_PROPERTY:
 				case JMETER_GLOBAL_PROP:
 				case SYSTEM_PROPERTY:
 				case VERSION_OPT:
-				case SERVER_OPT:
 				case PROPFILE_OPT:
 				case REPORT_GENERATING_OPT:
 				case HELP_OPT:

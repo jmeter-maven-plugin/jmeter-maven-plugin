@@ -2,6 +2,14 @@
 
 ##Next Version (Release Date TBC) Release Notes
 
+##Version 2.4.1 Release Notes
+
+* **Issue #252 - If generateReports is true, jmeter:gui adds invalid arguments.**
+
+* **Issue #251 - Static properties in AbstractJMeterMojo and ConfigureJMeterMojo can introduce weird issues .**
+
+* **Issue #250 - Plugin wrongly copies jorphan to lib/ext instead of lib.**
+
 ##Version 2.4.0 Release Notes
 
 * **Issue #244 - Settings ignoreResultFailures will not work if scanResultsForFailedRequests is not set to true.**

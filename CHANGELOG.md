@@ -2,6 +2,20 @@
 
 ##Next Version (Release Date TBC) Release Notes
 
+##Version 2.5.0 Release Notes
+
+* **Issue #256 Add an option to exclude a dependency.**
+
+* **Issue #255 Improve javadocs of mojo so that help displays useful info.**
+
+* **Issue #229 The plugin Downloads excluded dependencies of the Extension.**
+
+* **Issue #216 Capturing cyclic dependencies to avoid stackoverflow.**
+
+* **Issue #211 Remove duplicate versions of the same transitive dependency by selecting the most up to date.**
+
+** Thanks at https://github.com/kostd for his contribution to improving greatly dependency management !**
+
 ##Version 2.4.1 Release Notes
 
 * **Issue #252 - If generateReports is true, jmeter:gui adds invalid arguments.**

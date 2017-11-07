@@ -14,7 +14,7 @@
 
 * **Issue #211 Remove duplicate versions of the same transitive dependency by selecting the most up to date.**
 
-** Thanks at https://github.com/kostd for his contribution to improving greatly dependency management !**
+* ** Thanks at https://github.com/kostd for his contribution to improving greatly dependency management !**
 
 ##Version 2.4.1 Release Notes
 

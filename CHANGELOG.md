@@ -6,7 +6,22 @@
 
 * **Issue #94 Add the ability to start a remote server that is ready to accept connections.**
 
+   <code>
+   
+    mvn jmeter:remote-server
+  
+   </code>
+
+
 * **Issue #256 Add an option to exclude a dependency.**
+
+   <code>
+   
+    <excludedArtifacts>
+	<exclusion>commons-pool2:commons-pool2</exclusion>
+    </excludedArtifacts>
+  
+   </code>
 
 * **Issue #255 Improve javadocs of mojo so that help displays useful info.**
 

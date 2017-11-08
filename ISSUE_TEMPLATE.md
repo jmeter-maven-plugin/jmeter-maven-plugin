@@ -10,5 +10,5 @@ When reporting an issue:
 
 Issue are related to bug, it is not the right place to ask questions about usage, for the latter :
 
-- Read the manual https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/wiki
-- Ask at User Group https://github.com/jmeter-maven-plugin/jmeter-maven-plugin#users-group
+- Read the manual [WIKI](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/wiki)
+- Ask at  [User Group](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin#users-group)

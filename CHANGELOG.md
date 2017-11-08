@@ -17,9 +17,9 @@
 
    <code>
    
-    <excludedArtifacts>
-	<exclusion>commons-pool2:commons-pool2</exclusion>
-    </excludedArtifacts>
+    &lt;excludedArtifacts&gt;
+	&lt;exclusion&gt;commons-pool2:commons-pool2&lt;/exclusion&gt;
+    &lt;/excludedArtifacts&gt;
   
    </code>
 

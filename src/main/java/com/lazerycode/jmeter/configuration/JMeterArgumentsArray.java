@@ -172,7 +172,8 @@ public class JMeterArgumentsArray {
 		if (isNotSet(value)) return;
 		testFile = value.getAbsolutePath();
 
-		String resultFilename = FilenameUtils.removeExtension(testFilesDirectory.toURI().relativize(value.toURI()).getPath().replace(File.separator, "_"));
+		String resultFilename = FilenameUtils.removeExtension(testFilesDirectory.toURI().relativize(value.toURI()).getPath().replace("\\", "/").replace("/", "_")
+				);
 		resultsLogFileName = resultsDirectory + File.separator;
 		if (timestampResults) {
 			//TODO investigate when timestamp is generated.

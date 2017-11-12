@@ -404,7 +404,7 @@ public class JMeterArgumentsArrayTest {
 		assertThat(testArgs.getResultsLogFileName(),
 				is(not(equalTo(null))));
 		assertThat(UtilityFunctions.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()),
-				is(equalTo("-d target/jmeter/" + " -l " + "temp/subdir_test.jtl" + " -n -t " + testFileTwo.getAbsolutePath())));
+				is(equalTo("-d target/jmeter/" + " -l " + "temp"+File.separator+"subdir_test.jtl" + " -n -t " + testFileTwo.getAbsolutePath())));
 	}
 
 	@Test

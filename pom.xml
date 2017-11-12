@@ -372,6 +372,7 @@
                             </goals>
                             <streamLogs>true</streamLogs>
                             <showErrors>true</showErrors>
+                            <mavenOpts>${argLine}</mavenOpts>
                         </configuration>
                         <executions>
                             <execution>
@@ -407,7 +408,7 @@
                             </execution>
                         </executions>
                         <configuration>
-                            <argLine>${it.failsafe.argLine}</argLine>
+                            <argLine>@{argLine}</argLine>
                         </configuration>
                     </plugin>
                     <plugin>
@@ -421,37 +422,29 @@
                                     <goal>prepare-agent</goal>
                                 </goals>
                             </execution>                            
-                                <execution>
+                            <execution>
                                 <phase>pre-integration-test</phase>
                                 <goals>
-                                    <goal>prepare-agent</goal>
+                                    <goal>prepare-agent-integration</goal>
                                 </goals>
-                                <configuration>
-                                    <destFile>${project.build.directory}/jacoco-it.exec</destFile>
-	                                <propertyName>invoker.mavenOpts</propertyName>
-                                </configuration>
                             </execution>
                             <execution>
-                                <id>report</id>
+                                <id>default-report</id>
                                 <phase>test</phase>
                                 <goals>
                                     <goal>report</goal>
                                 </goals>
                             </execution>
                             <execution>
-                                <id>post-integration-test</id>
+                                <id>default-report-integration</id>
                                 <phase>post-integration-test</phase>
                                 <goals>
-                                    <goal>report</goal>
+                                    <goal>report-integration</goal>
                                 </goals>
-                                <configuration>
-                                    <dataFile>${project.build.directory}/jacoco-it.exec</dataFile>
-                                    <outputDirectory>${project.reporting.outputDirectory}/jacoco-it</outputDirectory>
-                                </configuration>
                             </execution>
                         </executions>
                         <configuration>
-                          <includes>com.lazerycode.jmeter.*</includes>
+                          <propertyName>argLine</propertyName>
                         </configuration>
                     </plugin>
                 </plugins>

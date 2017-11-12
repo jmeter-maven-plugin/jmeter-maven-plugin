@@ -372,6 +372,7 @@
                             </goals>
                             <streamLogs>true</streamLogs>
                             <showErrors>true</showErrors>
+                            <mavenOpts>${it.failsafe.argLine}</mavenOpts>
                         </configuration>
                         <executions>
                             <execution>
@@ -406,6 +407,9 @@
                                 </goals>
                             </execution>
                         </executions>
+                        <configuration>
+                            <argLine>${it.failsafe.argLine}</argLine>
+                        </configuration>
                     </plugin>
                     <plugin>
                         <groupId>org.jacoco</groupId>
@@ -413,6 +417,7 @@
                         <version>0.7.9</version>
                         <executions>
                             <execution>
+                                <phase>pre-integration-test</phase>
                                 <goals>
                                     <goal>prepare-agent</goal>
                                 </goals>
@@ -425,6 +430,9 @@
                                 </goals>
                             </execution>
                         </executions>
+                        <configuration>
+                          <propertyName>it.failsafe.argLine</propertyName>
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>

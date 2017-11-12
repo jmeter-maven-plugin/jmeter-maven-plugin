@@ -9,7 +9,7 @@
     <artifactId>basic-integration-test</artifactId>
     <version>DEV-SNAPSHOT</version>
 
-    <description>Basic Jmeter test to check that the plugin works</description>
+    <description>Basic JMeter test to check that the plugin works</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

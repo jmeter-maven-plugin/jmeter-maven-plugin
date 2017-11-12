@@ -4,7 +4,7 @@
 
 ##Version 2.5.1 Release Notes
 
-* **Issue #258 NPE if no jMeterProcessJVMSettings set.**
+* **Issue #258 NPE when running remote-server if no jMeterProcessJVMSettings set.**
 
 * **Issue #219 Unit tests fail on Windows.**
 

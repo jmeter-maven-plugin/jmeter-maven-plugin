@@ -74,7 +74,12 @@ public class RunJMeterServer extends AbstractJMeterMojo {
 	}
 
 	private void startJMeterServer() throws MojoExecutionException {
-	    JMeterProcessJVMSettings jMeterProcessJVMSettings = new JMeterProcessJVMSettings(this.jMeterProcessJVMSettings);
+	    JMeterProcessJVMSettings jMeterProcessJVMSettings = null;
+	    if(this.jMeterProcessJVMSettings == null) {
+	        jMeterProcessJVMSettings = new JMeterProcessJVMSettings();
+	    } else {
+	        jMeterProcessJVMSettings = new JMeterProcessJVMSettings(this.jMeterProcessJVMSettings);
+	    }
 	    if(exportedRmiHostname!= null && !exportedRmiHostname.isEmpty()) {
 	        jMeterProcessJVMSettings.getArguments().add("-Djava.rmi.server.hostname="+exportedRmiHostname);	        
 	    }

@@ -18,7 +18,7 @@ See the [CHANGELOG](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/b
 
 All the documentation you need to configure the plugin is available on the [github wiki](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/wiki).
 
-Last version is **2.5.0** and is compatible with **Apache JMeter 3.3**
+Last version is **2.5.1** and is compatible with **Apache JMeter 3.3**
 
 This plugin requires **JDK 1.8** or higher since 2.2.0. 
 
@@ -32,7 +32,7 @@ This plugin requires **JDK 1.8** or higher since 2.2.0.
 		<plugin>
 			<groupId>com.lazerycode.jmeter</groupId>
 			<artifactId>jmeter-maven-plugin</artifactId>
-			<version>2.5.0</version>
+			<version>2.5.1</version>
 			<executions>
 				<execution>
 					<id>jmeter-tests</id>

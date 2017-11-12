@@ -2,6 +2,12 @@
 
 ##Next Version (Release Date TBC) Release Notes
 
+##Version 2.5.1 Release Notes
+
+* **Issue #258 NPE if no jMeterProcessJVMSettings set.**
+
+* **Issue #219 Unit tests fail on Windows.**
+
 ##Version 2.5.0 Release Notes
 
 * **Issue #94 Add the ability to start a remote server that is ready to accept connections.**

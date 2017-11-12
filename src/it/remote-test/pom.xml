@@ -1,0 +1,126 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.lazerycode.jmeter</groupId>
+	<artifactId>test-plugins</artifactId>
+    <version>DEV-SNAPSHOT</version>
+
+    <description>JMeter test to check that extensions work</description>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    </properties>
+
+    <repositories>
+        <repository>
+            <id>apache-snapshots</id>
+            <name>Apache Snapshots</name>
+            <url>https://repository.apache.org/content/groups/snapshots/</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+    
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.jmeter</groupId>
+            <artifactId>ApacheJMeter_core</artifactId>
+            <version>3.3</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.tika</groupId>
+                    <artifactId>tika-parsers</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.jmeter</groupId>
+            <artifactId>ApacheJMeter_java</artifactId>
+            <version>3.3</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.tika</groupId>
+                    <artifactId>tika-parsers</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>@project.groupId@</groupId>
+                <artifactId>@project.artifactId@</artifactId>
+                <version>@project.version@</version>
+                <configuration>
+                    <generateReports>true</generateReports>
+                    <scanResultsForSuccessfulRequests>true</scanResultsForSuccessfulRequests>
+                    <scanResultsForFailedRequests>true</scanResultsForFailedRequests>
+                    <ignoreResultFailures>true</ignoreResultFailures>
+                    <downloadOptionalDependencies>false</downloadOptionalDependencies>
+                    <propertiesUser>
+                        <threads>10</threads>
+                        <duration>60</duration>
+                        <rampup>5</rampup>
+                    </propertiesUser>
+                    <jmeterExtensions>
+                        <artifact>kg.apc:jmeter-plugins-casutg:2.4</artifact>
+                    </jmeterExtensions>
+                    <excludedArtifacts>
+                        <exclusion>commons-pool2:commons-pool2</exclusion>
+                        <exclusion>commons-math3:commons-math3</exclusion>
+                        <exclusion>org.slf4j:slf4j-nop</exclusion>
+                        <exclusion>logkit:logkit</exclusion>
+                        <exclusion>avalon-logkit:avalon-logkit</exclusion>
+                        <exclusion>jdom:jdom</exclusion>
+                        <exclusion>log4j:log4j</exclusion>
+                        <exclusion>commons-logging:commons-logging</exclusion>
+                        <exclusion>excalibur-logger:excalibur-logger</exclusion>
+                    </excludedArtifacts>
+                    <testFilesIncluded>
+                        <jMeterTestFile>test.jmx</jMeterTestFile>
+                    </testFilesIncluded>
+                    <exportedRmiHostname>127.0.0.1</exportedRmiHostname>
+                    <serverPort>2010</serverPort>
+                    <remoteConfig>
+                        <serverList>127.0.0.1:2010</serverList>
+                        <startAndStopServersForEachTest>true</startAndStopServersForEachTest>
+                    </remoteConfig>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>configure</id>
+                        <goals>
+                            <goal>configure</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>start jmeter-server</id>
+                        <goals>
+                            <goal>remote-server</goal>
+                        </goals>
+                        <configuration>
+                            <runInBackground>true</runInBackground>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>performance test</id>
+                        <goals>
+                            <goal>jmeter</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>verify</id>
+                        <goals>
+                            <goal>results</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

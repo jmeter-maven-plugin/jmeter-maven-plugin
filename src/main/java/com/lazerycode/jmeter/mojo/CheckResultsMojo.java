@@ -29,14 +29,14 @@ public class CheckResultsMojo extends AbstractJMeterMojo {
 	 * Sets whether ResultScanner should search for failed requests in the JMeter result file.
 	 * Defaults to false
 	 */
-	@Parameter(defaultValue = "false")
+	@Parameter(defaultValue = "true")
 	protected boolean scanResultsForFailedRequests;
 
 	/**
 	 * Sets whether ResultScanner should search for Successful requests in the JMeter result file.
 	 * Defaults to false
 	 */
-	@Parameter(defaultValue = "false")
+	@Parameter(defaultValue = "true")
 	protected boolean scanResultsForSuccessfulRequests;
 
 	/**

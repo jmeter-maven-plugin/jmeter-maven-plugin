@@ -27,11 +27,9 @@ Default values for following properties have been changed:
 
 * **Issue #94 Add the ability to start a remote server that is ready to accept connections.**
 
-   <code>
-   
+   ```
     mvn jmeter:remote-server
-  
-   </code>
+   ```
 
 ##Version 2.5.1 Release Notes
 
@@ -43,11 +41,9 @@ Default values for following properties have been changed:
 
 * **Issue #94 Add the ability to start a remote server that is ready to accept connections.**
 
-   <code>
-   
+   ```
     mvn jmeter:remote-server
-  
-   </code>
+   ```
 
 
 * **Issue #256 Add an option to exclude a dependency.**

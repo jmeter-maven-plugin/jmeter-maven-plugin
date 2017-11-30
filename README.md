@@ -1,4 +1,4 @@
-# JMeter Maven Plugin
+JMeter Maven Plugin
 =================================
 
 [![Join the chat at https://gitter.im/jmeter-maven-plugin/jmeter-maven-plugin](https://badges.gitter.im/jmeter-maven-plugin/jmeter-maven-plugin.svg)](https://gitter.im/jmeter-maven-plugin/jmeter-maven-plugin?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
@@ -22,12 +22,12 @@ Last version is **2.6.0** and is compatible with **Apache JMeter 3.3**
 
 This plugin requires **JDK 1.8** or higher since 2.2.0. 
 
-# Basic Usage
+Basic Usage
 -----
 
 ### Add the plugin to your project
 
-* Add the plugin to the build section of your pom's project :
+Add the plugin to the build section of your pom's project :
 
 		<plugin>
 			<groupId>com.lazerycode.jmeter</groupId>
@@ -54,7 +54,7 @@ Once you have created your JMeter tests, you'll need to copy them to `<Project D
 
 All your tests will run in maven!
 
-# Documentation
+Documentation
 -----
 
 All the documentation you need to configure the plugin is available on the [github wiki](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/wiki).
@@ -63,7 +63,7 @@ Beginners should start with the [Basic Configuration](https://github.com/jmeter-
 
 For advanced POM configuration settings have a look at the [Advanced Configuration](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/wiki/Advanced-Configuration) section.
 
-# Community
+Community
 -----
 
 ## Users Group
@@ -86,7 +86,7 @@ Group Email: [maven-jmeter-plugin-devs@googlegroups.com](mailto:maven-jmeter-plu
 
 The official website is available at [http://jmeter.lazerycode.com](http://jmeter.lazerycode.com)
 
-# Contributing
+Contributing
 ------------
 
 1. Fork it.

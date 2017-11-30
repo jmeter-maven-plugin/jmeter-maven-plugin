@@ -72,6 +72,7 @@ import com.lazerycode.jmeter.properties.PropertiesMapping;
  */
 @Mojo(name = "configure", defaultPhase = LifecyclePhase.COMPILE)
 public class ConfigureJMeterMojo extends AbstractJMeterMojo {
+    private static final String DEPENDENCIES_DEFAULT_SEARCH_SCOPE = JavaScopes.RUNTIME;
 	@Component
 	private RepositorySystem repositorySystem;
 
@@ -589,7 +590,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
      * @throws IOException
      */
     private void copyTransitiveRuntimeDependenciesToLibDirectory(Artifact artifact, boolean getDependenciesOfDependency) throws DependencyResolutionException, IOException {
-        copyTransitiveRuntimeDependenciesToLibDirectory(new Dependency(artifact, JavaScopes.TEST), getDependenciesOfDependency); 
+        copyTransitiveRuntimeDependenciesToLibDirectory(new Dependency(artifact, DEPENDENCIES_DEFAULT_SEARCH_SCOPE), getDependenciesOfDependency); 
     }
     
 	/**
@@ -607,7 +608,25 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 		collectRequest.setRepositories(repositoryList);
 		// In #classpathFilter, we are not actually passing the scope, but the classpath identifier (just using the same enum as for the scope).
         // That is, for example, for a test classpath, dependencies are required with any scope (that is, the TEST filter is the softest)
-		DependencyFilter dependencyFilter = DependencyFilterUtils.classpathFilter(JavaScopes.TEST);
+		
+		DependencyFilter dependencyFilter = 
+		        DependencyFilterUtils.andFilter(DependencyFilterUtils.classpathFilter(DEPENDENCIES_DEFAULT_SEARCH_SCOPE),
+		                (DependencyNode dependencyNode, List<DependencyNode> arg1) -> {
+                                Artifact artifact = dependencyNode.getArtifact();
+                                if (dependencyNode.getDependency().isOptional()) {
+                                    getLog().debug("Filtering dependency "+dependencyNode.getDependency());
+                                    return false;
+                                }
+                                for(Exclusion currentExclusion: parsedExcludedArtifacts){
+                                    if (currentExclusion.getGroupId().equals(artifact.getGroupId()) &&
+                                            (currentExclusion.getArtifactId().equals(artifact.getArtifactId())) 
+                                            || (currentExclusion.getArtifactId().equals("*"))){
+                                        getLog().debug("Filtering excluded dependency "+dependencyNode.getDependency());
+                                        return false;
+                                    }
+                                }
+                                return true;
+                            });
 		DependencyRequest dependencyRequest = new DependencyRequest(collectRequest, dependencyFilter);
 
         if (getLog().isDebugEnabled()) {

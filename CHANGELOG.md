@@ -8,13 +8,11 @@
 
 To add to lib folder of Apache JMeter your test dependencies you can now use:
 
-   <code>
-   
-    &lt;testPlanLibraries&gt;
-	&lt;artifact&gt;org.apache.activemq:activemq-client:5.15.2&lt;/artifact&gt;
-    &lt;/testPlanLibraries&gt;
-  
-   </code>
+   ```
+    <testPlanLibraries>
+	<artifact>org.apache.activemq:activemq-client:5.15.2</artifact>
+    </testPlanLibraries>
+   ```
 
 * **Issue #261 Default values should be improved.**
 
@@ -54,13 +52,11 @@ Default values for following properties have been changed:
 
 * **Issue #256 Add an option to exclude a dependency.**
 
-   <code>
-   
-    &lt;excludedArtifacts&gt;
-	&lt;exclusion&gt;commons-pool2:commons-pool2&lt;/exclusion&gt;
-    &lt;/excludedArtifacts&gt;
-  
-   </code>
+   ```
+    <excludedArtifacts>
+	<exclusion>commons-pool2:commons-pool2</exclusion>
+    </excludedArtifacts>
+	```
 
 * **Issue #255 Improve javadocs of mojo so that help displays useful info.**
 

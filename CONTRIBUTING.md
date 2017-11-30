@@ -1,3 +1,6 @@
+Contributing
+------------
+
 1. Open an [Issue](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues)
 2. Fork us https://github.com/jmeter-maven-plugin/jmeter-maven-plugin
 3. Clone your forked repository locally : `git clone https://github.com/yourid/jmeter-maven-plugin/`

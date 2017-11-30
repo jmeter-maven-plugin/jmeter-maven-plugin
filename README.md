@@ -91,12 +91,4 @@ Group Email: [maven-jmeter-plugin-devs@googlegroups.com](mailto:maven-jmeter-plu
 
 The official website is available at [http://jmeter.lazerycode.com](http://jmeter.lazerycode.com)
 
-Contributing
-------------
-
-1. Fork it.
-2. Create a branch (`git checkout -b my_plugin`)
-3. Commit your changes (`git commit -am "Added feature"`)
-4. Push to the branch (`git push origin my_plugin`)
-5. Create a new [Issue](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues) with a link to your branch, or just make a Pull Request.
-6. Enjoy a refreshing Coffee or Tea or orange juice and wait
+We love it when people [Contribute](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/blob/master/CONTRIBUTING.md)!

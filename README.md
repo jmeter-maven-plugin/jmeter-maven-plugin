@@ -29,20 +29,22 @@ Basic Usage
 
 Add the plugin to the build section of your pom's project :
 
-		<plugin>
-			<groupId>com.lazerycode.jmeter</groupId>
-			<artifactId>jmeter-maven-plugin</artifactId>
-			<version>2.6.0</version>
-			<executions>
-				<execution>
-					<id>jmeter-tests</id>
-					<phase>verify</phase>
-					<goals>
-						<goal>jmeter</goal>
-					</goals>
-			   </execution>
-			</executions>
-		</plugin>
+```
+<plugin>
+    <groupId>com.lazerycode.jmeter</groupId>
+    <artifactId>jmeter-maven-plugin</artifactId>
+    <version>2.6.0</version>
+    <executions>
+        <execution>
+            <id>jmeter-tests</id>
+            <phase>verify</phase>
+            <goals>
+                <goal>jmeter</goal>
+            </goals>
+       </execution>
+    </executions>
+</plugin>
+```
 
 ### Reference JMX files
 
@@ -50,7 +52,7 @@ Once you have created your JMeter tests, you'll need to copy them to `<Project D
 
 ### Run the tests
 
-	`mvn verify`
+```mvn verify```
 
 All your tests will run in maven!
 
@@ -66,7 +68,7 @@ For advanced POM configuration settings have a look at the [Advanced Configurati
 Community
 -----
 
-## Users Group
+### Users Group
 
 A place to discuss usage of the maven-jmeter-plugin, let people know how you use it here.
 
@@ -74,7 +76,7 @@ Homepage: [http://groups.google.com/group/maven-jmeter-plugin-users](http://grou
 
 Group Email: [maven-jmeter-plugin-users@googlegroups.com](mailto:maven-jmeter-plugin-users@googlegroups.com)
 
-## Devs Group
+### Devs Group
 
 A place to discuss the development of the maven-jmeter-plugin, or ask about features you would like to see added.
 
@@ -82,7 +84,7 @@ Homepage: [http://groups.google.com/group/maven-jmeter-plugin-devs]( http://grou
 
 Group Email: [maven-jmeter-plugin-devs@googlegroups.com](mailto:maven-jmeter-plugin-devs@googlegroups.com)
 
-## Website
+### Website
 
 The official website is available at [http://jmeter.lazerycode.com](http://jmeter.lazerycode.com)
 

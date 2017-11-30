@@ -2,6 +2,39 @@
 
 ##Next Version (Release Date TBC) Release Notes
 
+##Version 2.6.0 Release Notes
+
+* **Issue #262 Improve management of non plugin related dependencies.**
+
+To add to lib folder of Apache JMeter your test dependencies you can now use:
+
+   <code>
+   
+    &lt;testPlanLibraries&gt;
+	&lt;artifact&gt;org.apache.activemq:activemq-client:5.15.2&lt;/artifact&gt;
+    &lt;/testPlanLibraries&gt;
+  
+   </code>
+
+* **Issue #261 Default values should be improved.**
+
+Default values for following properties have been changed:
+
+* generateReports=true
+* scanResultsForFailedRequests=true
+* scanResultsForSuccessfulRequests=true
+* resultsFileFormat=csv
+
+##Version 2.5.0 Release Notes
+
+* **Issue #94 Add the ability to start a remote server that is ready to accept connections.**
+
+   <code>
+   
+    mvn jmeter:remote-server
+  
+   </code>
+
 ##Version 2.5.1 Release Notes
 
 * **Issue #258 NPE when running remote-server if no jMeterProcessJVMSettings set.**

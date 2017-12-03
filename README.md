@@ -38,20 +38,29 @@ Add the plugin to the build section of your pom's project :
     <artifactId>jmeter-maven-plugin</artifactId>
     <version>2.6.0</version>
     <executions>
-        <execution>
+	   <!-- Run JMeter tests -->
+       <execution>
             <id>jmeter-tests</id>
-            <phase>verify</phase>
             <goals>
                 <goal>jmeter</goal>
+            </goals>
+       </execution>
+       <!-- Fail build on errors in test -->
+       <execution>
+            <id>jmeter-check-results</id>
+            <goals>
+                <goal>results</goal>
             </goals>
        </execution>
     </executions>
 </plugin>
 ```
 
-### Reference JMX files
+### Reference JMX files and CSV data
 
-Once you have created your JMeter tests, you'll need to copy them to `<Project Dir>/src/test/jmeter`.  By default this plugin will pick up all the .jmx files in that directory, to specify which tests should be run please see the project documentation.
+Once you have created your JMeter tests, you'll need to copy them to `<Project Dir>/src/test/jmeter`.  By default this plugin will pick up all the .jmx files in that directory, to specify which tests should be run please see the project documentation. 
+
+You can also put data files in this folder and reference them in your plan.
 
 ### Run the tests
 

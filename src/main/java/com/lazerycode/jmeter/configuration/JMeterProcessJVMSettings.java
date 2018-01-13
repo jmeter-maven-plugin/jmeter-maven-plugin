@@ -12,7 +12,7 @@ import java.util.List;
  * {@code
  * 	<configuration>
  *      <jMeterProcessJVMSettings>
- *          <javaRuntime>{env.JAVA_HOME}/bin/java</javaRuntime>
+ *          <javaRuntime>${env.JAVA_HOME}/bin/java</javaRuntime>
  *          <xms>512</xms>
  *          <xmx>1024</xmx>
  *          <arguments>

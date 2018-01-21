@@ -4,8 +4,8 @@ JMeter Maven Plugin
 
 [![License](http://img.shields.io/:license-apache-brightgreen.svg)](http://www.apache.org/licenses/LICENSE-2.0.html)
 [![Build Status](https://travis-ci.org/jmeter-maven-plugin/jmeter-maven-plugin.svg?branch=master)](https://travis-ci.org/jmeter-maven-plugin/jmeter-maven-plugin)
-[![Dependency Status](https://www.versioneye.com/user/projects/56e686a3df573d00495abe1d/badge.svg?style=flat)](https://www.versioneye.com/user/projects/56e686a3df573d00495abe1d)
 [![codecov](https://codecov.io/gh/jmeter-maven-plugin/jmeter-maven-plugin/branch/master/graph/badge.svg)](https://codecov.io/gh/jmeter-maven-plugin/jmeter-maven-plugin)
+[![Dependency Status](https://www.versioneye.com/user/projects/56e686a3df573d00495abe1d/badge.svg?style=flat)](https://www.versioneye.com/user/projects/56e686a3df573d00495abe1d)
 
 [![GitHub release](https://img.shields.io/github/release/jmeter-maven-plugin/jmeter-maven-plugin.svg?colorB=brightgreen)](http://jmeter.lazerycode.com/)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.lazerycode.jmeter/jmeter-maven-plugin/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.lazerycode.jmeter/jmeter-maven-plugin)
@@ -14,7 +14,7 @@ JMeter Maven Plugin
 
 [![Join the chat at https://gitter.im/jmeter-maven-plugin/jmeter-maven-plugin](https://badges.gitter.im/jmeter-maven-plugin/jmeter-maven-plugin.svg)](https://gitter.im/jmeter-maven-plugin/jmeter-maven-plugin?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Stack Overflow](https://img.shields.io/:stack%20overflow-jmeter_maven_plugin-brightgreen.svg)](https://stackoverflow.com/questions/tagged/jmeter-maven-plugin)
-
+[![Twitter](https://img.shields.io/twitter/url/https/github.com/jmeter-maven-plugin/jmeter-maven-plugin.svg?style=social)](https://twitter.com/intent/tweet?text=Integrate%20easily%20Apache%20JMeter%20in%20your%20Maven%20project%20with%20jmeter-maven-plugin:&url=https%3A%2F%2Fgithub.com%2Fjmeter-maven-plugin%2Fjmeter-maven-plugin)
 A Maven plugin that provides the ability to run JMeter tests as part of your build
 
 See the [CHANGELOG](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/blob/master/CHANGELOG.md) for change information.  

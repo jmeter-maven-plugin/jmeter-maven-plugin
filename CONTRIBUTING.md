@@ -1,6 +1,7 @@
 Contributing
 ------------
 
+0. Have a look at the issues tagged as [Help Required](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/labels/Help%20Required)
 1. Open an [Issue](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues)
 2. Fork us https://github.com/jmeter-maven-plugin/jmeter-maven-plugin
 3. Clone your forked repository locally : `git clone https://github.com/yourid/jmeter-maven-plugin/`

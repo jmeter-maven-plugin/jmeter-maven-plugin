@@ -101,9 +101,9 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 	 * This list is hard coded by default, you can override this list and supply your own list of artifacts for JMeter.
 	 * This would be useful if you want to use a different version of JMeter that has a different list of required artifacts.
 	 * <p/>
-	 * &lt;jmeterExtensions&gt;
+	 * &lt;jmeterArtifacts&gt;
 	 * &nbsp;&nbsp;&lt;artifact&gt;kg.apc:jmeter-plugins:1.3.1&lt;/artifact&gt;
-	 * &lt;jmeterExtensions&gt;
+	 * &lt;jmeterArtifacts&gt;
 	 */
 	@Parameter
 	private List<String> jmeterArtifacts = new ArrayList<>();

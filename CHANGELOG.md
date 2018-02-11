@@ -2,6 +2,11 @@
 
 ##Next Version (Release Date TBC) Release Notes
 
+##Version 2.7.0 Release Notes
+
+* **Issue #272 Support Apache JMeter 4.0.**
+* **Issue #277 Travis : Add tests for Java 9.**
+
 ##Version 2.6.0 Release Notes
 
 * **Issue #262 Improve management of non plugin related dependencies.**

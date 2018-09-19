@@ -8,14 +8,14 @@ env:
 
 matrix:
   include:
-    - jdk: oraclejdk8
-      script: mvn clean verify
-    - jdk: oraclejdk9
-      script: mvn clean verify
-    - jdk: oraclejdk10
-      script: mvn clean verify
-#    - jdk: oraclejdk11
+#    - jdk: oraclejdk8
 #      script: mvn clean verify
+#    - jdk: oraclejdk9
+#      script: mvn clean verify
+#    - jdk: oraclejdk10
+#      script: mvn clean verify
+    - jdk: oraclejdk11
+      script: mvn clean verify
       
 after_success: ./deploy_to_sonatype.sh
 

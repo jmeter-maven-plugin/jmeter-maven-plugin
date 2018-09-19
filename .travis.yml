@@ -12,7 +12,9 @@ matrix:
       script: mvn clean verify
     - jdk: oraclejdk9
       script: mvn clean verify
-
+    - jdk: oraclejdk10
+      script: mvn clean verify
+      
 after_success: ./deploy_to_sonatype.sh
 
 after_success:

@@ -25,7 +25,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <required.maven.version>3.1.1</required.maven.version>
+        <required.maven.version>3.5.0</required.maven.version>
         <supported.java.version>1.8</supported.java.version>
         <supported.jmeter.version>5.0</supported.jmeter.version>
 
@@ -38,7 +38,7 @@
         <json-path.version>2.4.0</json-path.version>
         <logback.version>1.2.3</logback.version>
         <mockito-core.version>2.22.0</mockito-core.version>
-        <byte-buddy.version>1.8.0</byte-buddy.version>
+        <byte-buddy.version>1.9.0</byte-buddy.version>
         <slf4j-api.version>1.7.25</slf4j-api.version>
 
         <!--Plugin versions-->

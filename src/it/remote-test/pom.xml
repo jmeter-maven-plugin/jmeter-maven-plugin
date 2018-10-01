@@ -11,7 +11,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <jmeter.version>4.0</jmeter.version>
+        <jmeter.version>5.0</jmeter.version>
     </properties>
 
     <repositories>
@@ -53,9 +53,9 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>@project.groupId@</groupId>
-                <artifactId>@project.artifactId@</artifactId>
-                <version>@project.version@</version>
+                <groupId>com.lazerycode.jmeter</groupId>
+                <artifactId>jmeter-maven-plugin</artifactId>
+                <version>DEV-SNAPSHOT</version>
                 <configuration>
                     <generateReports>true</generateReports>
                     <scanResultsForSuccessfulRequests>true</scanResultsForSuccessfulRequests>

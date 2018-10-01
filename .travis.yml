@@ -9,7 +9,7 @@ env:
 matrix:
   include:
     - jdk: oraclejdk8
-      script: mvn -X clean verify
+      script: mvn clean verify
 #    - jdk: oraclejdk9
 #      script: mvn clean verify
 #    - jdk: oraclejdk10

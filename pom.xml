@@ -20,7 +20,7 @@
 
     <name>JMeter Maven Plugin</name>
     <description>A plugin to allow you to run JMeter tests with Maven.</description>
-    <url>http://jmeter.lazerycode.com</url>
+    <url>https://jmeter.lazerycode.com</url>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -122,6 +122,9 @@
             <roles>
                 <role>Comitter</role>
             </roles>
+            <organizationUrl>https://ubikloadpack.com</organizationUrl>
+            <url>https://ubikloadpack.com</url>
+            <organization>Ubik-Ingenierie</organization>
         </developer>
     </developers>
 

@@ -322,13 +322,13 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 		configureJMeterArtifacts();
 		getLog().info(" Populating JMeter directory ...");
 		populateJMeterDirectoryTree();
-		getLog().info(" Copying extensions "+jmeterExtensions+" to JMeter lib/ext directory "
+		getLog().info(" Copying extensions "+jmeterExtensions+" to JMeter lib/ext directory "
 		        +libExtDirectory+" with downloadExtensionDependencies set to "+downloadExtensionDependencies+" ...");
 		copyExplicitLibraries(jmeterExtensions, libExtDirectory, downloadExtensionDependencies);
-        getLog().info(" Copying  JUnit libraries "+junitLibraries+" to JMeter junit lib directory "
+        getLog().info(" Copying  JUnit libraries "+junitLibraries+" to JMeter junit lib directory "
                 +libJUnitDirectory+" with downloadLibraryDependencies set to "+downloadLibraryDependencies+" ...");
 		copyExplicitLibraries(junitLibraries, libJUnitDirectory, downloadLibraryDependencies);
-        getLog().info(" Copying test libraries "+testPlanLibraries+" to JMeter lib directory "
+        getLog().info(" Copying test libraries "+testPlanLibraries+" to JMeter lib directory "
                 +libDirectory+" with downloadLibraryDependencies set to "+downloadLibraryDependencies+" ...");
 		copyExplicitLibraries(testPlanLibraries, libDirectory, downloadLibraryDependencies);
 		getLog().info(" Configuring jmeter properties ...");

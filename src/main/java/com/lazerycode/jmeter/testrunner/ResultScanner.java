@@ -47,7 +47,7 @@ public class ResultScanner {
 	public void parseResultFile(File file) throws ResultsFileNotFoundException {
 	    String failurePattern = this.csv ? CSV_REQUEST_FAILURE : XML_REQUEST_FAILURE;
 	    String successPattern = this.csv ? CSV_REQUEST_SUCCESS : XML_REQUEST_SUCCESS;
-	    LOGGER.info("Parsing results file '{}' in format '{}' using failurePattern:'{}', successPattern:'{}'",
+	    LOGGER.info("Parsing results file '{}' in format '{}', using failurePattern:'{}', successPattern:'{}'",
 	            file,
 	            this.csv ? "CSV" : "XML", failurePattern, successPattern);
 		if (countFailures) {

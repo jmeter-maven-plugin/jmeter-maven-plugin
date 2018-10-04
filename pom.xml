@@ -19,7 +19,7 @@
     <packaging>maven-plugin</packaging>
 
     <name>JMeter Maven Plugin</name>
-    <description>A plugin to allow you to run JMeter tests with Maven.</description>
+    <description>A plugin to allow you to run Apache JMeter tests with Maven.</description>
     <url>https://jmeter.lazerycode.com</url>
 
     <properties>
@@ -122,7 +122,7 @@
             <roles>
                 <role>Comitter</role>
             </roles>
-            <organizationUrl>https://ubikloadpack.com</organizationUrl>
+            <organizationUrl>https://www.ubik-ingenierie.com/blog/</organizationUrl>
             <url>https://ubikloadpack.com</url>
             <organization>Ubik-Ingenierie</organization>
         </developer>

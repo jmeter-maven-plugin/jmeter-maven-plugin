@@ -3,7 +3,7 @@ architect:
   - afranken
   - pmouawad
 docker:
-  image: "velo/rultor8"
+  image: "maven:3.5-jdk-8"
 decrypt:
   settings.xml: "repo/settings.xml.asc"
   pubring.gpg: "repo/pubring.gpg.asc"

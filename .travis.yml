@@ -10,10 +10,10 @@ matrix:
   include:
     - jdk: oraclejdk8
       script: mvn -X clean verify
-#    - jdk: oraclejdk9
-#      script: mvn clean verify
-#    - jdk: oraclejdk10
-#      script: mvn clean verify
+    - jdk: oraclejdk9
+      script: mvn clean verify
+    - jdk: oraclejdk10
+      script: mvn clean verify
 #    - jdk: openjdk11
 #      script: mvn clean verify      
 #    - jdk: oraclejdk11

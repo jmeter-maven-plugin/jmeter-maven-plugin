@@ -3,7 +3,7 @@ architect:
   - afranken
   - pmouawad
 docker:
-  image: "pmouawad/rultormaven"
+  image: "pmouawad/rultormaven:1.0.0"
 decrypt:
   settings.xml: "repo/settings.xml.asc"
   pubring.gpg: "repo/pubring.gpg.asc"

@@ -6,7 +6,7 @@
 
 * **Issue #285 Support Apache JMeter 5.0.**
 * **Issue #287 Upgraded dependencies.**
-* ** Travis : Add tests for Java 10.**
+* ** Travis : Add Java 10.**
 
 ##Version 2.7.0 Release Notes
 

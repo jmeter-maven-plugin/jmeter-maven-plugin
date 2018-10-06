@@ -2,6 +2,12 @@
 
 ##Next Version (Release Date TBC) Release Notes
 
+##Version 2.8.0 Release Notes
+
+* **Issue #285 Support Apache JMeter 5.0.**
+* **Issue #287 Upgraded dependencies.**
+* ** Travis : Add tests for Java 10.**
+
 ##Version 2.7.0 Release Notes
 
 * **Issue #272 Support Apache JMeter 4.0.**

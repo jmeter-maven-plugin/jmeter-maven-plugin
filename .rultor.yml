@@ -21,6 +21,7 @@ release:
     export PATH=$JAVA_HOME/bin:$PATH
     set
     javac -version
+    mvn -v
     git commit -am "${tag}"
     mvn clean deploy -Prelease --settings /home/r/settings.xml
   commanders:

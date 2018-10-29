@@ -12,7 +12,7 @@ matrix:
       script: mvn -X clean verify
     - jdk: oraclejdk9
       script: mvn clean verify
-    - jdk: oraclejdk10
+    - jdk: openjdk10
       script: mvn clean verify
     - jdk: openjdk11
       script: mvn clean verify      

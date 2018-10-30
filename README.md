@@ -84,7 +84,7 @@ Books
 
 If you'd like to help maintainer, you can buy this book:
 
-[![Master JMeter book logo](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/master-jmeter-from-load-test-to-devops-medium.png)](https://leanpub.com/master-jmeter-from-load-test-to-devops/)
+[![Master JMeter book logo](https://raw.githubusercontent.com/jmeter-maven-plugin/jmeter-maven-plugin/master/master-jmeter-from-load-test-to-devops-medium.png)](https://leanpub.com/master-jmeter-from-load-test-to-devops/)
 
 Community
 -----

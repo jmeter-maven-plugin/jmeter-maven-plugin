@@ -79,6 +79,13 @@ Beginners should start with the [Basic Configuration](https://github.com/jmeter-
 
 For advanced POM configuration settings have a look at the [Advanced Configuration](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/wiki/Advanced-Configuration) section.
 
+Books
+-----
+
+If you'd like to help maintainer, you can buy this book:
+
+<iframe width='160' height='400' src='https://leanpub.com/master-jmeter-from-load-test-to-devops/embed' frameborder='0' allowtransparency='true'></iframe>
+
 Community
 -----
 

@@ -82,7 +82,7 @@ For advanced POM configuration settings have a look at the [Advanced Configurati
 Books
 -----
 
-If you'd like to help maintainer, you can buy this book:
+If you'd like to thank the maintainer of this project and some developers of Apache JMeter, you can buy this book:
 
 [![Master JMeter book logo](https://raw.githubusercontent.com/jmeter-maven-plugin/jmeter-maven-plugin/master/master-jmeter-from-load-test-to-devops-medium.png)](https://leanpub.com/master-jmeter-from-load-test-to-devops/)
 

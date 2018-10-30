@@ -20,15 +20,6 @@ under the License.
 -->
 
 <settings>
-    <mirrors>
-        <!-- use this mirror with OpenJDK 11 as a workaround for https://bugs.openjdk.java.net/browse/JDK-8210005 
-            and https://issues.jboss.org/browse/NEXUS-181 -->
-        <mirror>
-            <id>jboss-public-repository-group-central-mirror</id>
-            <url>https://jcenter.bintray.com</url>
-            <mirrorOf>jboss-public-repository-group</mirrorOf>
-        </mirror>
-    </mirrors>
     <profiles>
         <profile>
             <id>it-repo</id>

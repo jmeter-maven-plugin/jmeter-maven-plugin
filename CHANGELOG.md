@@ -2,6 +2,10 @@
 
 ##Next Version (Release Date TBC) Release Notes
 
+##Version 2.8.1 Release Notes
+
+* **Issue #265 Add ability to fail build when error rate is over a threshold, see https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/wiki/Test-Results-File-Format#9.**
+
 ##Version 2.8.0 Release Notes
 
 * **Issue #285 Support Apache JMeter 5.0.**

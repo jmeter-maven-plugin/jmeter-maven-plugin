@@ -14,7 +14,7 @@ import com.lazerycode.jmeter.exceptions.ResultsFileNotFoundException;
  *
  * @author Jon Roberts
  */
-public class ResultScanner {
+public class ResultScanner implements IResultScanner {
     private static final Logger LOGGER = LoggerFactory.getLogger(ResultScanner.class);
 
     private static final String CSV_REQUEST_FAILURE = "\\bfalse\\b";
@@ -88,14 +88,16 @@ public class ResultScanner {
 	/**
 	 * @return failureCount
 	 */
-	public int getFailureCount() {
+	@Override
+    public int getFailureCount() {
 		return this.failureCount;
 	}
 
 	/**
 	 * @return failureCount
 	 */
-	public int getSuccessCount() {
+	@Override
+    public int getSuccessCount() {
 		return this.successCount;
 	}
 }

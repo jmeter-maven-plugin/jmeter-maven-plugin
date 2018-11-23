@@ -27,7 +27,7 @@ This plugin requires a JDK between **8** and **10**.  Java 11 will not work due 
 
 See this for a [possible workaround](https://stackoverflow.com/a/52510406/460802) on Java 11. 
 
-Basic Usage
+# Basic Usage
 -----
 
 ### Add the plugin to your project
@@ -66,11 +66,11 @@ You can also put data files in this folder and reference them in your plan.
 
 ### Run the tests
 
-```mvn verify```
+```mvn clean verify```
 
 All your tests will run in maven!
 
-Documentation
+# Documentation
 -----
 
 All the documentation you need to configure the plugin is available on the [github wiki](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/wiki).
@@ -79,14 +79,21 @@ Beginners should start with the [Basic Configuration](https://github.com/jmeter-
 
 For advanced POM configuration settings have a look at the [Advanced Configuration](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/wiki/Advanced-Configuration) section.
 
-Books
+# Book
 -----
 
 If you'd like to thank the maintainer of this project and some developers of Apache JMeter, you can buy this book:
 
 [![Master JMeter book logo](https://raw.githubusercontent.com/jmeter-maven-plugin/jmeter-maven-plugin/master/master-jmeter-from-load-test-to-devops-medium.png)](https://leanpub.com/master-jmeter-from-load-test-to-devops/)
 
-Community
+# Want to help
+-----
+
+Pick one of those issues:
+
+- [Next Milestone](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/milestone/29)
+
+# Community
 -----
 
 ### Users Group
@@ -107,6 +114,6 @@ Group Email: [maven-jmeter-plugin-devs@googlegroups.com](mailto:maven-jmeter-plu
 
 ### Website
 
-The official website is available at [http://jmeter.lazerycode.com](http://jmeter.lazerycode.com)
+The official website is available at [https://jmeter.lazerycode.com](https://jmeter.lazerycode.com)
 
 We love it when people [Contribute](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/blob/master/CONTRIBUTING.md)!

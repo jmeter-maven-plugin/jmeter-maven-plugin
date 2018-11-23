@@ -1,23 +1,23 @@
 # Changelog
 
-##Next Version (Release Date TBC) Release Notes
+## Next Version (Release Date TBC) Release Notes
 
-##Version 2.8.1 Release Notes
+## Version 2.8.1 Release Notes
 
 * **Issue #265 Add ability to fail build when error rate is over a threshold, see https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/wiki/Test-Results-File-Format#9.**
 
-##Version 2.8.0 Release Notes
+## Version 2.8.0 Release Notes
 
 * **Issue #285 Support Apache JMeter 5.0.**
 * **Issue #287 Upgraded dependencies.**
 * ** Travis : Add Java 10.**
 
-##Version 2.7.0 Release Notes
+## Version 2.7.0 Release Notes
 
 * **Issue #272 Support Apache JMeter 4.0.**
 * **Issue #277 Travis : Add tests for Java 9.**
 
-##Version 2.6.0 Release Notes
+## Version 2.6.0 Release Notes
 
 * **Issue #262 Improve management of non plugin related dependencies.**
 
@@ -38,7 +38,7 @@ Default values for following properties have been changed:
 * scanResultsForSuccessfulRequests=true
 * resultsFileFormat=csv
 
-##Version 2.5.0 Release Notes
+## Version 2.5.0 Release Notes
 
 * **Issue #94 Add the ability to start a remote server that is ready to accept connections.**
 
@@ -46,13 +46,13 @@ Default values for following properties have been changed:
     mvn jmeter:remote-server
    ```
 
-##Version 2.5.1 Release Notes
+## Version 2.5.1 Release Notes
 
 * **Issue #258 NPE when running remote-server if no jMeterProcessJVMSettings set.**
 
 * **Issue #219 Unit tests fail on Windows.**
 
-##Version 2.5.0 Release Notes
+## Version 2.5.0 Release Notes
 
 * **Issue #94 Add the ability to start a remote server that is ready to accept connections.**
 
@@ -79,7 +79,7 @@ Default values for following properties have been changed:
 
 **Thanks at https://github.com/kostd for his contribution to improving greatly dependency management !**
 
-##Version 2.4.1 Release Notes
+## Version 2.4.1 Release Notes
 
 * **Issue #252 - If generateReports is true, jmeter:gui adds invalid arguments.**
 
@@ -87,7 +87,7 @@ Default values for following properties have been changed:
 
 * **Issue #250 - Plugin wrongly copies jorphan to lib/ext instead of lib.**
 
-##Version 2.4.0 Release Notes
+## Version 2.4.0 Release Notes
 
 * **Issue #244 - Settings ignoreResultFailures will not work if scanResultsForFailedRequests is not set to true.**
 
@@ -95,13 +95,13 @@ Default values for following properties have been changed:
 
 * **Issue #242 - customPropertiesFiles Tag Drops The Period.**
 
-##Version 2.3.0 Release Notes
+## Version 2.3.0 Release Notes
 
 * **Issue #240 - JMeter version 3.3 support added.**
 
 * **Code cleanups and better logging.**
 
-##Version 2.2.0 Release Notes
+## Version 2.2.0 Release Notes
 
 * **Issue #222 - JMeter version 3.2.0 support added.**
 
@@ -116,7 +116,7 @@ Default values for following properties have been changed:
 	<confFilesDirectory>${basedir}/src/test/some_conf_dir</confFilesDirectory>
 	```
 
-##Version 2.1.0 Release Notes
+## Version 2.1.0 Release Notes
 
 * **JMeter version 3.1.0 support added.**
 * **Issue #188** - Directory structure is now preserved.  Test results will use the relative path of the test file (with the file seperators replaced with _) as its filename.
@@ -135,19 +135,19 @@ Default values for following properties have been changed:
 * **Issue #195** - The results file format is now stored in a config.json file in the ${project.build.directory}.
 * **Issue #190** - The list of results files was previously null since in memory data is not shared between MOJO's. They are now stored in a config.json file in the ${project.build.directory}. 
 
-##Version 2.0.3 Release Notes
+## Version 2.0.3 Release Notes
 
 * **Issue #182** - We are now correctly picking up all .jmx files if no test files are specified
 
-##Version 2.0.2 Release Notes
+## Version 2.0.2 Release Notes
 
 * **Issue #184** - use .replace() instead of .replaceAll() since File.separator is not a valid regex on windows machines.
 
-##Version 2.0.1 Release Notes
+## Version 2.0.1 Release Notes
 
 * **Issue #183** - `<resultsFileFormat>` is no longer ignored.
 
-##Version 2.0.0 Release Notes
+## Version 2.0.0 Release Notes
 
 * **JMeter version 3.0.0 support added.** 
 * **BREAKING CHANGE:** Location of the .jmx files is now set by using the configuration option `<testFilesDirectory>`:
@@ -208,14 +208,14 @@ Default values for following properties have been changed:
 			<file>someOtherFile</file>
 		</customPropertiesFiles>
 
-##Version 1.10.1 Release Notes
+## Version 1.10.1 Release Notes
 
 * **JMeter version 2.13 support added by hacking about with dependencies.**
 * **Issue #108** - Send log output to debug if suppressJMeterOutput is true to prevent buffer overflow
 * **Merge pull request #110** (Thanks [Nanne](https://github.com/nbaars)) - Additional logging.
 * **Merge pull request #120** (Thanks [Irek Pastusiak](https://github.com/automatictester)) - Make Properties file directory configurable.
 
-##Version 1.10.0 Release Notes
+## Version 1.10.0 Release Notes
 
 * **JMeter version 2.11 support added.**
 * **Merge pull request #100** (Thanks [Sascha Theves](https://github.com/sath1982)) - Add support for `<junitPlugins>` element to let you copy libraries into the  `jmeter/lib/junit` directory.
@@ -231,11 +231,11 @@ Default values for following properties have been changed:
 
 * **Issue #103** - system.properties and user.properties from JMeter used if custom ones are not specified.
 
-##Version 1.9.1 Release Notes
+## Version 1.9.1 Release Notes
 
 * **Merge pull request #99** (Thanks [Peter Murray](https://github.com/peter-murray)) - Set Java runtime
 
-##Version 1.9.0 Release Notes
+## Version 1.9.0 Release Notes
 
 * **JMeter version 2.10 support added.**
 * **Issue #56** - Now using a ProcessBuilder to isolate the JVM JMeter runs in.
@@ -290,11 +290,11 @@ Default values for following properties have been changed:
 		    <logConfigFilename>myFile.xml</logConfigFilename>
 		</configuration>
 
-##Version 1.8.1 Release Notes
+## Version 1.8.1 Release Notes
 
 * **Issue #62** - Fixed bug where testResultsTimestamp was ignored.
 
-##Version 1.8.0 Release Notes
+## Version 1.8.0 Release Notes
 
 * **JMeter version 2.9 support added.**
 * **Issue #58/Issue #59** - Add dependencies with custom function to /lib/ext folder.
@@ -315,12 +315,12 @@ Default values for following properties have been changed:
 			<serverList>server1,server2</serverList>
 		</remoteConfig>
 
-##Version 1.7.0 Release Notes
+## Version 1.7.0 Release Notes
 
 * **JMeter version 2.8 support added (Issue #57).**
 * **Issue #54** - Build directory ignored - Fix applied
 
-##Version 1.6.1 Release Notes
+## Version 1.6.1 Release Notes
 
 * **Issue #54** - Build directory ignored - Fix applied
 
@@ -328,7 +328,7 @@ Default values for following properties have been changed:
 
 * **JMeter version 2.7 support added.**
 
-##Version 1.5.1 Release Notes
+## Version 1.5.1 Release Notes
 
 * jmeter-maven-plugin can no longer generate reports. Use jmeter-analysis-maven-plugin instead.
 * clear system property "org.apache.commons.logging.Log" at the end of the test run
@@ -387,7 +387,7 @@ Default values for following properties have been changed:
 * remoteConfiguration->startAll
 * remoteConfiguration->startAndStopOnce
    
-### Other
+### Other
 
 * suppressJMeterOutput(Default: true) - suppress JMeter output to standard out.
 * testResultsTimestamp(Default: true) - enableReports/disable timestamping of the results filename(s).

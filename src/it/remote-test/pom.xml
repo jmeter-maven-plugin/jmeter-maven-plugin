@@ -85,9 +85,9 @@
                         <jMeterTestFile>test.jmx</jMeterTestFile>
                     </testFilesIncluded>
                     <exportedRmiHostname>127.0.0.1</exportedRmiHostname>
-                    <serverPort>2010</serverPort>
+                    <serverPort>3010</serverPort>
                     <remoteConfig>
-                        <serverList>127.0.0.1:2010</serverList>
+                        <serverList>127.0.0.1:3010</serverList>
                         <startAndStopServersForEachTest>true</startAndStopServersForEachTest>
                     </remoteConfig>
                 </configuration>

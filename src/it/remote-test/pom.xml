@@ -68,7 +68,7 @@
                         <rampup>5</rampup>
                     </propertiesUser>
                     <jmeterExtensions>
-                        <artifact>kg.apc:jmeter-plugins-casutg:2.4</artifact>
+                        <artifact>kg.apc:jmeter-plugins-casutg:2.6</artifact>
                     </jmeterExtensions>
                     <excludedArtifacts>
                         <exclusion>commons-pool2:commons-pool2</exclusion>

@@ -84,10 +84,10 @@
                     <testFilesIncluded>
                         <jMeterTestFile>test.jmx</jMeterTestFile>
                     </testFilesIncluded>
-                    <exportedRmiHostname>travis.dev</exportedRmiHostname>
+                    <exportedRmiHostname>${env.HOSTNAME}</exportedRmiHostname>
                     <serverPort>3010</serverPort>
                     <remoteConfig>
-                        <serverList>travis.dev:3010</serverList>
+                        <serverList>${env.HOSTNAME}:3010</serverList>
                         <startAndStopServersForEachTest>true</startAndStopServersForEachTest>
                     </remoteConfig>
                 </configuration>

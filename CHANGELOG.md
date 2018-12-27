@@ -1,7 +1,14 @@
 # Changelog
 
-## Next Version (Release Date TBC) Release Notes
+## Next Version 2.8.2 (Release Date TBC) Release Notes
 
+### Changes ###
+
+Starting with this version, the plugin will not add a suffix yyyyMMdd_HHmmss to the HTML report folder to make the
+path a fixed one, allowing usage of HTML Publisher plugin 
+
+* **Issue #295 Remove date_time suffix from path when generating html report.**
+ 
 ## Version 2.8.1 Release Notes
 
 * **Issue #265 Add ability to fail build when error rate is over a threshold, see https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/wiki/Test-Results-File-Format#9.**

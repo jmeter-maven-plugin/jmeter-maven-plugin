@@ -18,7 +18,9 @@ matrix:
 #      script: mvn -X clean verify
 #    - jdk: oraclejdk11
 #      script: mvn clean verify
-      
+addons:
+  hosts:
+    - travis.dev
 after_success: ./deploy_to_sonatype.sh
 
 after_success:

@@ -93,9 +93,12 @@ public class TestManager {
 		List<String> results = new ArrayList<>();
 		for (String file : tests) {
 		    if(generateReports) {
-		        thisTestArgs.setReportsDirectory(
-		                reportDirectory+File.separator+ 
-		            FilenameUtils.normalize(file));
+		        File outputReportFolder = new File(reportDirectory+File.separator+ FilenameUtils.removeExtension(file));
+		        if(outputReportFolder.mkdirs()) {
+	                thisTestArgs.setReportsDirectory(outputReportFolder.getAbsolutePath());
+		        } else {
+		            throw new MojoExecutionException("Unable to create report output folder:"+outputReportFolder.getAbsolutePath());
+		        }
 		    }
 			if (remoteServerConfiguration != null) {
 				if ((remoteServerConfiguration.isStartServersBeforeTests() && tests.get(0).equals(file)) || remoteServerConfiguration.isStartAndStopServersForEachTest()) {

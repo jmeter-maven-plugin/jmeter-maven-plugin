@@ -2,6 +2,7 @@ package com.lazerycode.jmeter.mojo;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -97,6 +98,8 @@ public class RunJMeterServer extends AbstractJMeterMojo {
 			final Process process = jmeterProcessBuilder.startProcess();
 			if (!runInBackground) {
 				process.waitFor();
+			} else {
+			    TimeUnit.SECONDS.sleep(1L);
 			}
 		} catch (InterruptedException ex) {
 			getLog().info(" ");

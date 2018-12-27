@@ -1,6 +1,9 @@
 # Changelog
 
-## Next Version 2.8.2 (Release Date TBC) Release Notes
+## Version 2.8.3 (To Be Released) Release Notes
+ 
+
+## Version 2.8.2 Release Notes (27th december 2018) 
 
 ### Changes ###
 

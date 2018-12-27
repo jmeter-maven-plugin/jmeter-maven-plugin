@@ -95,7 +95,7 @@ public class TestManager {
 		    if(generateReports) {
 		        thisTestArgs.setReportsDirectory(
 		                reportDirectory+File.separator+ 
-		            FilenameUtils.getBaseName(file));
+		            FilenameUtils.normalize(file));
 		    }
 			if (remoteServerConfiguration != null) {
 				if ((remoteServerConfiguration.isStartServersBeforeTests() && tests.get(0).equals(file)) || remoteServerConfiguration.isStartAndStopServersForEachTest()) {

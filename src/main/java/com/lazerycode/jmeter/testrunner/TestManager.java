@@ -94,6 +94,7 @@ public class TestManager {
 		for (String file : tests) {
 		    if(generateReports) {
 		        File outputReportFolder = new File(reportDirectory+File.separator+ FilenameUtils.removeExtension(file));
+		        LOGGER.info("Will generate HTML report in {}", outputReportFolder.getAbsolutePath());
 		        if(outputReportFolder.mkdirs()) {
 	                thisTestArgs.setReportsDirectory(outputReportFolder.getAbsolutePath());
 		        } else {

@@ -9,7 +9,7 @@ env:
 matrix:
   include:
     - jdk: oraclejdk8
-      script: mvn clean verify
+      script: mvn -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn clean verify
 #    - jdk: oraclejdk9
 #      script: mvn clean verify
 #    - jdk: openjdk10

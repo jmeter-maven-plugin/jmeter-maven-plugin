@@ -107,6 +107,11 @@
                         <serverList>${hostname}:3010</serverList>
                         <startAndStopServersForEachTest>true</startAndStopServersForEachTest>
                     </remoteConfig>
+                    <jMeterProcessJVMSettings>
+                        <arguments>
+                            <argument>-Djava.rmi.server.hostname=${hostname}</argument>
+                        </arguments>
+                    </jMeterProcessJVMSettings>
                 </configuration>
                 <executions>
                     <execution>

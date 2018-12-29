@@ -12,10 +12,10 @@ matrix:
 #      script: mvn clean verify
 #    - jdk: openjdk10
 #      script: mvn clean verify
-    - jdk: openjdk11
-      script: mvn -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn clean verify
-    - jdk: oraclejdk11
-      script: mvn -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn clean verify
+#    - jdk: openjdk11
+#      script: mvn -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn clean verify
+#    - jdk: oraclejdk11
+#      script: mvn -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn clean verify
     - jdk: oraclejdk8
       script: mvn -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn clean verify
 

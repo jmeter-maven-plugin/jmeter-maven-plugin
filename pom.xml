@@ -385,7 +385,7 @@
                             </goals>
                             <streamLogs>true</streamLogs>
                             <showErrors>true</showErrors>
-                            <mavenOpts>${argLine}</mavenOpts>
+                            <mavenOpts>${argLine} -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn</mavenOpts>
                         </configuration>
                         <executions>
                             <execution>
@@ -432,7 +432,7 @@
                             </execution>
                         </executions>
                         <configuration>
-                            <argLine>@{argLine} -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn</argLine>
+                            <argLine>@{argLine}</argLine>
                         </configuration>
                     </plugin>
                     <plugin>

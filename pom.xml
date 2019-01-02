@@ -432,7 +432,7 @@
                             </execution>
                         </executions>
                         <configuration>
-                            <argLine>@{argLine}</argLine>
+                            <argLine>@{argLine} -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn</argLine>
                         </configuration>
                     </plugin>
                     <plugin>

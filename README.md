@@ -11,8 +11,8 @@ JMeter Maven Plugin
 [![Javadocs](https://www.javadoc.io/badge/com.lazerycode.jmeter/jmeter-maven-plugin.svg)](https://www.javadoc.io/doc/com.lazerycode.jmeter/jmeter-maven-plugin)
 [![JitPack](https://jitpack.io/v/jmeter-maven-plugin/jmeter-maven-plugin.svg)](https://jitpack.io/#jmeter-maven-plugin/jmeter-maven-plugin)
 
-[![Join the chat at https://gitter.im/jmeter-maven-plugin/jmeter-maven-plugin](https://badges.gitter.im/jmeter-maven-plugin/jmeter-maven-plugin.svg)](https://gitter.im/jmeter-maven-plugin/jmeter-maven-plugin?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Stack Overflow](https://img.shields.io/:stack%20overflow-jmeter_maven_plugin-brightgreen.svg)](https://stackoverflow.com/questions/tagged/jmeter-maven-plugin)
+[![Open Source Helpers](https://www.codetriage.com/jmeter-maven-plugin/jmeter-maven-plugin/badges/users.svg)](https://www.codetriage.com/jmeter-maven-plugin/jmeter-maven-plugin)
 [![Twitter](https://img.shields.io/twitter/url/https/github.com/jmeter-maven-plugin/jmeter-maven-plugin.svg?style=social)](https://twitter.com/intent/tweet?text=Integrate+easily+%40ApacheJMeter+in+your+%23Maven+project+with+jmeter-maven-plugin:&url=https%3A%2F%2Fgithub.com%2Fjmeter-maven-plugin%2Fjmeter-maven-plugin)
 
 A Maven plugin that provides the ability to run JMeter tests as part of your build

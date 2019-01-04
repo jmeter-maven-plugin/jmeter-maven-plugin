@@ -91,7 +91,7 @@ If you'd like to thank the maintainer of this project and some developers of Apa
 
 Pick one of those issues:
 
-- [Next Milestone](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/milestone/29)
+- [Next Milestone](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/milestone/30)
 
 # Community
 -----

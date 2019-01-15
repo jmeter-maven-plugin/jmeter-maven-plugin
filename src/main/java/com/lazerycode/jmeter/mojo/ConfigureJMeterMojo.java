@@ -82,6 +82,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 	@Parameter(defaultValue = "${project.remoteProjectRepositories}", readonly = true)
 	private List<RemoteRepository> repositoryList;
 
+	private static final String ARTIFACT_STAR = "*";
 	/**
 	 * Name of the base config json file
 	 */
@@ -620,7 +621,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
                                 for(Exclusion currentExclusion: parsedExcludedArtifacts){
                                     if (currentExclusion.getGroupId().equals(artifact.getGroupId()) &&
                                             (currentExclusion.getArtifactId().equals(artifact.getArtifactId())) 
-                                            || (currentExclusion.getArtifactId().equals("*"))){
+                                            || (currentExclusion.getArtifactId().equals(ARTIFACT_STAR))){
                                         getLog().debug("Filtering excluded dependency "+dependencyNode.getDependency());
                                         return false;
                                     }
@@ -699,7 +700,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
         if(exclusion != null && exclusions != null) {
             for(Exclusion currentExclusion: exclusions){
                 if (currentExclusion.getGroupId().equals(exclusion.getGroupId()) &&
-                        (currentExclusion.getArtifactId().equals(exclusion.getArtifactId())) || (currentExclusion.getArtifactId().equals("*"))){
+                        (currentExclusion.getArtifactId().equals(exclusion.getArtifactId()) || (currentExclusion.getArtifactId().equals(ARTIFACT_STAR)))) {
                     return true;
                 }
             }
@@ -746,7 +747,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
                     // already copied, but perhaps the version right now is more recent than it was.
                     // We keep the most recent one
                     GenericVersionScheme genericVersionScheme = new GenericVersionScheme();
-                    Version currentArtifactVersion = genericVersionScheme.parseVersion(currentArtifact.getVersion());                   
+                    Version currentArtifactVersion = genericVersionScheme.parseVersion(currentArtifact.getVersion());
                     Version artifactVersion = genericVersionScheme.parseVersion(artifact.getVersion());
                     if (currentArtifactVersion.compareTo(artifactVersion) >= 0){
                         // the version of the already copied artifact above or the same, do not copy, do nothing

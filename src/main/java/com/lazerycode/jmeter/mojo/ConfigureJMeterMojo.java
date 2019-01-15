@@ -344,6 +344,18 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 	 * @param excludedArtifactsAsString List of exclusion
 	 */
 	private void setupExcludedArtifacts(List<String> excludedArtifactsAsString) {
+	    // Exclude broken artifacts of old JMeter pom
+	    // 1/ See https://bz.apache.org/bugzilla/show_bug.cgi?id=57555
+	    parsedExcludedArtifacts.add(new Exclusion("d-haven-managed-pool", "d-haven-managed-pool", null, null));
+	    parsedExcludedArtifacts.add(new Exclusion("event", "event", null, null));
+	    // 2/ See https://bz.apache.org/bugzilla/show_bug.cgi?id=57734
+	    parsedExcludedArtifacts.add(new Exclusion("commons-pool2", "commons-pool2", null, null));
+	    parsedExcludedArtifacts.add(new Exclusion("commons-math3", "commons-math3", null, null));
+	    
+	    // Exclude conflicting libraries since JMeter 3.2
+	    parsedExcludedArtifacts.add(new Exclusion("logkit", "logkit", null, null));
+	    parsedExcludedArtifacts.add(new Exclusion("avalon-logkit", "avalon-logkit", null, null));
+
 	    for (String exclusion : excludedArtifactsAsString) {
 	        String[] exclusionParts = exclusion.split(":");  
 	        parsedExcludedArtifacts.add(

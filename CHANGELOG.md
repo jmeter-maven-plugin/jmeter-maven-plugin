@@ -7,6 +7,7 @@
 ### Enhancements ###
 
 * Issue [300](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues/299) Simplify default setup when using 3rd party plugins relying on old JMeter version
+* New tutorial [Shift left your performance tests with JMeter and Maven](https://www.ubik-ingenierie.com/blog/shift-left-performance-tests-jmeter-maven/) available
 
 ### Bug Fixes ###
 

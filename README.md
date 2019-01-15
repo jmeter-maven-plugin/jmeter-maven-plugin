@@ -27,6 +27,10 @@ This plugin requires a JDK between **8** and **10**.  Java 11 will not work due 
 
 See this for a [possible workaround](https://stackoverflow.com/a/52510406/460802) on Java 11. 
 
+# Tutorial
+
+- [Shift left your performance tests with JMeter and Maven](https://www.ubik-ingenierie.com/blog/shift-left-performance-tests-jmeter-maven/)
+
 # Basic Usage
 -----
 

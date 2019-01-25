@@ -32,6 +32,7 @@ import com.lazerycode.jmeter.exceptions.IOException;
 @SuppressWarnings({"UnusedDeclaration", "FieldCanBeLocal", "JavaDoc"}) // Mojos get their fields set via reflection
 public abstract class AbstractJMeterMojo extends AbstractMojo {
     protected static final String LINE_SEPARATOR = "-------------------------------------------------------";
+    protected static final String RUN_HEADLESS_OPT = "-Djava.awt.headless=true";
 
     protected static final String JMETER_ARTIFACT_PREFIX = "ApacheJMeter_";
     protected static final String JMETER_ARTIFACT_NAME = "ApacheJMeter";
@@ -302,6 +303,14 @@ public abstract class AbstractJMeterMojo extends AbstractMojo {
 		} catch (java.io.IOException e) {
 			throw new IOException(e.getMessage(), e);
 		}
-
 	}
+	
+    protected static final boolean containsHeadless(JMeterProcessJVMSettings jvmSettings) {
+        for (String jvmArg : jvmSettings.getArguments()) {
+            if(jvmArg.contains(RUN_HEADLESS_OPT)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

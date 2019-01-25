@@ -83,7 +83,9 @@ public class RunJMeterServer extends AbstractJMeterMojo {
 	    if(exportedRmiHostname!= null && !exportedRmiHostname.isEmpty()) {
 	        jMeterProcessJVMSettings.getArguments().add("-Djava.rmi.server.hostname="+exportedRmiHostname);	        
 	    }
-	    jMeterProcessJVMSettings.getArguments().add("-Djava.awt.headless=true");
+	    if(!containsHeadless(jMeterProcessJVMSettings)) {
+            jMeterProcessJVMSettings.getArguments().add(RUN_HEADLESS_OPT);
+        }
 	    if(serverPort == null) {
 	        throw new MojoExecutionException("serverPort is null, cannot start jmeter server");
 	    }

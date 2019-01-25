@@ -20,7 +20,7 @@ import com.lazerycode.jmeter.testrunner.TestManager;
 @Execute(goal = "configure")
 public class RunJMeterMojo extends AbstractJMeterMojo {
 
-	/**
+    /**
 	 * Run all the JMeter tests.
 	 *
 	 * @throws MojoExecutionException
@@ -41,7 +41,9 @@ public class RunJMeterMojo extends AbstractJMeterMojo {
 
 		TestConfig testConfig = new TestConfig(new File(testConfigFile));
 		JMeterArgumentsArray testArgs = computeJMeterArgumentsArray(true, testConfig.getResultsOutputIsCSVFormat());
-
+		if(!containsHeadless(jMeterProcessJVMSettings)) {
+		    jMeterProcessJVMSettings.getArguments().add(RUN_HEADLESS_OPT);
+		}
 		if (null != remoteConfig) {
 			remoteConfig.setPropertiesMap(JMeterConfigurationHolder.getInstance().getPropertiesMap());
 		}

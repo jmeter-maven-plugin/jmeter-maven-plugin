@@ -9,6 +9,7 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 
 import com.lazerycode.jmeter.configuration.JMeterArgumentsArray;
+import com.lazerycode.jmeter.configuration.JMeterProcessJVMSettings;
 import com.lazerycode.jmeter.json.TestConfig;
 import com.lazerycode.jmeter.testrunner.TestManager;
 
@@ -41,6 +42,9 @@ public class RunJMeterMojo extends AbstractJMeterMojo {
 
 		TestConfig testConfig = new TestConfig(new File(testConfigFile));
 		JMeterArgumentsArray testArgs = computeJMeterArgumentsArray(true, testConfig.getResultsOutputIsCSVFormat());
+		if(this.jMeterProcessJVMSettings == null) {
+            jMeterProcessJVMSettings = new JMeterProcessJVMSettings();
+        }
 		if(!containsHeadless(jMeterProcessJVMSettings)) {
 		    jMeterProcessJVMSettings.getArguments().add(RUN_HEADLESS_OPT);
 		}

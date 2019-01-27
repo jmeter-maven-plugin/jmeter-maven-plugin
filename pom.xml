@@ -40,6 +40,7 @@
         <mockito-core.version>2.22.0</mockito-core.version>
         <byte-buddy.version>1.9.0</byte-buddy.version>
         <slf4j-api.version>1.7.25</slf4j-api.version>
+        <jackson.version>2.9.3</jackson.version>
 
         <!--Plugin versions-->
         <maven-compiler-plugin.version>3.8.0</maven-compiler-plugin.version>
@@ -258,6 +259,11 @@
             <groupId>org.eclipse.aether</groupId>
             <artifactId>aether-api</artifactId>
             <version>${aether.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-csv</artifactId>
+            <version>${jackson.version}</version>
         </dependency>
         <!-- optional helpers, might be superfluous depending on your use case -->
         <dependency>

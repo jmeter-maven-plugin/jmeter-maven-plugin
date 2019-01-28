@@ -2,20 +2,18 @@ package com.lazerycode.jmeter.testrunner;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStreamReader;
+import java.io.FileReader;
 import java.util.Map;
 import java.util.Scanner;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.MappingIterator;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import com.lazerycode.jmeter.exceptions.IOException;
 import com.lazerycode.jmeter.exceptions.ResultsFileNotFoundException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Handles checking a JMeter results file in XML format for errors and failures.
@@ -25,8 +23,8 @@ import org.slf4j.LoggerFactory;
 public class ResultScanner implements IResultScanner {
     private static final Logger LOGGER = LoggerFactory.getLogger(ResultScanner.class);
 
-    private static final String CSV_REQUEST_FAILURE = "\\bfalse\\b";
-    private static final String CSV_REQUEST_SUCCESS = "\\btrue\\b";
+    private static final String CSV_REQUEST_FAILURE = "false";
+    private static final String CSV_REQUEST_SUCCESS = "true";
 
 	private static final String XML_REQUEST_FAILURE = "s=\"false\"";
 	private static final String XML_REQUEST_SUCCESS = "s=\"true\"";
@@ -36,6 +34,8 @@ public class ResultScanner implements IResultScanner {
 	private int successCount = 0;
 	private boolean csv;
 	private static final CsvMapper CSV_MAPPER = new CsvMapper();
+
+    private static final int DEFAULT_BUFFER_SIZE = 8 * 1024;
 
 	public ResultScanner(boolean countSuccesses, boolean countFailures, boolean isCsv) {
         this.countFailures = countFailures;
@@ -55,47 +55,27 @@ public class ResultScanner implements IResultScanner {
 	 * @throws IOException
 	 */
 	public void parseResultFile(File file)
-			throws ResultsFileNotFoundException, IOException {
-	    String failurePattern = this.csv ? CSV_REQUEST_FAILURE : XML_REQUEST_FAILURE;
-	    String successPattern = this.csv ? CSV_REQUEST_SUCCESS : XML_REQUEST_SUCCESS;
-	    LOGGER.info("Parsing results file '{}' in format '{}', using failurePattern:'{}', successPattern:'{}'",
-	            file,
-	            this.csv ? "CSV" : "XML", failurePattern, successPattern);
-		if (countFailures) {
-			failureCount = failureCount + scanFileForPattern(file, failurePattern);
+			throws IOException {
+        LOGGER.info("Parsing results file '{}' in format '{}'",
+                file,
+                this.csv ? "CSV" : "XML");
+
+	    if (countFailures) {
+		    if(csv) {
+		        failureCount = failureCount + scanCsvForValue(file, CSV_REQUEST_FAILURE);
+		    } else {
+		        failureCount = failureCount + scanXmlForPattern(file, XML_REQUEST_FAILURE);
+		    }
+		    LOGGER.info("Scanned file '{}', failure result:'{}'", file.getAbsolutePath(), failureCount);
 		}
 		if (countSuccesses) {
-			successCount = successCount + scanFileForPattern(file, successPattern);
+		    if(csv) {
+		        successCount = successCount + scanCsvForValue(file, CSV_REQUEST_SUCCESS);
+            } else {
+                successCount = successCount + scanXmlForPattern(file, XML_REQUEST_SUCCESS);
+            }
+		    LOGGER.info("Scanned file '{}', success result:'{}'", file.getAbsolutePath(), successCount);
 		}
-	}
-
-	/**
-	 * Parse a file for instances of a pattern
-	 *
-	 * @param file    The file to parse
-	 * @param pattern The pattern to look for
-	 * @return The number of times the pattern has been found
-	 * @throws ResultsFileNotFoundException
-	 * @throws IOException
-	 */
-	private int scanFileForPattern(File file, String pattern)
-			throws ResultsFileNotFoundException, IOException { // NOSONAR
-		int patternCount = 0;
-		LOGGER.debug("Scanning file '{}' using pattern '{}'", file.getAbsolutePath(), pattern);
-		try {
-			if (csv)
-				patternCount = scanCsvForPattern(file, pattern);
-			else
-				patternCount = scanXmlForPattern(file, pattern);
-		} catch (FileNotFoundException ex) {
-			throw new ResultsFileNotFoundException("File not found for file:"
-			        +file.getAbsolutePath()
-			        +", pattern:"
-			        +pattern, ex);
-		}
-		LOGGER.debug("Scanned file '{}' using pattern '{}', result:'{}'", file.getAbsolutePath(), pattern, patternCount);
-
-		return patternCount;
 	}
 
 	/**
@@ -107,31 +87,27 @@ public class ResultScanner implements IResultScanner {
 	 * @return The number of times the pattern appears in the success column
 	 * @throws IOException When an error occurs while reading the file
 	 */
-	private int scanCsvForPattern(File file, String pattern) throws IOException {
+	private int scanCsvForValue(File file, String searchedForValue) throws IOException {
 		CsvSchema schema = CsvSchema.emptySchema().withHeader();
-		int bufferSize = 1024 * 1024;
-		int patternCount = 0;
+		int numberOfMatches = 0;
 
-		try (FileInputStream fis = new FileInputStream(file);
-				InputStreamReader isr = new InputStreamReader(fis);
-				BufferedReader reader = new BufferedReader(isr, bufferSize)) {
-
+		try (FileReader fr = new FileReader(file);
+				BufferedReader reader = new BufferedReader(fr, DEFAULT_BUFFER_SIZE)) {
 			MappingIterator<Map<String, String>> it = CSV_MAPPER.readerFor(Map.class)
 					.with(schema)
 					.readValues(reader);
-					
 			while (it.hasNext()) {
 				Map<String, String> row = it.next();
-				String success = row.get("success");
-				if (success != null && success.matches(pattern))
-					patternCount++;
+				String successValue = row.get("success");
+				if (searchedForValue.equals(successValue)) {
+				    numberOfMatches++;
+				}
 			}
 		} catch (java.io.IOException e) {
-			String message = "An unexpected error occured while reading file "
-					+ file.getAbsolutePath();
-			throw new IOException(message, e);
-		}
-		return patternCount;
+            throw new IOException("An unexpected error occured while reading file "
+                    + file.getAbsolutePath(), e);
+        }
+		return numberOfMatches;
 	}
 
 	/**
@@ -140,16 +116,19 @@ public class ResultScanner implements IResultScanner {
 	 * @param file    The file to parse
 	 * @param pattern The pattern to look for
 	 * @return The number of times the pattern appears in the xml file
-	 * @throws FileNotFoundException When the file is not found
+	 * @throws IOException When the file is not found
 	 */
 	private int scanXmlForPattern(File file, String pattern) 
-			throws FileNotFoundException {
+			throws IOException {
 		int patternCount = 0;
 		try (Scanner resultFileScanner = new Scanner(file)) {
 			while (resultFileScanner.findWithinHorizon(pattern, 0) != null) {
 				patternCount++;
 			}
-		}
+		} catch (java.io.IOException e) {
+            throw new IOException("An unexpected error occured while reading file "
+                    + file.getAbsolutePath(), e);
+        }
 		return patternCount;
 	}
 

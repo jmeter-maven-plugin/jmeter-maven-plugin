@@ -10,7 +10,7 @@
 
 ### Bug Fixes ###
 
-* Issue [305](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues/305) Response message containing "false" is considered a failure when parsed by ResultScanner
+* Issue [305](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues/305) Response message containing "false" is considered a failure when parsed by ResultScanner. **Thanks at https://github.com/martymcflywa for his contribution !**
 
 ## Version 2.8.3 Release Notes (15th january 2019)
 

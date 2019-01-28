@@ -1,14 +1,15 @@
 package com.lazerycode.jmeter;
 
-import com.lazerycode.jmeter.testrunner.ResultScanner;
-import org.junit.Test;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.Assert.assertThat;
 
 import java.io.File;
 import java.net.URL;
 
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.Assert.assertThat;
+import org.junit.Test;
+
+import com.lazerycode.jmeter.testrunner.ResultScanner;
 
 public class ResultScannerTest {
 
@@ -20,6 +21,7 @@ public class ResultScannerTest {
 	private final URL jtlPassingResultsFileURL = this.getClass().getResource("/jtl2-1-pass.jtl");
 	private final URL csvFailingResultsFileURL = this.getClass().getResource("/csv2-1-fail.csv");
 	private final URL csvPassingResultsFileURL = this.getClass().getResource("/csv2-1-pass.csv");
+	private final URL csvWithAlternateSeparatorPassingResultsFileURL = this.getClass().getResource("/csv3-1-pass.csv");
 
 	@Test
 	public void jtlFileWithFailuresCountSuccessAndFailures() throws Exception {
@@ -108,7 +110,16 @@ public class ResultScannerTest {
 
 	@Test
 	public void csvFileWithNoFailuresCountSuccessAndFailures() throws Exception {
-		File resultsFile = new File(csvPassingResultsFileURL.toURI());
+	    csvFileWithNoFailuresCountSuccessAndFailures(csvPassingResultsFileURL);
+	}
+	
+    @Test
+    public void csvFileWithNoFailuresCountSuccessAndFailuresAlternateSep() throws Exception {
+        csvFileWithNoFailuresCountSuccessAndFailures(csvWithAlternateSeparatorPassingResultsFileURL);
+    }
+    
+	private void csvFileWithNoFailuresCountSuccessAndFailures(URL fileUrl) throws Exception {
+	    File resultsFile = new File(fileUrl.toURI());
 		ResultScanner fileScanner = new ResultScanner(
 				COUNT_SUCCESSES, COUNT_FAILURES, true);
 		fileScanner.parseResultFile(resultsFile);

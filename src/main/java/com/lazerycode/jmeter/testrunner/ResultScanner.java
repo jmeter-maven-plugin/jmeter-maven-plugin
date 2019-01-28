@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,8 +27,8 @@ public class ResultScanner implements IResultScanner {
     private static final String CSV_REQUEST_FAILURE = "false";
     private static final String CSV_REQUEST_SUCCESS = "true";
 
-	private static final String XML_REQUEST_FAILURE = "s=\"false\"";
-	private static final String XML_REQUEST_SUCCESS = "s=\"true\"";
+	private static final String XML_REQUEST_FAILURE_PATTERN = "s=\"false\"";
+	private static final String XML_REQUEST_SUCCESS_PATTERN = "s=\"true\"";
 	private final boolean countFailures;
 	private final boolean countSuccesses;
 	private int failureCount = 0;
@@ -47,6 +48,15 @@ public class ResultScanner implements IResultScanner {
 	    this(countSuccesses, countFailures, false);
 	}
 
+    private static char lookForDelimiter(String line) {
+        for (char ch : line.toCharArray()) {
+            if (!Character.isLetter(ch)) {
+                return ch;
+            }
+        }
+        throw new IllegalStateException("Cannot find delimiter in header " + line);
+    }
+    
 	/**
 	 * Work out how to parse the file (if at all)
 	 *
@@ -64,17 +74,17 @@ public class ResultScanner implements IResultScanner {
 		    if(csv) {
 		        failureCount = failureCount + scanCsvForValue(file, CSV_REQUEST_FAILURE);
 		    } else {
-		        failureCount = failureCount + scanXmlForPattern(file, XML_REQUEST_FAILURE);
+		        failureCount = failureCount + scanXmlForPattern(file, XML_REQUEST_FAILURE_PATTERN);
 		    }
-		    LOGGER.info("Scanned file '{}', failure result:'{}'", file.getAbsolutePath(), failureCount);
+		    LOGGER.info("Scanned file '{}', number of results in failure:'{}'", file.getAbsolutePath(), failureCount);
 		}
 		if (countSuccesses) {
 		    if(csv) {
 		        successCount = successCount + scanCsvForValue(file, CSV_REQUEST_SUCCESS);
             } else {
-                successCount = successCount + scanXmlForPattern(file, XML_REQUEST_SUCCESS);
+                successCount = successCount + scanXmlForPattern(file, XML_REQUEST_SUCCESS_PATTERN);
             }
-		    LOGGER.info("Scanned file '{}', success result:'{}'", file.getAbsolutePath(), successCount);
+		    LOGGER.info("Scanned file '{}', number of results in success:'{}'", file.getAbsolutePath(), successCount);
 		}
 	}
 
@@ -83,26 +93,28 @@ public class ResultScanner implements IResultScanner {
 	 * the pattern appears in the success column. This function assumes that the
 	 * csv will always include the header row.
 	 * @param file    The file to parse
-	 * @param pattern The pattern to look for
+	 * @param searchedForValue The pattern to look for
 	 * @return The number of times the pattern appears in the success column
 	 * @throws IOException When an error occurs while reading the file
 	 */
 	private int scanCsvForValue(File file, String searchedForValue) throws IOException {
-		CsvSchema schema = CsvSchema.emptySchema().withHeader();
 		int numberOfMatches = 0;
-
-		try (FileReader fr = new FileReader(file);
-				BufferedReader reader = new BufferedReader(fr, DEFAULT_BUFFER_SIZE)) {
-			MappingIterator<Map<String, String>> it = CSV_MAPPER.readerFor(Map.class)
-					.with(schema)
-					.readValues(reader);
-			while (it.hasNext()) {
-				Map<String, String> row = it.next();
-				String successValue = row.get("success");
-				if (searchedForValue.equals(successValue)) {
-				    numberOfMatches++;
-				}
-			}
+		try {
+	        char separator = computeSeparator(file);
+	        CsvSchema schema = CsvSchema.emptySchema().withHeader().withColumnSeparator(separator);
+    		try (FileReader fr = new FileReader(file);
+    				BufferedReader reader = new BufferedReader(fr, DEFAULT_BUFFER_SIZE)) {
+    			MappingIterator<Map<String, String>> it = CSV_MAPPER.readerFor(Map.class)
+    					.with(schema)
+    					.readValues(reader);
+    			while (it.hasNext()) {
+    				Map<String, String> row = it.next();
+    				String successValue = row.get("success");
+    				if (searchedForValue.equals(successValue)) {
+    				    numberOfMatches++;
+    				}
+    			}
+    		} 
 		} catch (java.io.IOException e) {
             throw new IOException("An unexpected error occured while reading file "
                     + file.getAbsolutePath(), e);
@@ -110,17 +122,29 @@ public class ResultScanner implements IResultScanner {
 		return numberOfMatches;
 	}
 
-	/**
+	private char computeSeparator(File file) throws java.io.IOException {
+	    try (FileReader fr = new FileReader(file);
+                BufferedReader reader = new BufferedReader(fr, DEFAULT_BUFFER_SIZE)) {
+	        String line = reader.readLine();
+	        if(line != null) {
+	            return lookForDelimiter(line);
+	        }
+	        throw new IllegalArgumentException("No line read from file "+file.getAbsolutePath());
+	    }
+    }
+
+    /**
 	 * Scans an xml file for the given pattern and returns the number of times the
 	 * pattern appears in the xml.
 	 * @param file    The file to parse
-	 * @param pattern The pattern to look for
+	 * @param patternAsString The pattern to look for
 	 * @return The number of times the pattern appears in the xml file
 	 * @throws IOException When the file is not found
 	 */
-	private int scanXmlForPattern(File file, String pattern) 
+	private int scanXmlForPattern(File file, String patternAsString) 
 			throws IOException {
 		int patternCount = 0;
+		Pattern pattern = Pattern.compile(patternAsString);
 		try (Scanner resultFileScanner = new Scanner(file)) {
 			while (resultFileScanner.findWithinHorizon(pattern, 0) != null) {
 				patternCount++;

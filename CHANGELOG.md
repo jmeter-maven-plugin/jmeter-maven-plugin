@@ -2,7 +2,7 @@
 
 ## Version 2.8.5-SNAPSHOT Release Notes (IN PROGRESS)
 
-## Version 2.8.4 Release Notes (28th january 2019)
+## Version 2.8.4 Release Notes (29th january 2019)
 
 ### Enhancements ###
 

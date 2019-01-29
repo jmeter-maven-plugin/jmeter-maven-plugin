@@ -17,7 +17,9 @@ public class BenchmarkResultScannerTest {
 	To create the data file you can use an NPM module called datagen:
 
 		npm install -g datagen
-		datagen gen -s 10000000 -w 1
+		datagen init
+		# Now populate generated filed as noted below
+		datagen gen -s 10000000 -w 1 --out-file data1.xml
 
 	Header:
 
@@ -38,11 +40,12 @@ public class BenchmarkResultScannerTest {
 	private static final boolean DO_NOT_COUNT_FAILURES = false;
 	private static final boolean COUNT_SUCCESSES = true;
 	private static final boolean DO_NOT_COUNT_SUCCESSES = false;
+	private static final String TEST_XML_FILE_LOCATION = "/Programming/OpenSource/jmeter-maven-plugin/data1.xml";
 
 	@Ignore
 	@Test
 	public void countSuccessAndFailure() throws Exception {
-		File resultsFile = new File("/Programming/jmeter-maven-plugin/data1.xml");
+		File resultsFile = new File(TEST_XML_FILE_LOCATION);
 		ResultScanner fileScanner = new ResultScanner(COUNT_SUCCESSES, COUNT_FAILURES);
 
 		System.out.println("Benchmark new FailureScanner implementation");
@@ -60,7 +63,7 @@ public class BenchmarkResultScannerTest {
 	@Ignore
 	@Test
 	public void countSuccessOnly() throws Exception {
-		File resultsFile = new File("/Programming/jmeter-maven-plugin/data1.xml");
+		File resultsFile = new File(TEST_XML_FILE_LOCATION);
 		ResultScanner fileScanner = new ResultScanner(DO_NOT_COUNT_SUCCESSES, COUNT_FAILURES);
 
 		System.out.println("Benchmark new FailureScanner implementation - success only");
@@ -78,7 +81,7 @@ public class BenchmarkResultScannerTest {
 	@Ignore
 	@Test
 	public void countFailureOnly() throws Exception {
-		File resultsFile = new File("/Programming/jmeter-maven-plugin/data1.xml");
+		File resultsFile = new File(TEST_XML_FILE_LOCATION);
 		ResultScanner fileScanner = new ResultScanner(COUNT_SUCCESSES, DO_NOT_COUNT_FAILURES);
 
 		System.out.println("Benchmark new FailureScanner implementation - failure only");

@@ -42,3 +42,9 @@ Thumbs.db
 \.dorsync
 /nbactions.xml
 /bin/
+
+# Temp testing files
+footer
+header
+segment
+data1.xml

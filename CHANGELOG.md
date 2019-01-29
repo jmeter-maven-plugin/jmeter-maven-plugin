@@ -1,8 +1,8 @@
 # Changelog
 
-## Version 2.8.5-SNAPSHOT Release Notes (IN PROGRESS)
+## Version 2.8.6-SNAPSHOT Release Notes (IN PROGRESS)
 
-## Version 2.8.4 Release Notes (29th january 2019)
+## Version 2.8.5 Release Notes (29th january 2019)
 
 ### Enhancements ###
 
@@ -11,6 +11,8 @@
 ### Bug Fixes ###
 
 * Issue [305](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues/305) Response message containing "false" is considered a failure when parsed by ResultScanner. **Thanks at https://github.com/martymcflywa for his contribution !**
+
+## Version 2.8.4 (INVALID)
 
 ## Version 2.8.3 Release Notes (15th january 2019)
 

@@ -21,7 +21,7 @@ See the [CHANGELOG](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/b
 
 All the documentation you need to configure the plugin is available on the [github wiki](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/wiki).
 
-Last version is **2.8.5** requires Maven >= 3.5.0 and is compatible with **Apache JMeter 5.0**.
+Latest version is **2.8.5** requires Maven >= 3.5.0 and is compatible with **Apache JMeter 5.0**.
 
 This plugin requires a JDK between **8** and **10**.  Java 11 will not work due to this Java [bug](https://bugs.openjdk.java.net/browse/JDK-8210005).
 
@@ -64,7 +64,7 @@ Add the plugin to the build section of your pom's project :
 
 ### Reference JMX files and CSV data
 
-Once you have created your JMeter tests, you'll need to copy them to `<Project Dir>/src/test/jmeter`.  By default this plugin will pick up all the .jmx files in that directory, to specify which tests should be run please see the project documentation. 
+Once you have created your JMeter tests, you'll need to copy them to `<Project Dir>/src/test/jmeter`.  By default this plugin will pick up all the .jmx files in that directory.  To specify which tests should be run, see the project documentation. 
 
 You can also put data files in this folder and reference them in your plan.
 
@@ -77,7 +77,7 @@ All your tests will run in maven!
 # Documentation
 -----
 
-All the documentation you need to configure the plugin is available on the [github wiki](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/wiki).
+All the plugin configuration documentation is available on the [github wiki](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/wiki).
 
 Beginners should start with the [Basic Configuration](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/wiki/Basic-Configuration) section.
 
@@ -88,12 +88,12 @@ For advanced POM configuration settings have a look at the [Advanced Configurati
 
 If you'd like to thank the maintainer of this project and some developers of Apache JMeter, you can buy this book:
 
-[![Master JMeter book logo](https://raw.githubusercontent.com/jmeter-maven-plugin/jmeter-maven-plugin/master/master-jmeter-from-load-test-to-devops-medium.png)](https://leanpub.com/master-jmeter-from-load-test-to-devops/)
+[<kbd><img src="https://raw.githubusercontent.com/jmeter-maven-plugin/jmeter-maven-plugin/master/master-jmeter-from-load-test-to-devops-medium.png" /></kbd>](https://leanpub.com/master-jmeter-from-load-test-to-devops/)
 
 # Want to help
 -----
 
-Pick one of those issues:
+Have a look at our list of outstanding issues:
 
 - [Next Milestone](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/milestone/30)
 

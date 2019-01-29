@@ -24,7 +24,7 @@ public class TestConfigTest {
         File testConfigJSON = new File(configFile.toURI());
         TestConfig testConfig = new TestConfig(testConfigJSON);
         assertThat(testConfig.getFullConfig())
-                .isEqualTo(String.format("{%1$s  \"resultFilesLocations\" : [],%1$s  \"resultsOutputIsCSVFormat\" : false,%1$s  \"someOtherElement\": \"foo\"%1$s}", '\n'));
+                .isEqualTo(String.format("{%1$s  \"resultFilesLocations\" : [],%1$s  \"resultsOutputIsCSVFormat\" : false,%1$s  \"someOtherElement\": \"foo\",%1$s  \"generateReports\": false%1$s}", '\n'));
     }
 
     @Test(expected = MojoExecutionException.class)
@@ -38,7 +38,7 @@ public class TestConfigTest {
         InputStream configFile = this.getClass().getResourceAsStream(testConfigFile);
         TestConfig testConfig = new TestConfig(configFile);
         assertThat(testConfig.getFullConfig())
-                .isEqualTo(String.format("{%1$s  \"resultFilesLocations\" : [],%1$s  \"resultsOutputIsCSVFormat\" : false,%1$s  \"someOtherElement\": \"foo\"%1$s}", '\n'));
+                .isEqualTo(String.format("{%1$s  \"resultFilesLocations\" : [],%1$s  \"resultsOutputIsCSVFormat\" : false,%1$s  \"someOtherElement\": \"foo\",%1$s  \"generateReports\": false%1$s}", '\n'));
     }
 
     @Test(expected = MojoExecutionException.class)
@@ -79,6 +79,22 @@ public class TestConfigTest {
         assertThat(testConfig.getResultsFileLocations().size()).isEqualTo(2);
         assertThat(testConfig.getResultsFileLocations().get(0)).isEqualTo("c:\\windows\\temp");
         assertThat(testConfig.getResultsFileLocations().get(1)).isEqualTo("/usr/local/temp");
+    }
+
+    @Test
+    public void changeGenerateReports() throws MojoExecutionException {
+        InputStream configFile = this.getClass().getResourceAsStream(testConfigFile);
+        TestConfig testConfig = new TestConfig(configFile);
+
+        assertThat(testConfig.getGenerateReports()).isFalse();
+
+        testConfig.setGenerateReports(true);
+
+        assertThat(testConfig.getGenerateReports()).isTrue();
+
+        testConfig.setGenerateReports(false);
+
+        assertThat(testConfig.getGenerateReports()).isFalse();
     }
 
     @Test

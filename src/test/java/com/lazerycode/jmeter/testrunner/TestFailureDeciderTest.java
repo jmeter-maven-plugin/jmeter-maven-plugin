@@ -34,6 +34,7 @@ public class TestFailureDeciderTest {
     public void testRunChecksNotCalled() {
         IResultScanner resultScanner = new MockResultScanner(10, 10);
         TestFailureDecider decider = new TestFailureDecider(true, 2, resultScanner);
+
         assertThat(decider.failBuild()).isFalse();
     }
 
@@ -42,7 +43,11 @@ public class TestFailureDeciderTest {
         IResultScanner resultScanner = new MockResultScanner(10, 10);
         TestFailureDecider decider = new TestFailureDecider(true, 2, resultScanner);
         decider.runChecks();
+
         assertThat(decider.failBuild()).isFalse();
+        assertThat(decider.getErrorPercentage()).isEqualTo(50);
+        assertThat(decider.getErrorPercentageThreshold()).isEqualTo(2);
+        assertThat(decider.isIgnoreResultFailures()).isTrue();
     }
 
     @Test
@@ -50,7 +55,11 @@ public class TestFailureDeciderTest {
         IResultScanner resultScanner = new MockResultScanner(10, 10);
         TestFailureDecider decider = new TestFailureDecider(false, 2, resultScanner);
         decider.runChecks();
+
         assertThat(decider.failBuild()).isTrue();
+        assertThat(decider.getErrorPercentage()).isEqualTo(50);
+        assertThat(decider.getErrorPercentageThreshold()).isEqualTo(2);
+        assertThat(decider.isIgnoreResultFailures()).isFalse();
     }
 
     @Test
@@ -58,7 +67,11 @@ public class TestFailureDeciderTest {
         IResultScanner resultScanner = new MockResultScanner(100, 1);
         TestFailureDecider decider = new TestFailureDecider(false, 2, resultScanner);
         decider.runChecks();
+
         assertThat(decider.failBuild()).isFalse();
+        assertThat(decider.getErrorPercentage()).isEqualTo(0.990099f);
+        assertThat(decider.getErrorPercentageThreshold()).isEqualTo(2);
+        assertThat(decider.isIgnoreResultFailures()).isFalse();
     }
 
     @Test
@@ -66,7 +79,11 @@ public class TestFailureDeciderTest {
         IResultScanner resultScanner = new MockResultScanner(100, 2);
         TestFailureDecider decider = new TestFailureDecider(false, 2, resultScanner);
         decider.runChecks();
+
         assertThat(decider.failBuild()).isFalse();
+        assertThat(decider.getErrorPercentage()).isEqualTo(1.9607844f);
+        assertThat(decider.getErrorPercentageThreshold()).isEqualTo(2);
+        assertThat(decider.isIgnoreResultFailures()).isFalse();
     }
 
     @Test
@@ -74,7 +91,11 @@ public class TestFailureDeciderTest {
         IResultScanner resultScanner = new MockResultScanner(100, 3);
         TestFailureDecider decider = new TestFailureDecider(false, 2, resultScanner);
         decider.runChecks();
+
         assertThat(decider.failBuild()).isTrue();
+        assertThat(decider.getErrorPercentage()).isEqualTo(2.9126215f);
+        assertThat(decider.getErrorPercentageThreshold()).isEqualTo(2);
+        assertThat(decider.isIgnoreResultFailures()).isFalse();
     }
 
     @Test
@@ -82,7 +103,11 @@ public class TestFailureDeciderTest {
         IResultScanner resultScanner = new MockResultScanner(100, 1);
         TestFailureDecider decider = new TestFailureDecider(false, 0, resultScanner);
         decider.runChecks();
+
         assertThat(decider.failBuild()).isTrue();
+        assertThat(decider.getErrorPercentage()).isEqualTo(0.990099f);
+        assertThat(decider.getErrorPercentageThreshold()).isEqualTo(0);
+        assertThat(decider.isIgnoreResultFailures()).isFalse();
     }
 
     @Test
@@ -90,7 +115,11 @@ public class TestFailureDeciderTest {
         IResultScanner resultScanner = new MockResultScanner(10000, 3);
         TestFailureDecider decider = new TestFailureDecider(false, 0.02f, resultScanner);
         decider.runChecks();
+
         assertThat(decider.failBuild()).isTrue();
+        assertThat(decider.getErrorPercentage()).isEqualTo(0.029991003f);
+        assertThat(decider.getErrorPercentageThreshold()).isEqualTo(0.02f);
+        assertThat(decider.isIgnoreResultFailures()).isFalse();
     }
 
     @Test
@@ -98,6 +127,10 @@ public class TestFailureDeciderTest {
         IResultScanner resultScanner = new MockResultScanner(10000, 2);
         TestFailureDecider decider = new TestFailureDecider(false, 0.02f, resultScanner);
         decider.runChecks();
+
         assertThat(decider.failBuild()).isFalse();
+        assertThat(decider.getErrorPercentage()).isEqualTo(0.019996f);
+        assertThat(decider.getErrorPercentageThreshold()).isEqualTo(0.02f);
+        assertThat(decider.isIgnoreResultFailures()).isFalse();
     }
 }

@@ -39,8 +39,6 @@ public class RunJMeterServer extends AbstractJMeterMojo {
      */
     @Parameter
     private String exportedRmiHostname;
-	
-	private JMeterArgumentsArray testArgs;
 
 	/**
 	 * Load the JMeter server
@@ -54,10 +52,10 @@ public class RunJMeterServer extends AbstractJMeterMojo {
 		getLog().info(LINE_SEPARATOR);
 		getLog().info(" STARTING JMETER SERVER ON PORT:"+ serverPort + " WITH EXPORTED HOSTNAME:"+exportedRmiHostname);
 		getLog().info(LINE_SEPARATOR);
-		testArgs = initializeJMeterArgumentsArray();
+		JMeterArgumentsArray testArgs = initializeJMeterArgumentsArray();
 		getLog().debug("JMeter is called with the following command line arguments: " + 
 		        UtilityFunctions.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()));
-		startJMeterServer();
+		startJMeterServer(testArgs);
 	}
 
 	private JMeterArgumentsArray initializeJMeterArgumentsArray() throws MojoExecutionException {
@@ -73,7 +71,7 @@ public class RunJMeterServer extends AbstractJMeterMojo {
 		return currentTestArgs;
 	}
 
-	private void startJMeterServer() throws MojoExecutionException {
+	private void startJMeterServer(JMeterArgumentsArray testArgs) throws MojoExecutionException {
 	    JMeterProcessJVMSettings jMeterProcessJVMSettings = null;
 	    if(this.jMeterProcessJVMSettings == null) {
 	        jMeterProcessJVMSettings = new JMeterProcessJVMSettings();

@@ -2,6 +2,8 @@
 
 ## Version 2.8.6-SNAPSHOT Release Notes (IN PROGRESS)
 
+* Improved test coverage and moved from Hamcrest to AssertJ
+
 ## Version 2.8.5 Release Notes (29th january 2019)
 
 ### Enhancements ###

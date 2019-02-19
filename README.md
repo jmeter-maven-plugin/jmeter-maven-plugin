@@ -23,9 +23,7 @@ All the documentation you need to configure the plugin is available on the [gith
 
 Latest version is **2.8.5** requires Maven >= 3.5.0 and is compatible with **Apache JMeter 5.0**.
 
-This plugin requires a JDK between **8** and **10**.  Java 11 will not work due to this Java [bug](https://bugs.openjdk.java.net/browse/JDK-8210005).
-
-See this for a [possible workaround](https://stackoverflow.com/a/52510406/460802) on Java 11. 
+This plugin requires a JDK between **8** and **11**. If using Java 11, ensure you use recent version to avoid facing this [bug](https://bugs.openjdk.java.net/browse/JDK-8210005, see also [this](https://stackoverflow.com/a/52510406/460802). 
 
 # Tutorial
 

@@ -2,6 +2,7 @@
 
 ## Version 2.8.6-SNAPSHOT Release Notes (IN PROGRESS)
 
+* Issue [311](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues/311) Support Apache JMeter 5.1
 * Improved test coverage and moved from Hamcrest to AssertJ
 
 ## Version 2.8.5 Release Notes (29th january 2019)

@@ -2,6 +2,10 @@
 
 ## Version 2.8.7-SNAPSHOT Release Notes (IN PROGRESS)
 
+### Enhancements ###
+
+* Fix bug where server log name was malformed if server host was not explicitly set
+
 ## Version 2.8.6 Release Notes (20th february 2019)
 
 ### Enhancements ###

@@ -1,11 +1,15 @@
 package com.lazerycode.jmeter.configuration;
 
+import ch.qos.logback.classic.Logger;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.read.ListAppender;
 import com.lazerycode.jmeter.utility.UtilityFunctions;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.net.URISyntaxException;
@@ -141,6 +145,25 @@ public class JMeterArgumentsArrayTest {
 
         assertThat(UtilityFunctions.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()))
                 .isEqualTo("-d target/jmeter/" + " -l " + testArgs.getResultsLogFileName() + " -n -t " + testFilePath);
+    }
+
+    @Test
+    public void validateSettingAnInvalidLogLevelLogsToWarnAndDoesNotSetAnything() throws Exception {
+        String randomLogLevel = "MADE_UP";
+        ListAppender<ILoggingEvent> listAppender = new ListAppender<>();
+        listAppender.start();
+        Logger argumentsArrayLogger = (Logger) LoggerFactory.getLogger(JMeterArgumentsArray.class);
+        argumentsArrayLogger.addAppender(listAppender);
+
+        JMeterArgumentsArray testArgs = new JMeterArgumentsArray(disableGUI, "target/jmeter/");
+        testArgs.setTestFile(testFile, testFileDirectory);
+
+        testArgs.setLogRootOverride(randomLogLevel);
+
+        assertThat(UtilityFunctions.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()))
+                .isEqualTo("-d target/jmeter/" + " -l " + testArgs.getResultsLogFileName() + " -n -t " + testFilePath);
+        assertThat(listAppender.list.size()).isEqualTo(1);
+        assertThat(listAppender.list.get(0).toString()).isEqualTo(String.format("[WARN] Unknown log level %s", randomLogLevel));
     }
 
     @Test

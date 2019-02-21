@@ -113,6 +113,7 @@ public class TestConfigTest {
         TestConfig newlyCreatedTestConfig = new TestConfig(tempTestFile);
 
         assertThat(testConfig).isEqualTo(newlyCreatedTestConfig);
+        assertThat(testConfig.hashCode()).isEqualTo(newlyCreatedTestConfig.hashCode());
     }
 
     @Test(expected = MojoExecutionException.class)

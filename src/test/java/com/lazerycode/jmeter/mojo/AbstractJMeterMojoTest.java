@@ -62,6 +62,23 @@ public class AbstractJMeterMojoTest {
     }
 
     @Test
+    public void ifSettingsAreNullProxyConfigIsNotSet() throws Exception {
+
+        AbstractJMeterMojo testSubject = createTestSubject();
+        Proxy testProxy = createTestProxy();
+
+        Settings settings = Mockito.mock(Settings.class);
+        Mockito.when(settings.getActiveProxy()).thenReturn(testProxy);
+
+        testSubject.settings = null;
+        testSubject.useMavenProxy = true;
+
+        testSubject.execute();
+
+        assertThat(testSubject.proxyConfig).isNull();
+    }
+
+    @Test
     public void testSpecificProxyPriority() throws Exception {
 
         AbstractJMeterMojo testSubject = createTestSubject();

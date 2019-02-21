@@ -265,6 +265,7 @@ public abstract class AbstractJMeterMojo extends AbstractMojo {
 		}
 		testArgs.setLogRootOverride(overrideRootLogLevel);
 		testArgs.setLogsDirectory(logsDirectory.getAbsolutePath());
+
 		return testArgs;
 	}
 

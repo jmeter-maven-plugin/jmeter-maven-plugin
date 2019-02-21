@@ -13,6 +13,7 @@ public enum JMeterCommandLineArguments {
 	REPORT_AT_END_OPT("e"),         //DOCUMENTED
 	HELP_OPT("h"),                  //NOT_USED - Prints help information and exits.
 	REPORT_GENERATING_OPT("g"),     //NOT_USED - We always generate reports in the verify phase.
+	SERVER_OPT("s"),                //AUTOMATICALLY_SET - This is used hwne JMeter is started in server mode.
 	JMLOGFILE_OPT("j"),             //ALWAYS_SET - Test name is used for logfile name (<testname>.log).
 	LOGFILE_OPT("l"),               //ALWAYS_SET - Test name is used for logfile name (<testname>.jtl).
 	NONGUI_OPT("n"),                //DOCUMENTED
@@ -20,7 +21,6 @@ public enum JMeterCommandLineArguments {
 	PROPFILE_OPT("p"),              //NOT_USED - We place the jmeter.properties in the correct place on the filesystem.
 	PROPFILE2_OPT("q"),             //DOCUMENTED
 	REMOTE_OPT("r"),                //DOCUMENTED
-	SERVER_OPT("s"),                //NOT_USED - We are never going to start up a server instance on the command line, we are only running tests.
 	TESTFILE_OPT("t"),              //ALWAYS_SET - This is how we pass our test file list over to JMeter.
 	PROXY_USERNAME("u"),            //DOCUMENTED
 	VERSION_OPT("v"),               //NOT_USED - Prints version information and exits.

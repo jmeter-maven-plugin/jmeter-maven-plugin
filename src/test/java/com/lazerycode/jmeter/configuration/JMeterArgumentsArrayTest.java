@@ -24,6 +24,8 @@ public class JMeterArgumentsArrayTest {
     private String testFilePath;
     private File testFile;
     private File testFileDirectory;
+    private int serverPort = 8080;
+    private String logsDirectory = "/var/logs";
 
     @Before
     public void setTestFileAbsolutePath() throws URISyntaxException {
@@ -413,5 +415,50 @@ public class JMeterArgumentsArrayTest {
         assertThat(testArgs.getResultsLogFileName()).isNotEmpty();
         assertThat(UtilityFunctions.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()))
                 .isEqualTo("-d target/jmeter/" + " -e -l " + testArgs.getResultsLogFileName() + " -n -o /target/jmeter/reports -t " + testFilePath);
+    }
+
+    @Test
+    public void validateCommandLineWhenSettingServerModeWithJustPort() throws Exception {
+        JMeterArgumentsArray testArgs = new JMeterArgumentsArray(enableGUI, "target/jmeter/");
+        testArgs.setLogsDirectory(logsDirectory);
+        testArgs.setServerMode(null, serverPort);
+
+        assertThat(UtilityFunctions.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()))
+                .isEqualTo("-d target/jmeter/ -s -j " + logsDirectory + File.separator + "localhost_" + serverPort + ".log");
+    }
+
+    @Test
+    public void validateCommandLineWhenSettingServerModeWithHostNameAndPort() throws Exception {
+        String hostname = "jmeter.example.com";
+
+        JMeterArgumentsArray testArgs = new JMeterArgumentsArray(enableGUI, "target/jmeter/");
+        testArgs.setLogsDirectory(logsDirectory);
+        testArgs.setServerMode(hostname, serverPort);
+
+        assertThat(UtilityFunctions.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()))
+                .isEqualTo("-d target/jmeter/ -s -j " + logsDirectory + File.separator + hostname + "_" + serverPort + ".log");
+    }
+
+    @Test
+    public void validateCommandLineWhenSettingServerModeWithHostIPAndPort() throws Exception {
+        String hostname = "10.10.10.4";
+
+        JMeterArgumentsArray testArgs = new JMeterArgumentsArray(enableGUI, "target/jmeter/");
+        testArgs.setLogsDirectory(logsDirectory);
+        testArgs.setServerMode(hostname, serverPort);
+
+        assertThat(UtilityFunctions.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()))
+                .isEqualTo("-d target/jmeter/ -s -j " + logsDirectory + File.separator + hostname + "_" + serverPort + ".log");
+    }
+
+    @Test
+    public void validateCommandLineWhenSettingServerModeWithHostIPAndPortWithoutLogging() throws Exception {
+        String hostname = "10.10.10.4";
+
+        JMeterArgumentsArray testArgs = new JMeterArgumentsArray(enableGUI, "target/jmeter/");
+        testArgs.setServerMode(hostname, serverPort);
+
+        assertThat(UtilityFunctions.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()))
+                .isEqualTo("-d target/jmeter/ -s");
     }
 }

@@ -1,31 +1,5 @@
 package com.lazerycode.jmeter.configuration;
 
-import static com.lazerycode.jmeter.configuration.JMeterCommandLineArguments.JMETER_HOME_OPT;
-import static com.lazerycode.jmeter.configuration.JMeterCommandLineArguments.JMLOGFILE_OPT;
-import static com.lazerycode.jmeter.configuration.JMeterCommandLineArguments.LOGFILE_OPT;
-import static com.lazerycode.jmeter.configuration.JMeterCommandLineArguments.LOGLEVEL;
-import static com.lazerycode.jmeter.configuration.JMeterCommandLineArguments.NONGUI_OPT;
-import static com.lazerycode.jmeter.configuration.JMeterCommandLineArguments.NONPROXY_HOSTS;
-import static com.lazerycode.jmeter.configuration.JMeterCommandLineArguments.PROPFILE2_OPT;
-import static com.lazerycode.jmeter.configuration.JMeterCommandLineArguments.PROXY_HOST;
-import static com.lazerycode.jmeter.configuration.JMeterCommandLineArguments.PROXY_PASSWORD;
-import static com.lazerycode.jmeter.configuration.JMeterCommandLineArguments.PROXY_PORT;
-import static com.lazerycode.jmeter.configuration.JMeterCommandLineArguments.PROXY_USERNAME;
-import static com.lazerycode.jmeter.configuration.JMeterCommandLineArguments.REMOTE_OPT;
-import static com.lazerycode.jmeter.configuration.JMeterCommandLineArguments.REMOTE_OPT_PARAM;
-import static com.lazerycode.jmeter.configuration.JMeterCommandLineArguments.REMOTE_STOP;
-import static com.lazerycode.jmeter.configuration.JMeterCommandLineArguments.REPORT_AT_END_OPT;
-import static com.lazerycode.jmeter.configuration.JMeterCommandLineArguments.REPORT_OUTPUT_FOLDER_OPT;
-import static com.lazerycode.jmeter.configuration.JMeterCommandLineArguments.SERVER_OPT;
-import static com.lazerycode.jmeter.configuration.JMeterCommandLineArguments.TESTFILE_OPT;
-import static com.lazerycode.jmeter.utility.UtilityFunctions.isNotSet;
-import static com.lazerycode.jmeter.utility.UtilityFunctions.isSet;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.TreeSet;
-
 import org.apache.commons.io.FilenameUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.joda.time.LocalDateTime;
@@ -33,6 +7,15 @@ import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.TreeSet;
+
+import static com.lazerycode.jmeter.configuration.JMeterCommandLineArguments.*;
+import static com.lazerycode.jmeter.utility.UtilityFunctions.isNotSet;
+import static com.lazerycode.jmeter.utility.UtilityFunctions.isSet;
 
 /**
  * Creates an arguments array to pass to the JMeter object to run tests.
@@ -67,7 +50,7 @@ public class JMeterArgumentsArray {
      *
      * @param disableGUI          If GUI should be disabled or not
      * @param jMeterHomeDirectory The JMETER_HOME directory, what JMeter bases its classpath on
-     * @throws MojoExecutionException
+     * @throws MojoExecutionException Exception
      */
     public JMeterArgumentsArray(boolean disableGUI, String jMeterHomeDirectory) throws MojoExecutionException {
         if (isNotSet(jMeterHomeDirectory)) {
@@ -217,7 +200,7 @@ public class JMeterArgumentsArray {
      * The order of the array is determined by the order the values in JMeterCommandLineArguments are defined.
      *
      * @return An array representing the command line sent to JMeter
-     * @throws MojoExecutionException
+     * @throws MojoExecutionException Exception
      */
     public List<String> buildArgumentsArray() throws MojoExecutionException {
         if (!argumentList.contains(TESTFILE_OPT) && !disableTests) {
@@ -304,7 +287,7 @@ public class JMeterArgumentsArray {
                 case PROPFILE_OPT:
                 case REPORT_GENERATING_OPT:
                 case HELP_OPT:
-                    LOGGER.warn("Unhandled option '{}', it will be ignored", argument);
+                    //Unhandled options, they will be ignored
                     break;
             }
         }

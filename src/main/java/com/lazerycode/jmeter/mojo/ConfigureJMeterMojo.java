@@ -542,7 +542,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
         Artifact returnedArtifact = getArtifactResult(new DefaultArtifact(desiredArtifact));
         copyArtifact(returnedArtifact, destination);
         if (downloadDependencies) {
-            resolveTestDependenciesAndCopyWithTransitivity(returnedArtifact, true);
+            resolveTestDependenciesAndCopyWithTransitivity(returnedArtifact);
         }
     }
 	
@@ -572,7 +572,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 	 * @throws DependencyResolutionException
 	 * @throws IOException
 	 */
-    private void resolveTestDependenciesAndCopyWithTransitivity(Artifact artifact, boolean getDependenciesOfDependency) throws DependencyResolutionException, IOException {
+    private void resolveTestDependenciesAndCopyWithTransitivity(Artifact artifact) throws DependencyResolutionException, IOException {
         ArtifactDescriptorRequest request = new ArtifactDescriptorRequest(artifact, repositoryList, null);
         try {
             ArtifactDescriptorResult result = repositorySystem.readArtifactDescriptor(repositorySystemSession, request);
@@ -587,7 +587,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
                 } else {
                     getLog().debug("Artifact "+artifactResult.getArtifact()+" is not a library, ignoring");
                 }
-                copyTransitiveRuntimeDependenciesToLibDirectory(dep, getDependenciesOfDependency);
+                copyTransitiveRuntimeDependenciesToLibDirectory(dep, true);
             }
         } catch (ArtifactDescriptorException | ArtifactResolutionException e) {
             throw new DependencyResolutionException(e.getMessage(), e);

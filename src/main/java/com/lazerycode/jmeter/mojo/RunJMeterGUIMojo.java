@@ -45,15 +45,15 @@ public class RunJMeterGUIMojo extends AbstractJMeterMojo {
 		getLog().info(LINE_SEPARATOR);
 		getLog().info(" S T A R T I N G    J M E T E R    G U I ");
 		getLog().info(LINE_SEPARATOR);
-		JMeterArgumentsArray testArgs = initialiseJMeterArgumentsArray(false);
+		JMeterArgumentsArray testArgs = initialiseJMeterArgumentsArray();
 		getLog().debug("JMeter is called with the following command line arguments: " + 
 		        UtilityFunctions.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()));
 		startJMeterGUI(testArgs);
 	}
 
-	private JMeterArgumentsArray initialiseJMeterArgumentsArray(boolean disableGUI) throws MojoExecutionException {
+	private JMeterArgumentsArray initialiseJMeterArgumentsArray() throws MojoExecutionException {
 		TestConfig testConfig = new TestConfig(new File(testConfigFile));
-		JMeterArgumentsArray localTestArgs = computeJMeterArgumentsArray(disableGUI, testConfig.getResultsOutputIsCSVFormat());
+		JMeterArgumentsArray localTestArgs = computeJMeterArgumentsArray(false, testConfig.getResultsOutputIsCSVFormat());
 		localTestArgs.setTestFile(guiTestFile, testFilesDirectory);
 		return localTestArgs;
 	}

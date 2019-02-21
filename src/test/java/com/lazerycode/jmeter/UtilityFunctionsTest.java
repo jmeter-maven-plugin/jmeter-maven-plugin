@@ -18,7 +18,7 @@ public class UtilityFunctionsTest {
     @Test
     public void humanReadableCommandLineOutputTest() {
         String expected = "a b c d";
-        List<String> testArray = new ArrayList<String>(Arrays.asList("a", "b", "c", "d"));
+        List<String> testArray = new ArrayList<>(Arrays.asList("a", "b", "c", "d"));
         String returnValue = UtilityFunctions.humanReadableCommandLineOutput(testArray);
 
         assertThat(returnValue).isEqualTo(expected);

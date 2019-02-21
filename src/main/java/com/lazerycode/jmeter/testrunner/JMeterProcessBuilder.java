@@ -45,9 +45,7 @@ public class JMeterProcessBuilder {
 	}
 
 	public void addArguments(List<String> arguments) {
-		for (String argument : arguments) {
-			this.mainClassArguments.add(argument);
-		}
+		this.mainClassArguments.addAll(arguments);
 	}
 
 	private String[] constructArgumentsList() {
@@ -55,15 +53,11 @@ public class JMeterProcessBuilder {
 		argumentsList.add(javaRuntime);
 		argumentsList.add(MessageFormat.format("-Xms{0}M", String.valueOf(this.initialHeapSizeInMegaBytes)));
 		argumentsList.add(MessageFormat.format("-Xmx{0}M", String.valueOf(this.maximumHeapSizeInMegaBytes)));
-		for (String argument : userSuppliedArguments) {
-			argumentsList.add(argument);
-		}
+		argumentsList.addAll(userSuppliedArguments);
 
 		argumentsList.add("-jar");
 		argumentsList.add(runtimeJarName);
-		for (String arg : mainClassArguments) {
-			argumentsList.add(arg);
-		}
+		argumentsList.addAll(mainClassArguments);
 
 		LOGGER.debug("Arguments for forked JMeter JVM: {}", argumentsList);
 

@@ -75,7 +75,7 @@ public class TestManager {
                     postTestPauseInSeconds, ex);
         }
         if (null == testPause) {
-            testPause = 0l;
+            testPause = 0L;
         }
 
         this.postTestPauseInSeconds = testPause;
@@ -154,13 +154,10 @@ public class TestManager {
 		try {
 			final Process process = jmeterProcessBuilder.startProcess();
 
-			Runtime.getRuntime().addShutdownHook(new Thread() {
-				@Override
-				public void run() {
-					LOGGER.info("Shutdown detected, destroying JMeter process...");
-					process.destroy();
-				}
-			});
+			Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+				LOGGER.info("Shutdown detected, destroying JMeter process...");
+				process.destroy();
+			}));
 
 			try (InputStreamReader isr = new InputStreamReader(process.getInputStream());
 			        BufferedReader br = new BufferedReader(isr)) {

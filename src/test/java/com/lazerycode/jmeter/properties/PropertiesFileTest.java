@@ -117,7 +117,7 @@ public class PropertiesFileTest {
 
     @Test
     public void mergeValidPropertiesFromFileTest() throws Exception {
-        HashMap<String, String> customProperties = new HashMap<String, String>();
+        HashMap<String, String> customProperties = new HashMap<>();
         customProperties.put("log_level.jmeter.control", "INFO");
         customProperties.put("log_level.jmeter", "DEBUG");
 
@@ -134,7 +134,7 @@ public class PropertiesFileTest {
 
     @Test
     public void replaceValidPropertiesFromFileTest() throws Exception {
-        HashMap<String, String> customProperties = new HashMap<String, String>();
+        HashMap<String, String> customProperties = new HashMap<>();
         customProperties.put("log_level.jmeter.control", "INFO");
         customProperties.put("log_level.jmeter", "DEBUG");
 
@@ -150,7 +150,7 @@ public class PropertiesFileTest {
 
     @Test
     public void fileIgnoredIfItIsNotAvailableTest() throws Exception {
-        HashMap<String, String> customProperties = new HashMap<String, String>();
+        HashMap<String, String> customProperties = new HashMap<>();
         customProperties.put("log_level.jmeter.control", "INFO");
         customProperties.put("log_level.jmeter", "DEBUG");
 
@@ -257,12 +257,7 @@ public class PropertiesFileTest {
         PropertiesFile propertiesFile = new PropertiesFile(new File(sourcePropertiesFile.toURI()));
         propertiesFile.addAndOverwriteProperties(customProperties);
 
-        verify(mockAppender).doAppend(argThat(new ArgumentMatcher() {
-            @Override
-            public boolean matches(final Object argument) {
-                return ((LoggingEvent) argument).getFormattedMessage().equals(EXPECTED_LOG_ENTRY);
-            }
-        }));
+        verify(mockAppender).doAppend(argThat((ArgumentMatcher) argument -> ((LoggingEvent) argument).getFormattedMessage().equals(EXPECTED_LOG_ENTRY)));
 
         Properties modifiedProperties = propertiesFile.getProperties();
 

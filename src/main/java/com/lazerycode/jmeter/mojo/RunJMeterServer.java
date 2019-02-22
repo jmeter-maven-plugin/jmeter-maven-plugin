@@ -1,7 +1,6 @@
 package com.lazerycode.jmeter.mojo;
 
 import com.lazerycode.jmeter.configuration.JMeterArgumentsArray;
-import com.lazerycode.jmeter.configuration.JMeterProcessJVMSettings;
 import com.lazerycode.jmeter.testrunner.JMeterProcessBuilder;
 import com.lazerycode.jmeter.utility.UtilityFunctions;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -29,7 +28,7 @@ public class RunJMeterServer extends AbstractJMeterMojo {
     private boolean runInBackground;
 
     /**
-     * Port to listen on
+     * Port JMeter Server will listen on
      */
     @Parameter(defaultValue = "1099")
     private Integer serverPort;
@@ -43,11 +42,10 @@ public class RunJMeterServer extends AbstractJMeterMojo {
     /**
      * Load the JMeter server
      *
-     * @throws MojoExecutionException
-     * @throws MojoFailureException
+     * @throws MojoExecutionException MojoExecutionException
      */
     @Override
-    public void doExecute() throws MojoExecutionException, MojoFailureException {
+    public void doExecute() throws MojoExecutionException {
         getLog().info(" ");
         getLog().info(LINE_SEPARATOR);
         getLog().info(" STARTING JMETER SERVER ON PORT:" + serverPort + " WITH EXPORTED HOSTNAME:" + exportedRmiHostname);
@@ -72,22 +70,9 @@ public class RunJMeterServer extends AbstractJMeterMojo {
     }
 
     private void startJMeterServer(JMeterArgumentsArray testArgs) throws MojoExecutionException {
-        JMeterProcessJVMSettings jMeterProcessJVMSettings;
-        if (null == this.jMeterProcessJVMSettings) {
-            jMeterProcessJVMSettings = new JMeterProcessJVMSettings();
-        } else {
-            jMeterProcessJVMSettings = new JMeterProcessJVMSettings(this.jMeterProcessJVMSettings);
-        }
-        if (null != exportedRmiHostname&& !exportedRmiHostname.isEmpty()) {
-            jMeterProcessJVMSettings.getArguments().add("-Djava.rmi.server.hostname=" + exportedRmiHostname);
-        }
-        if (!containsHeadless(jMeterProcessJVMSettings)) {
-            jMeterProcessJVMSettings.getArguments().add(RUN_HEADLESS_OPT);
-        }
-        if (null == serverPort) {
-            throw new MojoExecutionException("serverPort is null, cannot start jmeter server");
-        }
-        jMeterProcessJVMSettings.getArguments().add("-Dserver_port=" + serverPort);
+        jMeterProcessJVMSettings.forceHeadless();
+        jMeterProcessJVMSettings.addArgument("-Djava.rmi.server.hostname=" + exportedRmiHostname);
+        jMeterProcessJVMSettings.addArgument("-Dserver_port=" + serverPort);
 
         JMeterProcessBuilder jmeterProcessBuilder = new JMeterProcessBuilder(jMeterProcessJVMSettings,
                 JMeterConfigurationHolder.getInstance().getRuntimeJarName());
@@ -105,8 +90,7 @@ public class RunJMeterServer extends AbstractJMeterMojo {
             Thread.currentThread().interrupt();
         } catch (IOException e) {
             getLog().error("Error starting JMeter with args " + testArgs.buildArgumentsArray()
-                            + ", in working directory:" + JMeterConfigurationHolder.getInstance().getWorkingDirectory()
-                    , e);
+                    + ", in working directory:" + JMeterConfigurationHolder.getInstance().getWorkingDirectory(), e);
         }
     }
 }

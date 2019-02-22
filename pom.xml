@@ -48,7 +48,7 @@
         <maven-failsafe-plugin.version>2.22.1</maven-failsafe-plugin.version>
         <maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
         <maven-invoker-plugin.version>3.2.0</maven-invoker-plugin.version>
-        <maven-javadoc-plugin.version>3.0.1</maven-javadoc-plugin.version>  <!--3.0.1-->
+        <maven-javadoc-plugin.version>3.0.1</maven-javadoc-plugin.version>
         <maven-plugin.version>3.5</maven-plugin.version>
         <maven-source-plugin.version>3.0.1</maven-source-plugin.version>
         <nexus-staging-maven-plugin.version>1.6.8</nexus-staging-maven-plugin.version>

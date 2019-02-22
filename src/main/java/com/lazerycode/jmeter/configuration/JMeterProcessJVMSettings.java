@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Used to detect which artifacts are JMeter plugins
+ * Used to specify JVM settings for the JMeter instance that will be run
  * <p/>
  * Configuration in pom.xml:
  * <p/>
@@ -25,60 +25,45 @@ import java.util.List;
  *
  * @author Mark Collin
  */
+@SuppressWarnings({"UnusedDeclaration", "FieldCanBeLocal"})
 public class JMeterProcessJVMSettings {
 
-	private int xms = 512;
-	private int xmx = 512;
-	private String java = "java";
-	private List<String> arguments = new ArrayList<>();
+    private int xms = 512;
+    private int xmx = 512;
+    private String javaRuntime = "java";
+    private List<String> arguments = new ArrayList<>();
 
-	/**
-	 * Empty constructor
-	 */
-	public JMeterProcessJVMSettings() {
-	    super();
-	}
-	
-	/**
-	 * Copy constructor
-	 * @param source {@link JMeterProcessJVMSettings}
-	 */
-	public JMeterProcessJVMSettings(JMeterProcessJVMSettings source) {
-	    this.xmx = source.xms;
-	    this.xms = source.xms;
-	    this.java = source.java;
-	    this.arguments = new ArrayList<>();
-        this.arguments.addAll(source.arguments);
-	}
-	public int getXms() {
-		return xms;
-	}
+    private static final String RUN_HEADLESS = "-Djava.awt.headless=true";
+    private static final String DISABLE_RUN_HEADLESS = "-Djava.awt.headless=false";
 
-	public void setXms(int xms) {
-		this.xms = xms;
-	}
+    public JMeterProcessJVMSettings() {
+        super();
+    }
 
-	public int getXmx() {
-		return xmx;
-	}
+    public int getXms() {
+        return xms;
+    }
 
-	public void setXmx(int xmx) {
-		this.xmx = xmx;
-	}
+    public int getXmx() {
+        return xmx;
+    }
 
-	public List<String> getArguments() {
-		return arguments;
-	}
+    public List<String> getArguments() {
+        return arguments;
+    }
 
-	public void setArguments(List<String> arguments) {
-		this.arguments = arguments;
-	}
+    public void addArgument(String argument) {
+        arguments.add(argument);
+    }
 
-	public void setJavaRuntime(String java) {
-		this.java = java;
-	}
+    public void forceHeadless() {
+        arguments.removeIf(argument -> argument.equals(DISABLE_RUN_HEADLESS));
+        if (arguments.stream().noneMatch(argument -> argument.equals(RUN_HEADLESS))) {
+            arguments.add(RUN_HEADLESS);
+        }
+    }
 
-	public String getJavaRuntime() {
-		return this.java;
-	}
+    public String getJavaRuntime() {
+        return this.javaRuntime;
+    }
 }

@@ -16,7 +16,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class RemoteArgumentsArrayBuilderTest {
 
     private Map<ConfigurationFiles, PropertiesMapping> inputMap = new HashMap<>();
-    private RemoteArgumentsArrayBuilder arrayBuilder = new RemoteArgumentsArrayBuilder();
     private PropertiesMapping propertiesMapping;
 
     @Before
@@ -30,16 +29,10 @@ public class RemoteArgumentsArrayBuilderTest {
     }
 
     @Test
-    public void shouldReturnEmptyListWhenNoPropsPassed() {
-        List<String> result = arrayBuilder.buildRemoteArgumentsArray(null);
-        assertThat(result.isEmpty()).isTrue();
-    }
-
-    @Test
     public void shouldBuildCommandLineArgumentsForSystemProperties() {
-
         inputMap.put(ConfigurationFiles.SYSTEM_PROPERTIES, propertiesMapping);
-        List<String> result = arrayBuilder.buildRemoteArgumentsArray(inputMap);
+        List<String> result = RemoteArgumentsArrayBuilder.buildRemoteArgumentsArray(inputMap);
+
         assertThat(result.size()).isEqualTo(2);
         assertThat(result.get(0)).isEqualTo("-Dhello");
         assertThat(result.get(1)).isEqualTo("world");
@@ -47,18 +40,18 @@ public class RemoteArgumentsArrayBuilderTest {
 
     @Test
     public void shouldBuildCommandLineArgumentsGlobalProperties() {
-
         inputMap.put(ConfigurationFiles.GLOBAL_PROPERTIES, propertiesMapping);
-        List<String> result = arrayBuilder.buildRemoteArgumentsArray(inputMap);
+        List<String> result = RemoteArgumentsArrayBuilder.buildRemoteArgumentsArray(inputMap);
+
         assertThat(result.size()).isEqualTo(1);
         assertThat(result.get(0)).isEqualTo("-Ghello=world");
     }
 
     @Test
-    public void shoulIgnoreOtherTypesOfProperties() {
-
+    public void shouldIgnoreOtherTypesOfProperties() {
         inputMap.put(ConfigurationFiles.JMETER_PROPERTIES, propertiesMapping);
-        List<String> result = arrayBuilder.buildRemoteArgumentsArray(inputMap);
+        List<String> result = RemoteArgumentsArrayBuilder.buildRemoteArgumentsArray(inputMap);
+
         assertThat(result.isEmpty()).isTrue();
     }
 }

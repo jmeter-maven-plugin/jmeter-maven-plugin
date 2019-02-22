@@ -3,6 +3,7 @@ package com.lazerycode.jmeter.configuration;
 import com.lazerycode.jmeter.properties.ConfigurationFiles;
 import com.lazerycode.jmeter.properties.PropertiesMapping;
 
+import java.util.EnumMap;
 import java.util.Map;
 
 /**
@@ -29,7 +30,7 @@ public class RemoteConfiguration {
 	private boolean stopServersAfterTests = false;
 	private boolean startAndStopServersForEachTest = false;
 	private String serverList = null;
-	private Map<ConfigurationFiles, PropertiesMapping> propertiesMap = null;
+	private Map<ConfigurationFiles, PropertiesMapping> propertiesMap = new EnumMap<>(ConfigurationFiles.class);
 
 
 	/**

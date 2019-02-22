@@ -142,7 +142,7 @@ public abstract class AbstractJMeterMojo extends AbstractMojo {
     /**
      * Value class that wraps all remote configurations.
      */
-    @Parameter
+    @Parameter(defaultValue = "${remoteConfig}")
     protected RemoteConfiguration remoteConfig;
 
     /**

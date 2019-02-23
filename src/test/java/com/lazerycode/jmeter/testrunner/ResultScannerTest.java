@@ -1,5 +1,6 @@
-package com.lazerycode.jmeter;
+package com.lazerycode.jmeter.testrunner;
 
+import com.lazerycode.jmeter.exceptions.IOException;
 import com.lazerycode.jmeter.testrunner.ResultScanner;
 import org.junit.Test;
 
@@ -18,6 +19,8 @@ public class ResultScannerTest {
     private final URL jtlPassingResultsFileURL = this.getClass().getResource("/jtl2-1-pass.jtl");
     private final URL csvFailingResultsFileURL = this.getClass().getResource("/csv2-1-fail.csv");
     private final URL csvPassingResultsFileURL = this.getClass().getResource("/csv2-1-pass.csv");
+    private final URL emptyCSVFileURL = this.getClass().getResource("/empty.csv");
+    private final URL csvMissingDelimiterFileURL = this.getClass().getResource("/csv-missing-delimiter.csv");
     private final URL csvWithAlternateSeparatorPassingResultsFileURL = this.getClass().getResource("/csv3-1-pass.csv");
 
     @Test
@@ -110,4 +113,33 @@ public class ResultScannerTest {
         assertThat(fileScanner.getFailureCount()).isEqualTo(0);
         assertThat(fileScanner.getSuccessCount()).isEqualTo(2);
     }
+
+    @Test(expected=IllegalArgumentException.class)
+    public void emptyCSVFileThrowsIllegalArgumentException() throws Exception {
+        File resultsFile = new File(emptyCSVFileURL.toURI());
+        ResultScanner fileScanner = new ResultScanner(COUNT_SUCCESSES, COUNT_FAILURES, true);
+        fileScanner.parseResultFile(resultsFile);
+    }
+
+    @Test(expected=IllegalStateException.class)
+    public void csvFileMissingDelimiterThrowsIllegalStateException() throws Exception {
+        File resultsFile = new File(csvMissingDelimiterFileURL.toURI());
+        ResultScanner fileScanner = new ResultScanner(COUNT_SUCCESSES, COUNT_FAILURES, true);
+        fileScanner.parseResultFile(resultsFile);
+    }
+
+    @Test(expected= IOException.class)
+    public void invalidCSVFileThrowsIOException() throws Exception {
+        File resultsFile = new File("DoesNotExist.nope");
+        ResultScanner fileScanner = new ResultScanner(COUNT_SUCCESSES, COUNT_FAILURES, true);
+        fileScanner.parseResultFile(resultsFile);
+    }
+
+    @Test(expected= IOException.class)
+    public void invalidJTLileThrowsIOException() throws Exception {
+        File resultsFile = new File("DoesNotExist.nope");
+        ResultScanner fileScanner = new ResultScanner(COUNT_SUCCESSES, COUNT_FAILURES, false);
+        fileScanner.parseResultFile(resultsFile);
+    }
+
 }

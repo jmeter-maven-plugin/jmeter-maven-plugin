@@ -1,4 +1,4 @@
-package com.lazerycode.jmeter;
+package com.lazerycode.jmeter.testrunner;
 
 import com.lazerycode.jmeter.testrunner.ResultScanner;
 import org.joda.time.DateTime;

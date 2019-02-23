@@ -1,4 +1,4 @@
-package com.lazerycode.jmeter;
+package com.lazerycode.jmeter.utility;
 
 import com.lazerycode.jmeter.utility.UtilityFunctions;
 import org.junit.Test;

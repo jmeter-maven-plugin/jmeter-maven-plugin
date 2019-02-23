@@ -25,22 +25,18 @@ public class JMeterProcessBuilder {
 	private List<String> mainClassArguments = new ArrayList<>();
 
 	public JMeterProcessBuilder(JMeterProcessJVMSettings settings, String runtimeJarName) {
-	    JMeterProcessJVMSettings lSettings = settings;
-		if (null == lSettings) {
-		    lSettings = new JMeterProcessJVMSettings();
-		}
 		this.runtimeJarName = runtimeJarName;
-		this.initialHeapSizeInMegaBytes = lSettings.getXms();
-		this.maximumHeapSizeInMegaBytes = lSettings.getXmx();
-		this.userSuppliedArguments = lSettings.getArguments();
-		this.javaRuntime = lSettings.getJavaRuntime();
+		this.initialHeapSizeInMegaBytes = settings.getXms();
+		this.maximumHeapSizeInMegaBytes = settings.getXmx();
+		this.userSuppliedArguments = settings.getArguments();
+		this.javaRuntime = settings.getJavaRuntime();
 	}
 
 	public void setWorkingDirectory(File workingDirectory) throws MojoExecutionException {
 		try {
 			this.workingDirectory = workingDirectory.getCanonicalPath();
-		} catch (IOException ignored) {
-			throw new MojoExecutionException("Unable to set working directory for JMeter process!", ignored);
+		} catch (IOException e) {
+			throw new MojoExecutionException("Unable to set working directory for JMeter process!", e);
 		}
 	}
 
@@ -48,20 +44,19 @@ public class JMeterProcessBuilder {
 		this.mainClassArguments.addAll(arguments);
 	}
 
-	private String[] constructArgumentsList() {
+	protected String[] constructArgumentsList() {
 		List<String> argumentsList = new ArrayList<>();
 		argumentsList.add(javaRuntime);
-		argumentsList.add(MessageFormat.format("-Xms{0}M", String.valueOf(this.initialHeapSizeInMegaBytes)));
-		argumentsList.add(MessageFormat.format("-Xmx{0}M", String.valueOf(this.maximumHeapSizeInMegaBytes)));
+		argumentsList.add(MessageFormat.format("-Xms{0}M", String.valueOf(initialHeapSizeInMegaBytes)));
+		argumentsList.add(MessageFormat.format("-Xmx{0}M", String.valueOf(maximumHeapSizeInMegaBytes)));
 		argumentsList.addAll(userSuppliedArguments);
-
 		argumentsList.add("-jar");
 		argumentsList.add(runtimeJarName);
 		argumentsList.addAll(mainClassArguments);
 
 		LOGGER.debug("Arguments for forked JMeter JVM: {}", argumentsList);
 
-		return argumentsList.toArray(new String[argumentsList.size()]);
+		return argumentsList.toArray(new String[0]);
 	}
 
 	public Process startProcess() throws IOException {
@@ -69,7 +64,8 @@ public class JMeterProcessBuilder {
 	    LOGGER.info("Starting process with:{}", Arrays.asList(arguments));
 		ProcessBuilder processBuilder = new ProcessBuilder(arguments);
 		processBuilder.redirectErrorStream(true);
-		processBuilder.directory(new File(this.workingDirectory));
+		processBuilder.directory(new File(workingDirectory));
+
 		return processBuilder.start();
 	}
 }

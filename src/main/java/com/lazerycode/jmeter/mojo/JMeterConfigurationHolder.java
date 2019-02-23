@@ -28,7 +28,7 @@ public class JMeterConfigurationHolder {
         super();
     }
 
-    public static final JMeterConfigurationHolder getInstance() {
+    public static JMeterConfigurationHolder getInstance() {
         return INSTANCE;
     }
 
@@ -42,9 +42,9 @@ public class JMeterConfigurationHolder {
     /**
      * @param runtimeJarName the runtimeJarName to set
      */
-    void setRuntimeJarName(String runtimeJarName) {
+    public void setRuntimeJarName(String runtimeJarName) {
         if (configurationFrozen) {
-            throw new IllegalStateException("setRuntimeJarName called while JMeter configuration already freezed");
+            throw new IllegalStateException("setRuntimeJarName called while JMeter configuration already frozen");
         }
         this.runtimeJarName = runtimeJarName;
     }
@@ -59,9 +59,9 @@ public class JMeterConfigurationHolder {
     /**
      * @param workingDirectory the workingDirectory to set
      */
-    void setWorkingDirectory(File workingDirectory) {
+    public void setWorkingDirectory(File workingDirectory) {
         if (configurationFrozen) {
-            throw new IllegalStateException("setWorkingDirectory called while JMeter configuration already freezed");
+            throw new IllegalStateException("setWorkingDirectory called while JMeter configuration already frozen");
         }
         this.workingDirectory = workingDirectory;
     }
@@ -76,9 +76,9 @@ public class JMeterConfigurationHolder {
     /**
      * @param propertiesMap the propertiesMap to set
      */
-    void setPropertiesMap(Map<ConfigurationFiles, PropertiesMapping> propertiesMap) {
+    public void setPropertiesMap(Map<ConfigurationFiles, PropertiesMapping> propertiesMap) {
         if (configurationFrozen) {
-            throw new IllegalStateException("setPropertiesMap called while JMeter configuration already freezed");
+            throw new IllegalStateException("setPropertiesMap called while JMeter configuration already frozen");
         }
         this.propertiesMap = Collections.unmodifiableMap(propertiesMap);
     }
@@ -86,14 +86,14 @@ public class JMeterConfigurationHolder {
     /**
      * Freeze configuration
      */
-    void freezeConfiguration() {
+    public void freezeConfiguration() {
         this.configurationFrozen = true;
     }
 
     /**
      * Allow to reset configuration
      */
-    void resetConfiguration() {
+    public void resetConfiguration() {
         workingDirectory = null;
         runtimeJarName = null;
         propertiesMap = null;

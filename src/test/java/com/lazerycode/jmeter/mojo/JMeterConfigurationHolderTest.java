@@ -1,6 +1,5 @@
-package com.lazerycode.jmeter.testrunner;
+package com.lazerycode.jmeter.mojo;
 
-import com.lazerycode.jmeter.mojo.JMeterConfigurationHolder;
 import com.lazerycode.jmeter.properties.ConfigurationFiles;
 import com.lazerycode.jmeter.properties.PropertiesMapping;
 import org.junit.Before;
@@ -12,7 +11,7 @@ import java.util.HashMap;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class JMeterProcessBuilderTest {
+public class JMeterConfigurationHolderTest {
     private static final String RUNTIME_JAR_NAME = "fred";
     private final File WORKING_DIRECTORY = new File(this.getClass().getResource("/").getFile());
     private EnumMap<ConfigurationFiles, PropertiesMapping> propertiesMap = new EnumMap<>(ConfigurationFiles.class);

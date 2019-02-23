@@ -35,14 +35,14 @@ public class JMeterConfigurationHolder {
     /**
      * @return the runtimeJarName
      */
-    public String getRuntimeJarName() {
+    String getRuntimeJarName() {
         return runtimeJarName;
     }
 
     /**
      * @param runtimeJarName the runtimeJarName to set
      */
-    public void setRuntimeJarName(String runtimeJarName) {
+    void setRuntimeJarName(String runtimeJarName) {
         if (configurationFrozen) {
             throw new IllegalStateException("setRuntimeJarName called while JMeter configuration already frozen");
         }
@@ -52,14 +52,14 @@ public class JMeterConfigurationHolder {
     /**
      * @return the workingDirectory
      */
-    public File getWorkingDirectory() {
+    File getWorkingDirectory() {
         return workingDirectory;
     }
 
     /**
      * @param workingDirectory the workingDirectory to set
      */
-    public void setWorkingDirectory(File workingDirectory) {
+    void setWorkingDirectory(File workingDirectory) {
         if (configurationFrozen) {
             throw new IllegalStateException("setWorkingDirectory called while JMeter configuration already frozen");
         }
@@ -69,14 +69,14 @@ public class JMeterConfigurationHolder {
     /**
      * @return the propertiesMap
      */
-    public Map<ConfigurationFiles, PropertiesMapping> getPropertiesMap() {
+    Map<ConfigurationFiles, PropertiesMapping> getPropertiesMap() {
         return propertiesMap;
     }
 
     /**
      * @param propertiesMap the propertiesMap to set
      */
-    public void setPropertiesMap(Map<ConfigurationFiles, PropertiesMapping> propertiesMap) {
+    void setPropertiesMap(Map<ConfigurationFiles, PropertiesMapping> propertiesMap) {
         if (configurationFrozen) {
             throw new IllegalStateException("setPropertiesMap called while JMeter configuration already frozen");
         }
@@ -86,14 +86,14 @@ public class JMeterConfigurationHolder {
     /**
      * Freeze configuration
      */
-    public void freezeConfiguration() {
+    void freezeConfiguration() {
         this.configurationFrozen = true;
     }
 
     /**
      * Allow to reset configuration
      */
-    public void resetConfiguration() {
+    void resetConfiguration() {
         workingDirectory = null;
         runtimeJarName = null;
         propertiesMap = null;

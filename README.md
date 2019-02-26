@@ -19,17 +19,22 @@ A Maven plugin that provides the ability to run JMeter tests as part of your bui
 
 See the [CHANGELOG](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/blob/master/CHANGELOG.md) for change information.  
 
-All the documentation you need to configure the plugin is available on the [github wiki](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/wiki).
+All the documentation you need to configure the plugin is available on the [Github Wiki](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/wiki).
 
-Latest version is **2.8.6**, it requires Maven >= 3.5.0 and uses by default **Apache JMeter 5.1**.
+The latest version is **2.8.6**, it requires Maven >= 3.5.0 and defaults to **Apache JMeter 5.1**.
 
-This plugin requires a JDK between **8** and **11**. If using Java 11, ensure you use recent version to avoid facing this [bug](https://bugs.openjdk.java.net/browse/JDK-8210005, see also [this](https://stackoverflow.com/a/52510406/460802). 
+This plugin requires a JDK between **8** and **11**. If using Java 11, ensure you use recent version to avoid facing this [Bug](https://bugs.openjdk.java.net/browse/JDK-8210005), also read [This](https://stackoverflow.com/a/52510406/460802). 
 
-# Tutorial
+Running the GUI
+-----
 
-- [Shift left your performance tests with JMeter and Maven](https://www.ubik-ingenierie.com/blog/shift-left-performance-tests-jmeter-maven/)
+Once you have added the plugin to your project you will be able to invoke the JMeter GUI using the following command:
 
-# Basic Usage
+```
+mvn jmeter:gui
+```
+
+Basic Usage
 -----
 
 ### Add the plugin to your project
@@ -62,40 +67,47 @@ Add the plugin to the build section of your pom's project :
 
 ### Reference JMX files and CSV data
 
-Once you have created your JMeter tests, you'll need to copy them to `<Project Dir>/src/test/jmeter`.  By default this plugin will pick up all the .jmx files in that directory.  To specify which tests should be run, see the project documentation. 
-
-You can also put data files in this folder and reference them in your plan.
+Once you have created your JMeter tests, you'll need to copy them to `<Project Dir>/src/test/jmeter`.  
+By default this plugin will pick up all the .jmx files in that directory, you can also put data files in this folder and reference them in your plan.
+To specify which tests should be run, see the [Selecting-Tests-To-Run](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/wiki/Selecting-Tests-To-Run#2) section of the Wiki.
 
 ### Run the tests
 
-```mvn clean verify```
+```
+mvn clean verify
+```
 
 All your tests will run in maven!
 
-# Documentation
+Documentation
 -----
 
-All the plugin configuration documentation is available on the [github wiki](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/wiki).
+All the plugin configuration documentation is available on the [Github Wiki](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/wiki).
 
 Beginners should start with the [Basic Configuration](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/wiki/Basic-Configuration) section.
 
 For advanced POM configuration settings have a look at the [Advanced Configuration](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/wiki/Advanced-Configuration) section.
 
-# Book
+Tutorial
+-----
+
+- [Shift left your performance tests with JMeter and Maven](https://www.ubik-ingenierie.com/blog/shift-left-performance-tests-jmeter-maven/)
+
+Book
 -----
 
 If you'd like to thank the maintainer of this project and some developers of Apache JMeter, you can buy this book:
 
 [<kbd><img src="https://raw.githubusercontent.com/jmeter-maven-plugin/jmeter-maven-plugin/master/master-jmeter-from-load-test-to-devops-medium.png" /></kbd>](https://leanpub.com/master-jmeter-from-load-test-to-devops/)
 
-# Want to help
+Want to help
 -----
 
 Have a look at our list of outstanding issues:
 
 - [Next Milestone](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/milestone/30)
 
-# Community
+Community
 -----
 
 ### Users Group

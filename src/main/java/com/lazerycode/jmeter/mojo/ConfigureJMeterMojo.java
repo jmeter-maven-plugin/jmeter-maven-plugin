@@ -568,7 +568,6 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 	/**
 	 * 
 	 * @param artifact {@link Artifact}
-	 * @param getDependenciesOfDependency get dependencies of dependency
 	 * @throws DependencyResolutionException
 	 * @throws IOException
 	 */

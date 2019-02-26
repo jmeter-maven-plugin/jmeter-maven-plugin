@@ -93,7 +93,7 @@ public abstract class AbstractJMeterMojo extends AbstractMojo {
     /**
      * Generate JMeter Reports (this will force your .jtl's into .csv mode)
      */
-    @Parameter(defaultValue = "true")
+    @Parameter(defaultValue = "false")
     protected boolean generateReports;
 
     /**

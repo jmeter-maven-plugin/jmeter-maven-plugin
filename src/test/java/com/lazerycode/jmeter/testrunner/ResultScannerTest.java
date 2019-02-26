@@ -1,7 +1,7 @@
 package com.lazerycode.jmeter.testrunner;
 
 import com.lazerycode.jmeter.exceptions.IOException;
-import com.lazerycode.jmeter.testrunner.ResultScanner;
+import com.lazerycode.jmeter.exceptions.ResultsFileNotFoundException;
 import org.junit.Test;
 
 import java.io.File;
@@ -114,30 +114,37 @@ public class ResultScannerTest {
         assertThat(fileScanner.getSuccessCount()).isEqualTo(2);
     }
 
-    @Test(expected=IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void emptyCSVFileThrowsIllegalArgumentException() throws Exception {
         File resultsFile = new File(emptyCSVFileURL.toURI());
         ResultScanner fileScanner = new ResultScanner(COUNT_SUCCESSES, COUNT_FAILURES, true);
         fileScanner.parseResultFile(resultsFile);
     }
 
-    @Test(expected=IllegalStateException.class)
+    @Test(expected = IllegalStateException.class)
     public void csvFileMissingDelimiterThrowsIllegalStateException() throws Exception {
         File resultsFile = new File(csvMissingDelimiterFileURL.toURI());
         ResultScanner fileScanner = new ResultScanner(COUNT_SUCCESSES, COUNT_FAILURES, true);
         fileScanner.parseResultFile(resultsFile);
     }
 
-    @Test(expected= IOException.class)
-    public void invalidCSVFileThrowsIOException() throws Exception {
+    @Test(expected = ResultsFileNotFoundException.class)
+    public void fileThatDoesNotExistThrowsResultsFileNotFoundException() throws Exception {
         File resultsFile = new File("DoesNotExist.nope");
         ResultScanner fileScanner = new ResultScanner(COUNT_SUCCESSES, COUNT_FAILURES, true);
         fileScanner.parseResultFile(resultsFile);
     }
 
-    @Test(expected= IOException.class)
+    @Test(expected = IOException.class)
+    public void invalidCSVFileThrowsIOException() throws Exception {
+        File resultsFile = new File("/");
+        ResultScanner fileScanner = new ResultScanner(COUNT_SUCCESSES, COUNT_FAILURES, true);
+        fileScanner.parseResultFile(resultsFile);
+    }
+
+    @Test(expected = IOException.class)
     public void invalidJTLileThrowsIOException() throws Exception {
-        File resultsFile = new File("DoesNotExist.nope");
+        File resultsFile = new File("/");
         ResultScanner fileScanner = new ResultScanner(COUNT_SUCCESSES, COUNT_FAILURES, false);
         fileScanner.parseResultFile(resultsFile);
     }

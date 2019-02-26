@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.MappingIterator;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import com.lazerycode.jmeter.exceptions.IOException;
+import com.lazerycode.jmeter.exceptions.ResultsFileNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,8 +60,12 @@ public class ResultScanner implements IResultScanner {
      *
      * @param file File to parse
      * @throws IOException IOException
+     * @throws ResultsFileNotFoundException File not found
      */
-    public void parseResultFile(File file) throws IOException {
+    public void parseResultFile(File file) throws IOException, ResultsFileNotFoundException {
+        if (!file.exists()) {
+            throw new ResultsFileNotFoundException("Unable to find " + file.getAbsolutePath());
+        }
         LOGGER.info("Parsing results file '{}' in format '{}'", file, format);
 
         if (countFailures) {

@@ -1,6 +1,6 @@
 # Changelog
 
-## Version 2.8.7-SNAPSHOT Release Notes (IN PROGRESS)
+## Version 2.9.0-SNAPSHOT Release Notes (IN PROGRESS)
 
 ### Enhancements ###
 

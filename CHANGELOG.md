@@ -7,7 +7,7 @@
 * Fix bug where server log name was malformed if server host was not explicitly set
 * Fix bug where RemoteConfiguration toString printed server list under the tag start
 * Fix minor logging bug.  Was previously logging that JMeter GUI was being started when in fact JMeter server was being started
-* Set a default of `<generateReports>false</generateReports>`.  Not everybody wants reports and they take time to generate so they should always be disabled by default.  It will also help reduce confusion around the results file format being ignored if you don't explicitly diable report generation.
+* Set a default of `<generateReports>false</generateReports>`.  Not everybody wants reports and they take time to generate so they should always be disabled by default.  It will also help reduce confusion around the results file format being ignored if you don't explicitly disable report generation.
 
 ## Version 2.8.6 Release Notes (20th february 2019)
 

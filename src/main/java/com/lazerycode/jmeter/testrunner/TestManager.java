@@ -148,7 +148,7 @@ public class TestManager {
         jmeterProcessBuilder.setWorkingDirectory(binDir);
         jmeterProcessBuilder.addArguments(argumentsArray);
         try {
-            final Process process = jmeterProcessBuilder.startProcess();
+            final Process process = jmeterProcessBuilder.build().start();
 
             Runtime.getRuntime().addShutdownHook(new Thread(() -> {
                 LOGGER.info("Shutdown detected, destroying JMeter process...");

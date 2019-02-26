@@ -6,6 +6,7 @@
 
 * Fix bug where server log name was malformed if server host was not explicitly set
 * Fix bug where RemoteConfiguration toString printed server list under the tag start
+* Fix minor logging bug.  Was previously logging that JMeter GUI was being started when in fact JMeter server was being started
 
 ## Version 2.8.6 Release Notes (20th february 2019)
 

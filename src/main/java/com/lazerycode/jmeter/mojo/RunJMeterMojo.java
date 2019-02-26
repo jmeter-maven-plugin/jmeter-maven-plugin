@@ -33,7 +33,7 @@ public class RunJMeterMojo extends AbstractJMeterMojo {
 
         if (!testFilesDirectory.exists()) {
             getLog().info("<testFilesDirectory>" + testFilesDirectory.getAbsolutePath() + "</testFilesDirectory> does not exist...");
-            getLog().info("Performance tests are skipped.");
+            getLog().info("Performance tests skipped.");
             return;
         }
 

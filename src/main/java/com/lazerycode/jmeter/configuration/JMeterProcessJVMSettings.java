@@ -52,15 +52,19 @@ public class JMeterProcessJVMSettings {
         return arguments;
     }
 
-    public void addArgument(String argument) {
+    public JMeterProcessJVMSettings addArgument(String argument) {
         arguments.add(argument);
+
+        return this;
     }
 
-    public void forceHeadless() {
+    public JMeterProcessJVMSettings forceHeadless() {
         arguments.removeIf(argument -> argument.equals(DISABLE_RUN_HEADLESS));
         if (arguments.stream().noneMatch(argument -> argument.equals(RUN_HEADLESS))) {
             arguments.add(RUN_HEADLESS);
         }
+
+        return this;
     }
 
     public String getJavaRuntime() {

@@ -3,7 +3,7 @@ package com.lazerycode.jmeter.properties;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.spi.LoggingEvent;
 import ch.qos.logback.core.Appender;
-import com.lazerycode.jmeter.exceptions.IOException;
+import org.apache.maven.plugin.MojoExecutionException;
 import org.eclipse.aether.artifact.Artifact;
 import org.eclipse.aether.artifact.DefaultArtifact;
 import org.junit.Test;
@@ -33,7 +33,7 @@ public class PropertiesFileTest {
     private static final boolean REPLACE_ALL_PROPERTIES = true;
     private static final boolean MERGE_PROPERTIES = false;
 
-    @Test(expected = IOException.class)
+    @Test(expected = MojoExecutionException.class)
     public void invalidPropertiesFileThrowsIOException() throws Exception {
         new PropertiesFile(invalidPropertiesFile);
     }
@@ -56,7 +56,7 @@ public class PropertiesFileTest {
         assertThat(initialProperties.size()).isEqualTo(0);
     }
 
-    @Test(expected = IOException.class)
+    @Test(expected = MojoExecutionException.class)
     public void ifTheArtifactIsInvalidAnIOExceptionWillBeThrown() throws Exception {
         Artifact artifact = new DefaultArtifact("g.i.d:a.i.d:1.0-SNAPSHOT").setFile(invalidPropertiesFile);
         PropertiesFile propertiesFile = new PropertiesFile(artifact, JMETER_PROPERTIES);
@@ -163,7 +163,7 @@ public class PropertiesFileTest {
         assertThat(modifiedProperties.size()).isEqualTo(2);
     }
 
-    @Test(expected = IOException.class)
+    @Test(expected = MojoExecutionException.class)
     public void tryingToWriteToAnInvalidFileThrowsAnIOException() throws Exception {
         PropertiesFile propertiesFile = new PropertiesFile(new File(sourcePropertiesFile.toURI()));
         propertiesFile.writePropertiesToFile(invalidPropertiesFile);

@@ -4,7 +4,6 @@ import com.lazerycode.jmeter.configuration.JMeterArgumentsArray;
 import com.lazerycode.jmeter.configuration.JMeterProcessJVMSettings;
 import com.lazerycode.jmeter.configuration.ProxyConfiguration;
 import com.lazerycode.jmeter.configuration.RemoteConfiguration;
-import com.lazerycode.jmeter.exceptions.IOException;
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
@@ -17,6 +16,7 @@ import org.apache.maven.settings.Settings;
 import org.joda.time.format.DateTimeFormat;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -295,11 +295,11 @@ public abstract class AbstractJMeterMojo extends AbstractMojo {
         }
     }
 
-    static void copyFilesInTestDirectory(File sourceDirectory, File destinationDirectory) throws IOException { // NOSONAR
+    static void copyFilesInTestDirectory(File sourceDirectory, File destinationDirectory) throws MojoExecutionException { // NOSONAR
         try {
             FileUtils.copyDirectory(sourceDirectory, destinationDirectory);
-        } catch (java.io.IOException e) {
-            throw new IOException(e.getMessage(), e);
+        } catch (IOException e) {
+            throw new MojoExecutionException(e.getMessage(), e);
         }
     }
 }

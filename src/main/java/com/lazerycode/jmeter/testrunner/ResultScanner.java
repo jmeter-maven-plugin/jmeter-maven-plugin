@@ -3,14 +3,14 @@ package com.lazerycode.jmeter.testrunner;
 import com.fasterxml.jackson.databind.MappingIterator;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
-import com.lazerycode.jmeter.exceptions.IOException;
-import com.lazerycode.jmeter.exceptions.ResultsFileNotFoundException;
+import org.apache.maven.plugin.MojoExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.IOException;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.regex.Pattern;
@@ -59,12 +59,11 @@ public class ResultScanner implements IResultScanner {
      * Work out how to parse the file (if at all)
      *
      * @param file File to parse
-     * @throws IOException IOException
-     * @throws ResultsFileNotFoundException File not found
+     * @throws MojoExecutionException MojoExecutionException
      */
-    public void parseResultFile(File file) throws IOException, ResultsFileNotFoundException {
+    public void parseResultFile(File file) throws MojoExecutionException {
         if (!file.exists()) {
-            throw new ResultsFileNotFoundException("Unable to find " + file.getAbsolutePath());
+            throw new MojoExecutionException("Unable to find " + file.getAbsolutePath());
         }
         LOGGER.info("Parsing results file '{}' in format '{}'", file, format);
 
@@ -94,9 +93,9 @@ public class ResultScanner implements IResultScanner {
      * @param file             The file to parse
      * @param searchedForValue The pattern to look for
      * @return The number of times the pattern appears in the success column
-     * @throws IOException When an error occurs while reading the file
+     * @throws MojoExecutionException When an error occurs while reading the file
      */
-    private int scanCsvForValue(File file, String searchedForValue) throws IOException {
+    private int scanCsvForValue(File file, String searchedForValue) throws MojoExecutionException {
         int numberOfMatches = 0;
         try {
             char separator = computeSeparator(file);
@@ -114,8 +113,8 @@ public class ResultScanner implements IResultScanner {
                     }
                 }
             }
-        } catch (java.io.IOException e) {
-            throw new IOException("An unexpected error occurred while reading file " + file.getAbsolutePath(), e);
+        } catch (IOException e) {
+            throw new MojoExecutionException("An unexpected error occurred while reading file " + file.getAbsolutePath(), e);
         }
 
         return numberOfMatches;
@@ -139,18 +138,17 @@ public class ResultScanner implements IResultScanner {
      * @param file            The file to parse
      * @param patternAsString The pattern to look for
      * @return The number of times the pattern appears in the xml file
-     * @throws IOException When the file is not found
+     * @throws MojoExecutionException When the file is not found
      */
-    private int scanXmlForPattern(File file, String patternAsString)
-            throws IOException {
+    private int scanXmlForPattern(File file, String patternAsString) throws MojoExecutionException {
         int patternCount = 0;
         Pattern pattern = Pattern.compile(patternAsString);
         try (Scanner resultFileScanner = new Scanner(file)) {
             while (resultFileScanner.findWithinHorizon(pattern, 0) != null) {
                 patternCount++;
             }
-        } catch (java.io.IOException e) {
-            throw new IOException("An unexpected error occured while reading file " + file.getAbsolutePath(), e);
+        } catch (IOException e) {
+            throw new MojoExecutionException("An unexpected error occured while reading file " + file.getAbsolutePath(), e);
         }
 
         return patternCount;

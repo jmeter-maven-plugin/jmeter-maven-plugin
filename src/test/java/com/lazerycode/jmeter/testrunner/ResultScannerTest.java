@@ -1,7 +1,6 @@
 package com.lazerycode.jmeter.testrunner;
 
-import com.lazerycode.jmeter.exceptions.IOException;
-import com.lazerycode.jmeter.exceptions.ResultsFileNotFoundException;
+import org.apache.maven.plugin.MojoExecutionException;
 import org.junit.Test;
 
 import java.io.File;
@@ -128,21 +127,21 @@ public class ResultScannerTest {
         fileScanner.parseResultFile(resultsFile);
     }
 
-    @Test(expected = ResultsFileNotFoundException.class)
+    @Test(expected = MojoExecutionException.class)
     public void fileThatDoesNotExistThrowsResultsFileNotFoundException() throws Exception {
         File resultsFile = new File("DoesNotExist.nope");
         ResultScanner fileScanner = new ResultScanner(COUNT_SUCCESSES, COUNT_FAILURES, true);
         fileScanner.parseResultFile(resultsFile);
     }
 
-    @Test(expected = IOException.class)
+    @Test(expected = MojoExecutionException.class)
     public void invalidCSVFileThrowsIOException() throws Exception {
         File resultsFile = new File("/");
         ResultScanner fileScanner = new ResultScanner(COUNT_SUCCESSES, COUNT_FAILURES, true);
         fileScanner.parseResultFile(resultsFile);
     }
 
-    @Test(expected = IOException.class)
+    @Test(expected = MojoExecutionException.class)
     public void invalidJTLileThrowsIOException() throws Exception {
         File resultsFile = new File("/");
         ResultScanner fileScanner = new ResultScanner(COUNT_SUCCESSES, COUNT_FAILURES, false);

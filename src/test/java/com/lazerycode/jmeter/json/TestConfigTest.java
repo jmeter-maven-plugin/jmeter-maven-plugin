@@ -24,7 +24,7 @@ public class TestConfigTest {
         File testConfigJSON = new File(configFile.toURI());
         TestConfig testConfig = new TestConfig(testConfigJSON);
         assertThat(testConfig.getFullConfig())
-                .isEqualTo(String.format("{%1$s  \"resultFilesLocations\" : [],%1$s  \"resultsOutputIsCSVFormat\" : false,%1$s  \"someOtherElement\": \"foo\",%1$s  \"generateReports\": false%1$s}", '\n'));
+                .isEqualToNormalizingWhitespace(String.format("{%1$s  \"resultFilesLocations\" : [],%1$s  \"resultsOutputIsCSVFormat\" : false,%1$s  \"someOtherElement\": \"foo\",%1$s  \"generateReports\": false%1$s}", '\n'));
     }
 
     @Test(expected = MojoExecutionException.class)
@@ -38,7 +38,7 @@ public class TestConfigTest {
         InputStream configFile = this.getClass().getResourceAsStream(testConfigFile);
         TestConfig testConfig = new TestConfig(configFile);
         assertThat(testConfig.getFullConfig())
-                .isEqualTo(String.format("{%1$s  \"resultFilesLocations\" : [],%1$s  \"resultsOutputIsCSVFormat\" : false,%1$s  \"someOtherElement\": \"foo\",%1$s  \"generateReports\": false%1$s}", '\n'));
+                .isEqualToNormalizingWhitespace(String.format("{%1$s  \"resultFilesLocations\" : [],%1$s  \"resultsOutputIsCSVFormat\" : false,%1$s  \"someOtherElement\": \"foo\",%1$s  \"generateReports\": false%1$s}", '\n'));
     }
 
     @Test(expected = MojoExecutionException.class)

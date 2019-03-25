@@ -39,7 +39,7 @@ public class RunJMeterMojo extends AbstractJMeterMojo {
 
         TestConfig testConfig = new TestConfig(new File(testConfigFile));
         JMeterArgumentsArray testArgs = computeJMeterArgumentsArray(true, testConfig.getResultsOutputIsCSVFormat());
-        jMeterProcessJVMSettings.forceHeadless();
+        jMeterProcessJVMSettings.setHeadlessDefaultIfRequired();
         remoteConfig.setPropertiesMap(JMeterConfigurationHolder.getInstance().getPropertiesMap());
 
         copyFilesInTestDirectory(testFilesDirectory, testFilesBuildDirectory);

@@ -46,12 +46,12 @@ public class JMeterProcessJVMSettingsTest {
 
         assertThat(jMeterProcessJVMSettings.getArguments().size()).isEqualTo(0);
 
-        jMeterProcessJVMSettings.forceHeadless();
+        jMeterProcessJVMSettings.setHeadlessDefaultIfRequired();
 
         assertThat(jMeterProcessJVMSettings.getArguments().size()).isEqualTo(1);
         assertThat(jMeterProcessJVMSettings.getArguments().get(0)).isEqualTo(JAVA_AWT_HEADLESS_TRUE);
 
-        jMeterProcessJVMSettings.forceHeadless();
+        jMeterProcessJVMSettings.setHeadlessDefaultIfRequired();
 
         assertThat(jMeterProcessJVMSettings.getArguments().size()).isEqualTo(1);
         assertThat(jMeterProcessJVMSettings.getArguments().get(0)).isEqualTo(JAVA_AWT_HEADLESS_TRUE);
@@ -68,43 +68,7 @@ public class JMeterProcessJVMSettingsTest {
         assertThat(jMeterProcessJVMSettings.getArguments().size()).isEqualTo(1);
         assertThat(jMeterProcessJVMSettings.getArguments().get(0)).isEqualTo(JAVA_AWT_HEADLESS_TRUE);
 
-        jMeterProcessJVMSettings.forceHeadless();
-
-        assertThat(jMeterProcessJVMSettings.getArguments().size()).isEqualTo(1);
-        assertThat(jMeterProcessJVMSettings.getArguments().get(0)).isEqualTo(JAVA_AWT_HEADLESS_TRUE);
-    }
-
-    @Test
-    public void forceHeadlessWillRemoveArgumentDisablingHeadless() {
-        JMeterProcessJVMSettings jMeterProcessJVMSettings = new JMeterProcessJVMSettings();
-
-        assertThat(jMeterProcessJVMSettings.getArguments().size()).isEqualTo(0);
-
-        jMeterProcessJVMSettings.addArgument(JAVA_AWT_HEADLESS_FALSE);
-
-        assertThat(jMeterProcessJVMSettings.getArguments().size()).isEqualTo(1);
-        assertThat(jMeterProcessJVMSettings.getArguments().get(0)).isEqualTo(JAVA_AWT_HEADLESS_FALSE);
-
-        jMeterProcessJVMSettings.forceHeadless();
-
-        assertThat(jMeterProcessJVMSettings.getArguments().size()).isEqualTo(1);
-        assertThat(jMeterProcessJVMSettings.getArguments().get(0)).isEqualTo(JAVA_AWT_HEADLESS_TRUE);
-    }
-
-    @Test
-    public void multipleInstancesOfHeadlessFalseWillBeRemoved() {
-        JMeterProcessJVMSettings jMeterProcessJVMSettings = new JMeterProcessJVMSettings();
-
-        assertThat(jMeterProcessJVMSettings.getArguments().size()).isEqualTo(0);
-
-        jMeterProcessJVMSettings.addArgument(JAVA_AWT_HEADLESS_FALSE)
-                .addArgument(JAVA_AWT_HEADLESS_FALSE);
-
-        assertThat(jMeterProcessJVMSettings.getArguments().size()).isEqualTo(2);
-        assertThat(jMeterProcessJVMSettings.getArguments().get(0)).isEqualTo(JAVA_AWT_HEADLESS_FALSE);
-        assertThat(jMeterProcessJVMSettings.getArguments().get(1)).isEqualTo(JAVA_AWT_HEADLESS_FALSE);
-
-        jMeterProcessJVMSettings.forceHeadless();
+        jMeterProcessJVMSettings.setHeadlessDefaultIfRequired();
 
         assertThat(jMeterProcessJVMSettings.getArguments().size()).isEqualTo(1);
         assertThat(jMeterProcessJVMSettings.getArguments().get(0)).isEqualTo(JAVA_AWT_HEADLESS_TRUE);

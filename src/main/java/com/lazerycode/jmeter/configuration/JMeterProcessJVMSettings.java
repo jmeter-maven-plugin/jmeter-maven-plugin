@@ -34,7 +34,7 @@ public class JMeterProcessJVMSettings {
     private List<String> arguments = new ArrayList<>();
 
     private static final String RUN_HEADLESS = "-Djava.awt.headless=true";
-    private static final String DISABLE_RUN_HEADLESS = "-Djava.awt.headless=false";
+    private static final String HEADLESS_SETTING = "-Djava.awt.headless=";
 
     public JMeterProcessJVMSettings() {
         super();
@@ -58,9 +58,8 @@ public class JMeterProcessJVMSettings {
         return this;
     }
 
-    public JMeterProcessJVMSettings forceHeadless() {
-        arguments.removeIf(argument -> argument.equals(DISABLE_RUN_HEADLESS));
-        if (arguments.stream().noneMatch(argument -> argument.equals(RUN_HEADLESS))) {
+    public JMeterProcessJVMSettings setHeadlessDefaultIfRequired() {
+        if (arguments.stream().noneMatch(argument -> argument.contains(HEADLESS_SETTING))) {
             arguments.add(RUN_HEADLESS);
         }
 

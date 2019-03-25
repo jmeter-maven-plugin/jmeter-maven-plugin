@@ -75,7 +75,7 @@ public class RunJMeterServerMojo extends AbstractJMeterMojo {
     }
 
     private void startJMeterServer(JMeterArgumentsArray testArgs) throws MojoExecutionException {
-        jMeterProcessJVMSettings.forceHeadless()
+        jMeterProcessJVMSettings.setHeadlessDefaultIfRequired()
                 .addArgument("-Djava.rmi.server.hostname=" + exportedRmiHostname)
                 .addArgument("-Dserver_port=" + serverPort);
 

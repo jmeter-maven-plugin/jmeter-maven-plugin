@@ -8,7 +8,6 @@ public class JMeterProcessJVMSettingsTest {
 
 
     private static final String JAVA_AWT_HEADLESS_TRUE = "-Djava.awt.headless=true";
-    private static final String JAVA_AWT_HEADLESS_FALSE = "-Djava.awt.headless=false";
 
     @Test
     public void validateDefaultJVMSettings() {
@@ -72,5 +71,29 @@ public class JMeterProcessJVMSettingsTest {
 
         assertThat(jMeterProcessJVMSettings.getArguments().size()).isEqualTo(1);
         assertThat(jMeterProcessJVMSettings.getArguments().get(0)).isEqualTo(JAVA_AWT_HEADLESS_TRUE);
+    }
+
+    @Test
+    public void willNotAddArgumentIfItAlreadyExists() {
+        JMeterProcessJVMSettings jMeterProcessJVMSettings = new JMeterProcessJVMSettings();
+
+        assertThat(jMeterProcessJVMSettings.getArguments().size()).isEqualTo(0);
+
+        jMeterProcessJVMSettings.addArgument("some argument");
+
+        assertThat(jMeterProcessJVMSettings.getArguments().size()).isEqualTo(1);
+        assertThat(jMeterProcessJVMSettings.getArguments().get(0)).isEqualTo("some argument");
+
+        jMeterProcessJVMSettings.addArgument("some other argument");
+
+        assertThat(jMeterProcessJVMSettings.getArguments().size()).isEqualTo(2);
+        assertThat(jMeterProcessJVMSettings.getArguments().get(0)).isEqualTo("some argument");
+        assertThat(jMeterProcessJVMSettings.getArguments().get(1)).isEqualTo("some other argument");
+
+        jMeterProcessJVMSettings.addArgument("some argument");
+
+        assertThat(jMeterProcessJVMSettings.getArguments().size()).isEqualTo(2);
+        assertThat(jMeterProcessJVMSettings.getArguments().get(0)).isEqualTo("some argument");
+        assertThat(jMeterProcessJVMSettings.getArguments().get(1)).isEqualTo("some other argument");
     }
 }

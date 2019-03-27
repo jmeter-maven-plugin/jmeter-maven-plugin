@@ -52,15 +52,17 @@ public class JMeterProcessJVMSettings {
         return arguments;
     }
 
-    public JMeterProcessJVMSettings addArgument(String argument) {
-        arguments.add(argument);
+    public JMeterProcessJVMSettings addArgument(String newArgument) {
+        if (arguments.stream().noneMatch(argument -> argument.equals(newArgument))) {
+            arguments.add(newArgument);
+        }
 
         return this;
     }
 
     public JMeterProcessJVMSettings setHeadlessDefaultIfRequired() {
         if (arguments.stream().noneMatch(argument -> argument.contains(HEADLESS_SETTING))) {
-            arguments.add(RUN_HEADLESS);
+            addArgument(RUN_HEADLESS);
         }
 
         return this;

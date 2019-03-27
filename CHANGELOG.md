@@ -4,28 +4,29 @@
 
 ### Enhancements ###
 
-* Issue [319](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues/311) Support Apache JMeter 5.1.1
-* Fix bug where server log name was malformed if server host was not explicitly set
-* Fix bug where RemoteConfiguration toString printed server list under the tag start
-* Fix minor logging bug.  Was previously logging that JMeter GUI was being started when in fact JMeter server was being started
+* Issue [318](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues/318) Fix forceHeadless override logic.
+* Issue [319](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues/319) Support Apache JMeter 5.1.1.
+* Issue [321](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues/321) Fix bug where server log name was malformed if server host was not explicitly set
+* Issue [320](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues/320) RemoteConfiguration toString printed server list under the tag start.
+* Issue [321](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues/321) Minor logging bug.  Was previously logging that JMeter GUI was being shut down when in fact JMeter server was being shut down.
 * Set a default of `<generateReports>false</generateReports>`.  Not everybody wants reports and they take time to generate so they should always be disabled by default.  It will also help reduce confusion around the results file format being ignored if you don't explicitly disable report generation.
 
 ## Version 2.8.6 Release Notes (20th february 2019)
 
 ### Enhancements ###
 
-* Issue [311](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues/311) Support Apache JMeter 5.1
-* Improved test coverage and moved from Hamcrest to AssertJ
+* Issue [311](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues/311) Support Apache JMeter 5.1.
+* Improved test coverage and moved from Hamcrest to AssertJ.
 
 ## Version 2.8.5 Release Notes (29th january 2019)
 
 ### Enhancements ###
 
-* Issue [304](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues/304) Run headless when possible
+* Issue [304](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues/304) Run headless when possible.
 
 ### Bug Fixes ###
 
-* Issue [305](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues/305) Response message containing "false" is considered a failure when parsed by ResultScanner. **Thanks at https://github.com/martymcflywa for his contribution !**
+* Issue [305](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues/305) Response message containing "false" is considered a failure when parsed by ResultScanner. **Thanks at https://github.com/martymcflywa for his contribution !**.
 
 ## Version 2.8.4 (INVALID)
 
@@ -33,14 +34,14 @@
 
 ### Enhancements ###
 
-* Issue [300](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues/299) Simplify default setup when using 3rd party plugins relying on old JMeter version
-* New tutorial [Shift left your performance tests with JMeter and Maven](https://www.ubik-ingenierie.com/blog/shift-left-performance-tests-jmeter-maven/) available
+* Issue [300](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues/299) Simplify default setup when using 3rd party plugins relying on old JMeter version.
+* New tutorial [Shift left your performance tests with JMeter and Maven](https://www.ubik-ingenierie.com/blog/shift-left-performance-tests-jmeter-maven/) available.
 
 ### Bug Fixes ###
 
-* Issue [299](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues/299) Using exclusion with '*' artifact in does not work
-* Issue [298](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues/298) Drop of coverage from 77% to 32%
-* Issue [297](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues/297) Random failure of integration test it/aremote-test on travis
+* Issue [299](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues/299) Using exclusion with '*' artifact in does not work.
+* Issue [298](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues/298) Drop of coverage from 77% to 32%.
+* Issue [297](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues/297) Random failure of integration test it/aremote-test on travis.
 
 ## Version 2.8.2 Release Notes (27th december 2018) 
 

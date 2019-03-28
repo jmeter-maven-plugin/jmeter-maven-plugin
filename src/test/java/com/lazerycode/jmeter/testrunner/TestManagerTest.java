@@ -12,7 +12,9 @@ import org.junit.Test;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -182,5 +184,37 @@ public class TestManagerTest {
     @Test
     public void checkPostTestPauseInSecondsDefault() {
         assertThat(testManager.getPostTestPauseInSeconds()).isEqualTo(0L);
+    }
+
+    @Test
+    public void checkGenerateTestList() throws URISyntaxException {
+        List<String> expected = new ArrayList<>();
+        expected.add("one/fake.jmx");
+        expected.add("one/four/fake4.jmx");
+        expected.add("three/fake.jmx");
+        expected.add("two/fake2.jmx");
+
+        testManager.setTestFilesDirectory(new File(this.getClass().getResource("/testFiles").toURI()));
+        List<String> actual = testManager.generateTestList();
+
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    public void checkGenerateTestListWithExclusions() throws URISyntaxException {
+        List<String> expected = new ArrayList<>();
+        expected.add("one/four/fake4.jmx");
+        expected.add("two/fake2.jmx");
+
+        testManager.setTestFilesDirectory(new File(this.getClass().getResource("/testFiles").toURI()))
+                .setTestFilesExcluded(Collections.singletonList("**/fake.jmx"));
+        List<String> actual = testManager.generateTestList();
+
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    public void checkEmptyListIsReturnedIfTestFilesDirectoryIsNotSet() {
+        assertThat(testManager.generateTestList()).isEqualTo(Collections.emptyList());
     }
 }

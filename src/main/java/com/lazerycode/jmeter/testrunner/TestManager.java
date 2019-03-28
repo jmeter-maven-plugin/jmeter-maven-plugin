@@ -16,10 +16,12 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static com.lazerycode.jmeter.configuration.RemoteArgumentsArrayBuilder.buildRemoteArgumentsArray;
+import static com.lazerycode.jmeter.utility.UtilityFunctions.isNotSet;
 
 /**
  * TestManager encapsulates functions that gather JMeter Test files and execute the tests
@@ -280,7 +282,10 @@ public class TestManager {
      *
      * @return found JMeter tests
      */
-    private List<String> generateTestList() {
+    List<String> generateTestList() {
+        if (isNotSet(this.testFilesDirectory)) {
+            return Collections.emptyList();
+        }
         DirectoryScanner scanner = new DirectoryScanner();
         scanner.setBasedir(this.testFilesDirectory);
         scanner.setIncludes(this.testFilesIncluded);

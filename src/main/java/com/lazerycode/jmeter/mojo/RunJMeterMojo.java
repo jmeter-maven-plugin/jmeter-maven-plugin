@@ -1,15 +1,13 @@
 package com.lazerycode.jmeter.mojo;
 
-import java.io.File;
-
+import com.lazerycode.jmeter.json.TestConfig;
+import com.lazerycode.jmeter.testrunner.TestManager;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Execute;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 
-import com.lazerycode.jmeter.configuration.JMeterArgumentsArray;
-import com.lazerycode.jmeter.json.TestConfig;
-import com.lazerycode.jmeter.testrunner.TestManager;
+import java.io.File;
 
 /**
  * Goal that runs jmeter based on configuration defined in your pom.<br/>
@@ -38,14 +36,13 @@ public class RunJMeterMojo extends AbstractJMeterMojo {
         }
 
         TestConfig testConfig = new TestConfig(new File(testConfigFile));
-        JMeterArgumentsArray testArgs = computeJMeterArgumentsArray(true, testConfig.getResultsOutputIsCSVFormat());
         JMeterConfigurationHolder configuration = JMeterConfigurationHolder.getInstance();
 
         remoteConfig.setPropertiesMap(configuration.getPropertiesMap());
         jMeterProcessJVMSettings.setHeadlessDefaultIfRequired();
         copyFilesInTestDirectory(testFilesDirectory, testFilesBuildDirectory);
         TestManager jMeterTestManager = new TestManager()
-                .setBaseTestArgs(testArgs)
+                .setBaseTestArgs(computeJMeterArgumentsArray(true, testConfig.getResultsOutputIsCSVFormat()))
                 .setTestFilesDirectory(testFilesBuildDirectory)
                 .setTestFilesIncluded(testFilesIncluded)
                 .setTestFilesExcluded(testFilesExcluded)

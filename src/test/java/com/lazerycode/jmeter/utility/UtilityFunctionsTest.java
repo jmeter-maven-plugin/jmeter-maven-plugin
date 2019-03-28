@@ -33,6 +33,15 @@ public class UtilityFunctionsTest {
     }
 
     @Test
+    public void isNotSetListTest() {
+        List testList = null;
+        List testList2 = Collections.emptyList();
+
+        assertThat(UtilityFunctions.isNotSet(testList)).isTrue();
+        assertThat(UtilityFunctions.isNotSet(testList2)).isTrue();
+    }
+
+    @Test
     public void isNotSetStringTest() {
         String testString = null;
         String testString2 = "";

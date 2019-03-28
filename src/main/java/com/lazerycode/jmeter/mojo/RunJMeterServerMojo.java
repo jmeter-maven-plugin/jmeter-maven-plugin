@@ -9,7 +9,6 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
-import java.io.File;
 import java.io.IOException;
 
 /**
@@ -56,22 +55,18 @@ public class RunJMeterServerMojo extends AbstractJMeterMojo {
         getLog().info(" Host:" + exportedRmiHostname);
         getLog().info(" Port:" + serverPort);
         JMeterArgumentsArray testArgs = initializeJMeterArgumentsArray();
-        getLog().debug("JMeter is called with the following command line arguments: " +
-                UtilityFunctions.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()));
+        getLog().debug(String.format("JMeter is called with the following command line arguments: %s",
+                UtilityFunctions.humanReadableCommandLineOutput(testArgs.buildArgumentsArray())));
         startJMeterServer(testArgs);
     }
 
     private JMeterArgumentsArray initializeJMeterArgumentsArray() throws MojoExecutionException {
-        JMeterArgumentsArray currentTestArgs = new JMeterArgumentsArray(false, jmeterDirectory.getAbsolutePath());
-        currentTestArgs.setProxyConfig(proxyConfig);
-        for (File customPropertiesFile : customPropertiesFiles) {
-            currentTestArgs.setACustomPropertiesFile(customPropertiesFile);
-        }
-        currentTestArgs.setLogRootOverride(overrideRootLogLevel);
-        currentTestArgs.setLogsDirectory(logsDirectory.getAbsolutePath());
-        currentTestArgs.setServerMode(exportedRmiHostname, serverPort);
-
-        return currentTestArgs;
+        return new JMeterArgumentsArray(false, jmeterDirectory.getAbsolutePath())
+                .setProxyConfig(proxyConfig)
+                .addACustomPropertiesFiles(customPropertiesFiles)
+                .setLogRootOverride(overrideRootLogLevel)
+                .setLogsDirectory(logsDirectory.getAbsolutePath())
+                .setServerMode(exportedRmiHostname, serverPort);
     }
 
     private void startJMeterServer(JMeterArgumentsArray testArgs) throws MojoExecutionException {

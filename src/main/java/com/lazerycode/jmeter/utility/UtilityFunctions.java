@@ -53,6 +53,16 @@ public final class UtilityFunctions {
     }
 
     /**
+     * Utility function to check if a List is defined and not empty
+     *
+     * @param value List
+     * @return boolean
+     */
+    public static Boolean isNotSet(List<?> value) {
+        return null == value || value.isEmpty();
+    }
+
+    /**
      * Utility function to check if a String is defined and not empty
      *
      * @param value String

@@ -3,6 +3,7 @@ package com.lazerycode.jmeter.configuration;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.joda.time.LocalDateTime;
+import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 import org.slf4j.Logger;
@@ -66,22 +67,28 @@ public class JMeterArgumentsArray {
         }
     }
 
-    public void setRemoteStop() {
+    public JMeterArgumentsArray setRemoteStop() {
         argumentList.add(REMOTE_STOP);
+
+        return this;
     }
 
-    public void setRemoteStart() {
+    public JMeterArgumentsArray setRemoteStart() {
         argumentList.add(REMOTE_OPT);
+
+        return this;
     }
 
-    public void setRemoteStartServerList(String serverList) {
-        if (isNotSet(serverList)) return;
+    public JMeterArgumentsArray setRemoteStartServerList(String serverList) {
+        if (isNotSet(serverList)) return this;
         remoteStartServerList = serverList;
         argumentList.add(REMOTE_OPT_PARAM);
+
+        return this;
     }
 
-    public void setProxyConfig(ProxyConfiguration configuration) {
-        if (configuration == null) return;
+    public JMeterArgumentsArray setProxyConfig(ProxyConfiguration configuration) {
+        if (configuration == null) return this;
 
         this.proxyConfiguration = configuration;
         if (isSet(proxyConfiguration.getHost())) {
@@ -97,62 +104,84 @@ public class JMeterArgumentsArray {
         if (isSet(proxyConfiguration.getHostExclusions())) {
             argumentList.add(NONPROXY_HOSTS);
         }
+
+        return this;
     }
 
-    public void setACustomPropertiesFile(File customProperties) {
-        if (isNotSet(customProperties)) return;
-        customPropertiesFiles.add(customProperties.getAbsolutePath());
-        argumentList.add(PROPFILE2_OPT);
+    public JMeterArgumentsArray addACustomPropertiesFiles(List<File> customPropertiesFiles) {
+        if (isNotSet(customPropertiesFiles)) return this;
+        for (File customPropertiesFile : customPropertiesFiles) {
+            this.customPropertiesFiles.add(customPropertiesFile.getAbsolutePath());
+            argumentList.add(PROPFILE2_OPT);
+        }
+
+        return this;
     }
 
-    public void setLogRootOverride(String requestedLogLevel) {
+    public JMeterArgumentsArray setLogRootOverride(String requestedLogLevel) {
         if (isNotSet(requestedLogLevel)) {
-            return;
+            return this;
         }
         for (LogLevel logLevel : LogLevel.values()) {
             if (logLevel.toString().equalsIgnoreCase(requestedLogLevel)) {
                 overrideRootLogLevel = logLevel;
                 argumentList.add(LOGLEVEL);
-                return;
+                return this;
             }
         }
         LOGGER.warn("Unknown log level {}", requestedLogLevel);
+
+        return this;
     }
 
-    public void setResultsDirectory(String resultsDirectory) {
+    public JMeterArgumentsArray setResultsDirectory(String resultsDirectory) {
         this.resultsDirectory = resultsDirectory;
+
+        return this;
     }
 
-    public void setLogsDirectory(String logsDirectory) {
+    public JMeterArgumentsArray setLogsDirectory(String logsDirectory) {
         this.logsDirectory = logsDirectory;
+
+        return this;
     }
 
-    public void setResultsTimestamp(boolean addTimestamp) {
+    public JMeterArgumentsArray setResultsTimestamp(boolean addTimestamp) {
         timestampResults = addTimestamp;
+
+        return this;
     }
 
-    public void setResultsFileNameDateFormat(DateTimeFormatter dateFormat) {
-        this.dateFormat = dateFormat;
+    public JMeterArgumentsArray setResultsFileNameDateFormat(String dateFormat) {
+        if (isSet(dateFormat)) {
+            try {
+                this.dateFormat = DateTimeFormat.forPattern(dateFormat);
+            } catch (Exception ex) {
+                LOGGER.error("'" + dateFormat + "' is an invalid DateTimeFormat.  Defaulting to Standard ISO_8601.", ex);
+            }
+        }
+
+        return this;
     }
 
-    public void appendTimestamp(boolean append) {
+    public JMeterArgumentsArray appendTimestamp(boolean append) {
         appendTimestamp = append;
+
+        return this;
     }
 
-    public String getResultsLogFileName() {
-        return resultsLogFileName;
-    }
-
-    public void setResultFileOutputFormatIsCSV(boolean isCSVFormat) {
+    public JMeterArgumentsArray setResultFileOutputFormatIsCSV(boolean isCSVFormat) {
         if (isCSVFormat) {
             resultFileExtension = ".csv";
         } else {
             resultFileExtension = ".jtl";
         }
+
+        return this;
     }
 
-    public void setTestFile(File value, File testFilesDirectory) {
-        if (isNotSet(value)) return;
+    public JMeterArgumentsArray setTestFile(File value, File testFilesDirectory) {
+        if (isNotSet(value)) return this;
         testFile = value.getAbsolutePath();
 
         String resultFilename = FilenameUtils.removeExtension(testFilesDirectory.toURI().relativize(value.toURI()).getPath().replace("\\", "/").replace("/", "_")
@@ -175,15 +204,19 @@ public class JMeterArgumentsArray {
         argumentList.add(TESTFILE_OPT);
         argumentList.add(LOGFILE_OPT);
         disableTests = false;
+
+        return this;
     }
 
-    public void setReportsDirectory(String reportDirectory) {
+    public JMeterArgumentsArray setReportsDirectory(String reportDirectory) {
         argumentList.add(REPORT_AT_END_OPT);
         argumentList.add(REPORT_OUTPUT_FOLDER_OPT);
         this.reportDirectory = reportDirectory;
+
+        return this;
     }
 
-    public void setServerMode(String exportedHostname, int port) {
+    public JMeterArgumentsArray setServerMode(String exportedHostname, int port) {
         argumentList.add(SERVER_OPT);
         disableTests = true;
         if (isSet(logsDirectory)) {
@@ -193,6 +226,12 @@ public class JMeterArgumentsArray {
             jmeterLogFileName = logsDirectory + File.separator + String.format("%s_%s.log", exportedHostname, port);
             argumentList.add(JMLOGFILE_OPT);
         }
+
+        return this;
+    }
+
+    public String getResultsLogFileName() {
+        return resultsLogFileName;
     }
 
     /**

@@ -13,14 +13,11 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.settings.Proxy;
 import org.apache.maven.settings.Settings;
-import org.joda.time.format.DateTimeFormat;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.lazerycode.jmeter.utility.UtilityFunctions.isSet;
 
 /**
  * JMeter Maven plugin.
@@ -237,29 +234,21 @@ public abstract class AbstractJMeterMojo extends AbstractMojo {
      * @throws MojoExecutionException
      */
     protected JMeterArgumentsArray computeJMeterArgumentsArray(boolean disableGUI, boolean isCSVFormat) throws MojoExecutionException {
-        JMeterArgumentsArray testArgs = new JMeterArgumentsArray(disableGUI, jmeterDirectory.getAbsolutePath());
-        testArgs.setResultsDirectory(resultsDirectory.getAbsolutePath());
-        testArgs.setResultFileOutputFormatIsCSV(isCSVFormat);
+        JMeterArgumentsArray testArgs = new JMeterArgumentsArray(disableGUI, jmeterDirectory.getAbsolutePath())
+                .setResultsDirectory(resultsDirectory.getAbsolutePath())
+                .setResultFileOutputFormatIsCSV(isCSVFormat)
+                .setProxyConfig(proxyConfig)
+                .setLogRootOverride(overrideRootLogLevel)
+                .setLogsDirectory(logsDirectory.getAbsolutePath())
+                .addACustomPropertiesFiles(customPropertiesFiles);
         if (generateReports && disableGUI) {
             testArgs.setReportsDirectory(reportDirectory.getAbsolutePath());
         }
         if (testResultsTimestamp) {
-            testArgs.setResultsTimestamp(true);
-            testArgs.appendTimestamp(appendResultsTimestamp);
-            if (isSet(resultsFileNameDateFormat)) {
-                try {
-                    testArgs.setResultsFileNameDateFormat(DateTimeFormat.forPattern(resultsFileNameDateFormat));
-                } catch (Exception ex) {
-                    getLog().error("'" + resultsFileNameDateFormat + "' is an invalid DateTimeFormat.  Defaulting to Standard ISO_8601.", ex);
-                }
-            }
+            testArgs.setResultsTimestamp(true)
+                    .appendTimestamp(appendResultsTimestamp)
+                    .setResultsFileNameDateFormat(resultsFileNameDateFormat);
         }
-        testArgs.setProxyConfig(proxyConfig);
-        for (File customPropertiesFile : customPropertiesFiles) {
-            testArgs.setACustomPropertiesFile(customPropertiesFile);
-        }
-        testArgs.setLogRootOverride(overrideRootLogLevel);
-        testArgs.setLogsDirectory(logsDirectory.getAbsolutePath());
 
         return testArgs;
     }

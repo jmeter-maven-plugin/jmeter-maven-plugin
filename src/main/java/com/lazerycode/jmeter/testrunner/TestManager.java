@@ -26,38 +26,88 @@ import static com.lazerycode.jmeter.configuration.RemoteArgumentsArrayBuilder.bu
  */
 public class TestManager {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(JMeterProcessBuilder.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TestManager.class);
 
-    private final JMeterArgumentsArray baseTestArgs;
-    private final File binDir;
-    private final File testFilesDirectory;
-    private final String[] testFilesIncluded;
-    private final String[] testFilesExcluded;
-    private final boolean suppressJMeterOutput;
-    private final RemoteConfiguration remoteServerConfiguration;
-    private final JMeterProcessJVMSettings jMeterProcessJVMSettings;
-    private long postTestPauseInSeconds;
-    private final String runtimeJarName;
+    private JMeterArgumentsArray baseTestArgs;
+
+    private File binDir;
+    private File testFilesDirectory;
+    private String[] testFilesIncluded = new String[]{"**/*.jmx"};
+    private String[] testFilesExcluded = new String[0];
+    private boolean suppressJMeterOutput;
+    private RemoteConfiguration remoteServerConfiguration;
+    private JMeterProcessJVMSettings jMeterProcessJVMSettings;
+    private long postTestPauseInSeconds = 0L;
+    private String runtimeJarName;
     private File reportDirectory;
-    private boolean generateReports;
+    private boolean generateReports = false;
 
-    public TestManager(JMeterArgumentsArray baseTestArgs, File testFilesDirectory, List<String> testFilesIncluded, List<String> testFilesExcluded, RemoteConfiguration remoteServerConfiguration, boolean suppressJMeterOutput, File binDir, JMeterProcessJVMSettings jMeterProcessJVMSettings, String runtimeJarName,
-                       File reportDirectory, boolean generateReports) {
-        this.binDir = binDir;
-        this.baseTestArgs = baseTestArgs;
-        this.testFilesDirectory = testFilesDirectory;
-        this.remoteServerConfiguration = remoteServerConfiguration;
-        this.suppressJMeterOutput = suppressJMeterOutput;
-        this.jMeterProcessJVMSettings = jMeterProcessJVMSettings;
-        this.runtimeJarName = runtimeJarName;
-        this.testFilesExcluded = testFilesExcluded.toArray(new String[0]);
-        this.reportDirectory = reportDirectory;
-        this.generateReports = generateReports;
-        if (!testFilesIncluded.isEmpty()) {
-            this.testFilesIncluded = testFilesIncluded.toArray(new String[0]);
-        } else {
-            this.testFilesIncluded = new String[]{"**/*.jmx"};
+    public TestManager setBinDir(File file) {
+        this.binDir = file;
+
+        return this;
+    }
+
+    public TestManager setBaseTestArgs(JMeterArgumentsArray argumentsArray) {
+        this.baseTestArgs = argumentsArray;
+
+        return this;
+    }
+
+    public TestManager setTestFilesDirectory(File file) {
+        this.testFilesDirectory = file;
+
+        return this;
+    }
+
+    public TestManager setRemoteServerConfiguration(RemoteConfiguration configuration) {
+        this.remoteServerConfiguration = configuration;
+
+        return this;
+    }
+
+    public TestManager setSuppressJMeterOutput(Boolean value) {
+        this.suppressJMeterOutput = value;
+
+        return this;
+    }
+
+    public TestManager setJMeterProcessJVMSettings(JMeterProcessJVMSettings settings) {
+        this.jMeterProcessJVMSettings = settings;
+
+        return this;
+    }
+
+    public TestManager setRuntimeJarName(String value) {
+        this.runtimeJarName = value;
+
+        return this;
+    }
+
+    public TestManager setReportDirectory(File file) {
+        this.reportDirectory = file;
+
+        return this;
+    }
+
+    public TestManager setGenerateReports(Boolean value) {
+        this.generateReports = value;
+
+        return this;
+    }
+
+    public TestManager setTestFilesExcluded(List<String> values) {
+        this.testFilesExcluded = values.toArray(new String[0]);
+
+        return this;
+    }
+
+    public TestManager setTestFilesIncluded(List<String> values) {
+        if (!values.isEmpty()) {
+            this.testFilesIncluded = values.toArray(new String[0]);
         }
+
+        return this;
     }
 
     /**
@@ -65,19 +115,62 @@ public class TestManager {
      *
      * @param postTestPauseInSeconds Number of seconds to pause after a test has completed
      */
-    public void setPostTestPauseInSeconds(String postTestPauseInSeconds) {
-        Long testPause = null;
+    public TestManager setPostTestPauseInSeconds(String postTestPauseInSeconds) {
         try {
-            testPause = Long.parseLong(postTestPauseInSeconds);
+            this.postTestPauseInSeconds = Long.parseLong(postTestPauseInSeconds);
         } catch (NumberFormatException ex) {
-            LOGGER.error("Error parsing value {} of <postTestPauseInSeconds>, will default to 0",
-                    postTestPauseInSeconds, ex);
-        }
-        if (null == testPause) {
-            testPause = 0L;
+            LOGGER.error("Error parsing <postTestPauseInSeconds>{}</postTestPauseInSeconds> to Long, will default to 0L", postTestPauseInSeconds);
         }
 
-        this.postTestPauseInSeconds = testPause;
+        return this;
+    }
+
+    JMeterArgumentsArray getBaseTestArgs() {
+        return baseTestArgs;
+    }
+
+    File getBinDir() {
+        return binDir;
+    }
+
+    File getTestFilesDirectory() {
+        return testFilesDirectory;
+    }
+
+    String[] getTestFilesIncluded() {
+        return testFilesIncluded;
+    }
+
+    String[] getTestFilesExcluded() {
+        return testFilesExcluded;
+    }
+
+    boolean isSuppressJMeterOutput() {
+        return suppressJMeterOutput;
+    }
+
+    RemoteConfiguration getRemoteServerConfiguration() {
+        return remoteServerConfiguration;
+    }
+
+    JMeterProcessJVMSettings getJMeterProcessJVMSettings() {
+        return jMeterProcessJVMSettings;
+    }
+
+    long getPostTestPauseInSeconds() {
+        return postTestPauseInSeconds;
+    }
+
+    String getRuntimeJarName() {
+        return runtimeJarName;
+    }
+
+    File getReportDirectory() {
+        return reportDirectory;
+    }
+
+    boolean isGenerateReports() {
+        return generateReports;
     }
 
     /**

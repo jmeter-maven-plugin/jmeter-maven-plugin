@@ -39,16 +39,25 @@ public class RunJMeterMojo extends AbstractJMeterMojo {
 
         TestConfig testConfig = new TestConfig(new File(testConfigFile));
         JMeterArgumentsArray testArgs = computeJMeterArgumentsArray(true, testConfig.getResultsOutputIsCSVFormat());
+        JMeterConfigurationHolder configuration = JMeterConfigurationHolder.getInstance();
+
+        remoteConfig.setPropertiesMap(configuration.getPropertiesMap());
         jMeterProcessJVMSettings.setHeadlessDefaultIfRequired();
-        remoteConfig.setPropertiesMap(JMeterConfigurationHolder.getInstance().getPropertiesMap());
-
         copyFilesInTestDirectory(testFilesDirectory, testFilesBuildDirectory);
+        TestManager jMeterTestManager = new TestManager()
+                .setBaseTestArgs(testArgs)
+                .setTestFilesDirectory(testFilesBuildDirectory)
+                .setTestFilesIncluded(testFilesIncluded)
+                .setTestFilesExcluded(testFilesExcluded)
+                .setRemoteServerConfiguration(remoteConfig)
+                .setSuppressJMeterOutput(suppressJMeterOutput)
+                .setBinDir(configuration.getWorkingDirectory())
+                .setJMeterProcessJVMSettings(jMeterProcessJVMSettings)
+                .setRuntimeJarName(configuration.getRuntimeJarName())
+                .setReportDirectory(reportDirectory)
+                .setGenerateReports(generateReports)
+                .setPostTestPauseInSeconds(postTestPauseInSeconds);
 
-        TestManager jMeterTestManager =
-                new TestManager(testArgs, testFilesBuildDirectory, testFilesIncluded, testFilesExcluded,
-                        remoteConfig, suppressJMeterOutput, JMeterConfigurationHolder.getInstance().getWorkingDirectory(), jMeterProcessJVMSettings,
-                        JMeterConfigurationHolder.getInstance().getRuntimeJarName(), reportDirectory, generateReports);
-        jMeterTestManager.setPostTestPauseInSeconds(postTestPauseInSeconds);
         getLog().info(" ");
         if (proxyConfig != null) {
             getLog().info(this.proxyConfig.toString());

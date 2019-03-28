@@ -25,8 +25,6 @@ import static com.lazerycode.jmeter.utility.UtilityFunctions.isSet;
 /**
  * JMeter Maven plugin.
  * This is a base class for the JMeter mojos.
- *
- * @author Tim McCune
  */
 @SuppressWarnings({"UnusedDeclaration", "FieldCanBeLocal", "JavaDoc"}) // Mojos get their fields set via reflection
 public abstract class AbstractJMeterMojo extends AbstractMojo {
@@ -172,7 +170,7 @@ public abstract class AbstractJMeterMojo extends AbstractMojo {
     protected MojoExecution mojoExecution;
 
     @Parameter(defaultValue = "${session}", readonly = true)
-    private MavenSession session;
+    protected MavenSession session;
 
     /**
      * Skip the JMeter tests
@@ -212,18 +210,18 @@ public abstract class AbstractJMeterMojo extends AbstractMojo {
     public final void execute() throws MojoExecutionException, MojoFailureException {
         if (skipTests) {
             if (session.getGoals().contains("jmeter:gui")) {
-                if (!"default-cli".equals(mojoExecution.getExecutionId()) &&
-                        !"compile".equals(mojoExecution.getLifecyclePhase())) {
+                if (!"default-cli".equals(mojoExecution.getExecutionId()) && !"compile".equals(mojoExecution.getLifecyclePhase())) {
                     getLog().info("Performance tests are skipped.");
+
                     return;
                 }
             } else {
                 getLog().info("Performance tests are skipped.");
+
                 return;
             }
         }
 
-        // load maven proxy if needed
         if (useMavenProxy && proxyConfig == null) {
             loadMavenProxy();
         }
@@ -270,32 +268,26 @@ public abstract class AbstractJMeterMojo extends AbstractMojo {
      * Try to load the active maven proxy.
      */
     protected void loadMavenProxy() {
-        if (settings == null)
+        if (null == settings) {
             return;
+        }
 
-        try {
-            Proxy mvnProxy = settings.getActiveProxy();
-
-            if (mvnProxy != null) {
-
-                ProxyConfiguration newProxyConf = new ProxyConfiguration();
-                newProxyConf.setHost(mvnProxy.getHost());
-                newProxyConf.setPort(mvnProxy.getPort());
-                newProxyConf.setUsername(mvnProxy.getUsername());
-                newProxyConf.setPassword(mvnProxy.getPassword());
-                newProxyConf.setHostExclusions(mvnProxy.getNonProxyHosts());
-                proxyConfig = newProxyConf;
-
-                getLog().info("Maven proxy loaded successfully");
-            } else {
-                getLog().warn("No maven proxy found, but useMavenProxy set to true.");
-            }
-        } catch (Exception e) {
-            getLog().error("Error while loading maven proxy", e);
+        Proxy mvnProxy = settings.getActiveProxy();
+        if (mvnProxy != null) {
+            ProxyConfiguration newProxyConfiguration = new ProxyConfiguration();
+            newProxyConfiguration.setHost(mvnProxy.getHost());
+            newProxyConfiguration.setPort(mvnProxy.getPort());
+            newProxyConfiguration.setUsername(mvnProxy.getUsername());
+            newProxyConfiguration.setPassword(mvnProxy.getPassword());
+            newProxyConfiguration.setHostExclusions(mvnProxy.getNonProxyHosts());
+            proxyConfig = newProxyConfiguration;
+            getLog().info("Maven proxy loaded successfully");
+        } else {
+            getLog().warn("No maven proxy found, however useMavenProxy is set to true!");
         }
     }
 
-    static void copyFilesInTestDirectory(File sourceDirectory, File destinationDirectory) throws MojoExecutionException { // NOSONAR
+    static void copyFilesInTestDirectory(File sourceDirectory, File destinationDirectory) throws MojoExecutionException {
         try {
             FileUtils.copyDirectory(sourceDirectory, destinationDirectory);
         } catch (IOException e) {

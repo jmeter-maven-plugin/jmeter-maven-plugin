@@ -1,6 +1,8 @@
 package com.lazerycode.jmeter.mojo;
 
+import com.lazerycode.jmeter.configuration.JMeterArgumentsArray;
 import com.lazerycode.jmeter.configuration.ProxyConfiguration;
+import com.lazerycode.jmeter.utility.UtilityFunctions;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -212,5 +214,116 @@ public class AbstractJMeterMojoTest {
         destinationDirectory.deleteOnExit();
 
         RunJMeterMojo.copyFilesInTestDirectory(sourceDirectory, destinationDirectory);
+    }
+
+    @Test
+    public void computeJMeterArgumentsArrayReturnsExpectedArray() throws Exception {
+        File resultsDirectory = Files.createTempDirectory(Paths.get(systemTempDirectory), "temp_results_destination_").toFile();
+        resultsDirectory.deleteOnExit();
+        File logsDirectory = Files.createTempDirectory(Paths.get(systemTempDirectory), "temp_logs_destination_").toFile();
+        logsDirectory.deleteOnExit();
+        File jmeterDirectory = Files.createTempDirectory(Paths.get(systemTempDirectory), "temp_jmeter_destination_").toFile();
+        jmeterDirectory.deleteOnExit();
+        File testFile = Files.createTempFile(Paths.get(systemTempDirectory), "test_file_", "").toFile();
+        jmeterDirectory.deleteOnExit();
+        File testFileDirectory = new File(systemTempDirectory);
+
+        JMeterArgumentsArray expected = new JMeterArgumentsArray(true, jmeterDirectory.getAbsolutePath())
+                .setLogsDirectory(logsDirectory.getAbsolutePath())
+                .setResultsDirectory(resultsDirectory.getAbsolutePath())
+                .setResultFileOutputFormatIsCSV(true)
+                .setProxyConfig(new ProxyConfiguration())
+                .setLogRootOverride(null)
+                .addACustomPropertiesFiles(null)
+                .setTestFile(testFile, testFileDirectory);
+
+        AbstractJMeterMojo testSubject = createtMojoInstanceWithTestLogging();
+        testSubject.resultsDirectory = resultsDirectory;
+        testSubject.logsDirectory = logsDirectory;
+        testSubject.jmeterDirectory = jmeterDirectory;
+        testSubject.customPropertiesFiles = null;
+        testSubject.generateReports = false;
+        testSubject.testResultsTimestamp = false;
+        JMeterArgumentsArray actual = testSubject.computeJMeterArgumentsArray(true, true)
+                .setTestFile(testFile, testFileDirectory);
+
+        assertThat(UtilityFunctions.humanReadableCommandLineOutput(actual.buildArgumentsArray())).isEqualTo(UtilityFunctions.humanReadableCommandLineOutput(expected.buildArgumentsArray()));
+    }
+
+    @Test
+    public void computeJMeterArgumentsArrayReturnsExpectedArrayWithGenerateReportsEnabled() throws Exception {
+        File resultsDirectory = Files.createTempDirectory(Paths.get(systemTempDirectory), "temp_results_destination_").toFile();
+        resultsDirectory.deleteOnExit();
+        File logsDirectory = Files.createTempDirectory(Paths.get(systemTempDirectory), "temp_logs_destination_").toFile();
+        logsDirectory.deleteOnExit();
+        File jmeterDirectory = Files.createTempDirectory(Paths.get(systemTempDirectory), "temp_jmeter_destination_").toFile();
+        jmeterDirectory.deleteOnExit();
+        File reportsDirectory = Files.createTempDirectory(Paths.get(systemTempDirectory), "temp_reports_destination_").toFile();
+        reportsDirectory.deleteOnExit();
+        File testFile = Files.createTempFile(Paths.get(systemTempDirectory), "test_file_", "").toFile();
+        jmeterDirectory.deleteOnExit();
+        File testFileDirectory = new File(systemTempDirectory);
+
+        JMeterArgumentsArray expected = new JMeterArgumentsArray(true, jmeterDirectory.getAbsolutePath())
+                .setLogsDirectory(logsDirectory.getAbsolutePath())
+                .setReportsDirectory(reportsDirectory.getAbsolutePath())
+                .setResultsDirectory(resultsDirectory.getAbsolutePath())
+                .setResultFileOutputFormatIsCSV(true)
+                .setProxyConfig(new ProxyConfiguration())
+                .setLogRootOverride(null)
+                .addACustomPropertiesFiles(null)
+                .setTestFile(testFile, testFileDirectory);
+
+        AbstractJMeterMojo testSubject = createtMojoInstanceWithTestLogging();
+        testSubject.resultsDirectory = resultsDirectory;
+        testSubject.logsDirectory = logsDirectory;
+        testSubject.jmeterDirectory = jmeterDirectory;
+        testSubject.reportDirectory = reportsDirectory;
+        testSubject.customPropertiesFiles = null;
+        testSubject.generateReports = true;
+        testSubject.testResultsTimestamp = false;
+        JMeterArgumentsArray actual = testSubject.computeJMeterArgumentsArray(true, true)
+                .setTestFile(testFile, testFileDirectory);
+
+        assertThat(UtilityFunctions.humanReadableCommandLineOutput(actual.buildArgumentsArray())).isEqualTo(UtilityFunctions.humanReadableCommandLineOutput(expected.buildArgumentsArray()));
+    }
+
+    @Test
+    public void computeJMeterArgumentsArrayReturnsExpectedArrayWithTestResultsTimeStampEnabled() throws Exception {
+        File resultsDirectory = Files.createTempDirectory(Paths.get(systemTempDirectory), "temp_results_destination_").toFile();
+        resultsDirectory.deleteOnExit();
+        File logsDirectory = Files.createTempDirectory(Paths.get(systemTempDirectory), "temp_logs_destination_").toFile();
+        logsDirectory.deleteOnExit();
+        File jmeterDirectory = Files.createTempDirectory(Paths.get(systemTempDirectory), "temp_jmeter_destination_").toFile();
+        jmeterDirectory.deleteOnExit();
+        File testFile = Files.createTempFile(Paths.get(systemTempDirectory), "test_file_", "").toFile();
+        jmeterDirectory.deleteOnExit();
+        File testFileDirectory = new File(systemTempDirectory);
+
+        JMeterArgumentsArray expected = new JMeterArgumentsArray(true, jmeterDirectory.getAbsolutePath())
+                .setLogsDirectory(logsDirectory.getAbsolutePath())
+                .setResultsDirectory(resultsDirectory.getAbsolutePath())
+                .setResultFileOutputFormatIsCSV(true)
+                .setProxyConfig(new ProxyConfiguration())
+                .setResultsTimestamp(true)
+                .appendTimestamp(true)
+                .setResultsFileNameDateFormat("YYYYMM")
+                .setLogRootOverride(null)
+                .addACustomPropertiesFiles(null)
+                .setTestFile(testFile, testFileDirectory);
+
+        AbstractJMeterMojo testSubject = createtMojoInstanceWithTestLogging();
+        testSubject.resultsDirectory = resultsDirectory;
+        testSubject.logsDirectory = logsDirectory;
+        testSubject.jmeterDirectory = jmeterDirectory;
+        testSubject.customPropertiesFiles = null;
+        testSubject.generateReports = false;
+        testSubject.testResultsTimestamp = true;
+        testSubject.appendResultsTimestamp = true;
+        testSubject.resultsFileNameDateFormat = "YYYYMM";
+        JMeterArgumentsArray actual = testSubject.computeJMeterArgumentsArray(true, true)
+                .setTestFile(testFile, testFileDirectory);
+
+        assertThat(UtilityFunctions.humanReadableCommandLineOutput(actual.buildArgumentsArray())).isEqualTo(UtilityFunctions.humanReadableCommandLineOutput(expected.buildArgumentsArray()));
     }
 }

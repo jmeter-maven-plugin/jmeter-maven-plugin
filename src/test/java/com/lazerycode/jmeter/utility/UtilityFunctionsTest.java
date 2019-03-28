@@ -1,6 +1,5 @@
 package com.lazerycode.jmeter.utility;
 
-import com.lazerycode.jmeter.utility.UtilityFunctions;
 import org.junit.Test;
 
 import java.io.File;
@@ -27,9 +26,9 @@ public class UtilityFunctionsTest {
     @Test
     public void isNotSetMapTest() {
         Map testMap = null;
-        assertThat(UtilityFunctions.isNotSet(testMap)).isTrue();
-
         Map testMap2 = Collections.emptyMap();
+
+        assertThat(UtilityFunctions.isNotSet(testMap)).isTrue();
         assertThat(UtilityFunctions.isNotSet(testMap2)).isTrue();
     }
 
@@ -72,5 +71,10 @@ public class UtilityFunctionsTest {
         } catch (InvocationTargetException e) {
             assertThat(e.getTargetException().getMessage()).isEqualTo("This class is non-instantiable.");
         }
+    }
+
+    @Test(expected = InstantiationError.class)
+    public void cannotInstantiateClass() {
+        new UtilityFunctions();
     }
 }

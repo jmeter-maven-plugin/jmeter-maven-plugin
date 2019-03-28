@@ -128,4 +128,29 @@ public class TestConfigTest {
         testConfig.setResultsOutputIsCSVFormat(true);
         testConfig.writeResultFilesConfigTo(tempFileLocation);
     }
+
+    @Test
+    public void checkEqualsWorksForIdenticalObject() throws MojoExecutionException {
+        InputStream configFile = this.getClass().getResourceAsStream(testConfigFile);
+        TestConfig testConfig = new TestConfig(configFile);
+
+        assertThat(testConfig.equals(testConfig)).isTrue();
+    }
+
+    @Test
+    public void checkEqualsWorksForNull() throws MojoExecutionException {
+        InputStream configFile = this.getClass().getResourceAsStream(testConfigFile);
+        TestConfig testConfig = new TestConfig(configFile);
+
+        assertThat(testConfig.equals(null)).isFalse();
+    }
+
+    @Test
+    public void checkEqualsWorksForDifferentClassType() throws MojoExecutionException {
+        InputStream configFile = this.getClass().getResourceAsStream(testConfigFile);
+        TestConfig testConfig = new TestConfig(configFile);
+        String notTestConfig = "nope";
+
+        assertThat(testConfig.equals(notTestConfig)).isFalse();
+    }
 }

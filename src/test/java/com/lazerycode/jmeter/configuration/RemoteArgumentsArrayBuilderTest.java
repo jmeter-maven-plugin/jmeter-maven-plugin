@@ -6,6 +6,8 @@ import com.lazerycode.jmeter.properties.PropertiesMapping;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -53,5 +55,22 @@ public class RemoteArgumentsArrayBuilderTest {
         List<String> result = RemoteArgumentsArrayBuilder.buildRemoteArgumentsArray(inputMap);
 
         assertThat(result.isEmpty()).isTrue();
+    }
+
+    @Test(expected = InstantiationError.class)
+    public void cannotInstantiateClass() {
+        new RemoteArgumentsArrayBuilder();
+    }
+
+    @Test
+    public void checkPrivateConstructor() throws Exception {
+        Constructor<RemoteArgumentsArrayBuilder> utilityFunctions;
+        try {
+            utilityFunctions = RemoteArgumentsArrayBuilder.class.getDeclaredConstructor();
+            utilityFunctions.setAccessible(true);
+            utilityFunctions.newInstance();
+        } catch (InvocationTargetException e) {
+            assertThat(e.getTargetException().getMessage()).isEqualTo("This class is non-instantiable.");
+        }
     }
 }

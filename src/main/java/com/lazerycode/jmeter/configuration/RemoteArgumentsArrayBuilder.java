@@ -11,6 +11,13 @@ import java.util.Properties;
 
 public class RemoteArgumentsArrayBuilder {
 
+    /**
+     * Make constructor private as this is a non-instantiable helper classes
+     */
+    RemoteArgumentsArrayBuilder() throws InstantiationError {
+        throw new InstantiationError("This class is non-instantiable.");
+    }
+
     public static List<String> buildRemoteArgumentsArray(Map<ConfigurationFiles, PropertiesMapping> propertiesMap) {
         List<String> result = new ArrayList<>();
         for (Entry<ConfigurationFiles, PropertiesMapping> entry : propertiesMap.entrySet()) {

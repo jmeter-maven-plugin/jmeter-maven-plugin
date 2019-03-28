@@ -58,6 +58,14 @@ public class JMeterArgumentsArrayTest {
         testArgs.buildArgumentsArray();
     }
 
+    @Test(expected = MojoExecutionException.class)
+    public void nullTestFileIsNotAddedToArguments() throws Exception {
+        JMeterArgumentsArray testArgs = new JMeterArgumentsArray(disableGUI, "target/jmeter/");
+        testArgs.setTestFile(null, testFileDirectory);
+
+        testArgs.buildArgumentsArray();
+    }
+
     @Test
     public void validateDefaultCommandLineOutputWithGUIDisabled() throws Exception {
         JMeterArgumentsArray testArgs = new JMeterArgumentsArray(disableGUI, "target/jmeter/");
@@ -87,6 +95,17 @@ public class JMeterArgumentsArrayTest {
 
         assertThat(UtilityFunctions.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()))
                 .isEqualTo("-d target/jmeter/ -l " + testArgs.getResultsLogFileName() + " -n -q " + testPropFile.getAbsolutePath() + " -t " + testFilePath);
+    }
+
+    @Test
+    public void emptyCustomPropertiesFileIsNotAddedToArguments() throws Exception {
+        JMeterArgumentsArray testArgs = new JMeterArgumentsArray(disableGUI, "target/jmeter/");
+        testArgs.setTestFile(testFile, testFileDirectory);
+
+        testArgs.setACustomPropertiesFile(null);
+
+        assertThat(UtilityFunctions.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()))
+                .isEqualTo("-d target/jmeter/ -l " + testArgs.getResultsLogFileName() + " -n -t " + testFilePath);
     }
 
     @Test
@@ -164,6 +183,17 @@ public class JMeterArgumentsArrayTest {
                 .isEqualTo("-d target/jmeter/" + " -l " + testArgs.getResultsLogFileName() + " -n -t " + testFilePath);
         assertThat(listAppender.list.size()).isEqualTo(1);
         assertThat(listAppender.list.get(0).toString()).isEqualTo(String.format("[WARN] Unknown log level %s", randomLogLevel));
+    }
+
+    @Test
+    public void nullProxyConfigDoesNotAddProxyArguments() throws Exception {
+        JMeterArgumentsArray testArgs = new JMeterArgumentsArray(disableGUI, "target/jmeter/");
+        testArgs.setTestFile(testFile, testFileDirectory);
+
+        testArgs.setProxyConfig(null);
+
+        assertThat(UtilityFunctions.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()))
+                .isEqualTo("-d target/jmeter/ -l " + testArgs.getResultsLogFileName() + " -n -t " + testFilePath);
     }
 
     @Test
@@ -309,7 +339,18 @@ public class JMeterArgumentsArrayTest {
     }
 
     @Test
-    public void validateSetRemoteStart() throws Exception {
+    public void emptyServerListDoesNotAddServerListArguments() throws MojoExecutionException {
+        JMeterArgumentsArray testArgs = new JMeterArgumentsArray(disableGUI, "target/jmeter/");
+        testArgs.setTestFile(testFile, testFileDirectory);
+
+        testArgs.setRemoteStartServerList(" ");
+
+        assertThat(UtilityFunctions.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()))
+                .isEqualTo("-d target/jmeter/ -l " + testArgs.getResultsLogFileName() + " -n -t " + testFilePath);
+    }
+
+    @Test
+    public void validateSetRemoteStartServerList() throws Exception {
         JMeterArgumentsArray testArgs = new JMeterArgumentsArray(disableGUI, "target/jmeter/");
         testArgs.setTestFile(testFile, testFileDirectory);
 

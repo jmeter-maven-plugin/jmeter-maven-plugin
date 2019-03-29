@@ -4,14 +4,17 @@
 
 ### Enhancements ###
 
+* Issue [319](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues/319) Support Apache JMeter 5.1.1.
+* Set a default of `<generateReports>false</generateReports>`.  Not everybody wants reports and they take time to generate so they should always be disabled by default.  It will also help reduce confusion around the results file format being ignored if you don't explicitly disable report generation.
+
+### Bug Fixes ###
+
 * Issue [325](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues/325) Fix error where we were always logging scanned file type as .jtl.
 * Issue [323](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues/323) Fix error where existing reports dir would cause build to fail.
 * Issue [318](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues/318) Fix forceHeadless override logic.
-* Issue [319](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues/319) Support Apache JMeter 5.1.1.
 * Issue [321](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues/321) Fix bug where server log name was malformed if server host was not explicitly set
 * Issue [320](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues/320) RemoteConfiguration toString printed server list under the tag start.
 * Issue [321](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues/321) Minor logging bug.  Was previously logging that JMeter GUI was being shut down when in fact JMeter server was being shut down.
-* Set a default of `<generateReports>false</generateReports>`.  Not everybody wants reports and they take time to generate so they should always be disabled by default.  It will also help reduce confusion around the results file format being ignored if you don't explicitly disable report generation.
 
 ## Version 2.8.6 Release Notes (20th february 2019)
 

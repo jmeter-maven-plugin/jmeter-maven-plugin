@@ -5,6 +5,8 @@ import com.lazerycode.jmeter.configuration.JMeterProcessJVMSettings;
 import com.lazerycode.jmeter.configuration.ProxyConfiguration;
 import com.lazerycode.jmeter.configuration.RemoteConfiguration;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.JavaVersion;
+import org.apache.commons.lang3.SystemUtils;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecution;
@@ -205,6 +207,9 @@ public abstract class AbstractJMeterMojo extends AbstractMojo {
 
     @Override
     public final void execute() throws MojoExecutionException, MojoFailureException {
+        if (!SystemUtils.isJavaVersionAtLeast(JavaVersion.JAVA_1_8)) {
+            throw new MojoExecutionException(String.format("This plugin requires a minimum java version of %s!", JavaVersion.JAVA_1_8.toString()));
+        }
         if (skipTests) {
             if (session.getGoals().contains("jmeter:gui")) {
                 if (!"default-cli".equals(mojoExecution.getExecutionId()) && !"compile".equals(mojoExecution.getLifecyclePhase())) {

@@ -4,6 +4,7 @@
 
 ### Enhancements ###
 
+* Issue [325](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues/325) Fix error where we were always logging scanned file type as .jtl.
 * Issue [323](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues/323) Fix error where existing reports dir would cause build to fail.
 * Issue [318](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues/318) Fix forceHeadless override logic.
 * Issue [319](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues/319) Support Apache JMeter 5.1.1.

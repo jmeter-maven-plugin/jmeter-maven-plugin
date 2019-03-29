@@ -65,15 +65,15 @@ public class ResultScanner implements IResultScanner {
         if (!file.exists()) {
             throw new MojoExecutionException("Unable to find " + file.getAbsolutePath());
         }
-        LOGGER.info("Parsing results file '{}' in format '{}'", file, format);
-
+        LOGGER.info(" ");
+        LOGGER.info("Parsing results file '{}' as type: {}", file, format);
         if (countFailures) {
             if (csv) {
                 failureCount = failureCount + scanCsvForValue(file, CSV_REQUEST_FAILURE);
             } else {
                 failureCount = failureCount + scanXmlForPattern(file, XML_REQUEST_FAILURE_PATTERN);
             }
-            LOGGER.info("Scanned file '{}', number of results in failure:'{}'", file.getAbsolutePath(), failureCount);
+            LOGGER.info("Number of failures in '{}': {}", file.getName(), failureCount);
         }
         if (countSuccesses) {
             if (csv) {
@@ -81,7 +81,7 @@ public class ResultScanner implements IResultScanner {
             } else {
                 successCount = successCount + scanXmlForPattern(file, XML_REQUEST_SUCCESS_PATTERN);
             }
-            LOGGER.info("Scanned file '{}', number of results in success:'{}'", file.getAbsolutePath(), successCount);
+            LOGGER.info("Number of successes in '{}': {}", file.getName(), successCount);
         }
     }
 

@@ -78,7 +78,7 @@ public class CheckResultsMojo extends AbstractJMeterMojo {
             }
             getLog().info(" ");
             getLog().info(LINE_SEPARATOR);
-            getLog().info("P E R F O R M A N C E  T E S T  R E S U L T S");
+            getLog().info("P E R F O R M A N C E    T E S T    R E S U L T S");
             getLog().info(LINE_SEPARATOR);
             getLog().info(" ");
             getLog().info(String.format("Result (.%s) files scanned: %s", resultFormat.toLowerCase(), testConfig.getResultsFileLocations().size()));

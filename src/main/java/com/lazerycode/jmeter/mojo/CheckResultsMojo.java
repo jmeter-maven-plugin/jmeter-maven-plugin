@@ -66,7 +66,7 @@ public class CheckResultsMojo extends AbstractJMeterMojo {
         }
         if (scanResultsForSuccessfulRequests || scanResultsForFailedRequests) {
             TestConfig testConfig = new TestConfig(new File(testConfigFile));
-            String resultFormat = testConfig.getResultsOutputIsCSVFormat() ? ".csv" : ".jtl";
+            String resultFormat = testConfig.getResultsOutputIsCSVFormat() ? "CSV" : "JTL";
             getLog().info(String.format("Will scan results using format: %s", resultFormat));
             ResultScanner resultScanner = new ResultScanner(
                     scanResultsForSuccessfulRequests,
@@ -77,7 +77,7 @@ public class CheckResultsMojo extends AbstractJMeterMojo {
                 resultScanner.parseResultFile(new File(resultFileLocation));
             }
             getLog().info("\nPerformance Test Results\n");
-            getLog().info(String.format("Result (%s) files scanned: %s", resultFormat, testConfig.getResultsFileLocations().size()));
+            getLog().info(String.format("Result (.%s) files scanned: %s", resultFormat.toLowerCase(), testConfig.getResultsFileLocations().size()));
             getLog().info(String.format("Successful requests:         %s", resultScanner.getSuccessCount()));
             getLog().info(String.format("Failed requests:             %s", resultScanner.getFailureCount()));
             TestFailureDecider decider = new TestFailureDecider(ignoreResultFailures, errorRateThresholdInPercent, resultScanner);

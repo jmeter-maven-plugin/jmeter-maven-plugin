@@ -4,6 +4,7 @@
 
 ### Enhancements ###
 
+* Issue [323](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues/323) Fix error where existing reports dir would cause build to fail.
 * Issue [318](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues/318) Fix forceHeadless override logic.
 * Issue [319](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues/319) Support Apache JMeter 5.1.1.
 * Issue [321](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues/321) Fix bug where server log name was malformed if server host was not explicitly set

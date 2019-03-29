@@ -189,7 +189,7 @@ public class TestManager {
             if (generateReports) {
                 File outputReportFolder = new File(reportDirectory + File.separator + FilenameUtils.removeExtension(file));
                 LOGGER.info("Will generate HTML report in {}", outputReportFolder.getAbsolutePath());
-                if (outputReportFolder.mkdirs()) {
+                if (outputReportFolder.exists() || outputReportFolder.mkdirs()) {
                     thisTestArgs.setReportsDirectory(outputReportFolder.getAbsolutePath());
                 } else {
                     throw new MojoExecutionException("Unable to create report output folder:" + outputReportFolder.getAbsolutePath());

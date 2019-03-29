@@ -7,7 +7,6 @@ import com.lazerycode.jmeter.properties.PropertiesMapping;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -281,36 +280,47 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
     /**
      * Configure a local instance of JMeter
      *
-     * @throws MojoExecutionException
-     * @throws MojoFailureException
+     * @throws MojoExecutionException Exception
      */
     @Override
-    public void doExecute() throws MojoExecutionException, MojoFailureException {
+    public void doExecute() throws MojoExecutionException {
         processedArtifacts.clear();
         parsedExcludedArtifacts.clear();
         JMeterConfigurationHolder.getInstance().resetConfiguration();
         setupExcludedArtifacts(excludedArtifacts);
         getLog().info(LINE_SEPARATOR);
-        getLog().info(" Configuring JMeter...");
+        getLog().info("Configuring JMeter...");
         getLog().info(LINE_SEPARATOR);
-        getLog().info(" Building JMeter directory structure...");
+        getLog().info("Building JMeter directory structure...");
         generateJMeterDirectoryTree();
-        getLog().info(" Configuring JMeter artifacts :" + jmeterArtifacts);
+        getLog().info(String.format("Configuring JMeter artifacts: %s", jmeterArtifacts));
         configureJMeterArtifacts();
-        getLog().info(" Populating JMeter directory ...");
+        getLog().info("Populating JMeter directory...");
         populateJMeterDirectoryTree();
-        getLog().info(" Copying extensions " + jmeterExtensions + " to JMeter lib/ext directory "
-                + libExtDirectory + " with downloadExtensionDependencies set to " + downloadExtensionDependencies + " ...");
+        getLog().info(String.format(
+                "Copying extensions %s to JMeter lib/ext directory %s with downloadExtensionDependencies set to %s..."
+                , jmeterExtensions
+                , libExtDirectory
+                , downloadExtensionDependencies
+        ));
         copyExplicitLibraries(jmeterExtensions, libExtDirectory, downloadExtensionDependencies);
-        getLog().info(" Copying  JUnit libraries " + junitLibraries + " to JMeter junit lib directory "
-                + libJUnitDirectory + " with downloadLibraryDependencies set to " + downloadLibraryDependencies + " ...");
+        getLog().info(String.format(
+                "Copying JUnit libraries %s to JMeter junit lib directory %s with downloadLibraryDependencies set to %s..."
+                , junitLibraries
+                , libJUnitDirectory
+                , downloadLibraryDependencies
+        ));
         copyExplicitLibraries(junitLibraries, libJUnitDirectory, downloadLibraryDependencies);
-        getLog().info(" Copying test libraries " + testPlanLibraries + " to JMeter lib directory "
-                + libDirectory + " with downloadLibraryDependencies set to " + downloadLibraryDependencies + " ...");
+        getLog().info(String.format(
+                "Copying test libraries %s to JMeter lib directory %s with downloadLibraryDependencies set to %s..."
+                , testPlanLibraries
+                , libDirectory
+                , downloadLibraryDependencies
+        ));
         copyExplicitLibraries(testPlanLibraries, libDirectory, downloadLibraryDependencies);
-        getLog().info(" Configuring jmeter properties ...");
+        getLog().info("Configuring JMeter properties ...");
         configurePropertiesFiles();
-        getLog().info(" Generating JSON Test config ...");
+        getLog().info("Generating JSON Test config ...");
         generateTestConfig();
         JMeterConfigurationHolder.getInstance().freezeConfiguration();
     }
@@ -335,11 +345,12 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 
         for (String exclusion : excludedArtifactsAsString) {
             String[] exclusionParts = exclusion.split(":");
-            parsedExcludedArtifacts.add(
-                    new Exclusion(exclusionParts[0],
-                            exclusionParts[1],
-                            exclusionParts.length > 2 ? exclusionParts[2] : null,
-                            exclusionParts.length > 3 ? exclusionParts[3] : null));
+            parsedExcludedArtifacts.add(new Exclusion(
+                    exclusionParts[0],
+                    exclusionParts[1],
+                    exclusionParts.length > 2 ? exclusionParts[2] : null,
+                    exclusionParts.length > 3 ? exclusionParts[3] : null
+            ));
         }
     }
 
@@ -366,8 +377,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
     }
 
     private void configurePropertiesFiles() throws MojoExecutionException {
-        Map<ConfigurationFiles, PropertiesMapping> propertiesMap =
-                new EnumMap<>(ConfigurationFiles.class);
+        Map<ConfigurationFiles, PropertiesMapping> propertiesMap = new EnumMap<>(ConfigurationFiles.class);
         JMeterConfigurationHolder.getInstance().setPropertiesMap(propertiesMap);
         propertiesMap.put(JMETER_PROPERTIES, new PropertiesMapping(propertiesJMeter));
         propertiesMap.put(SAVE_SERVICE_PROPERTIES, new PropertiesMapping(propertiesSaveService));
@@ -381,23 +391,19 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 
         for (ConfigurationFiles configurationFile : values()) {
             File suppliedPropertiesFile = new File(propertiesFilesDirectory, configurationFile.getFilename());
-            File propertiesFileToWrite = new File(
-                    JMeterConfigurationHolder.getInstance().getWorkingDirectory(), configurationFile.getFilename());
-
+            File propertiesFileToWrite = new File(JMeterConfigurationHolder.getInstance().getWorkingDirectory(), configurationFile.getFilename());
             PropertiesFile somePropertiesFile = new PropertiesFile(jmeterConfigArtifact, configurationFile);
             somePropertiesFile.loadProvidedPropertiesIfAvailable(suppliedPropertiesFile, propertiesReplacedByCustomFiles);
             somePropertiesFile.addAndOverwriteProperties(propertiesMap.get(configurationFile).getAdditionalProperties());
             somePropertiesFile.writePropertiesToFile(propertiesFileToWrite);
-
             propertiesMap.get(configurationFile).setPropertiesFile(somePropertiesFile);
         }
 
         for (File customPropertiesFile : customPropertiesFiles) {
             PropertiesFile customProperties = new PropertiesFile(customPropertiesFile);
-            String customPropertiesFilename =
-                    FilenameUtils.getBaseName(customPropertiesFile.getName())
-                            + "-" + UUID.randomUUID().toString()
-                            + "." + FilenameUtils.getExtension(customPropertiesFile.getName());
+            String customPropertiesFilename = FilenameUtils.getBaseName(customPropertiesFile.getName())
+                    + "-" + UUID.randomUUID().toString()
+                    + "." + FilenameUtils.getExtension(customPropertiesFile.getName());
             customProperties.writePropertiesToFile(new File(customPropertiesDirectory, customPropertiesFilename));
         }
 
@@ -485,7 +491,6 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
                     copyTransitiveRuntimeDependenciesToLibDirectory(returnedArtifact, downloadJMeterDependencies);
             }
         }
-
         if (confFilesDirectory.exists()) {
             copyFilesInTestDirectory(confFilesDirectory, new File(jmeterDirectory, "bin"));
         }

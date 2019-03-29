@@ -51,17 +51,17 @@ public class CheckResultsMojo extends AbstractJMeterMojo {
     /**
      * Scan JMeter result files for successful, and failed requests/
      *
-     * @throws MojoExecutionException
-     * @throws MojoFailureException
+     * @throws MojoExecutionException Exception
+     * @throws MojoFailureException   Exception
      */
     @Override
     public void doExecute() throws MojoExecutionException, MojoFailureException {
         if (!ignoreResultFailures && !scanResultsForFailedRequests) {
-            getLog().warn(
-                    String.format("current value of scanResultsForFailedRequests(%s) is incompatible with ignoreResultFailures(%s), setting scanResultsForFailedRequests to true",
-                            scanResultsForFailedRequests,
-                            ignoreResultFailures)
-            );
+            getLog().warn(String.format(
+                    "current value of scanResultsForFailedRequests(%s) is incompatible with ignoreResultFailures(%s), setting scanResultsForFailedRequests to true",
+                    scanResultsForFailedRequests,
+                    ignoreResultFailures
+            ));
             scanResultsForFailedRequests = true;
         }
         if (scanResultsForSuccessfulRequests || scanResultsForFailedRequests) {
@@ -88,13 +88,12 @@ public class CheckResultsMojo extends AbstractJMeterMojo {
             decider.runChecks();
             getLog().info(String.format("Failures:                    %s%% (%s%% accepted)", decider.getErrorPercentage(), decider.getErrorPercentageThreshold()));
             if (decider.failBuild()) {
-                throw new MojoFailureException(
-                        String.format(
-                                "Failing build because error percentage %s is above accepted threshold %s. JMeter logs are available at: '%s'",
-                                logsDirectory.getAbsolutePath(),
-                                decider.getErrorPercentage(),
-                                decider.getErrorPercentageThreshold())
-                );
+                throw new MojoFailureException(String.format(
+                        "Failing build because error percentage %s is above accepted threshold %s. JMeter logs are available at: '%s'",
+                        logsDirectory.getAbsolutePath(),
+                        decider.getErrorPercentage(),
+                        decider.getErrorPercentageThreshold()
+                ));
             }
         } else {
             getLog().info("Results of Performance Test(s) have not been scanned.");

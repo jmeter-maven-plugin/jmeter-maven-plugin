@@ -52,11 +52,13 @@ public class RunJMeterServerMojo extends AbstractJMeterMojo {
         getLog().info(LINE_SEPARATOR);
         getLog().info(" S T A R T I N G    J M E T E R    S E R V E R ");
         getLog().info(LINE_SEPARATOR);
-        getLog().info(" Host:" + exportedRmiHostname);
-        getLog().info(" Port:" + serverPort);
+        getLog().info(String.format(" Host: %s", exportedRmiHostname));
+        getLog().info(String.format(" Port: %s", serverPort));
         JMeterArgumentsArray testArgs = initializeJMeterArgumentsArray();
-        getLog().debug(String.format("JMeter is called with the following command line arguments: %s",
-                UtilityFunctions.humanReadableCommandLineOutput(testArgs.buildArgumentsArray())));
+        getLog().debug(String.format(
+                "JMeter is called with the following command line arguments: %s",
+                UtilityFunctions.humanReadableCommandLineOutput(testArgs.buildArgumentsArray())
+        ));
         startJMeterServer(testArgs);
     }
 
@@ -71,8 +73,8 @@ public class RunJMeterServerMojo extends AbstractJMeterMojo {
 
     private void startJMeterServer(JMeterArgumentsArray testArgs) throws MojoExecutionException {
         jMeterProcessJVMSettings.setHeadlessDefaultIfRequired()
-                .addArgument("-Djava.rmi.server.hostname=" + exportedRmiHostname)
-                .addArgument("-Dserver_port=" + serverPort);
+                .addArgument(String.format("-Djava.rmi.server.hostname=%s", exportedRmiHostname))
+                .addArgument(String.format("-Dserver_port=%s", serverPort));
 
         JMeterProcessBuilder jmeterProcessBuilder = new JMeterProcessBuilder(jMeterProcessJVMSettings, JMeterConfigurationHolder.getInstance().getRuntimeJarName())
                 .setWorkingDirectory(JMeterConfigurationHolder.getInstance().getWorkingDirectory())
@@ -92,11 +94,11 @@ public class RunJMeterServerMojo extends AbstractJMeterMojo {
             getLog().info(" ");
             Thread.currentThread().interrupt();
         } catch (IOException ioException) {
-            getLog().error(
-                    String.format("Error starting JMeter with args %s, in working directory: %s",
-                            testArgs.buildArgumentsArray(),
-                            JMeterConfigurationHolder.getInstance().getWorkingDirectory()),
-                    ioException);
+            getLog().error(String.format(
+                    "Error starting JMeter with args %s, in working directory: %s",
+                    testArgs.buildArgumentsArray(),
+                    JMeterConfigurationHolder.getInstance().getWorkingDirectory()
+            ), ioException);
         }
     }
 }

@@ -37,7 +37,6 @@ public class RunJMeterMojo extends AbstractJMeterMojo {
 
         TestConfig testConfig = new TestConfig(new File(testConfigFile));
         JMeterConfigurationHolder configuration = JMeterConfigurationHolder.getInstance();
-
         remoteConfig.setPropertiesMap(configuration.getPropertiesMap());
         jMeterProcessJVMSettings.setHeadlessDefaultIfRequired();
         copyFilesInTestDirectory(testFilesDirectory, testFilesBuildDirectory);

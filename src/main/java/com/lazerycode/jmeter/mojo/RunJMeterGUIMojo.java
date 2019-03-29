@@ -48,15 +48,17 @@ public class RunJMeterGUIMojo extends AbstractJMeterMojo {
         getLog().info(" S T A R T I N G    J M E T E R    G U I ");
         getLog().info(LINE_SEPARATOR);
         JMeterArgumentsArray testArgs = initialiseJMeterArgumentsArray();
-        getLog().debug("JMeter is called with the following command line arguments: " +
-                UtilityFunctions.humanReadableCommandLineOutput(testArgs.buildArgumentsArray()));
+        getLog().debug(String.format(
+                "JMeter is called with the following command line arguments: %s",
+                UtilityFunctions.humanReadableCommandLineOutput(testArgs.buildArgumentsArray())
+        ));
         startJMeterGUI(testArgs);
     }
 
     private JMeterArgumentsArray initialiseJMeterArgumentsArray() throws MojoExecutionException {
         TestConfig testConfig = new TestConfig(new File(testConfigFile));
-        return computeJMeterArgumentsArray(false, testConfig.getResultsOutputIsCSVFormat())
-                .setTestFile(guiTestFile, testFilesDirectory);
+
+        return computeJMeterArgumentsArray(false, testConfig.getResultsOutputIsCSVFormat()).setTestFile(guiTestFile, testFilesDirectory);
     }
 
     private void startJMeterGUI(JMeterArgumentsArray testArgs) throws MojoExecutionException {
@@ -78,11 +80,11 @@ public class RunJMeterGUIMojo extends AbstractJMeterMojo {
             getLog().info(" ");
             Thread.currentThread().interrupt();
         } catch (IOException ioException) {
-            getLog().error(
-                    String.format("Error starting JMeter with args %s, in working directory: %s",
-                            testArgs.buildArgumentsArray(),
-                            JMeterConfigurationHolder.getInstance().getWorkingDirectory()),
-                    ioException);
+            getLog().error(String.format(
+                    "Error starting JMeter with args %s, in working directory: %s",
+                    testArgs.buildArgumentsArray(),
+                    JMeterConfigurationHolder.getInstance().getWorkingDirectory()
+            ), ioException);
         }
     }
 }

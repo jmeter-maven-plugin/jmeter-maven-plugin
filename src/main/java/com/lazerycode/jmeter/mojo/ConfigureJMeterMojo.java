@@ -295,7 +295,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
         setupExcludedArtifacts(excludedArtifacts);
         getLog().info("Building JMeter directory structure...");
         generateJMeterDirectoryTree();
-        getLog().info(String.format("Configuring JMeter artifacts: %s", jmeterArtifacts));
+        getLog().info("Configuring JMeter artifacts...");
         configureJMeterArtifacts();
         getLog().info("Populating JMeter directory...");
         populateJMeterDirectoryTree();
@@ -463,6 +463,11 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
             jmeterArtifacts.add(JMETER_GROUP_ID + ":ApacheJMeter_tcp:" + jmeterVersion);
             jmeterArtifacts.add(JMETER_GROUP_ID + ":jorphan:" + jmeterVersion);
         }
+        getLog().debug("JMeter Artifact List:");
+        jmeterArtifacts.forEach(artifact ->
+                getLog().debug(artifact)
+        );
+
     }
 
     private void populateJMeterDirectoryTree() throws MojoExecutionException {

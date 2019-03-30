@@ -102,7 +102,9 @@ public class CheckResultsMojo extends AbstractJMeterMojo {
                 ));
             }
         } else {
+            getLog().info(" ");
             getLog().info("Results of Performance Test(s) have not been scanned.");
+            getLog().info(" ");
         }
     }
 }

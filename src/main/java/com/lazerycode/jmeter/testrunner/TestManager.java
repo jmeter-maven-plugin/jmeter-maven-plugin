@@ -223,28 +223,27 @@ public class TestManager {
      * @throws org.apache.maven.plugin.MojoExecutionException Exception
      */
     private String executeSingleTest(File test, JMeterArgumentsArray testArgs) throws MojoExecutionException {
-        LOGGER.info(" ");
         testArgs.setTestFile(test, testFilesDirectory);
-        //Delete results file if it already exists
         File currentResultsFile = new File(testArgs.getResultsLogFileName());
-        if (currentResultsFile.exists() && !currentResultsFile.delete()) {
-            throw new MojoExecutionException("Failed to delete existing results file:" + currentResultsFile.getAbsolutePath());
+        if (currentResultsFile.exists()) {
+            LOGGER.info("%s already exists!, deleting file in preparation for new test run...");
+            if (!currentResultsFile.delete()) {
+                throw new MojoExecutionException("Failed to delete existing results file:" + currentResultsFile.getAbsolutePath());
+            }
         }
         List<String> argumentsArray = testArgs.buildArgumentsArray();
         argumentsArray.addAll(buildRemoteArgumentsArray(remoteServerConfiguration.getPropertiesMap()));
         LOGGER.info("Executing test: {}", test.getName());
-        //Start the test.
         JMeterProcessBuilder jmeterProcessBuilder = new JMeterProcessBuilder(jMeterProcessJVMSettings, runtimeJarName);
         jmeterProcessBuilder.setWorkingDirectory(binDir);
         jmeterProcessBuilder.addArguments(argumentsArray);
         try {
             final Process process = jmeterProcessBuilder.build().start();
-
             Runtime.getRuntime().addShutdownHook(new Thread(() -> {
                 LOGGER.info("Shutdown detected, destroying JMeter process...");
+                LOGGER.info(" ");
                 process.destroy();
             }));
-
             try (InputStreamReader isr = new InputStreamReader(process.getInputStream());
                  BufferedReader br = new BufferedReader(isr)) {
                 String line;
@@ -260,6 +259,7 @@ public class TestManager {
                     throw new MojoExecutionException("Test failed with exit code:" + jMeterExitCode);
                 }
                 LOGGER.info("Completed Test: {}", test.getAbsolutePath());
+                LOGGER.info(" ");
             }
         } catch (InterruptedException ex) {
             LOGGER.info(" ");

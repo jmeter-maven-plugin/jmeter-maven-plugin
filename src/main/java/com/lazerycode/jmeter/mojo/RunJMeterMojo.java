@@ -28,10 +28,12 @@ public class RunJMeterMojo extends AbstractJMeterMojo {
         getLog().info(LINE_SEPARATOR);
         getLog().info(" P E R F O R M A N C E    T E S T S");
         getLog().info(LINE_SEPARATOR);
+        getLog().info(" ");
 
         if (!testFilesDirectory.exists()) {
             getLog().info("<testFilesDirectory>" + testFilesDirectory.getAbsolutePath() + "</testFilesDirectory> does not exist...");
-            getLog().info("Performance tests skipped.");
+            getLog().info("Performance tests skipped!");
+            getLog().info(" ");
             return;
         }
 
@@ -53,8 +55,6 @@ public class RunJMeterMojo extends AbstractJMeterMojo {
                 .setReportDirectory(reportDirectory)
                 .setGenerateReports(generateReports)
                 .setPostTestPauseInSeconds(postTestPauseInSeconds);
-
-        getLog().info(" ");
         if (proxyConfig != null) {
             getLog().info(this.proxyConfig.toString());
         }

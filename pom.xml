@@ -34,7 +34,6 @@
         <byte-buddy.version>1.9.12</byte-buddy.version>
         <commons-io.version>2.6</commons-io.version>
         <jackson.version>2.9.8</jackson.version>
-        <joda-time.version>2.10.1</joda-time.version>
         <json-path.version>2.4.0</json-path.version>
         <junit.version>4.12</junit.version>
         <logback.version>1.2.3</logback.version>
@@ -211,11 +210,6 @@
             <artifactId>maven-plugin-annotations</artifactId>
             <version>${required.maven.version}</version>
             <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>joda-time</groupId>
-            <artifactId>joda-time</artifactId>
-            <version>${joda-time.version}</version>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>

@@ -2,14 +2,12 @@ package com.lazerycode.jmeter.configuration;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.joda.time.LocalDateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
-import org.joda.time.format.ISODateTimeFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeSet;
@@ -30,7 +28,7 @@ public class JMeterArgumentsArray {
     private boolean disableTests;
 
     private final TreeSet<JMeterCommandLineArguments> argumentList = new TreeSet<>();
-    private DateTimeFormatter dateFormat = ISODateTimeFormat.basicDate();
+    private DateTimeFormatter dateFormat = DateTimeFormatter.BASIC_ISO_DATE;
     private ProxyConfiguration proxyConfiguration;
     private boolean timestampResults = false;
     private boolean appendTimestamp = false;
@@ -155,7 +153,7 @@ public class JMeterArgumentsArray {
     public JMeterArgumentsArray setResultsFileNameDateFormat(String dateFormat) {
         if (isSet(dateFormat)) {
             try {
-                this.dateFormat = DateTimeFormat.forPattern(dateFormat);
+                this.dateFormat = DateTimeFormatter.ofPattern(dateFormat);
             } catch (Exception ex) {
                 LOGGER.error("'" + dateFormat + "' is an invalid DateTimeFormat.  Defaulting to Standard ISO_8601.", ex);
             }
@@ -190,9 +188,9 @@ public class JMeterArgumentsArray {
         if (timestampResults) {
             //TODO investigate when timestamp is generated.
             if (appendTimestamp) {
-                resultsLogFileName += resultFilename + "-" + dateFormat.print(new LocalDateTime()) + resultFileExtension;
+                resultsLogFileName += String.format("%s-%s%s", resultFilename, LocalDateTime.now().format(dateFormat), resultFileExtension);
             } else {
-                resultsLogFileName += dateFormat.print(new LocalDateTime()) + "-" + resultFilename + resultFileExtension;
+                resultsLogFileName += String.format("%s-%s%s", LocalDateTime.now().format(dateFormat), resultFilename, resultFileExtension);
             }
         } else {
             resultsLogFileName += resultFilename + resultFileExtension;

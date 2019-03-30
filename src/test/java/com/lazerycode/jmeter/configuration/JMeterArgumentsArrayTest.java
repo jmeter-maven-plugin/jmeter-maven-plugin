@@ -5,7 +5,6 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.read.ListAppender;
 import com.lazerycode.jmeter.utility.UtilityFunctions;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.LoggerFactory;
@@ -13,6 +12,8 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,8 +21,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class JMeterArgumentsArrayTest {
 
-    private static final String TIMESTAMP = new DateTime().year().getAsText();
-    private static final String DEFAULT_TIMESTAMP = new DateTime().toDateTime().toLocalDate().toString("YYYYMMdd");
+    private static final String TIMESTAMP = String.valueOf(LocalDateTime.now().getYear());
+    private static final String DEFAULT_TIMESTAMP = LocalDateTime.now().format(DateTimeFormatter.BASIC_ISO_DATE);
     private static final boolean DISABLE_GUI = true;
     private static final boolean ENABLE_GUI = false;
     private final URL testFileUrl = this.getClass().getResource("/tests/test.jmx");

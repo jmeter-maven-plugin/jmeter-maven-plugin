@@ -6,6 +6,7 @@
 
 * Issue [319](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues/319) Support Apache JMeter 5.1.1.
 * Set a default of `<generateReports>false</generateReports>`.  Not everybody wants reports and they take time to generate so they should always be disabled by default.  It will also help reduce confusion around the results file format being ignored if you don't explicitly disable report generation.
+* **BREAKING CHANGE:** Set minimum Maven version to **3.5.2** which includes some fixes to package and assemble for JDK 9.
 
 ### Bug Fixes ###
 

@@ -284,13 +284,15 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
      */
     @Override
     public void doExecute() throws MojoExecutionException {
+        getLog().info(" ");
+        getLog().info(LINE_SEPARATOR);
+        getLog().info("C O N F I G U R I N G    J M E T E R");
+        getLog().info(LINE_SEPARATOR);
+        getLog().info(" ");
         processedArtifacts.clear();
         parsedExcludedArtifacts.clear();
         JMeterConfigurationHolder.getInstance().resetConfiguration();
         setupExcludedArtifacts(excludedArtifacts);
-        getLog().info(LINE_SEPARATOR);
-        getLog().info("Configuring JMeter...");
-        getLog().info(LINE_SEPARATOR);
         getLog().info("Building JMeter directory structure...");
         generateJMeterDirectoryTree();
         getLog().info(String.format("Configuring JMeter artifacts: %s", jmeterArtifacts));
@@ -298,29 +300,26 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
         getLog().info("Populating JMeter directory...");
         populateJMeterDirectoryTree();
         getLog().info(String.format(
-                "Copying extensions %s to JMeter lib/ext directory %s with downloadExtensionDependencies set to %s..."
-                , jmeterExtensions
-                , libExtDirectory
-                , downloadExtensionDependencies
+                "Copying extensions to JMeter lib/ext directory %s with downloadExtensionDependencies set to %s...",
+                libExtDirectory,
+                downloadExtensionDependencies
         ));
         copyExplicitLibraries(jmeterExtensions, libExtDirectory, downloadExtensionDependencies);
         getLog().info(String.format(
-                "Copying JUnit libraries %s to JMeter junit lib directory %s with downloadLibraryDependencies set to %s..."
-                , junitLibraries
-                , libJUnitDirectory
-                , downloadLibraryDependencies
+                "Copying JUnit libraries to JMeter junit lib directory %s with downloadLibraryDependencies set to %s...",
+                libJUnitDirectory,
+                downloadLibraryDependencies
         ));
         copyExplicitLibraries(junitLibraries, libJUnitDirectory, downloadLibraryDependencies);
         getLog().info(String.format(
-                "Copying test libraries %s to JMeter lib directory %s with downloadLibraryDependencies set to %s..."
-                , testPlanLibraries
-                , libDirectory
-                , downloadLibraryDependencies
+                "Copying test libraries to JMeter lib directory %s with downloadLibraryDependencies set to %s...",
+                libDirectory,
+                downloadLibraryDependencies
         ));
         copyExplicitLibraries(testPlanLibraries, libDirectory, downloadLibraryDependencies);
-        getLog().info("Configuring JMeter properties ...");
+        getLog().info("Configuring JMeter properties...");
         configurePropertiesFiles();
-        getLog().info("Generating JSON Test config ...");
+        getLog().info("Generating JSON Test config...");
         generateTestConfig();
         JMeterConfigurationHolder.getInstance().freezeConfiguration();
     }
@@ -517,6 +516,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
      * @throws MojoExecutionException MojoExecutionException
      */
     private void copyExplicitLibraries(String desiredArtifact, File destination, boolean downloadDependencies) throws MojoExecutionException {
+        getLog().debug(String.format("Copying %s to %s", desiredArtifact, destination.getAbsolutePath()));
         Artifact returnedArtifact = getArtifactResult(new DefaultArtifact(desiredArtifact));
         copyArtifact(returnedArtifact, destination);
         if (downloadDependencies) {
@@ -632,7 +632,6 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
                         getLog().debug("Dependency request trace: " +
                                 dependencyRequest.getCollectRequest().getTrace().toString());
                     }
-                    getLog().debug(LINE_SEPARATOR);
                 }
                 Exclusion dummyExclusion = new Exclusion(
                         dependencyNode.getArtifact().getGroupId(),

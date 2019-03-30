@@ -9,7 +9,6 @@ import java.io.File;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class JMeterProcessBuilder {
@@ -54,9 +53,7 @@ public class JMeterProcessBuilder {
         if (null == workingDirectory) {
             throw new MojoExecutionException("Working directory is not set!");
         }
-        String[] arguments = constructArgumentsList();
-        LOGGER.info("Starting process with:{}", Arrays.asList(arguments));
-        ProcessBuilder processBuilder = new ProcessBuilder(arguments);
+        ProcessBuilder processBuilder = new ProcessBuilder(constructArgumentsList());
         processBuilder.redirectErrorStream(true);
         processBuilder.directory(new File(workingDirectory));
 
@@ -73,7 +70,8 @@ public class JMeterProcessBuilder {
         argumentsList.add(runtimeJarName);
         argumentsList.addAll(mainClassArguments);
 
-        LOGGER.debug("Arguments for forked JMeter JVM: {}", argumentsList);
+        LOGGER.info("Arguments for forked JMeter JVM: {}", argumentsList);
+        LOGGER.info(" ");
 
         return argumentsList.toArray(new String[0]);
     }

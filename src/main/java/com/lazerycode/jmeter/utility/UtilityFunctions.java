@@ -25,6 +25,7 @@ public final class UtilityFunctions {
      * @return String
      */
     public static String humanReadableCommandLineOutput(List<String> arguments) {
+        //TODO investigate removing this, only used in tests
         StringBuilder debugOutput = new StringBuilder();
         for (String argument : arguments) {
             debugOutput.append(argument).append(" ");

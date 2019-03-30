@@ -65,6 +65,11 @@ public class CheckResultsMojo extends AbstractJMeterMojo {
             scanResultsForFailedRequests = true;
         }
         if (scanResultsForSuccessfulRequests || scanResultsForFailedRequests) {
+            getLog().info(" ");
+            getLog().info(LINE_SEPARATOR);
+            getLog().info("S C A N N I N G    F O R    R E S U L T S");
+            getLog().info(LINE_SEPARATOR);
+            getLog().info(" ");
             TestConfig testConfig = new TestConfig(new File(testConfigFile));
             String resultFormat = testConfig.getResultsOutputIsCSVFormat() ? "CSV" : "JTL";
             getLog().info(String.format("Will scan results using format: %s", resultFormat));
@@ -87,6 +92,7 @@ public class CheckResultsMojo extends AbstractJMeterMojo {
             TestFailureDecider decider = new TestFailureDecider(ignoreResultFailures, errorRateThresholdInPercent, resultScanner);
             decider.runChecks();
             getLog().info(String.format("Failures:                    %s%% (%s%% accepted)", decider.getErrorPercentage(), decider.getErrorPercentageThreshold()));
+            getLog().info(" ");
             if (decider.failBuild()) {
                 throw new MojoFailureException(String.format(
                         "Failing build because error percentage %s is above accepted threshold %s. JMeter logs are available at: '%s'",

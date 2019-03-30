@@ -3,7 +3,6 @@ package com.lazerycode.jmeter.testrunner;
 import com.lazerycode.jmeter.configuration.JMeterArgumentsArray;
 import com.lazerycode.jmeter.configuration.JMeterProcessJVMSettings;
 import com.lazerycode.jmeter.configuration.RemoteConfiguration;
-import com.lazerycode.jmeter.utility.UtilityFunctions;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.tools.ant.DirectoryScanner;
@@ -233,10 +232,6 @@ public class TestManager {
         }
         List<String> argumentsArray = testArgs.buildArgumentsArray();
         argumentsArray.addAll(buildRemoteArgumentsArray(remoteServerConfiguration.getPropertiesMap()));
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("JMeter is called with the following command line arguments: {}",
-                    UtilityFunctions.humanReadableCommandLineOutput(argumentsArray));
-        }
         LOGGER.info("Executing test: {}", test.getName());
         //Start the test.
         JMeterProcessBuilder jmeterProcessBuilder = new JMeterProcessBuilder(jMeterProcessJVMSettings, runtimeJarName);

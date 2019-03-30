@@ -54,12 +54,7 @@ public class RunJMeterServerMojo extends AbstractJMeterMojo {
         getLog().info(LINE_SEPARATOR);
         getLog().info(String.format(" Host: %s", exportedRmiHostname));
         getLog().info(String.format(" Port: %s", serverPort));
-        JMeterArgumentsArray testArgs = initializeJMeterArgumentsArray();
-        getLog().debug(String.format(
-                "JMeter is called with the following command line arguments: %s",
-                UtilityFunctions.humanReadableCommandLineOutput(testArgs.buildArgumentsArray())
-        ));
-        startJMeterServer(testArgs);
+        startJMeterServer(initializeJMeterArgumentsArray());
     }
 
     private JMeterArgumentsArray initializeJMeterArgumentsArray() throws MojoExecutionException {

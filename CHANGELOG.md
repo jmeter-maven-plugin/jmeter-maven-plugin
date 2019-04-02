@@ -1,6 +1,8 @@
 # Changelog
 
-## Version 2.9.0-SNAPSHOT Release Notes (IN PROGRESS)
+## Version 2.9.1-SNAPSHOT Release Notes (IN PROGRESS)
+
+## Version 2.9.0 Release Notes (2nd April 2019)
 
 ### Enhancements ###
 

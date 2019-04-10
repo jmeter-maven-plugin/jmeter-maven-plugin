@@ -30,7 +30,6 @@ public abstract class AbstractJMeterMojo extends AbstractMojo {
     protected static final String JMETER_ARTIFACT_NAME = "ApacheJMeter";
     protected static final String JMETER_CONFIG_ARTIFACT_NAME = "ApacheJMeter_config";
     protected static final String JORPHAN_ARTIFACT_NAME = "jorphan";
-    protected static final String JMETER_GROUP_ID = "org.apache.jmeter";
 
     /**
      * Sets the list of include patterns to use in directory scan for JMX files.

@@ -4,7 +4,6 @@ import com.lazerycode.jmeter.json.TestConfig;
 import com.lazerycode.jmeter.properties.ConfigurationFiles;
 import com.lazerycode.jmeter.properties.PropertiesFile;
 import com.lazerycode.jmeter.properties.PropertiesMapping;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Component;
@@ -26,17 +25,19 @@ import org.eclipse.aether.repository.RemoteRepository;
 import org.eclipse.aether.resolution.*;
 import org.eclipse.aether.util.artifact.JavaScopes;
 import org.eclipse.aether.util.filter.DependencyFilterUtils;
-import org.eclipse.aether.util.version.GenericVersionScheme;
 import org.eclipse.aether.version.InvalidVersionSpecificationException;
-import org.eclipse.aether.version.Version;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+import static com.lazerycode.jmeter.configuration.ArtifactHelpers.*;
 import static com.lazerycode.jmeter.properties.ConfigurationFiles.*;
 import static org.apache.commons.io.FileUtils.copyInputStreamToFile;
 
@@ -56,8 +57,6 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 
     @Parameter(defaultValue = "${project.remoteProjectRepositories}", readonly = true)
     private List<RemoteRepository> repositoryList;
-
-    private static final String ARTIFACT_STAR = "*";
     /**
      * Name of the base config json file
      */
@@ -290,9 +289,8 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
         getLog().info(LINE_SEPARATOR);
         getLog().info(" ");
         processedArtifacts.clear();
-        parsedExcludedArtifacts.clear();
         JMeterConfigurationHolder.getInstance().resetConfiguration();
-        setupExcludedArtifacts(excludedArtifacts);
+        parsedExcludedArtifacts = setupExcludedArtifacts(excludedArtifacts);
         getLog().info("Building JMeter directory structure...");
         generateJMeterDirectoryTree();
         getLog().info("Configuring JMeter artifacts...");
@@ -322,35 +320,6 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
         getLog().info("Generating JSON Test config...");
         generateTestConfig();
         JMeterConfigurationHolder.getInstance().freezeConfiguration();
-    }
-
-    /**
-     * Parses excludedArtifactsAsString and fills parsedExcludedArtifacts
-     *
-     * @param excludedArtifactsAsString List of exclusion
-     */
-    private void setupExcludedArtifacts(List<String> excludedArtifactsAsString) {
-        // Exclude broken artifacts of old JMeter pom
-        // 1/ See https://bz.apache.org/bugzilla/show_bug.cgi?id=57555
-        parsedExcludedArtifacts.add(new Exclusion("d-haven-managed-pool", "d-haven-managed-pool", null, null));
-        parsedExcludedArtifacts.add(new Exclusion("event", "event", null, null));
-        // 2/ See https://bz.apache.org/bugzilla/show_bug.cgi?id=57734
-        parsedExcludedArtifacts.add(new Exclusion("commons-pool2", "commons-pool2", null, null));
-        parsedExcludedArtifacts.add(new Exclusion("commons-math3", "commons-math3", null, null));
-
-        // Exclude conflicting libraries since JMeter 3.2
-        parsedExcludedArtifacts.add(new Exclusion("logkit", "logkit", null, null));
-        parsedExcludedArtifacts.add(new Exclusion("avalon-logkit", "avalon-logkit", null, null));
-
-        for (String exclusion : excludedArtifactsAsString) {
-            String[] exclusionParts = exclusion.split(":");
-            parsedExcludedArtifacts.add(new Exclusion(
-                    exclusionParts[0],
-                    exclusionParts[1],
-                    exclusionParts.length > 2 ? exclusionParts[2] : null,
-                    exclusionParts.length > 3 ? exclusionParts[3] : null
-            ));
-        }
     }
 
     /**
@@ -445,23 +414,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
      */
     private void configureJMeterArtifacts() {
         if (jmeterArtifacts.isEmpty()) {
-            jmeterArtifacts.add(JMETER_GROUP_ID + ":ApacheJMeter:" + jmeterVersion);
-            jmeterArtifacts.add(JMETER_GROUP_ID + ":ApacheJMeter_components:" + jmeterVersion);
-            jmeterArtifacts.add(JMETER_GROUP_ID + ":ApacheJMeter_config:" + jmeterVersion);
-            jmeterArtifacts.add(JMETER_GROUP_ID + ":ApacheJMeter_core:" + jmeterVersion);
-            jmeterArtifacts.add(JMETER_GROUP_ID + ":ApacheJMeter_ftp:" + jmeterVersion);
-            jmeterArtifacts.add(JMETER_GROUP_ID + ":ApacheJMeter_functions:" + jmeterVersion);
-            jmeterArtifacts.add(JMETER_GROUP_ID + ":ApacheJMeter_http:" + jmeterVersion);
-            jmeterArtifacts.add(JMETER_GROUP_ID + ":ApacheJMeter_java:" + jmeterVersion);
-            jmeterArtifacts.add(JMETER_GROUP_ID + ":ApacheJMeter_jdbc:" + jmeterVersion);
-            jmeterArtifacts.add(JMETER_GROUP_ID + ":ApacheJMeter_jms:" + jmeterVersion);
-            jmeterArtifacts.add(JMETER_GROUP_ID + ":ApacheJMeter_junit:" + jmeterVersion);
-            jmeterArtifacts.add(JMETER_GROUP_ID + ":ApacheJMeter_ldap:" + jmeterVersion);
-            jmeterArtifacts.add(JMETER_GROUP_ID + ":ApacheJMeter_mail:" + jmeterVersion);
-            jmeterArtifacts.add(JMETER_GROUP_ID + ":ApacheJMeter_mongodb:" + jmeterVersion);
-            jmeterArtifacts.add(JMETER_GROUP_ID + ":ApacheJMeter_native:" + jmeterVersion);
-            jmeterArtifacts.add(JMETER_GROUP_ID + ":ApacheJMeter_tcp:" + jmeterVersion);
-            jmeterArtifacts.add(JMETER_GROUP_ID + ":jorphan:" + jmeterVersion);
+            jmeterArtifacts = createDefaultJmeterArtifactsArray(jmeterVersion);
         }
         getLog().debug("JMeter Artifact List:");
         jmeterArtifacts.forEach(artifact ->
@@ -482,16 +435,16 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
                     extractConfigSettings(jmeterConfigArtifact);
                     break;
                 case JORPHAN_ARTIFACT_NAME:
-                    copyArtifact(returnedArtifact, libDirectory);
+                    copyArtifactIfRequired(returnedArtifact, Paths.get(libDirectory.toURI()));
                     copyTransitiveRuntimeDependenciesToLibDirectory(returnedArtifact, downloadJMeterDependencies);
                     break;
                 case JMETER_ARTIFACT_NAME:
                     JMeterConfigurationHolder.getInstance().setRuntimeJarName(returnedArtifact.getFile().getName());
-                    copyArtifact(returnedArtifact, JMeterConfigurationHolder.getInstance().getWorkingDirectory());
+                    copyArtifactIfRequired(returnedArtifact, Paths.get(JMeterConfigurationHolder.getInstance().getWorkingDirectory().toURI()));
                     copyTransitiveRuntimeDependenciesToLibDirectory(returnedArtifact, downloadJMeterDependencies);
                     break;
                 default:
-                    copyArtifact(returnedArtifact, libExtDirectory);
+                    copyArtifactIfRequired(returnedArtifact, Paths.get(libExtDirectory.toURI()));
                     copyTransitiveRuntimeDependenciesToLibDirectory(returnedArtifact, downloadJMeterDependencies);
             }
         }
@@ -510,7 +463,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
      */
     private void copyExplicitLibraries(List<String> desiredArtifacts, File destination, boolean downloadDependencies) throws MojoExecutionException {
         for (String desiredArtifact : desiredArtifacts) {
-            copyExplicitLibraries(desiredArtifact, destination, downloadDependencies);
+            copyExplicitLibrary(desiredArtifact, destination, downloadDependencies);
         }
     }
 
@@ -520,10 +473,10 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
      * @param downloadDependencies Do we download dependencies
      * @throws MojoExecutionException MojoExecutionException
      */
-    private void copyExplicitLibraries(String desiredArtifact, File destination, boolean downloadDependencies) throws MojoExecutionException {
+    private void copyExplicitLibrary(String desiredArtifact, File destination, boolean downloadDependencies) throws MojoExecutionException {
         getLog().debug(String.format("Copying %s to %s", desiredArtifact, destination.getAbsolutePath()));
         Artifact returnedArtifact = getArtifactResult(new DefaultArtifact(desiredArtifact));
-        copyArtifact(returnedArtifact, destination);
+        copyArtifactIfRequired(returnedArtifact, Paths.get(destination.toURI()));
         if (downloadDependencies) {
             resolveTestDependenciesAndCopyWithTransitivity(returnedArtifact);
         }
@@ -561,8 +514,8 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
                 // and provided, and especially compile-scoped dependencies  
                 ArtifactResult artifactResult = repositorySystem.resolveArtifact(repositorySystemSession,
                         new ArtifactRequest(dep.getArtifact(), repositoryList, null));
-                if (isLibraryArtifact(artifactResult.getArtifact())) {
-                    copyArtifact(artifactResult.getArtifact(), libDirectory);
+                if (isArtifactALibrary(artifactResult.getArtifact())) {
+                    copyArtifactIfRequired(artifactResult.getArtifact(), Paths.get(libDirectory.toURI()));
                 } else {
                     getLog().debug("Artifact " + artifactResult.getArtifact() + " is not a library, ignoring");
                 }
@@ -606,15 +559,13 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
                                 getLog().debug("Filtering dependency " + dependencyNode.getDependency());
                                 return false;
                             }
-                            for (Exclusion currentExclusion : parsedExcludedArtifacts) {
-                                if (currentExclusion.getGroupId().equals(artifact.getGroupId()) &&
-                                        (currentExclusion.getArtifactId().equals(artifact.getArtifactId()))
-                                        || (currentExclusion.getArtifactId().equals(ARTIFACT_STAR))) {
-                                    getLog().debug("Filtering excluded dependency " + dependencyNode.getDependency());
-                                    return false;
-                                }
+
+                            boolean notExcluded = artifactIsNotExcluded(parsedExcludedArtifacts, artifact);
+                            if (!notExcluded) {
+                                getLog().debug("Filtering excluded dependency " + dependencyNode.getDependency());
                             }
-                            return true;
+
+                            return notExcluded;
                         });
         DependencyRequest dependencyRequest = new DependencyRequest(collectRequest, dependencyFilter);
 
@@ -644,12 +595,12 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
                         dependencyNode.getArtifact().getClassifier(),
                         dependencyNode.getArtifact().getExtension());
                 if ((downloadOptionalDependencies || !dependencyNode.getDependency().isOptional()) &&
-                        !containsEx(parsedExcludedArtifacts, dummyExclusion) &&
-                        !((rootDependency.getExclusions() != null) && (containsEx(rootDependency.getExclusions(), dummyExclusion)))) {
+                        !containsExclusion(parsedExcludedArtifacts, dummyExclusion) &&
+                        !((rootDependency.getExclusions() != null) && (containsExclusion(rootDependency.getExclusions(), dummyExclusion)))) {
                     Artifact returnedArtifact = repositorySystem.resolveArtifact(repositorySystemSession,
                             new ArtifactRequest(dependencyNode)).getArtifact();
-                    if ((!returnedArtifact.getArtifactId().startsWith(JMETER_ARTIFACT_PREFIX)) && (isLibraryArtifact(returnedArtifact))) {
-                        copyArtifact(returnedArtifact, libDirectory);
+                    if ((!returnedArtifact.getArtifactId().startsWith(JMETER_ARTIFACT_PREFIX)) && (isArtifactALibrary(returnedArtifact))) {
+                        copyArtifactIfRequired(returnedArtifact, Paths.get(libDirectory.toURI()));
                     }
 
                     if (getDependenciesOfDependency && !processedArtifacts.contains(dummyExclusion)) {
@@ -669,97 +620,48 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
     }
 
     /**
-     * Exclusive can be specified by wildcard:
-     * -- groupId:artifactId:*:*
-     * -- groupId:*:*:*
-     * <p>
-     * And in general, to require a strict match up to the version and the classifier is not necessary
-     * <p>
-     * TODO: the correct fix would be to rewrite {@link Exclusion # equals (Object)}, but what about the boundary case:
-     * If contains (id1: *: *: *, id1: id2: *: *) == true, then that's equals ??
-     * TODO: there must be useful code in Aether or maven on this topic
-     * <p>
-     *
-     * @param exclusions
-     * @param exclusion
-     * @return
-     */
-    private boolean containsEx(Collection<Exclusion> exclusions, Exclusion exclusion) {
-        if (exclusion != null && exclusions != null) {
-            for (Exclusion currentExclusion : exclusions) {
-                if (currentExclusion.getGroupId().equals(exclusion.getGroupId()) &&
-                        (currentExclusion.getArtifactId().equals(exclusion.getArtifactId()) || (currentExclusion.getArtifactId().equals(ARTIFACT_STAR)))) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Is artifact a library ?
-     *
-     * @param artifact {@link Artifact}
-     * @return boolean if true
-     */
-    private boolean isLibraryArtifact(Artifact artifact) {
-        return artifact.getExtension().equals("jar") ||
-                artifact.getExtension().equals("war") ||
-                artifact.getExtension().equals("zip") ||
-                artifact.getExtension().equals("ear");
-    }
-
-    /**
      * Copy an Artifact to a directory
      *
-     * @param artifact             Artifact that needs to be copied.
-     * @param destinationDirectory Directory to copy the artifact to.
-     * @throws MojoExecutionException Unable to copy file or resolve dependency
+     * @param artifactToCopy       Artifact that needs to be copied.
+     * @param destinationDirectory Directory to copy the artifact to
+     * @return true if artifact copied, false if artifact not copied
+     * @throws MojoExecutionException Unable to copy file or resolve dependency, or unable to find artifact or unable to parse Artifact version
      */
-    private void copyArtifact(Artifact artifact, File destinationDirectory) throws MojoExecutionException {// NOSONAR
+    private boolean copyArtifactIfRequired(Artifact artifactToCopy, Path destinationDirectory) throws MojoExecutionException {
         for (String ignoredArtifact : ignoredArtifacts) {
             Artifact artifactToIgnore = getArtifactResult(new DefaultArtifact(ignoredArtifact));
-            if (artifact.getFile().getName().equals(artifactToIgnore.getFile().getName())) {
-                getLog().debug(artifact.getFile().getName() + " has not been copied over because it is in the ignore list.");
-                return;
+            if (artifactToCopy.getFile().getName().equals(artifactToIgnore.getFile().getName())) {
+                getLog().debug(artifactToCopy.getFile().getName() + " has not been copied over because it is in the ignore list.");
+                return false;
             }
         }
         try {
             for (Iterator<Artifact> iterator = copiedArtifacts.iterator(); iterator.hasNext(); ) {
-                Artifact currentArtifact = iterator.next();
-                if (currentArtifact.getGroupId().equals(artifact.getGroupId()) &&
-                        currentArtifact.getArtifactId().equals(artifact.getArtifactId()) &&
-                        currentArtifact.getExtension().equals(artifact.getExtension()) &&
-                        currentArtifact.getClassifier().equals(artifact.getClassifier())) {
-                    // already copied, but perhaps the version right now is more recent than it was.
-                    // We keep the most recent one
-                    GenericVersionScheme genericVersionScheme = new GenericVersionScheme();
-                    Version currentArtifactVersion = genericVersionScheme.parseVersion(currentArtifact.getVersion());
-                    Version artifactVersion = genericVersionScheme.parseVersion(artifact.getVersion());
-                    if (currentArtifactVersion.compareTo(artifactVersion) >= 0) {
-                        // the version of the already copied artifact above or the same, do not copy, do nothing
-                        return;
-                    } else {
-                        // We delete the old artifact, and copy it
-                        // (here we only delete, we will copy by the output from the loop)
-                        File artifactToDelete = new File(destinationDirectory, currentArtifact.getFile().getName());
-                        getLog().debug("Deleting file:'" + artifactToDelete.getAbsolutePath() + "'");
-                        FileUtils.forceDelete(artifactToDelete);
+                Artifact alreadyCopiedArtifact = iterator.next();
+                if (artifactsAreMatchingTypes(alreadyCopiedArtifact, artifactToCopy)) {
+                    if (isArtifactIsOlderThanArtifact(alreadyCopiedArtifact, artifactToCopy)) {
+                        Path artifactToDelete = Paths.get(destinationDirectory.toString(), alreadyCopiedArtifact.getFile().getName());
+                        getLog().debug(String.format("Deleting file:'%s'", artifactToDelete));
+                        // We delete the old artifact and remove it from the list of copied artifacts, the new artifact will be copied below
+                        Files.deleteIfExists(artifactToDelete);
                         iterator.remove();
                         break;
+                    } else {
+                        return false;
                     }
                 }
             }
-            copiedArtifacts.add(artifact);
-            File artifactToCopy = new File(destinationDirectory, artifact.getFile().getName());
-            getLog().debug("Checking: " + artifactToCopy.getAbsolutePath() + "...");
-            if (!artifactToCopy.exists()) {
-                getLog().debug("Copying: " + artifactToCopy.getAbsolutePath() + " to " + destinationDirectory.getAbsolutePath());
-                FileUtils.copyFileToDirectory(artifact.getFile(), destinationDirectory);
+            Path desiredArtifact = Paths.get(destinationDirectory.toString(), artifactToCopy.getFile().getName());
+            if (!desiredArtifact.toFile().exists()) {
+                getLog().debug(String.format("Copying: %s to %s", desiredArtifact.toString(), destinationDirectory.toString()));
+                Files.copy(Paths.get(artifactToCopy.getFile().getAbsolutePath()), desiredArtifact);
             }
         } catch (IOException | InvalidVersionSpecificationException e) {
             throw new MojoExecutionException(e.getMessage(), e);
         }
+        copiedArtifacts.add(artifactToCopy);
+
+        return true;
     }
 
     /**

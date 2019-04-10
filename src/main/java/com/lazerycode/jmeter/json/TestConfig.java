@@ -30,7 +30,13 @@ public class TestConfig {
         try (FileReader jsonFileReader = new FileReader(jsonFile)) {
             jsonData = IOUtils.toString(jsonFileReader);
         } catch (Exception ex) {
-            throw new MojoExecutionException(ex.getMessage(), ex);
+            throw new MojoExecutionException(String.format("%s\nHave you added the configure goal to your POM?\n" +
+                    "    <execution>\n" +
+                    "        <id>configuration</id>\n" +
+                    "        <goals>\n" +
+                    "            <goal>configure</goal>\n" +
+                    "        </goals>\n" +
+                    "    </execution>", ex.getMessage()), ex);
         }
     }
 

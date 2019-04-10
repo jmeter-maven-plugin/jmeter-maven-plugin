@@ -1,6 +1,20 @@
 # Changelog
 
-## Version 2.9.1-SNAPSHOT Release Notes (IN PROGRESS)
+## Version 3.0.0-SNAPSHOT Release Notes (IN PROGRESS)
+
+### Enhancements ###
+
+### Bug Fixes ###
+
+* Issue [329](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues/329) **BREAKING CHANGE** Fix error where default configure goal was always called resulting in config overwrite.  You will now need to always explicitly add the configure execution block to your POM
+```
+<execution>
+    <id>configuration</id>
+    <goals>
+        <goal>configure</goal>
+    </goals>
+</execution>
+``` 
 
 ## Version 2.9.0 Release Notes (2nd April 2019)
 

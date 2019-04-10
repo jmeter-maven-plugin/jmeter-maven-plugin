@@ -3,7 +3,6 @@ package com.lazerycode.jmeter.mojo;
 import com.lazerycode.jmeter.json.TestConfig;
 import com.lazerycode.jmeter.testrunner.TestManager;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugins.annotations.Execute;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 
@@ -14,7 +13,6 @@ import java.io.File;
  * This goal runs within Lifecycle phase {@link LifecyclePhase#INTEGRATION_TEST}.
  */
 @Mojo(name = "jmeter", defaultPhase = LifecyclePhase.INTEGRATION_TEST)
-@Execute(goal = "configure")
 public class RunJMeterMojo extends AbstractJMeterMojo {
 
     /**

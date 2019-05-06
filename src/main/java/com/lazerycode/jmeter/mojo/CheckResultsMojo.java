@@ -56,6 +56,7 @@ public class CheckResultsMojo extends AbstractJMeterMojo {
      */
     @Override
     public void doExecute() throws MojoExecutionException, MojoFailureException {
+        checkConfiguration();
         if (!ignoreResultFailures && !scanResultsForFailedRequests) {
             getLog().warn(String.format(
                     "current value of scanResultsForFailedRequests(%s) is incompatible with ignoreResultFailures(%s), setting scanResultsForFailedRequests to true",

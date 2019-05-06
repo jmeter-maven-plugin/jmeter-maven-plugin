@@ -1,26 +1,24 @@
 package com.lazerycode.jmeter.mojo;
 
-import com.lazerycode.jmeter.configuration.JMeterArgumentsArray;
-import com.lazerycode.jmeter.json.TestConfig;
-import com.lazerycode.jmeter.testrunner.JMeterProcessBuilder;
-import com.lazerycode.jmeter.utility.UtilityFunctions;
+import java.io.File;
+import java.io.IOException;
+
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugins.annotations.Execute;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
-import java.io.File;
-import java.io.IOException;
+import com.lazerycode.jmeter.configuration.JMeterArgumentsArray;
+import com.lazerycode.jmeter.json.TestConfig;
+import com.lazerycode.jmeter.testrunner.JMeterProcessBuilder;
 
 /**
  * Goal that runs JMeter in GUI mode.<br/>
- * This goal runs within Lifecycle phase {@link LifecyclePhase#TEST}.
+ * This goal runs within Lifecycle phase {@link LifecyclePhase#INTEGRATION_TEST}.
  *
  * @author Jarrod Ribble
  */
-@Mojo(name = "gui", defaultPhase = LifecyclePhase.TEST)
-@Execute(goal = "configure")
+@Mojo(name = "gui", defaultPhase = LifecyclePhase.INTEGRATION_TEST)
 public class RunJMeterGUIMojo extends AbstractJMeterMojo {
 
     /**
@@ -43,6 +41,7 @@ public class RunJMeterGUIMojo extends AbstractJMeterMojo {
      */
     @Override
     public void doExecute() throws MojoExecutionException {
+        checkConfiguration();
         getLog().info(" ");
         getLog().info(LINE_SEPARATOR);
         getLog().info(" S T A R T I N G    J M E T E R    G U I ");

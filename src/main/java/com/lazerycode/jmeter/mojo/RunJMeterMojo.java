@@ -22,6 +22,7 @@ public class RunJMeterMojo extends AbstractJMeterMojo {
      */
     @Override
     public void doExecute() throws MojoExecutionException {
+        checkConfiguration();
         getLog().info(" ");
         getLog().info(LINE_SEPARATOR);
         getLog().info(" P E R F O R M A N C E    T E S T S");

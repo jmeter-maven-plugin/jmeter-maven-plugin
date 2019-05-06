@@ -16,6 +16,8 @@
 </execution>
 ``` 
 
+And to run in GUI mode, call `mvn jmeter:configure jmeter:run-gui`
+
 ## Version 2.9.0 Release Notes (2nd April 2019)
 
 ### Enhancements ###

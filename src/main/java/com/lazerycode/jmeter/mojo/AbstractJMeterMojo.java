@@ -1,9 +1,10 @@
 package com.lazerycode.jmeter.mojo;
 
-import com.lazerycode.jmeter.configuration.JMeterArgumentsArray;
-import com.lazerycode.jmeter.configuration.JMeterProcessJVMSettings;
-import com.lazerycode.jmeter.configuration.ProxyConfiguration;
-import com.lazerycode.jmeter.configuration.RemoteConfiguration;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
@@ -14,10 +15,10 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.settings.Proxy;
 import org.apache.maven.settings.Settings;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import com.lazerycode.jmeter.configuration.JMeterArgumentsArray;
+import com.lazerycode.jmeter.configuration.JMeterProcessJVMSettings;
+import com.lazerycode.jmeter.configuration.ProxyConfiguration;
+import com.lazerycode.jmeter.configuration.RemoteConfiguration;
 
 /**
  * JMeter Maven plugin.
@@ -280,6 +281,18 @@ public abstract class AbstractJMeterMojo extends AbstractMojo {
             FileUtils.copyDirectory(sourceDirectory, destinationDirectory);
         } catch (IOException e) {
             throw new MojoExecutionException(e.getMessage(), e);
+        }
+    }
+    
+    protected void checkConfiguration() throws MojoExecutionException {
+        if (!JMeterConfigurationHolder.getInstance().isFreezed()) {
+            throw new MojoExecutionException("Configuration is not done, have you added the configure goal to your POM?\n" +
+                    "    <execution>\n" +
+                    "        <id>configuration</id>\n" +
+                    "        <goals>\n" +
+                    "            <goal>configure</goal>\n" +
+                    "        </goals>\n" +
+                    "    </execution>");
         }
     }
 }

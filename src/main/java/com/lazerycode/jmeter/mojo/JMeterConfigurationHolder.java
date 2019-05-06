@@ -89,6 +89,10 @@ public class JMeterConfigurationHolder {
     void freezeConfiguration() {
         this.configurationFrozen = true;
     }
+    
+    public boolean isFreezed() {
+        return configurationFrozen;
+    }
 
     /**
      * Allow to reset configuration

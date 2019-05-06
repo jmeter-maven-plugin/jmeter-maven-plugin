@@ -226,7 +226,7 @@ public class TestManager {
         testArgs.setTestFile(test, testFilesDirectory);
         File currentResultsFile = new File(testArgs.getResultsLogFileName());
         if (currentResultsFile.exists()) {
-            LOGGER.info("%s already exists!, deleting file in preparation for new test run...");
+            LOGGER.info("{} already exists!, deleting file in preparation for new test run...", currentResultsFile);
             if (!currentResultsFile.delete()) {
                 throw new MojoExecutionException("Failed to delete existing results file:" + currentResultsFile.getAbsolutePath());
             }

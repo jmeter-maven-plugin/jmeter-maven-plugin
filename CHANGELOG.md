@@ -16,7 +16,12 @@
 </execution>
 ``` 
 
-And to run in GUI mode, call `mvn jmeter:configure jmeter:run-gui`
+And to run in GUI mode, call:
+
+    `mvn package jmeter:configure jmeter:gui`
+
+* Issue [332](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues/332) Goal "remote-server" fails if project contains classes used in test
+* Issue [333](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues/333) Goal **remote-server** does not mark build as failed if launch of `jmeter -r` fails
 
 ## Version 2.9.0 Release Notes (2nd April 2019)
 

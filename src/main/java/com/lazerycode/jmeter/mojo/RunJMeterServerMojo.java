@@ -80,19 +80,32 @@ public class RunJMeterServerMojo extends AbstractJMeterMojo {
                 getLog().info(" Starting JMeter server process in the background...");
                 //TODO log process using process.pid() when Java 9 is the minimum supported version
             } else {
-                process.waitFor();
+                waitForEndAndCheckExitCode(process); 
             }
-        } catch (InterruptedException ex) {
-            getLog().info(" ");
-            getLog().info("System Exit detected!  Stopping server process...");
-            getLog().info(" ");
-            Thread.currentThread().interrupt();
         } catch (IOException ioException) {
             getLog().error(String.format(
                     "Error starting JMeter with args %s, in working directory: %s",
                     testArgs.buildArgumentsArray(),
                     JMeterConfigurationHolder.getInstance().getWorkingDirectory()
             ), ioException);
+        }
+    }
+
+    /**
+     * @param process {@link Process}
+     * @throws MojoExecutionException
+     */
+    private void waitForEndAndCheckExitCode(final Process process) throws MojoExecutionException {
+        try {
+            int exitCode = process.waitFor();
+            if (exitCode != 0) {
+                throw new MojoExecutionException("Starting jmeter server in background failed with exit code:"+exitCode+", check jmeter logs for more details");
+            }
+        } catch (InterruptedException ex) {
+            getLog().info(" ");
+            getLog().info("System Exit detected!  Stopping server process...");
+            getLog().info(" ");
+            Thread.currentThread().interrupt();
         }
     }
 }

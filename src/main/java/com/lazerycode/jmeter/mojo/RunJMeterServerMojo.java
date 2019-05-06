@@ -1,25 +1,23 @@
 package com.lazerycode.jmeter.mojo;
 
-import com.lazerycode.jmeter.configuration.JMeterArgumentsArray;
-import com.lazerycode.jmeter.testrunner.JMeterProcessBuilder;
-import com.lazerycode.jmeter.utility.UtilityFunctions;
+import java.io.IOException;
+
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugins.annotations.Execute;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
-import java.io.IOException;
+import com.lazerycode.jmeter.configuration.JMeterArgumentsArray;
+import com.lazerycode.jmeter.testrunner.JMeterProcessBuilder;
 
 /**
  * Goal that runs JMeter in server mode.<br/>
- * This goal runs within Lifecycle phase {@link LifecyclePhase#TEST}.
+ * This goal runs within Lifecycle phase {@link LifecyclePhase#INTEGRATION_TEST}.
  *
  * @author Philippe Mouawad
  * @since 2.5.0
  */
-@Mojo(name = "remote-server", defaultPhase = LifecyclePhase.TEST)
-@Execute(goal = "configure")
+@Mojo(name = "remote-server", defaultPhase = LifecyclePhase.INTEGRATION_TEST)
 public class RunJMeterServerMojo extends AbstractJMeterMojo {
 
     /**
@@ -67,6 +65,7 @@ public class RunJMeterServerMojo extends AbstractJMeterMojo {
     }
 
     private void startJMeterServer(JMeterArgumentsArray testArgs) throws MojoExecutionException {
+        checkConfiguration();
         jMeterProcessJVMSettings.setHeadlessDefaultIfRequired()
                 .addArgument(String.format("-Djava.rmi.server.hostname=%s", exportedRmiHostname))
                 .addArgument(String.format("-Dserver_port=%s", serverPort));

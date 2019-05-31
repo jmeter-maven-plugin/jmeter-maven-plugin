@@ -1,9 +1,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.lazerycode.jmeter</groupId>
-	<artifactId>test-plugins</artifactId>
+    <artifactId>test-plugins</artifactId>
     <version>DEV-SNAPSHOT</version>
 
     <description>JMeter test to check that extensions work</description>
@@ -11,44 +11,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <jmeter.version>5.0</jmeter.version>
     </properties>
-
-    <repositories>
-        <repository>
-            <id>apache-snapshots</id>
-            <name>Apache Snapshots</name>
-            <url>https://repository.apache.org/content/groups/snapshots/</url>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
-    
-    <dependencies>
-        <dependency>
-            <groupId>org.apache.jmeter</groupId>
-            <artifactId>ApacheJMeter_core</artifactId>
-            <version>${jmeter.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.tika</groupId>
-                    <artifactId>tika-parsers</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.jmeter</groupId>
-            <artifactId>ApacheJMeter_java</artifactId>
-            <version>${jmeter.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.tika</groupId>
-                    <artifactId>tika-parsers</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-    </dependencies>
 
     <build>
         <plugins>
@@ -63,23 +26,16 @@
                     <ignoreResultFailures>true</ignoreResultFailures>
                     <downloadOptionalDependencies>false</downloadOptionalDependencies>
                     <propertiesUser>
-                        <threads>10</threads>
-                        <duration>60</duration>
-                        <rampup>5</rampup>
+                        <threads>5</threads>
+                        <duration>5</duration>
+                        <rampup>2</rampup>
                     </propertiesUser>
                     <jmeterExtensions>
-                        <artifact>kg.apc:jmeter-plugins-casutg:2.4</artifact>
+                        <artifact>kg.apc:jmeter-plugins-casutg:2.8</artifact>
                     </jmeterExtensions>
                     <excludedArtifacts>
-                        <exclusion>commons-pool2:commons-pool2</exclusion>
-                        <exclusion>commons-math3:commons-math3</exclusion>
-                        <exclusion>org.slf4j:slf4j-nop</exclusion>
-                        <exclusion>logkit:logkit</exclusion>
-                        <exclusion>avalon-logkit:avalon-logkit</exclusion>
-                        <exclusion>jdom:jdom</exclusion>
-                        <exclusion>log4j:log4j</exclusion>
-                        <exclusion>commons-logging:commons-logging</exclusion>
-                        <exclusion>excalibur-logger:excalibur-logger</exclusion>
+                        <exclusion>commons-pool2:commons-pool2:*:*</exclusion>
+                        <exclusion>commons-math3:commons-math3:*:*</exclusion>
                     </excludedArtifacts>
                     <testFilesIncluded>
                         <jMeterTestFile>test.jmx</jMeterTestFile>

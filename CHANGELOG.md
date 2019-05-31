@@ -6,6 +6,7 @@
 
 ### Bug Fixes ###
 
+* Issue [335](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues/335) You can now use the command line property `-Djmeter.version=5.0` to specify a version of jmeter to be used to build/run the plugin.  Changes to the list of expected libraries will still need modifications to the POM.  
 * Issue [329](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues/329) **BREAKING CHANGE** Fix error where default configure goal was always called resulting in config overwrite.  You will now need to always explicitly add the configure execution block to your POM
 ```
 <execution>

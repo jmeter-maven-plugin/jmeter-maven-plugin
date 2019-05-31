@@ -68,7 +68,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
      * if you change this version number the list of artifacts required to run JMeter may change.
      * If this happens you will need to override the &lt;jmeterArtifacts&gt; element.
      */
-    @Parameter(property = "default.jmeter.version", defaultValue = "5.1.1")
+    @Parameter(property = "jmeter.version", defaultValue = "5.1.1")
     private String jmeterVersion;
 
     /**

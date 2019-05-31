@@ -13,31 +13,6 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.apache.jmeter</groupId>
-            <artifactId>ApacheJMeter_core</artifactId>
-            <version>${jmeter.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.tika</groupId>
-                    <artifactId>tika-parsers</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.jmeter</groupId>
-            <artifactId>ApacheJMeter_java</artifactId>
-            <version>${jmeter.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.tika</groupId>
-                    <artifactId>tika-parsers</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-    </dependencies>
-
     <build>
         <plugins>
             <plugin>
@@ -69,9 +44,9 @@
                     <ignoreResultFailures>true</ignoreResultFailures>
                     <downloadOptionalDependencies>false</downloadOptionalDependencies>
                     <propertiesUser>
-                        <threads>10</threads>
-                        <duration>60</duration>
-                        <rampup>5</rampup>
+                        <threads>5</threads>
+                        <duration>5</duration>
+                        <rampup>2</rampup>
                     </propertiesUser>
                     <jmeterExtensions>
                         <artifact>kg.apc:jmeter-plugins-casutg:2.6</artifact>

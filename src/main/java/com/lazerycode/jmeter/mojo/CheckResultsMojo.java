@@ -56,7 +56,6 @@ public class CheckResultsMojo extends AbstractJMeterMojo {
      */
     @Override
     public void doExecute() throws MojoExecutionException, MojoFailureException {
-        checkConfiguration();
         if (!ignoreResultFailures && !scanResultsForFailedRequests) {
             getLog().warn(String.format(
                     "current value of scanResultsForFailedRequests(%s) is incompatible with ignoreResultFailures(%s), setting scanResultsForFailedRequests to true",
@@ -71,7 +70,7 @@ public class CheckResultsMojo extends AbstractJMeterMojo {
             getLog().info("S C A N N I N G    F O R    R E S U L T S");
             getLog().info(LINE_SEPARATOR);
             getLog().info(" ");
-            TestConfig testConfig = new TestConfig(new File(testConfigFile));
+            TestConfig testConfig = new TestConfig(new File(testConfigFile), selectedConfiguration);
             String resultFormat = testConfig.getResultsOutputIsCSVFormat() ? "CSV" : "JTL";
             getLog().info(String.format("Will scan results using format: %s", resultFormat));
             ResultScanner resultScanner = new ResultScanner(

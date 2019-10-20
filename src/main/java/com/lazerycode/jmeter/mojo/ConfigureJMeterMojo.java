@@ -29,7 +29,6 @@ import org.eclipse.aether.version.InvalidVersionSpecificationException;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -39,7 +38,6 @@ import java.util.jar.JarFile;
 
 import static com.lazerycode.jmeter.configuration.ArtifactHelpers.*;
 import static com.lazerycode.jmeter.properties.ConfigurationFiles.*;
-import static org.apache.commons.io.FileUtils.copyInputStreamToFile;
 
 /**
  * Goal that configures Apache JMeter bundle.<br/>
@@ -268,13 +266,15 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
      */
     @Parameter(defaultValue = "csv")
     protected String resultsFileFormat;
-    protected boolean resultsOutputIsCSVFormat = false;
+    protected boolean resultsOutputIsCSVFormat = true;
 
     protected Artifact jmeterConfigArtifact;
-    protected File customPropertiesDirectory;
-    protected File libDirectory;
-    protected File libExtDirectory;
-    protected File libJUnitDirectory;
+    protected Path customPropertiesDirectory;
+    protected Path jmeterDirectoryPath;
+    protected Path binDirectory;
+    protected Path libDirectory;
+    protected Path libExtDirectory;
+    protected Path libJUnitDirectory;
 
     /**
      * Configure a local instance of JMeter
@@ -288,60 +288,54 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
         getLog().info("C O N F I G U R I N G    J M E T E R");
         getLog().info(LINE_SEPARATOR);
         getLog().info(" ");
+
         processedArtifacts.clear();
         JMeterConfigurationHolder.getInstance().resetConfiguration();
         parsedExcludedArtifacts = setupExcludedArtifacts(excludedArtifacts);
         getLog().info("Building JMeter directory structure...");
+        getLog().info("Generating JSON Test config...");
+        jmeterDirectoryPath = Paths.get(projectBuildDirectory.getAbsolutePath(), UUID.randomUUID().toString(), "jmeter");
         generateJMeterDirectoryTree();
         getLog().info("Configuring JMeter artifacts...");
         configureJMeterArtifacts();
         getLog().info("Populating JMeter directory...");
         populateJMeterDirectoryTree();
-        getLog().info(String.format(
-                "Copying extensions to JMeter lib/ext directory %s with downloadExtensionDependencies set to %s...",
-                libExtDirectory,
-                downloadExtensionDependencies
-        ));
-        copyExplicitLibraries(jmeterExtensions, libExtDirectory, downloadExtensionDependencies);
-        getLog().info(String.format(
-                "Copying JUnit libraries to JMeter junit lib directory %s with downloadLibraryDependencies set to %s...",
-                libJUnitDirectory,
-                downloadLibraryDependencies
-        ));
-        copyExplicitLibraries(junitLibraries, libJUnitDirectory, downloadLibraryDependencies);
-        getLog().info(String.format(
-                "Copying test libraries to JMeter lib directory %s with downloadLibraryDependencies set to %s...",
-                libDirectory,
-                downloadLibraryDependencies
-        ));
-        copyExplicitLibraries(testPlanLibraries, libDirectory, downloadLibraryDependencies);
+        copyExplicitLibraries(jmeterExtensions, libExtDirectory.toFile(), downloadExtensionDependencies, "extensions");
+        copyExplicitLibraries(junitLibraries, libJUnitDirectory.toFile(), downloadLibraryDependencies, "junit libraries");
+        copyExplicitLibraries(testPlanLibraries, libDirectory.toFile(), downloadLibraryDependencies, "test plan libraries");
         getLog().info("Configuring JMeter properties...");
         configurePropertiesFiles();
-        getLog().info("Generating JSON Test config...");
-        generateTestConfig();
-        JMeterConfigurationHolder.getInstance().freezeConfiguration();
+        generateTestConfig(this.mojoExecution.getExecutionId());
     }
 
     /**
      * Generate the directory tree utilised by JMeter.
      */
-    private void generateJMeterDirectoryTree() {
-        File workingDirectory = new File(jmeterDirectory, "bin");
-        workingDirectory.mkdirs();
-        JMeterConfigurationHolder.getInstance().setWorkingDirectory(workingDirectory);
-        customPropertiesDirectory = new File(jmeterDirectory, "custom_properties");
-        customPropertiesDirectory.mkdirs();
-        libDirectory = new File(jmeterDirectory, "lib");
-        libExtDirectory = new File(libDirectory, "ext");
-        libExtDirectory.mkdirs();
-        libJUnitDirectory = new File(libDirectory, "junit");
-        libJUnitDirectory.mkdirs();
-        testFilesBuildDirectory.mkdirs();
-        resultsDirectory.mkdirs();
-        if (generateReports) {
-            reportDirectory.mkdirs();
+    private void generateJMeterDirectoryTree() throws MojoExecutionException {
+        binDirectory = jmeterDirectoryPath.resolve("bin");
+        //TODO do we need this now?
+        JMeterConfigurationHolder.getInstance().setWorkingDirectory(binDirectory.toFile());
+        customPropertiesDirectory = jmeterDirectoryPath.resolve("custom_properties");
+        libDirectory = jmeterDirectoryPath.resolve("lib");
+        libExtDirectory = libDirectory.resolve("ext");
+        libJUnitDirectory = libDirectory.resolve("junit");
+
+        try {
+            Files.createDirectories(jmeterDirectoryPath);
+            Files.createDirectories(binDirectory);
+            Files.createDirectories(customPropertiesDirectory);
+            Files.createDirectories(libExtDirectory);
+            Files.createDirectories(libJUnitDirectory);
+
+            testFilesBuildDirectory.mkdirs();
+            resultsDirectory.mkdirs();
+            if (generateReports) {
+                reportDirectory.mkdirs();
+            }
+            logsDirectory.mkdirs();
+        } catch (IOException e) {
+            throw new MojoExecutionException(e.getMessage(), e);
         }
-        logsDirectory.mkdirs();
     }
 
     private void configurePropertiesFiles() throws MojoExecutionException {
@@ -372,21 +366,30 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
             String customPropertiesFilename = FilenameUtils.getBaseName(customPropertiesFile.getName())
                     + "-" + UUID.randomUUID().toString()
                     + "." + FilenameUtils.getExtension(customPropertiesFile.getName());
-            customProperties.writePropertiesToFile(new File(customPropertiesDirectory, customPropertiesFilename));
+            customProperties.writePropertiesToFile(customPropertiesDirectory.resolve(customPropertiesFilename).toFile());
         }
 
         setDefaultPluginProperties(JMeterConfigurationHolder.getInstance().getWorkingDirectory().getAbsolutePath());
     }
 
-    protected void generateTestConfig() throws MojoExecutionException {
-        try (InputStream configFile = this.getClass().getResourceAsStream(BASE_CONFIG_FILE)) {
-            TestConfig testConfig = new TestConfig(configFile);
-            testConfig.setResultsOutputIsCSVFormat(resultsOutputIsCSVFormat);
-            testConfig.setGenerateReports(generateReports);
-            testConfig.writeResultFilesConfigTo(testConfigFile);
-        } catch (IOException ex) {
-            throw new MojoExecutionException("Exception creating TestConfig", ex);
+    protected void generateTestConfig(String executionId) throws MojoExecutionException {
+        Path testConfigPath = Paths.get(testConfigFile);
+        if (!Files.exists(testConfigPath)) {
+            Path targetDirectory = Paths.get(String.valueOf(projectBuildDirectory));
+            if (!Files.exists(targetDirectory)) {
+                try {
+                    Files.createDirectory(targetDirectory);
+                } catch (IOException e) {
+                    throw new MojoExecutionException(e.getMessage(), e);
+                }
+            }
         }
+        TestConfig testConfig = new TestConfig();
+        testConfig.setExecutionIDName(executionId);
+        testConfig.setJMeterDirectoryPath(jmeterDirectoryPath);
+        testConfig.setResultsOutputIsCSVFormat(resultsOutputIsCSVFormat);
+        testConfig.setGenerateReports(generateReports);
+        testConfig.writeResultFilesConfigTo(testConfigFile);
     }
 
     protected void setJMeterResultFileFormat() {
@@ -434,22 +437,22 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
                     jmeterConfigArtifact = returnedArtifact;
                     extractConfigSettings(jmeterConfigArtifact);
                     break;
-                case JORPHAN_ARTIFACT_NAME:
-                    copyArtifactIfRequired(returnedArtifact, Paths.get(libDirectory.toURI()));
-                    copyTransitiveRuntimeDependenciesToLibDirectory(returnedArtifact, downloadJMeterDependencies);
-                    break;
                 case JMETER_ARTIFACT_NAME:
                     JMeterConfigurationHolder.getInstance().setRuntimeJarName(returnedArtifact.getFile().getName());
-                    copyArtifactIfRequired(returnedArtifact, Paths.get(JMeterConfigurationHolder.getInstance().getWorkingDirectory().toURI()));
+                    copyArtifactIfRequired(returnedArtifact, binDirectory);
+                    copyTransitiveRuntimeDependenciesToLibDirectory(returnedArtifact, downloadJMeterDependencies);
+                    break;
+                case JORPHAN_ARTIFACT_NAME:
+                    copyArtifactIfRequired(returnedArtifact, libDirectory);
                     copyTransitiveRuntimeDependenciesToLibDirectory(returnedArtifact, downloadJMeterDependencies);
                     break;
                 default:
-                    copyArtifactIfRequired(returnedArtifact, Paths.get(libExtDirectory.toURI()));
+                    copyArtifactIfRequired(returnedArtifact, libExtDirectory);
                     copyTransitiveRuntimeDependenciesToLibDirectory(returnedArtifact, downloadJMeterDependencies);
             }
         }
         if (confFilesDirectory.exists()) {
-            copyFilesInTestDirectory(confFilesDirectory, new File(jmeterDirectory, "bin"));
+            copyFilesInTestDirectory(confFilesDirectory, binDirectory.toFile());
         }
     }
 
@@ -461,7 +464,8 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
      * @param downloadDependencies Do we download dependencies
      * @throws MojoExecutionException MojoExecutionException
      */
-    private void copyExplicitLibraries(List<String> desiredArtifacts, File destination, boolean downloadDependencies) throws MojoExecutionException {
+    private void copyExplicitLibraries(List<String> desiredArtifacts, File destination, boolean downloadDependencies, String description) throws MojoExecutionException {
+        getLog().info(String.format("Copying %s to %s \nDownloading dependencies: %s", description, destination, downloadDependencies));
         for (String desiredArtifact : desiredArtifacts) {
             copyExplicitLibrary(desiredArtifact, destination, downloadDependencies);
         }
@@ -509,13 +513,13 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
         try {
             ArtifactDescriptorResult result = repositorySystem.readArtifactDescriptor(repositorySystemSession, request);
             for (Dependency dep : result.getDependencies()) {
-                // Here we can not filter dependencies by scope. 
-                // we need to use dependencies with any scope, because tests are needed to test, 
-                // and provided, and especially compile-scoped dependencies  
+                // Here we can not filter dependencies by scope.
+                // we need to use dependencies with any scope, because tests are needed to test,
+                // and provided, and especially compile-scoped dependencies
                 ArtifactResult artifactResult = repositorySystem.resolveArtifact(repositorySystemSession,
                         new ArtifactRequest(dep.getArtifact(), repositoryList, null));
                 if (isArtifactALibrary(artifactResult.getArtifact())) {
-                    copyArtifactIfRequired(artifactResult.getArtifact(), Paths.get(libDirectory.toURI()));
+                    copyArtifactIfRequired(artifactResult.getArtifact(), libDirectory);
                 } else {
                     getLog().debug("Artifact " + artifactResult.getArtifact() + " is not a library, ignoring");
                 }
@@ -600,7 +604,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
                     Artifact returnedArtifact = repositorySystem.resolveArtifact(repositorySystemSession,
                             new ArtifactRequest(dependencyNode)).getArtifact();
                     if ((!returnedArtifact.getArtifactId().startsWith(JMETER_ARTIFACT_PREFIX)) && (isArtifactALibrary(returnedArtifact))) {
-                        copyArtifactIfRequired(returnedArtifact, Paths.get(libDirectory.toURI()));
+                        copyArtifactIfRequired(returnedArtifact, libDirectory);
                     }
 
                     if (getDependenciesOfDependency && !processedArtifacts.contains(dummyExclusion)) {
@@ -677,10 +681,10 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
             while (entries.hasMoreElements()) {
                 JarEntry jarFileEntry = entries.nextElement();
                 // Only interested in files in the /bin directory that are not properties files
-                if (!jarFileEntry.isDirectory() && jarFileEntry.getName().startsWith("bin")
-                        && !jarFileEntry.getName().endsWith(".properties")) {
-                    File fileToCreate = new File(jmeterDirectory, jarFileEntry.getName());
-                    copyInputStreamToFile(configSettings.getInputStream(jarFileEntry), fileToCreate);
+                if (!jarFileEntry.isDirectory() && jarFileEntry.getName().startsWith("bin") && !jarFileEntry.getName().endsWith(".properties")) {
+                    //FIXME add a test to check directory creation with multiple child directories
+                    Files.createDirectories(jmeterDirectoryPath.resolve(new File(jarFileEntry.getName()).getParentFile().getPath()));
+                    Files.copy(configSettings.getInputStream(jarFileEntry), jmeterDirectoryPath.resolve(jarFileEntry.getName()));
                 }
             }
         } catch (IOException e) {

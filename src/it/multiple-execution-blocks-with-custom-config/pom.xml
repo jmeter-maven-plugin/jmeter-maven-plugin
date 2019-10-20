@@ -28,10 +28,22 @@
                 </configuration>
                 <executions>
                     <execution>
-                        <id>configuration</id>
+                        <id>configuration-one</id>
                         <goals>
                             <goal>configure</goal>
                         </goals>
+                        <configuration>
+                            <resultsFileFormat>xml</resultsFileFormat>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>configuration-two</id>
+                        <goals>
+                            <goal>configure</goal>
+                        </goals>
+                        <configuration>
+                            <resultsFileFormat>csv</resultsFileFormat>
+                        </configuration>
                     </execution>
                     <execution>
                         <id>performance test one</id>
@@ -39,6 +51,7 @@
                             <goal>jmeter</goal>
                         </goals>
                         <configuration>
+                            <selectedConfiguration>configuration-one</selectedConfiguration>
                             <testFilesIncluded>
                                 <jMeterTestFile>test1.jmx</jMeterTestFile>
                             </testFilesIncluded>
@@ -50,6 +63,7 @@
                             <goal>jmeter</goal>
                         </goals>
                         <configuration>
+                            <selectedConfiguration>configuration-two</selectedConfiguration>
                             <testFilesIncluded>
                                 <jMeterTestFile>test2.jmx</jMeterTestFile>
                             </testFilesIncluded>

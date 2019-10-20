@@ -22,7 +22,6 @@ public class RunJMeterMojo extends AbstractJMeterMojo {
      */
     @Override
     public void doExecute() throws MojoExecutionException {
-        checkConfiguration();
         getLog().info(" ");
         getLog().info(LINE_SEPARATOR);
         getLog().info(" P E R F O R M A N C E    T E S T S");
@@ -36,13 +35,14 @@ public class RunJMeterMojo extends AbstractJMeterMojo {
             return;
         }
 
-        TestConfig testConfig = new TestConfig(new File(testConfigFile));
+        TestConfig testConfig = new TestConfig(new File(testConfigFile), selectedConfiguration);
+        //TODO move func below into config.json
         JMeterConfigurationHolder configuration = JMeterConfigurationHolder.getInstance();
         remoteConfig.setPropertiesMap(configuration.getPropertiesMap());
         jMeterProcessJVMSettings.setHeadlessDefaultIfRequired();
         copyFilesInTestDirectory(testFilesDirectory, testFilesBuildDirectory);
         TestManager jMeterTestManager = new TestManager()
-                .setBaseTestArgs(computeJMeterArgumentsArray(true, testConfig.getResultsOutputIsCSVFormat()))
+                .setBaseTestArgs(computeJMeterArgumentsArray(true, testConfig.getResultsOutputIsCSVFormat(), testConfig.getJMeterDirectoryPath()))
                 .setTestFilesDirectory(testFilesBuildDirectory)
                 .setTestFilesIncluded(testFilesIncluded)
                 .setTestFilesExcluded(testFilesExcluded)

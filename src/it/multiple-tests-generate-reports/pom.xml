@@ -31,7 +31,7 @@
                 </configuration>
                 <executions>
                     <execution>
-                        <id>configure</id>
+                        <id>configuration</id>
                         <goals>
                             <goal>configure</goal>
                         </goals>

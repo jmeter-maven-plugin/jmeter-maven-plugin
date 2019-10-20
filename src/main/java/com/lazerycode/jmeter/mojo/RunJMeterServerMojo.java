@@ -1,7 +1,9 @@
 package com.lazerycode.jmeter.mojo;
 
+import java.io.File;
 import java.io.IOException;
 
+import com.lazerycode.jmeter.json.TestConfig;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -56,7 +58,8 @@ public class RunJMeterServerMojo extends AbstractJMeterMojo {
     }
 
     private JMeterArgumentsArray initializeJMeterArgumentsArray() throws MojoExecutionException {
-        return new JMeterArgumentsArray(false, jmeterDirectory.getAbsolutePath())
+        TestConfig testConfig = new TestConfig(new File(testConfigFile), selectedConfiguration);
+        return new JMeterArgumentsArray(false, testConfig.getJMeterDirectoryPath())
                 .setProxyConfig(proxyConfig)
                 .addACustomPropertiesFiles(customPropertiesFiles)
                 .setLogRootOverride(overrideRootLogLevel)
@@ -65,7 +68,6 @@ public class RunJMeterServerMojo extends AbstractJMeterMojo {
     }
 
     private void startJMeterServer(JMeterArgumentsArray testArgs) throws MojoExecutionException {
-        checkConfiguration();
         jMeterProcessJVMSettings.setHeadlessDefaultIfRequired()
                 .addArgument(String.format("-Djava.rmi.server.hostname=%s", exportedRmiHostname))
                 .addArgument(String.format("-Dserver_port=%s", serverPort));

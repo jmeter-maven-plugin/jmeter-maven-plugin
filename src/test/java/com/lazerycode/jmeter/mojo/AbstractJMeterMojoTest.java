@@ -240,11 +240,10 @@ public class AbstractJMeterMojoTest {
         AbstractJMeterMojo testSubject = createtMojoInstanceWithTestLogging();
         testSubject.resultsDirectory = resultsDirectory;
         testSubject.logsDirectory = logsDirectory;
-        testSubject.jmeterDirectory = jmeterDirectory;
         testSubject.customPropertiesFiles = null;
         testSubject.generateReports = false;
         testSubject.testResultsTimestamp = false;
-        JMeterArgumentsArray actual = testSubject.computeJMeterArgumentsArray(true, true)
+        JMeterArgumentsArray actual = testSubject.computeJMeterArgumentsArray(true, true, jmeterDirectory.getAbsolutePath())
                 .setTestFile(testFile, testFileDirectory);
 
         assertThat(UtilityFunctions.humanReadableCommandLineOutput(actual.buildArgumentsArray())).isEqualTo(UtilityFunctions.humanReadableCommandLineOutput(expected.buildArgumentsArray()));
@@ -277,12 +276,11 @@ public class AbstractJMeterMojoTest {
         AbstractJMeterMojo testSubject = createtMojoInstanceWithTestLogging();
         testSubject.resultsDirectory = resultsDirectory;
         testSubject.logsDirectory = logsDirectory;
-        testSubject.jmeterDirectory = jmeterDirectory;
         testSubject.reportDirectory = reportsDirectory;
         testSubject.customPropertiesFiles = null;
         testSubject.generateReports = true;
         testSubject.testResultsTimestamp = false;
-        JMeterArgumentsArray actual = testSubject.computeJMeterArgumentsArray(true, true)
+        JMeterArgumentsArray actual = testSubject.computeJMeterArgumentsArray(true, true, jmeterDirectory.getAbsolutePath())
                 .setTestFile(testFile, testFileDirectory);
 
         assertThat(UtilityFunctions.humanReadableCommandLineOutput(actual.buildArgumentsArray())).isEqualTo(UtilityFunctions.humanReadableCommandLineOutput(expected.buildArgumentsArray()));
@@ -315,13 +313,12 @@ public class AbstractJMeterMojoTest {
         AbstractJMeterMojo testSubject = createtMojoInstanceWithTestLogging();
         testSubject.resultsDirectory = resultsDirectory;
         testSubject.logsDirectory = logsDirectory;
-        testSubject.jmeterDirectory = jmeterDirectory;
         testSubject.customPropertiesFiles = null;
         testSubject.generateReports = false;
         testSubject.testResultsTimestamp = true;
         testSubject.appendResultsTimestamp = true;
         testSubject.resultsFileNameDateFormat = "YYYYMM";
-        JMeterArgumentsArray actual = testSubject.computeJMeterArgumentsArray(true, true)
+        JMeterArgumentsArray actual = testSubject.computeJMeterArgumentsArray(true, true, jmeterDirectory.getAbsolutePath())
                 .setTestFile(testFile, testFileDirectory);
 
         assertThat(UtilityFunctions.humanReadableCommandLineOutput(actual.buildArgumentsArray())).isEqualTo(UtilityFunctions.humanReadableCommandLineOutput(expected.buildArgumentsArray()));

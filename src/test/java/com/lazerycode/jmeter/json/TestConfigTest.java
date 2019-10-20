@@ -1,10 +1,11 @@
 package com.lazerycode.jmeter.json;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.junit.Test;
 
 import java.io.File;
-import java.io.InputStream;
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -19,38 +20,30 @@ public class TestConfigTest {
     private String tempdir = System.getProperty("java.io.tmpdir");
 
     @Test
-    public void createConfigFromResourceFile() throws MojoExecutionException, URISyntaxException {
+    public void createConfigFromResourceFile() throws MojoExecutionException, URISyntaxException, JsonProcessingException {
         URL configFile = this.getClass().getResource(testConfigFile);
         File testConfigJSON = new File(configFile.toURI());
-        TestConfig testConfig = new TestConfig(testConfigJSON);
+        TestConfig testConfig = new TestConfig(testConfigJSON, "test-execution");
         assertThat(testConfig.getFullConfig())
-                .isEqualToNormalizingWhitespace(String.format("{%1$s  \"resultFilesLocations\" : [],%1$s  \"resultsOutputIsCSVFormat\" : false,%1$s  \"someOtherElement\": \"foo\",%1$s  \"generateReports\": false%1$s}", '\n'));
+                .isEqualTo("{\"executionID\":\"test-execution\",\"jmeterDirectoryPath\":null,\"resultsOutputIsCSVFormat\":false,\"resultFilesLocations\":[],\"generateReports\":false}");
     }
 
     @Test(expected = MojoExecutionException.class)
     public void testConfigFileDoesNotExist() throws MojoExecutionException {
         File testConfigJSON = new File("/does/not/exist");
-        new TestConfig(testConfigJSON);
-    }
-
-    @Test
-    public void createConfigFromInputStream() throws MojoExecutionException {
-        InputStream configFile = this.getClass().getResourceAsStream(testConfigFile);
-        TestConfig testConfig = new TestConfig(configFile);
-        assertThat(testConfig.getFullConfig())
-                .isEqualToNormalizingWhitespace(String.format("{%1$s  \"resultFilesLocations\" : [],%1$s  \"resultsOutputIsCSVFormat\" : false,%1$s  \"someOtherElement\": \"foo\",%1$s  \"generateReports\": false%1$s}", '\n'));
+        new TestConfig(testConfigJSON, "configuration");
     }
 
     @Test(expected = MojoExecutionException.class)
     public void testConfigResourceDoesNotExist() throws MojoExecutionException {
-        InputStream configFile = this.getClass().getResourceAsStream("/does/not.exist");
-        new TestConfig(configFile);
+        File configFile = new File("/does/not.exist");
+        new TestConfig(configFile, "configuration");
     }
 
     @Test
-    public void changeCSVFormat() throws MojoExecutionException {
-        InputStream configFile = this.getClass().getResourceAsStream(testConfigFile);
-        TestConfig testConfig = new TestConfig(configFile);
+    public void changeCSVFormat() throws MojoExecutionException, URISyntaxException {
+        File configFile = new File(this.getClass().getResource(testConfigFile).toURI());
+        TestConfig testConfig = new TestConfig(configFile, "test-execution");
 
         assertThat(testConfig.getResultsOutputIsCSVFormat()).isFalse();
 
@@ -64,9 +57,9 @@ public class TestConfigTest {
     }
 
     @Test
-    public void changeResultsFileLocation() throws MojoExecutionException {
-        InputStream configFile = this.getClass().getResourceAsStream(testConfigFile);
-        TestConfig testConfig = new TestConfig(configFile);
+    public void changeResultsFileLocation() throws MojoExecutionException, URISyntaxException {
+        File configFile = new File(this.getClass().getResource(testConfigFile).toURI());
+        TestConfig testConfig = new TestConfig(configFile, "test-execution");
 
         assertThat(testConfig.getResultsFileLocations().size()).isEqualTo(0);
 
@@ -82,9 +75,9 @@ public class TestConfigTest {
     }
 
     @Test
-    public void changeGenerateReports() throws MojoExecutionException {
-        InputStream configFile = this.getClass().getResourceAsStream(testConfigFile);
-        TestConfig testConfig = new TestConfig(configFile);
+    public void changeGenerateReports() throws MojoExecutionException, URISyntaxException {
+        File configFile = new File(this.getClass().getResource(testConfigFile).toURI());
+        TestConfig testConfig = new TestConfig(configFile, "test-execution");
 
         assertThat(testConfig.getGenerateReports()).isFalse();
 
@@ -98,59 +91,58 @@ public class TestConfigTest {
     }
 
     @Test
-    public void checkThatAWrittenFileCanBeReadInAgain() throws MojoExecutionException {
-
+    public void checkThatAWrittenFileCanBeReadInAgain() throws MojoExecutionException, URISyntaxException, IOException {
         String tempFileLocation = tempdir + File.separator + UUID.randomUUID() + File.separator + "test_config.json";
         File tempTestFile = new File(tempFileLocation);
         tempTestFile.getParentFile().mkdirs();
         tempTestFile.deleteOnExit();
 
-        InputStream configFile = this.getClass().getResourceAsStream(testConfigFile);
-        TestConfig testConfig = new TestConfig(configFile);
+        File configFile = new File(this.getClass().getResource(testConfigFile).toURI());
+        TestConfig testConfig = new TestConfig(configFile, "test-execution");
         testConfig.setResultsOutputIsCSVFormat(true);
         testConfig.writeResultFilesConfigTo(tempFileLocation);
 
-        TestConfig newlyCreatedTestConfig = new TestConfig(tempTestFile);
+        //TODO make sure we don't overwrite original file data
+        TestConfig newlyCreatedTestConfig = new TestConfig(tempTestFile, "test-execution");
 
         assertThat(testConfig).isEqualTo(newlyCreatedTestConfig);
         assertThat(testConfig.hashCode()).isEqualTo(newlyCreatedTestConfig.hashCode());
     }
 
     @Test(expected = MojoExecutionException.class)
-    public void checkExceptionIsThrownIfFileCannotBeCreated() throws MojoExecutionException {
-
+    public void checkExceptionIsThrownIfFileCannotBeCreated() throws MojoExecutionException, URISyntaxException {
         String tempFileLocation = tempdir + File.separator + UUID.randomUUID() + File.separator + "test_config.json";
         File tempTestFile = new File(tempFileLocation);
         tempTestFile.deleteOnExit();
 
-        InputStream configFile = this.getClass().getResourceAsStream(testConfigFile);
-        TestConfig testConfig = new TestConfig(configFile);
+        File configFile = new File(this.getClass().getResource(testConfigFile).toURI());
+        TestConfig testConfig = new TestConfig(configFile, "test-execution");
         testConfig.setResultsOutputIsCSVFormat(true);
         testConfig.writeResultFilesConfigTo(tempFileLocation);
     }
 
     @Test
-    public void checkEqualsWorksForIdenticalObject() throws MojoExecutionException {
-        InputStream configFile = this.getClass().getResourceAsStream(testConfigFile);
-        TestConfig testConfig = new TestConfig(configFile);
+    public void checkEqualsWorksForIdenticalObject() throws MojoExecutionException, URISyntaxException {
+        File configFile = new File(this.getClass().getResource(testConfigFile).toURI());
+        TestConfig testConfig = new TestConfig(configFile, "test-execution");
 
-        assertThat(testConfig.equals(testConfig)).isTrue();
+        assertThat(testConfig).isEqualTo(testConfig);
     }
 
     @Test
-    public void checkEqualsWorksForNull() throws MojoExecutionException {
-        InputStream configFile = this.getClass().getResourceAsStream(testConfigFile);
-        TestConfig testConfig = new TestConfig(configFile);
+    public void checkEqualsWorksForNull() throws MojoExecutionException, URISyntaxException {
+        File configFile = new File(this.getClass().getResource(testConfigFile).toURI());
+        TestConfig testConfig = new TestConfig(configFile, "test-execution");
 
-        assertThat(testConfig.equals(null)).isFalse();
+        assertThat(testConfig).isNotNull();
     }
 
     @Test
-    public void checkEqualsWorksForDifferentClassType() throws MojoExecutionException {
-        InputStream configFile = this.getClass().getResourceAsStream(testConfigFile);
-        TestConfig testConfig = new TestConfig(configFile);
+    public void checkEqualsWorksForDifferentClassType() throws MojoExecutionException, URISyntaxException {
+        File configFile = new File(this.getClass().getResource(testConfigFile).toURI());
+        TestConfig testConfig = new TestConfig(configFile, "test-execution");
         String notTestConfig = "nope";
 
-        assertThat(testConfig.equals(notTestConfig)).isFalse();
+        assertThat(testConfig).isNotEqualTo(notTestConfig);
     }
 }

@@ -1,10 +1,9 @@
 package com.lazerycode.jmeter.mojo;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
+import com.lazerycode.jmeter.configuration.JMeterArgumentsArray;
+import com.lazerycode.jmeter.configuration.JMeterProcessJVMSettings;
+import com.lazerycode.jmeter.configuration.ProxyConfiguration;
+import com.lazerycode.jmeter.configuration.RemoteConfiguration;
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
@@ -15,10 +14,10 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.settings.Proxy;
 import org.apache.maven.settings.Settings;
 
-import com.lazerycode.jmeter.configuration.JMeterArgumentsArray;
-import com.lazerycode.jmeter.configuration.JMeterProcessJVMSettings;
-import com.lazerycode.jmeter.configuration.ProxyConfiguration;
-import com.lazerycode.jmeter.configuration.RemoteConfiguration;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * JMeter Maven plugin.
@@ -26,6 +25,7 @@ import com.lazerycode.jmeter.configuration.RemoteConfiguration;
  */
 @SuppressWarnings({"UnusedDeclaration", "FieldCanBeLocal", "JavaDoc"}) // Mojos get their fields set via reflection
 public abstract class AbstractJMeterMojo extends AbstractMojo {
+    public static final String DEFAULT_CONFIG_EXECUTION_ID = "configuration";
     protected static final String LINE_SEPARATOR = "-------------------------------------------------------";
     protected static final String JMETER_ARTIFACT_PREFIX = "ApacheJMeter_";
     protected static final String JMETER_ARTIFACT_NAME = "ApacheJMeter";
@@ -80,34 +80,38 @@ public abstract class AbstractJMeterMojo extends AbstractMojo {
     protected String resultsFileNameDateFormat;
 
     /**
-     * Set the directory that JMeter results are saved to.
-     */
-    @Parameter(defaultValue = "${project.build.directory}/jmeter/results")
-    protected File resultsDirectory;
-
-    /**
      * Generate JMeter Reports (this will force your .jtl's into .csv mode)
      */
     @Parameter(defaultValue = "false")
     protected boolean generateReports;
 
     /**
+     * TODO Dynamic
+     * Set the directory that JMeter results are saved to.
+     */
+    @Parameter(defaultValue = "${project.build.directory}/jmeter/results")
+    protected File resultsDirectory;
+
+    /**
+     * TODO Dynamic
      * Set the directory that JMeter reports are saved to.
      */
     @Parameter(defaultValue = "${project.build.directory}/jmeter/reports")
     protected File reportDirectory;
 
     /**
-     * Set the directory that JMeter test files are copied into as part of the build.
-     */
-    @Parameter(defaultValue = "${project.build.directory}/jmeter/testFiles")
-    protected File testFilesBuildDirectory;
-
-    /**
+     * TODO Dynamic
      * Set the directory that JMeter logs are saved to.
      */
     @Parameter(defaultValue = "${project.build.directory}/jmeter/logs")
     protected File logsDirectory;
+
+    /**
+     * TODO Dynamic
+     * Set the directory that JMeter test files are copied into as part of the build.
+     */
+    @Parameter(defaultValue = "${project.build.directory}/jmeter/testFiles")
+    protected File testFilesBuildDirectory;
 
     /**
      * Absolute path to JMeter custom (test dependent) properties file.
@@ -187,13 +191,13 @@ public abstract class AbstractJMeterMojo extends AbstractMojo {
     @Parameter(defaultValue = "${project.build.directory}/config.json")
     protected String testConfigFile;
 
-    //------------------------------------------------------------------------------------------------------------------
-
     /**
-     * Place where the JMeter files will be generated.
+     * The filename used to store the results config
      */
-    @Parameter(defaultValue = "${project.build.directory}/jmeter")
-    protected File jmeterDirectory;
+    @Parameter(defaultValue = DEFAULT_CONFIG_EXECUTION_ID)
+    protected String selectedConfiguration;
+
+    //------------------------------------------------------------------------------------------------------------------
 
     /**
      * The project build directory
@@ -233,8 +237,8 @@ public abstract class AbstractJMeterMojo extends AbstractMojo {
      *
      * @throws MojoExecutionException
      */
-    protected JMeterArgumentsArray computeJMeterArgumentsArray(boolean disableGUI, boolean isCSVFormat) throws MojoExecutionException {
-        JMeterArgumentsArray testArgs = new JMeterArgumentsArray(disableGUI, jmeterDirectory.getAbsolutePath())
+    protected JMeterArgumentsArray computeJMeterArgumentsArray(boolean disableGUI, boolean isCSVFormat, String jmeterDirectoryPath) throws MojoExecutionException {
+        JMeterArgumentsArray testArgs = new JMeterArgumentsArray(disableGUI, jmeterDirectoryPath)
                 .setResultsDirectory(resultsDirectory.getAbsolutePath())
                 .setResultFileOutputFormatIsCSV(isCSVFormat)
                 .setProxyConfig(proxyConfig)
@@ -281,18 +285,6 @@ public abstract class AbstractJMeterMojo extends AbstractMojo {
             FileUtils.copyDirectory(sourceDirectory, destinationDirectory);
         } catch (IOException e) {
             throw new MojoExecutionException(e.getMessage(), e);
-        }
-    }
-    
-    protected void checkConfiguration() throws MojoExecutionException {
-        if (!JMeterConfigurationHolder.getInstance().isFreezed()) {
-            throw new MojoExecutionException("Configuration is not done, have you added the configure goal to your POM?\n" +
-                    "    <execution>\n" +
-                    "        <id>configuration</id>\n" +
-                    "        <goals>\n" +
-                    "            <goal>configure</goal>\n" +
-                    "        </goals>\n" +
-                    "    </execution>");
         }
     }
 }

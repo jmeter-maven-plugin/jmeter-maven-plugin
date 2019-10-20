@@ -1,6 +1,18 @@
 {
-  "resultFilesLocations" : [],
-  "resultsOutputIsCSVFormat" : false,
-  "someOtherElement": "foo",
-  "generateReports": false
+  "configurations": [
+    {
+      "executionID": "configuration",
+      "resultFilesLocations": [],
+      "resultsOutputIsCSVFormat": true,
+      "someOtherElement": "bar",
+      "generateReports": true
+    },
+    {
+      "executionID": "test-execution",
+      "resultFilesLocations": [],
+      "resultsOutputIsCSVFormat": false,
+      "someOtherElement": "foo",
+      "generateReports": false
+    }
+  ]
 }

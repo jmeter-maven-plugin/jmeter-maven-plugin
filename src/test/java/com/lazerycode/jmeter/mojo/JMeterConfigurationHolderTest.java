@@ -12,7 +12,6 @@ import java.util.HashMap;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class JMeterConfigurationHolderTest {
-    private static final String RUNTIME_JAR_NAME = "fred";
     private final File WORKING_DIRECTORY = new File(this.getClass().getResource("/").getFile());
     private EnumMap<ConfigurationFiles, PropertiesMapping> propertiesMap = new EnumMap<>(ConfigurationFiles.class);
     private HashMap<String, String> properties = new HashMap<>();
@@ -27,51 +26,23 @@ public class JMeterConfigurationHolderTest {
     @Test
     public void gettersAndSettersWorkAsExpected() {
         JMeterConfigurationHolder jMeterConfigurationHolder = JMeterConfigurationHolder.getInstance();
-        jMeterConfigurationHolder.setRuntimeJarName(RUNTIME_JAR_NAME);
         jMeterConfigurationHolder.setWorkingDirectory(WORKING_DIRECTORY);
         jMeterConfigurationHolder.setPropertiesMap(propertiesMap);
 
-        assertThat(jMeterConfigurationHolder.getRuntimeJarName()).isEqualTo(RUNTIME_JAR_NAME);
         assertThat(jMeterConfigurationHolder.getWorkingDirectory()).isEqualTo(WORKING_DIRECTORY);
         assertThat(jMeterConfigurationHolder.getPropertiesMap()).isEqualTo(propertiesMap);
-    }
-
-    @Test(expected = IllegalStateException.class)
-    public void tryingToModifyRuntimeJarNameWhileFrozenThrowsIllegalStateException() {
-        JMeterConfigurationHolder jMeterConfigurationHolder = JMeterConfigurationHolder.getInstance();
-        jMeterConfigurationHolder.freezeConfiguration();
-        jMeterConfigurationHolder.setRuntimeJarName(RUNTIME_JAR_NAME);
-    }
-
-    @Test(expected = IllegalStateException.class)
-    public void tryingToModifyWorkingDirectoryWhileFrozenThrowsIllegalStateException() {
-        JMeterConfigurationHolder jMeterConfigurationHolder = JMeterConfigurationHolder.getInstance();
-        jMeterConfigurationHolder.freezeConfiguration();
-        jMeterConfigurationHolder.setWorkingDirectory(WORKING_DIRECTORY);
-    }
-
-    @Test(expected = IllegalStateException.class)
-    public void tryingToModifyPropertiesMapWhileFrozenThrowsIllegalStateException() {
-        JMeterConfigurationHolder jMeterConfigurationHolder = JMeterConfigurationHolder.getInstance();
-        jMeterConfigurationHolder.freezeConfiguration();
-        jMeterConfigurationHolder.setPropertiesMap(propertiesMap);
     }
 
     @Test
     public void resettingConfigurationAllowsYouToModifyJMeterConfigurationHolder() {
         JMeterConfigurationHolder jMeterConfigurationHolder = JMeterConfigurationHolder.getInstance();
-        jMeterConfigurationHolder.freezeConfiguration();
 
-        assertThat(jMeterConfigurationHolder.getRuntimeJarName()).isNull();
         assertThat(jMeterConfigurationHolder.getWorkingDirectory()).isNull();
         assertThat(jMeterConfigurationHolder.getPropertiesMap()).isNull();
 
-        jMeterConfigurationHolder.resetConfiguration();
-        jMeterConfigurationHolder.setRuntimeJarName(RUNTIME_JAR_NAME);
         jMeterConfigurationHolder.setWorkingDirectory(WORKING_DIRECTORY);
         jMeterConfigurationHolder.setPropertiesMap(propertiesMap);
 
-        assertThat(jMeterConfigurationHolder.getRuntimeJarName()).isEqualTo(RUNTIME_JAR_NAME);
         assertThat(jMeterConfigurationHolder.getWorkingDirectory()).isEqualTo(WORKING_DIRECTORY);
         assertThat(jMeterConfigurationHolder.getPropertiesMap()).isEqualTo(propertiesMap);
     }

@@ -1,6 +1,6 @@
 package com.lazerycode.jmeter.mojo;
 
-import com.lazerycode.jmeter.json.TestConfig;
+import com.lazerycode.jmeter.json.TestConfigurationWrapper;
 import com.lazerycode.jmeter.testrunner.TestManager;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -35,14 +35,14 @@ public class RunJMeterMojo extends AbstractJMeterMojo {
             return;
         }
 
-        TestConfig testConfig = new TestConfig(new File(testConfigFile), selectedConfiguration);
+        testConfig = new TestConfigurationWrapper(new File(testConfigFile), selectedConfiguration);
         //TODO move func below into config.json
         JMeterConfigurationHolder configuration = JMeterConfigurationHolder.getInstance();
         remoteConfig.setPropertiesMap(configuration.getPropertiesMap());
         jMeterProcessJVMSettings.setHeadlessDefaultIfRequired();
         copyFilesInTestDirectory(testFilesDirectory, testFilesBuildDirectory);
         TestManager jMeterTestManager = new TestManager()
-                .setBaseTestArgs(computeJMeterArgumentsArray(true, testConfig.getResultsOutputIsCSVFormat(), testConfig.getJMeterDirectoryPath()))
+                .setBaseTestArgs(computeJMeterArgumentsArray(true, testConfig.getCurrentTestConfiguration().getResultsOutputIsCSVFormat(), testConfig.getCurrentTestConfiguration().getJmeterDirectoryPath()))
                 .setTestFilesDirectory(testFilesBuildDirectory)
                 .setTestFilesIncluded(testFilesIncluded)
                 .setTestFilesExcluded(testFilesExcluded)
@@ -50,7 +50,7 @@ public class RunJMeterMojo extends AbstractJMeterMojo {
                 .setSuppressJMeterOutput(suppressJMeterOutput)
                 .setBinDir(configuration.getWorkingDirectory())
                 .setJMeterProcessJVMSettings(jMeterProcessJVMSettings)
-                .setRuntimeJarName(configuration.getRuntimeJarName())
+                .setRuntimeJarName(testConfig.getCurrentTestConfiguration().getRuntimeJarName())
                 .setReportDirectory(reportDirectory)
                 .setGenerateReports(generateReports)
                 .setPostTestPauseInSeconds(postTestPauseInSeconds);
@@ -58,7 +58,7 @@ public class RunJMeterMojo extends AbstractJMeterMojo {
             getLog().info(this.proxyConfig.toString());
         }
 
-        testConfig.setResultsFileLocations(jMeterTestManager.executeTests());
+        testConfig.getCurrentTestConfiguration().setResultFilesLocations(jMeterTestManager.executeTests());
         testConfig.writeResultFilesConfigTo(testConfigFile);
     }
 }

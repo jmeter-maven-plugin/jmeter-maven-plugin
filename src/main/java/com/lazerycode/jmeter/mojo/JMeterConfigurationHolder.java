@@ -15,11 +15,8 @@ import java.util.Map;
  */
 public class JMeterConfigurationHolder {
     private static final JMeterConfigurationHolder INSTANCE = new JMeterConfigurationHolder();
-    private String runtimeJarName;
     private File workingDirectory;
     private Map<ConfigurationFiles, PropertiesMapping> propertiesMap;
-
-    private boolean configurationFrozen;
 
     /**
      *
@@ -33,23 +30,6 @@ public class JMeterConfigurationHolder {
     }
 
     /**
-     * @return the runtimeJarName
-     */
-    String getRuntimeJarName() {
-        return runtimeJarName;
-    }
-
-    /**
-     * @param runtimeJarName the runtimeJarName to set
-     */
-    void setRuntimeJarName(String runtimeJarName) {
-        if (configurationFrozen) {
-            throw new IllegalStateException("setRuntimeJarName called while JMeter configuration already frozen");
-        }
-        this.runtimeJarName = runtimeJarName;
-    }
-
-    /**
      * @return the workingDirectory
      */
     File getWorkingDirectory() {
@@ -60,9 +40,6 @@ public class JMeterConfigurationHolder {
      * @param workingDirectory the workingDirectory to set
      */
     void setWorkingDirectory(File workingDirectory) {
-        if (configurationFrozen) {
-            throw new IllegalStateException("setWorkingDirectory called while JMeter configuration already frozen");
-        }
         this.workingDirectory = workingDirectory;
     }
 
@@ -77,30 +54,6 @@ public class JMeterConfigurationHolder {
      * @param propertiesMap the propertiesMap to set
      */
     void setPropertiesMap(Map<ConfigurationFiles, PropertiesMapping> propertiesMap) {
-        if (configurationFrozen) {
-            throw new IllegalStateException("setPropertiesMap called while JMeter configuration already frozen");
-        }
         this.propertiesMap = Collections.unmodifiableMap(propertiesMap);
-    }
-
-    /**
-     * Freeze configuration
-     */
-    void freezeConfiguration() {
-        this.configurationFrozen = true;
-    }
-    
-    public boolean isFreezed() {
-        return configurationFrozen;
-    }
-
-    /**
-     * Allow to reset configuration
-     */
-    void resetConfiguration() {
-        workingDirectory = null;
-        runtimeJarName = null;
-        propertiesMap = null;
-        this.configurationFrozen = false;
     }
 }

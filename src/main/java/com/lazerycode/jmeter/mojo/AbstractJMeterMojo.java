@@ -4,6 +4,7 @@ import com.lazerycode.jmeter.configuration.JMeterArgumentsArray;
 import com.lazerycode.jmeter.configuration.JMeterProcessJVMSettings;
 import com.lazerycode.jmeter.configuration.ProxyConfiguration;
 import com.lazerycode.jmeter.configuration.RemoteConfiguration;
+import com.lazerycode.jmeter.json.TestConfigurationWrapper;
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
@@ -204,6 +205,7 @@ public abstract class AbstractJMeterMojo extends AbstractMojo {
      */
     @Parameter(defaultValue = "${project.build.directory}")
     protected File projectBuildDirectory;
+    protected TestConfigurationWrapper testConfig;
 
     //==================================================================================================================
 

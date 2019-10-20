@@ -16,8 +16,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -27,16 +25,16 @@ import static com.jayway.jsonpath.Filter.filter;
 /**
  * Allows user to specify the files they want to check.
  */
-public class TestConfig {
+public class TestConfigurationWrapper {
     private static final String DEFAULT_CONFIGURATION_NAME = "default_plugin_configuration";  //FIXME use a hash to make it more likely to be unique? 61695e67f0df122c254df14fa94b511ab02ad4f7f95a89fe08893fc655e2027d
     private ObjectMapper mapper = new ObjectMapper();
     private TestConfiguration testConfiguration;
 
-    public TestConfig() {
+    public TestConfigurationWrapper() {
         testConfiguration = new TestConfiguration();
     }
 
-    public TestConfig(File jsonFile, String executionIdName) throws MojoExecutionException {
+    public TestConfigurationWrapper(File jsonFile, String executionIdName) throws MojoExecutionException {
         Configuration jsonPathConfiguration = Configuration.defaultConfiguration().mappingProvider(new JacksonMappingProvider());
         try (FileReader jsonFileReader = new FileReader(jsonFile)) {
             Filter configFiter = filter(
@@ -81,47 +79,15 @@ public class TestConfig {
         }
     }
 
-    public void setExecutionIDName(String executionIdName) {
-        testConfiguration.setExecutionID(executionIdName);
-    }
-
-    public void setJMeterDirectoryPath(Path jmeterDirectoryPath) {
-        testConfiguration.setJmeterDirectoryPath(jmeterDirectoryPath.toString());
-    }
-
-    public String getJMeterDirectoryPath() {
-        return testConfiguration.getJmeterDirectoryPath();
-    }
-
-    public void setResultsFileLocations(List<String> resultFileLocations) {
-        testConfiguration.setResultFilesLocations(resultFileLocations.toArray(new String[0]));
-    }
-
-    public List<String> getResultsFileLocations() {
-        return Arrays.asList(testConfiguration.getResultFilesLocations());
-    }
-
-    public void setResultsOutputIsCSVFormat(boolean isCSVFormat) {
-        testConfiguration.setResultsOutputIsCSVFormat(isCSVFormat);
-    }
-
-    public boolean getResultsOutputIsCSVFormat() {
-        return testConfiguration.getResultsOutputIsCSVFormat();
-    }
-
-    public void setGenerateReports(boolean generateReports) {
-        testConfiguration.setGenerateReports(generateReports);
-    }
-
-    public boolean getGenerateReports() {
-        return testConfiguration.getGenerateReports();
+    public TestConfiguration getCurrentTestConfiguration() {
+        return this.testConfiguration;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        TestConfig that = (TestConfig) o;
+        TestConfigurationWrapper that = (TestConfigurationWrapper) o;
         return Objects.equals(testConfiguration, that.testConfiguration);
     }
 

@@ -1,6 +1,6 @@
 package com.lazerycode.jmeter.mojo;
 
-import com.lazerycode.jmeter.json.TestConfig;
+import com.lazerycode.jmeter.json.TestConfigurationWrapper;
 import com.lazerycode.jmeter.properties.ConfigurationFiles;
 import com.lazerycode.jmeter.properties.PropertiesFile;
 import com.lazerycode.jmeter.properties.PropertiesMapping;
@@ -267,7 +267,6 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
     @Parameter(defaultValue = "csv")
     protected String resultsFileFormat;
     protected boolean resultsOutputIsCSVFormat = true;
-
     protected Artifact jmeterConfigArtifact;
     protected Path customPropertiesDirectory;
     protected Path jmeterDirectoryPath;
@@ -288,13 +287,15 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
         getLog().info("C O N F I G U R I N G    J M E T E R");
         getLog().info(LINE_SEPARATOR);
         getLog().info(" ");
-
+        testConfig = new TestConfigurationWrapper();
+        testConfig.getCurrentTestConfiguration().setExecutionID(this.mojoExecution.getExecutionId());
+        testConfig.getCurrentTestConfiguration().setGenerateReports(generateReports);
         processedArtifacts.clear();
-        JMeterConfigurationHolder.getInstance().resetConfiguration();
         parsedExcludedArtifacts = setupExcludedArtifacts(excludedArtifacts);
         getLog().info("Building JMeter directory structure...");
         getLog().info("Generating JSON Test config...");
         jmeterDirectoryPath = Paths.get(projectBuildDirectory.getAbsolutePath(), UUID.randomUUID().toString(), "jmeter");
+        testConfig.getCurrentTestConfiguration().setJmeterDirectoryPath(jmeterDirectoryPath.toString());
         generateJMeterDirectoryTree();
         getLog().info("Configuring JMeter artifacts...");
         configureJMeterArtifacts();
@@ -305,7 +306,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
         copyExplicitLibraries(testPlanLibraries, libDirectory.toFile(), downloadLibraryDependencies, "test plan libraries");
         getLog().info("Configuring JMeter properties...");
         configurePropertiesFiles();
-        generateTestConfig(this.mojoExecution.getExecutionId());
+        testConfig.writeResultFilesConfigTo(testConfigFile);
     }
 
     /**
@@ -372,26 +373,6 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
         setDefaultPluginProperties(JMeterConfigurationHolder.getInstance().getWorkingDirectory().getAbsolutePath());
     }
 
-    protected void generateTestConfig(String executionId) throws MojoExecutionException {
-        Path testConfigPath = Paths.get(testConfigFile);
-        if (!Files.exists(testConfigPath)) {
-            Path targetDirectory = Paths.get(String.valueOf(projectBuildDirectory));
-            if (!Files.exists(targetDirectory)) {
-                try {
-                    Files.createDirectory(targetDirectory);
-                } catch (IOException e) {
-                    throw new MojoExecutionException(e.getMessage(), e);
-                }
-            }
-        }
-        TestConfig testConfig = new TestConfig();
-        testConfig.setExecutionIDName(executionId);
-        testConfig.setJMeterDirectoryPath(jmeterDirectoryPath);
-        testConfig.setResultsOutputIsCSVFormat(resultsOutputIsCSVFormat);
-        testConfig.setGenerateReports(generateReports);
-        testConfig.writeResultFilesConfigTo(testConfigFile);
-    }
-
     protected void setJMeterResultFileFormat() {
         if (generateReports || "csv".equalsIgnoreCase(resultsFileFormat)) {
             propertiesJMeter.put("jmeter.save.saveservice.output_format", "csv");
@@ -400,6 +381,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
             propertiesJMeter.put("jmeter.save.saveservice.output_format", "xml");
             resultsOutputIsCSVFormat = false;
         }
+        testConfig.getCurrentTestConfiguration().setResultsOutputIsCSVFormat(resultsOutputIsCSVFormat);
     }
 
 
@@ -438,7 +420,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
                     extractConfigSettings(jmeterConfigArtifact);
                     break;
                 case JMETER_ARTIFACT_NAME:
-                    JMeterConfigurationHolder.getInstance().setRuntimeJarName(returnedArtifact.getFile().getName());
+                    testConfig.getCurrentTestConfiguration().setRuntimeJarName(returnedArtifact.getFile().getName());
                     copyArtifactIfRequired(returnedArtifact, binDirectory);
                     copyTransitiveRuntimeDependenciesToLibDirectory(returnedArtifact, downloadJMeterDependencies);
                     break;

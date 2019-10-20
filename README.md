@@ -31,7 +31,7 @@ Running the GUI
 Once you have added the plugin to your project you will be able to invoke the JMeter GUI using the following command:
 
 ```
-mvn jmeter:gui
+mvn jmeter:configure jmeter:gui
 ```
 
 Basic Usage
@@ -47,6 +47,13 @@ Add the plugin to the build section of your pom's project :
     <artifactId>jmeter-maven-plugin</artifactId>
     <version>2.9.0</version>
     <executions>
+       <!-- Generate JMeter configuration -->
+       <execution>
+           <id>configuration</id>
+           <goals>
+               <goal>configure</goal>
+           </goals>
+       </execution>
 	   <!-- Run JMeter tests -->
        <execution>
             <id>jmeter-tests</id>

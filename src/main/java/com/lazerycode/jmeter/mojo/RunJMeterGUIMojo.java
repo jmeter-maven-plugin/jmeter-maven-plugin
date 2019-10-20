@@ -1,7 +1,7 @@
 package com.lazerycode.jmeter.mojo;
 
 import com.lazerycode.jmeter.configuration.JMeterArgumentsArray;
-import com.lazerycode.jmeter.json.TestConfig;
+import com.lazerycode.jmeter.json.TestConfigurationWrapper;
 import com.lazerycode.jmeter.testrunner.JMeterProcessBuilder;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -44,17 +44,16 @@ public class RunJMeterGUIMojo extends AbstractJMeterMojo {
         getLog().info(LINE_SEPARATOR);
         getLog().info(" S T A R T I N G    J M E T E R    G U I ");
         getLog().info(LINE_SEPARATOR);
+        testConfig = new TestConfigurationWrapper(new File(testConfigFile), selectedConfiguration);
         startJMeterGUI(initialiseJMeterArgumentsArray());
     }
 
     private JMeterArgumentsArray initialiseJMeterArgumentsArray() throws MojoExecutionException {
-        TestConfig testConfig = new TestConfig(new File(testConfigFile), selectedConfiguration);
-        //TODO set right config
-        return computeJMeterArgumentsArray(false, testConfig.getResultsOutputIsCSVFormat(), testConfig.getJMeterDirectoryPath()).setTestFile(guiTestFile, testFilesDirectory);
+        return computeJMeterArgumentsArray(false, testConfig.getCurrentTestConfiguration().getResultsOutputIsCSVFormat(), testConfig.getCurrentTestConfiguration().getJmeterDirectoryPath()).setTestFile(guiTestFile, testFilesDirectory);
     }
 
     private void startJMeterGUI(JMeterArgumentsArray testArgs) throws MojoExecutionException {
-        JMeterProcessBuilder jmeterProcessBuilder = new JMeterProcessBuilder(jMeterProcessJVMSettings, JMeterConfigurationHolder.getInstance().getRuntimeJarName())
+        JMeterProcessBuilder jmeterProcessBuilder = new JMeterProcessBuilder(jMeterProcessJVMSettings, testConfig.getCurrentTestConfiguration().getRuntimeJarName())
                 .setWorkingDirectory(JMeterConfigurationHolder.getInstance().getWorkingDirectory())
                 .addArguments(testArgs.buildArgumentsArray());
         try {

@@ -4,7 +4,8 @@
 
 ### Enhancements ###
 
-* Issue [335](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues/335) You can now use the command line property `-Djmeter.version=5.0` to specify a version of jmeter to be used to build/run the plugin.  Changes to the list of expected libraries will still need modifications to the POM.
+* Issue [230](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues/230) You can now generate multiple configuration profiles that can be bound to specific test executions.
+* Issue [335](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues/335) You can now use the command line property `-Djmeter.version=5.0` to specify a version of JMeter to be used to build/run the plugin.  Changes to the list of expected libraries will still need modifications to the POM.
 
 ### Bug Fixes ###
 
@@ -20,7 +21,7 @@
 
 And to run in GUI mode, call:
 
-    `mvn package jmeter:configure jmeter:gui`
+    `mvn jmeter:configure jmeter:gui`
 
 * Issue [332](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues/332) Goal "remote-server" fails if project contains classes used in test
 * Issue [333](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues/333) Goal **remote-server** does not mark build as failed if launch of `jmeter -r` fails

@@ -3,14 +3,16 @@ package com.lazerycode.jmeter.json;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class TestConfiguration {
     private String executionID;
     private String jmeterDirectoryPath;
+    private String runtimeJarName;
     private Boolean resultsOutputIsCSVFormat;
-    private String[] resultFilesLocations;
+    private String[] resultFilesLocations = new String[0];
 
     public String getExecutionID() {
         return executionID;
@@ -28,6 +30,14 @@ public class TestConfiguration {
         this.jmeterDirectoryPath = jmeterDirectoryPath;
     }
 
+    public String getRuntimeJarName() {
+        return runtimeJarName;
+    }
+
+    public void setRuntimeJarName(String runtimeJarName) {
+        this.runtimeJarName = runtimeJarName;
+    }
+
     public Boolean getResultsOutputIsCSVFormat() {
         return resultsOutputIsCSVFormat;
     }
@@ -36,12 +46,12 @@ public class TestConfiguration {
         this.resultsOutputIsCSVFormat = resultsOutputIsCSVFormat;
     }
 
-    public String[] getResultFilesLocations() {
-        return resultFilesLocations;
+    public List<String> getResultFilesLocations() {
+        return Arrays.asList(resultFilesLocations);
     }
 
-    public void setResultFilesLocations(String[] resultFilesLocations) {
-        this.resultFilesLocations = resultFilesLocations;
+    public void setResultFilesLocations(List<String> resultFilesLocations) {
+        this.resultFilesLocations = resultFilesLocations.toArray(new String[0]);
     }
 
     public Boolean getGenerateReports() {

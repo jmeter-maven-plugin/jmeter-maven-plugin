@@ -1,16 +1,15 @@
 package com.lazerycode.jmeter.mojo;
 
-import java.io.File;
-import java.io.IOException;
-
-import com.lazerycode.jmeter.json.TestConfig;
+import com.lazerycode.jmeter.configuration.JMeterArgumentsArray;
+import com.lazerycode.jmeter.json.TestConfigurationWrapper;
+import com.lazerycode.jmeter.testrunner.JMeterProcessBuilder;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
-import com.lazerycode.jmeter.configuration.JMeterArgumentsArray;
-import com.lazerycode.jmeter.testrunner.JMeterProcessBuilder;
+import java.io.File;
+import java.io.IOException;
 
 /**
  * Goal that runs JMeter in server mode.<br/>
@@ -54,12 +53,12 @@ public class RunJMeterServerMojo extends AbstractJMeterMojo {
         getLog().info(LINE_SEPARATOR);
         getLog().info(String.format(" Host: %s", exportedRmiHostname));
         getLog().info(String.format(" Port: %s", serverPort));
+        testConfig = new TestConfigurationWrapper(new File(testConfigFile), selectedConfiguration);
         startJMeterServer(initializeJMeterArgumentsArray());
     }
 
     private JMeterArgumentsArray initializeJMeterArgumentsArray() throws MojoExecutionException {
-        TestConfig testConfig = new TestConfig(new File(testConfigFile), selectedConfiguration);
-        return new JMeterArgumentsArray(false, testConfig.getJMeterDirectoryPath())
+        return new JMeterArgumentsArray(false, testConfig.getCurrentTestConfiguration().getJmeterDirectoryPath())
                 .setProxyConfig(proxyConfig)
                 .addACustomPropertiesFiles(customPropertiesFiles)
                 .setLogRootOverride(overrideRootLogLevel)
@@ -72,7 +71,7 @@ public class RunJMeterServerMojo extends AbstractJMeterMojo {
                 .addArgument(String.format("-Djava.rmi.server.hostname=%s", exportedRmiHostname))
                 .addArgument(String.format("-Dserver_port=%s", serverPort));
 
-        JMeterProcessBuilder jmeterProcessBuilder = new JMeterProcessBuilder(jMeterProcessJVMSettings, JMeterConfigurationHolder.getInstance().getRuntimeJarName())
+        JMeterProcessBuilder jmeterProcessBuilder = new JMeterProcessBuilder(jMeterProcessJVMSettings, testConfig.getCurrentTestConfiguration().getRuntimeJarName())
                 .setWorkingDirectory(JMeterConfigurationHolder.getInstance().getWorkingDirectory())
                 .addArguments(testArgs.buildArgumentsArray());
         try {
@@ -82,7 +81,7 @@ public class RunJMeterServerMojo extends AbstractJMeterMojo {
                 getLog().info(" Starting JMeter server process in the background...");
                 //TODO log process using process.pid() when Java 9 is the minimum supported version
             } else {
-                waitForEndAndCheckExitCode(process); 
+                waitForEndAndCheckExitCode(process);
             }
         } catch (IOException ioException) {
             getLog().error(String.format(
@@ -101,7 +100,7 @@ public class RunJMeterServerMojo extends AbstractJMeterMojo {
         try {
             int exitCode = process.waitFor();
             if (exitCode != 0) {
-                throw new MojoExecutionException("Starting jmeter server in background failed with exit code:"+exitCode+", check jmeter logs for more details");
+                throw new MojoExecutionException("Starting jmeter server in background failed with exit code:" + exitCode + ", check jmeter logs for more details");
             }
         } catch (InterruptedException ex) {
             getLog().info(" ");

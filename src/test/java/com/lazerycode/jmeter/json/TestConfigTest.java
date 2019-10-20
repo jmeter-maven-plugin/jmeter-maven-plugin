@@ -23,71 +23,71 @@ public class TestConfigTest {
     public void createConfigFromResourceFile() throws MojoExecutionException, URISyntaxException, JsonProcessingException {
         URL configFile = this.getClass().getResource(testConfigFile);
         File testConfigJSON = new File(configFile.toURI());
-        TestConfig testConfig = new TestConfig(testConfigJSON, "test-execution");
+        TestConfigurationWrapper testConfig = new TestConfigurationWrapper(testConfigJSON, "test-execution");
         assertThat(testConfig.getFullConfig())
-                .isEqualTo("{\"executionID\":\"test-execution\",\"jmeterDirectoryPath\":null,\"resultsOutputIsCSVFormat\":false,\"resultFilesLocations\":[],\"generateReports\":false}");
+                .isEqualTo("{\"executionID\":\"test-execution\",\"jmeterDirectoryPath\":null,\"runtimeJarName\":null,\"resultsOutputIsCSVFormat\":false,\"resultFilesLocations\":[],\"generateReports\":false}");
     }
 
     @Test(expected = MojoExecutionException.class)
     public void testConfigFileDoesNotExist() throws MojoExecutionException {
         File testConfigJSON = new File("/does/not/exist");
-        new TestConfig(testConfigJSON, "configuration");
+        new TestConfigurationWrapper(testConfigJSON, "configuration");
     }
 
     @Test(expected = MojoExecutionException.class)
     public void testConfigResourceDoesNotExist() throws MojoExecutionException {
         File configFile = new File("/does/not.exist");
-        new TestConfig(configFile, "configuration");
+        new TestConfigurationWrapper(configFile, "configuration");
     }
 
     @Test
     public void changeCSVFormat() throws MojoExecutionException, URISyntaxException {
         File configFile = new File(this.getClass().getResource(testConfigFile).toURI());
-        TestConfig testConfig = new TestConfig(configFile, "test-execution");
+        TestConfigurationWrapper testConfig = new TestConfigurationWrapper(configFile, "test-execution");
 
-        assertThat(testConfig.getResultsOutputIsCSVFormat()).isFalse();
+        assertThat(testConfig.getCurrentTestConfiguration().getResultsOutputIsCSVFormat()).isFalse();
 
-        testConfig.setResultsOutputIsCSVFormat(true);
+        testConfig.getCurrentTestConfiguration().setResultsOutputIsCSVFormat(true);
 
-        assertThat(testConfig.getResultsOutputIsCSVFormat()).isTrue();
+        assertThat(testConfig.getCurrentTestConfiguration().getResultsOutputIsCSVFormat()).isTrue();
 
-        testConfig.setResultsOutputIsCSVFormat(false);
+        testConfig.getCurrentTestConfiguration().setResultsOutputIsCSVFormat(false);
 
-        assertThat(testConfig.getResultsOutputIsCSVFormat()).isFalse();
+        assertThat(testConfig.getCurrentTestConfiguration().getResultsOutputIsCSVFormat()).isFalse();
     }
 
     @Test
     public void changeResultsFileLocation() throws MojoExecutionException, URISyntaxException {
         File configFile = new File(this.getClass().getResource(testConfigFile).toURI());
-        TestConfig testConfig = new TestConfig(configFile, "test-execution");
+        TestConfigurationWrapper testConfig = new TestConfigurationWrapper(configFile, "test-execution");
 
-        assertThat(testConfig.getResultsFileLocations().size()).isEqualTo(0);
+        assertThat(testConfig.getCurrentTestConfiguration().getResultFilesLocations().size()).isEqualTo(0);
 
         List<String> resultFilenames = new ArrayList<>();
         resultFilenames.add(0, "c:\\windows\\temp");
         resultFilenames.add(1, "/usr/local/temp");
 
-        testConfig.setResultsFileLocations(resultFilenames);
+        testConfig.getCurrentTestConfiguration().setResultFilesLocations(resultFilenames);
 
-        assertThat(testConfig.getResultsFileLocations().size()).isEqualTo(2);
-        assertThat(testConfig.getResultsFileLocations().get(0)).isEqualTo("c:\\windows\\temp");
-        assertThat(testConfig.getResultsFileLocations().get(1)).isEqualTo("/usr/local/temp");
+        assertThat(testConfig.getCurrentTestConfiguration().getResultFilesLocations().size()).isEqualTo(2);
+        assertThat(testConfig.getCurrentTestConfiguration().getResultFilesLocations().get(0)).isEqualTo("c:\\windows\\temp");
+        assertThat(testConfig.getCurrentTestConfiguration().getResultFilesLocations().get(1)).isEqualTo("/usr/local/temp");
     }
 
     @Test
     public void changeGenerateReports() throws MojoExecutionException, URISyntaxException {
         File configFile = new File(this.getClass().getResource(testConfigFile).toURI());
-        TestConfig testConfig = new TestConfig(configFile, "test-execution");
+        TestConfigurationWrapper testConfig = new TestConfigurationWrapper(configFile, "test-execution");
 
-        assertThat(testConfig.getGenerateReports()).isFalse();
+        assertThat(testConfig.getCurrentTestConfiguration().getGenerateReports()).isFalse();
 
-        testConfig.setGenerateReports(true);
+        testConfig.getCurrentTestConfiguration().setGenerateReports(true);
 
-        assertThat(testConfig.getGenerateReports()).isTrue();
+        assertThat(testConfig.getCurrentTestConfiguration().getGenerateReports()).isTrue();
 
-        testConfig.setGenerateReports(false);
+        testConfig.getCurrentTestConfiguration().setGenerateReports(false);
 
-        assertThat(testConfig.getGenerateReports()).isFalse();
+        assertThat(testConfig.getCurrentTestConfiguration().getGenerateReports()).isFalse();
     }
 
     @Test
@@ -98,12 +98,12 @@ public class TestConfigTest {
         tempTestFile.deleteOnExit();
 
         File configFile = new File(this.getClass().getResource(testConfigFile).toURI());
-        TestConfig testConfig = new TestConfig(configFile, "test-execution");
-        testConfig.setResultsOutputIsCSVFormat(true);
+        TestConfigurationWrapper testConfig = new TestConfigurationWrapper(configFile, "test-execution");
+        testConfig.getCurrentTestConfiguration().setResultsOutputIsCSVFormat(true);
         testConfig.writeResultFilesConfigTo(tempFileLocation);
 
         //TODO make sure we don't overwrite original file data
-        TestConfig newlyCreatedTestConfig = new TestConfig(tempTestFile, "test-execution");
+        TestConfigurationWrapper newlyCreatedTestConfig = new TestConfigurationWrapper(tempTestFile, "test-execution");
 
         assertThat(testConfig).isEqualTo(newlyCreatedTestConfig);
         assertThat(testConfig.hashCode()).isEqualTo(newlyCreatedTestConfig.hashCode());
@@ -116,15 +116,15 @@ public class TestConfigTest {
         tempTestFile.deleteOnExit();
 
         File configFile = new File(this.getClass().getResource(testConfigFile).toURI());
-        TestConfig testConfig = new TestConfig(configFile, "test-execution");
-        testConfig.setResultsOutputIsCSVFormat(true);
+        TestConfigurationWrapper testConfig = new TestConfigurationWrapper(configFile, "test-execution");
+        testConfig.getCurrentTestConfiguration().setResultsOutputIsCSVFormat(true);
         testConfig.writeResultFilesConfigTo(tempFileLocation);
     }
 
     @Test
     public void checkEqualsWorksForIdenticalObject() throws MojoExecutionException, URISyntaxException {
         File configFile = new File(this.getClass().getResource(testConfigFile).toURI());
-        TestConfig testConfig = new TestConfig(configFile, "test-execution");
+        TestConfigurationWrapper testConfig = new TestConfigurationWrapper(configFile, "test-execution");
 
         assertThat(testConfig).isEqualTo(testConfig);
     }
@@ -132,7 +132,7 @@ public class TestConfigTest {
     @Test
     public void checkEqualsWorksForNull() throws MojoExecutionException, URISyntaxException {
         File configFile = new File(this.getClass().getResource(testConfigFile).toURI());
-        TestConfig testConfig = new TestConfig(configFile, "test-execution");
+        TestConfigurationWrapper testConfig = new TestConfigurationWrapper(configFile, "test-execution");
 
         assertThat(testConfig).isNotNull();
     }
@@ -140,7 +140,7 @@ public class TestConfigTest {
     @Test
     public void checkEqualsWorksForDifferentClassType() throws MojoExecutionException, URISyntaxException {
         File configFile = new File(this.getClass().getResource(testConfigFile).toURI());
-        TestConfig testConfig = new TestConfig(configFile, "test-execution");
+        TestConfigurationWrapper testConfig = new TestConfigurationWrapper(configFile, "test-execution");
         String notTestConfig = "nope";
 
         assertThat(testConfig).isNotEqualTo(notTestConfig);

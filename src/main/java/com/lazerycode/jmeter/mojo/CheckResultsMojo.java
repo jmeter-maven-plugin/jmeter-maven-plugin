@@ -1,6 +1,6 @@
 package com.lazerycode.jmeter.mojo;
 
-import com.lazerycode.jmeter.json.TestConfig;
+import com.lazerycode.jmeter.json.TestConfigurationWrapper;
 import com.lazerycode.jmeter.testrunner.ResultScanner;
 import com.lazerycode.jmeter.testrunner.TestFailureDecider;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -70,15 +70,15 @@ public class CheckResultsMojo extends AbstractJMeterMojo {
             getLog().info("S C A N N I N G    F O R    R E S U L T S");
             getLog().info(LINE_SEPARATOR);
             getLog().info(" ");
-            TestConfig testConfig = new TestConfig(new File(testConfigFile), selectedConfiguration);
-            String resultFormat = testConfig.getResultsOutputIsCSVFormat() ? "CSV" : "JTL";
+            TestConfigurationWrapper testConfig = new TestConfigurationWrapper(new File(testConfigFile), selectedConfiguration);
+            String resultFormat = testConfig.getCurrentTestConfiguration().getResultsOutputIsCSVFormat() ? "CSV" : "JTL";
             getLog().info(String.format("Will scan results using format: %s", resultFormat));
             ResultScanner resultScanner = new ResultScanner(
                     scanResultsForSuccessfulRequests,
                     scanResultsForFailedRequests,
-                    testConfig.getResultsOutputIsCSVFormat()
+                    testConfig.getCurrentTestConfiguration().getResultsOutputIsCSVFormat()
             );
-            for (String resultFileLocation : testConfig.getResultsFileLocations()) {
+            for (String resultFileLocation : testConfig.getCurrentTestConfiguration().getResultFilesLocations()) {
                 resultScanner.parseResultFile(new File(resultFileLocation));
             }
             getLog().info(" ");
@@ -86,7 +86,7 @@ public class CheckResultsMojo extends AbstractJMeterMojo {
             getLog().info("P E R F O R M A N C E    T E S T    R E S U L T S");
             getLog().info(LINE_SEPARATOR);
             getLog().info(" ");
-            getLog().info(String.format("Result (.%s) files scanned: %s", resultFormat.toLowerCase(), testConfig.getResultsFileLocations().size()));
+            getLog().info(String.format("Result (.%s) files scanned: %s", resultFormat.toLowerCase(), testConfig.getCurrentTestConfiguration().getResultFilesLocations().size()));
             getLog().info(String.format("Successful requests:         %s", resultScanner.getSuccessCount()));
             getLog().info(String.format("Failed requests:             %s", resultScanner.getFailureCount()));
             TestFailureDecider decider = new TestFailureDecider(ignoreResultFailures, errorRateThresholdInPercent, resultScanner);

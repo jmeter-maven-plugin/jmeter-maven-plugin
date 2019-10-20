@@ -28,9 +28,7 @@ import static com.lazerycode.jmeter.utility.UtilityFunctions.isNotSet;
 public class TestManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TestManager.class);
-
     private JMeterArgumentsArray baseTestArgs;
-
     private File binDir;
     private File testFilesDirectory;
     private String[] testFilesIncluded = new String[]{"**/*.jmx"};

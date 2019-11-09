@@ -95,15 +95,15 @@ Beginners should start with the [Basic Configuration](https://github.com/jmeter-
 
 For advanced POM configuration settings have a look at the [Advanced Configuration](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/wiki/Advanced-Configuration) section.
 
-Tutorial
+Tutorials
 -----
 
 - [Shift left your performance tests with JMeter and Maven](https://www.ubik-ingenierie.com/blog/shift-left-performance-tests-jmeter-maven/)
 
-Book
+Support
 -----
 
-If you'd like to thank the maintainer of this project and some developers of Apache JMeter, you can buy this book:
+If you'd like to help support the maintainers you can donate using the sponsorship button at the top of the page, or you can purchase this book:
 
 [<kbd><img src="https://raw.githubusercontent.com/jmeter-maven-plugin/jmeter-maven-plugin/master/master-jmeter-from-load-test-to-devops-medium.png" /></kbd>](https://leanpub.com/master-jmeter-from-load-test-to-devops/)
 

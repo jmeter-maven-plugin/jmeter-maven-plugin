@@ -37,18 +37,18 @@ public class TestConfigurationWrapper {
     public TestConfigurationWrapper(File jsonFile, String executionIdName) throws MojoExecutionException {
         Configuration jsonPathConfiguration = Configuration.defaultConfiguration().mappingProvider(new JacksonMappingProvider());
         try (FileReader jsonFileReader = new FileReader(jsonFile)) {
-            Filter configFiter = filter(
+            Filter configFilter = filter(
                     where("executionID").is(Optional.ofNullable(executionIdName).orElse(DEFAULT_CONFIGURATION_NAME))
             );
             testConfiguration = JsonPath
                     .using(jsonPathConfiguration)
                     .parse(
                             JsonPath.parse(IOUtils.toString(jsonFileReader))
-                                    .read("$..[?]", JSONArray.class, configFiter)
+                                    .read("$..[?]", JSONArray.class, configFilter)
                                     .toJSONString()
                     ).read("$[0]", TestConfiguration.class);
         } catch (Exception ex) {
-            System.out.println("Using: " + jsonFile);
+            System.out.println("Using: " + jsonFile +" with execution id:"+executionIdName);
             throw new MojoExecutionException(String.format("%s\nHave you added the configure goal to your POM?\n" +
                     "    <execution>\n" +
                     "        <id>configuration</id>\n" +

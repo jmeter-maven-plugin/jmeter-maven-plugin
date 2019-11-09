@@ -19,16 +19,16 @@ matrix:
       script: mvn -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn clean verify
     - jdk: oraclejdk8
       script: mvn -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn clean verify
-    - jdk: oraclejdk8
-      name: Apache JMeter master, Java 8
-      script:
-        - cd ..
-        - git clone --depth 50 https://github.com/apache/jmeter.git
-        - cd jmeter
-        # TODO: remove --console=plain when upgrading dist from trusty
-        - ./gradlew -PskipJavadoc publishToMavenLocal -Pjmeter.version=42.0 -PchecksumIgnore --console=plain
-        - cd ../jmeter-maven-plugin
-        - mvn -Djmeter.version=42.0-SNAPSHOT -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn clean verify
+#    - jdk: oraclejdk8
+#      name: Apache JMeter master, Java 8
+#      script:
+#        - cd ..
+#        - git clone --depth 50 https://github.com/apache/jmeter.git
+#        - cd jmeter
+#        # TODO: remove --console=plain when upgrading dist from trusty
+#        - ./gradlew -PskipJavadoc publishToMavenLocal -Pjmeter.version=42.0 -PchecksumIgnore --console=plain
+#        - cd ../jmeter-maven-plugin
+#        - mvn -Djmeter.version=42.0-SNAPSHOT -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn clean verify
 
 after_success:
   - ./deploy_to_sonatype.sh

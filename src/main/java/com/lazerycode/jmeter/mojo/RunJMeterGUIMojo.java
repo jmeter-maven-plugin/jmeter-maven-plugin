@@ -44,7 +44,7 @@ public class RunJMeterGUIMojo extends AbstractJMeterMojo {
         getLog().info(LINE_SEPARATOR);
         getLog().info(" S T A R T I N G    J M E T E R    G U I ");
         getLog().info(LINE_SEPARATOR);
-        testConfig = new TestConfigurationWrapper(new File(testConfigFile), selectedConfiguration);
+        testConfig = new TestConfigurationWrapper(new File(testConfigFile), "default-cli");
         startJMeterGUI(initialiseJMeterArgumentsArray());
     }
 

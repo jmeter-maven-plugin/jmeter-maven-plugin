@@ -47,27 +47,27 @@ Add the plugin to the build section of your pom's project :
     <artifactId>jmeter-maven-plugin</artifactId>
     <version>2.9.0</version>
     <executions>
-       <!-- Generate JMeter configuration -->
-       <execution>
-           <id>configuration</id>
-           <goals>
-               <goal>configure</goal>
-           </goals>
-       </execution>
-	   <!-- Run JMeter tests -->
-       <execution>
+        <!-- Generate JMeter configuration -->
+        <execution>
+            <id>configuration</id>
+            <goals>
+                <goal>configure</goal>
+            </goals>
+        </execution>
+        <!-- Run JMeter tests -->
+        <execution>
             <id>jmeter-tests</id>
             <goals>
                 <goal>jmeter</goal>
             </goals>
-       </execution>
-       <!-- Fail build on errors in test -->
-       <execution>
+        </execution>
+        <!-- Fail build on errors in test -->
+        <execution>
             <id>jmeter-check-results</id>
             <goals>
                 <goal>results</goal>
             </goals>
-       </execution>
+        </execution>
     </executions>
 </plugin>
 ```

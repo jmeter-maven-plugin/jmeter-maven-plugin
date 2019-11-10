@@ -8,20 +8,24 @@ env:
     - secure: RZfD/0Ksr8JYLVxXjkTY2Br5zeX//vQZ+EuvK8jnajoG7Cl468n3o6BtvELt9B7/aAFPO6HFPzqWNjQWFIZ3ts3s51vjwnaW6zszF6apVyQlnqG6mqdJtokezoNXJGpz4AD/+mrskN71HRMVVwSI+xrLInpufUjgw7t27Azczw8=
 
 matrix:
+  allow_failures:
+    - name: Apache JMeter master and Oracle jdk8
   include:
     #    - jdk: oraclejdk9
     #      script: mvn clean verify
     #    - jdk: openjdk10
     #      script: mvn clean verify
-    - jdk: openjdk11
+    - name: Test with OpenJDK 11
+      jdk: openjdk11
       script: mvn -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn clean verify
-    - jdk: oraclejdk11
+    - name: Test with Oracle jdk11
+      jdk: oraclejdk11
       script: mvn -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn clean verify
-    - jdk: oraclejdk8
+    - name: Test with Oracle jdk8
+      jdk: oraclejdk8
       script: mvn -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn clean verify
-  allow_failures:
-    - jdk: oraclejdk8
-      name: Apache JMeter master, Java 8
+    - name: Apache JMeter master and Oracle jdk8
+      jdk: oraclejdk8
       script:
         - cd ..
         - git clone --depth 50 https://github.com/apache/jmeter.git

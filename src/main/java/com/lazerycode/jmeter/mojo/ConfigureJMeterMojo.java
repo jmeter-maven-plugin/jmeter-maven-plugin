@@ -132,7 +132,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
      * &nbsp;&nbsp;&lt;false&gt;
      * &lt;downloadJMeterDependencies&gt;
      */
-    @Parameter(defaultValue = "false")
+    @Parameter(defaultValue = "true")
     protected boolean downloadJMeterDependencies;
 
     /**

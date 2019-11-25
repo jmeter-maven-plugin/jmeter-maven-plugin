@@ -1,9 +1,39 @@
 package com.lazerycode.jmeter.mojo;
 
-import com.lazerycode.jmeter.json.TestConfigurationWrapper;
-import com.lazerycode.jmeter.properties.ConfigurationFiles;
-import com.lazerycode.jmeter.properties.PropertiesFile;
-import com.lazerycode.jmeter.properties.PropertiesMapping;
+import static com.lazerycode.jmeter.configuration.ArtifactHelpers.artifactIsNotExcluded;
+import static com.lazerycode.jmeter.configuration.ArtifactHelpers.artifactsAreMatchingTypes;
+import static com.lazerycode.jmeter.configuration.ArtifactHelpers.containsExclusion;
+import static com.lazerycode.jmeter.configuration.ArtifactHelpers.createDefaultJmeterArtifactsArray;
+import static com.lazerycode.jmeter.configuration.ArtifactHelpers.isArtifactALibrary;
+import static com.lazerycode.jmeter.configuration.ArtifactHelpers.isArtifactIsOlderThanArtifact;
+import static com.lazerycode.jmeter.configuration.ArtifactHelpers.setupExcludedArtifacts;
+import static com.lazerycode.jmeter.properties.ConfigurationFiles.GLOBAL_PROPERTIES;
+import static com.lazerycode.jmeter.properties.ConfigurationFiles.JMETER_PROPERTIES;
+import static com.lazerycode.jmeter.properties.ConfigurationFiles.REPORT_GENERATOR_PROPERTIES;
+import static com.lazerycode.jmeter.properties.ConfigurationFiles.SAVE_SERVICE_PROPERTIES;
+import static com.lazerycode.jmeter.properties.ConfigurationFiles.SYSTEM_PROPERTIES;
+import static com.lazerycode.jmeter.properties.ConfigurationFiles.UPGRADE_PROPERTIES;
+import static com.lazerycode.jmeter.properties.ConfigurationFiles.USER_PROPERTIES;
+import static com.lazerycode.jmeter.properties.ConfigurationFiles.values;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+
 import org.apache.commons.io.FilenameUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Component;
@@ -22,22 +52,21 @@ import org.eclipse.aether.graph.DependencyFilter;
 import org.eclipse.aether.graph.DependencyNode;
 import org.eclipse.aether.graph.Exclusion;
 import org.eclipse.aether.repository.RemoteRepository;
-import org.eclipse.aether.resolution.*;
+import org.eclipse.aether.resolution.ArtifactDescriptorException;
+import org.eclipse.aether.resolution.ArtifactDescriptorRequest;
+import org.eclipse.aether.resolution.ArtifactDescriptorResult;
+import org.eclipse.aether.resolution.ArtifactRequest;
+import org.eclipse.aether.resolution.ArtifactResolutionException;
+import org.eclipse.aether.resolution.ArtifactResult;
+import org.eclipse.aether.resolution.DependencyRequest;
 import org.eclipse.aether.util.artifact.JavaScopes;
 import org.eclipse.aether.util.filter.DependencyFilterUtils;
 import org.eclipse.aether.version.InvalidVersionSpecificationException;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.*;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
-
-import static com.lazerycode.jmeter.configuration.ArtifactHelpers.*;
-import static com.lazerycode.jmeter.properties.ConfigurationFiles.*;
+import com.lazerycode.jmeter.json.TestConfigurationWrapper;
+import com.lazerycode.jmeter.properties.ConfigurationFiles;
+import com.lazerycode.jmeter.properties.PropertiesFile;
+import com.lazerycode.jmeter.properties.PropertiesMapping;
 
 /**
  * Goal that configures Apache JMeter bundle.<br/>
@@ -66,7 +95,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
      * if you change this version number the list of artifacts required to run JMeter may change.
      * If this happens you will need to override the &lt;jmeterArtifacts&gt; element.
      */
-    @Parameter(property = "jmeter.version", defaultValue = "5.1.1")
+    @Parameter(property = "jmeter.version", defaultValue = "5.2.1")
     private String jmeterVersion;
 
     /**
@@ -413,24 +442,28 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
             throw new MojoExecutionException("No JMeter dependencies specified!, check jmeterArtifacts and jmeterVersion elements");
         }
         for (String desiredArtifact : jmeterArtifacts) {
-            Artifact returnedArtifact = getArtifactResult(new DefaultArtifact(desiredArtifact));
+            Artifact returnedArtifact = getArtifactResult(new DefaultArtifact(desiredArtifact), true);
+            if (returnedArtifact == null) {
+                getLog().info("Ignoring missing JMeter artifact:"+desiredArtifact +" for JMeter version:" +jmeterVersion);
+                continue;
+            }
             switch (returnedArtifact.getArtifactId()) {
-                case JMETER_CONFIG_ARTIFACT_NAME:
-                    jmeterConfigArtifact = returnedArtifact;
-                    extractConfigSettings(jmeterConfigArtifact);
-                    break;
-                case JMETER_ARTIFACT_NAME:
-                    testConfig.getCurrentTestConfiguration().setRuntimeJarName(returnedArtifact.getFile().getName());
-                    copyArtifactIfRequired(returnedArtifact, binDirectory);
-                    copyTransitiveRuntimeDependenciesToLibDirectory(returnedArtifact, downloadJMeterDependencies);
-                    break;
-                case JORPHAN_ARTIFACT_NAME:
-                    copyArtifactIfRequired(returnedArtifact, libDirectory);
-                    copyTransitiveRuntimeDependenciesToLibDirectory(returnedArtifact, downloadJMeterDependencies);
-                    break;
-                default:
-                    copyArtifactIfRequired(returnedArtifact, libExtDirectory);
-                    copyTransitiveRuntimeDependenciesToLibDirectory(returnedArtifact, downloadJMeterDependencies);
+            case JMETER_CONFIG_ARTIFACT_NAME:
+                jmeterConfigArtifact = returnedArtifact;
+                extractConfigSettings(jmeterConfigArtifact);
+                break;
+            case JMETER_ARTIFACT_NAME:
+                testConfig.getCurrentTestConfiguration().setRuntimeJarName(returnedArtifact.getFile().getName());
+                copyArtifactIfRequired(returnedArtifact, binDirectory);
+                copyTransitiveRuntimeDependenciesToLibDirectory(returnedArtifact, downloadJMeterDependencies);
+                break;
+            case JORPHAN_ARTIFACT_NAME:
+                copyArtifactIfRequired(returnedArtifact, libDirectory);
+                copyTransitiveRuntimeDependenciesToLibDirectory(returnedArtifact, downloadJMeterDependencies);
+                break;
+            default:
+                copyArtifactIfRequired(returnedArtifact, libExtDirectory);
+                copyTransitiveRuntimeDependenciesToLibDirectory(returnedArtifact, downloadJMeterDependencies);
             }
         }
         if (confFilesDirectory.exists()) {
@@ -461,7 +494,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
      */
     private void copyExplicitLibrary(String desiredArtifact, File destination, boolean downloadDependencies) throws MojoExecutionException {
         getLog().debug(String.format("Copying %s to %s", desiredArtifact, destination.getAbsolutePath()));
-        Artifact returnedArtifact = getArtifactResult(new DefaultArtifact(desiredArtifact));
+        Artifact returnedArtifact = getArtifactResult(new DefaultArtifact(desiredArtifact), true);
         copyArtifactIfRequired(returnedArtifact, Paths.get(destination.toURI()));
         if (downloadDependencies) {
             resolveTestDependenciesAndCopyWithTransitivity(returnedArtifact);
@@ -472,17 +505,22 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
      * Find a specific artifact in a remote repository
      *
      * @param desiredArtifact The artifact that we want to find
+     * @param mustExist if true, throws a {@link MojoExecutionException} if desiredArtifact is not resolved, false will return null
      * @return Will return an ArtifactResult object
      * @throws MojoExecutionException MojoExecutionException
      */
-    private Artifact getArtifactResult(Artifact desiredArtifact) throws MojoExecutionException {// NOSONAR
+    private Artifact getArtifactResult(Artifact desiredArtifact, boolean mustExist) throws MojoExecutionException {// NOSONAR
         ArtifactRequest artifactRequest = new ArtifactRequest();
         artifactRequest.setArtifact(desiredArtifact);
         artifactRequest.setRepositories(repositoryList);
         try {
             return repositorySystem.resolveArtifact(repositorySystemSession, artifactRequest).getArtifact();
         } catch (ArtifactResolutionException e) {
-            throw new MojoExecutionException(e.getMessage(), e);
+            if (mustExist) {
+                throw new MojoExecutionException(e.getMessage(), e);
+            } else {
+                return null;
+            }
         }
     }
 
@@ -615,7 +653,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
      */
     private boolean copyArtifactIfRequired(Artifact artifactToCopy, Path destinationDirectory) throws MojoExecutionException {
         for (String ignoredArtifact : ignoredArtifacts) {
-            Artifact artifactToIgnore = getArtifactResult(new DefaultArtifact(ignoredArtifact));
+            Artifact artifactToIgnore = getArtifactResult(new DefaultArtifact(ignoredArtifact), true);
             if (artifactToCopy.getFile().getName().equals(artifactToIgnore.getFile().getName())) {
                 getLog().debug(artifactToCopy.getFile().getName() + " has not been copied over because it is in the ignore list.");
                 return false;

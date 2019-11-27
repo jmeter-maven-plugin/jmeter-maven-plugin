@@ -4,6 +4,7 @@
 
 ### Enhancements ###
 
+* Issue [346](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues/346) Support JMeter 5.2.1 
 * Issue [230](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues/230) You can now generate multiple configuration profiles that can be bound to specific test executions.
 * Issue [335](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues/335) You can now use the command line property `-Djmeter.version=5.0` to specify a version of JMeter to be used to build/run the plugin.  Changes to the list of expected libraries will still need modifications to the POM.
 

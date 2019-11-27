@@ -19,6 +19,7 @@ public class ArtifactHelpers {
     static final String JMETER_GROUP_ID = "org.apache.jmeter";
     static final List<String> JMETER_ARTIFACT_NAMES = Arrays.asList(
             "ApacheJMeter",
+            "ApacheJMeter_bolt",
             "ApacheJMeter_components",
             "ApacheJMeter_config",
             "ApacheJMeter_core",

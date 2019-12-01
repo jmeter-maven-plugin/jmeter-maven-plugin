@@ -1,6 +1,8 @@
 # Changelog
 
-## Version 3.0.0-SNAPSHOT Release Notes (IN PROGRESS)
+## Version 3.1.0-SNAPSHOT Release Notes (IN PROGRESS)
+
+## Version 3.0.0 Release Notes (1th December 2019)
 
 ### Enhancements ###
 

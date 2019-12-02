@@ -1,5 +1,6 @@
 package com.lazerycode.jmeter.mojo;
 
+import com.lazerycode.jmeter.configuration.RepositoryConfiguration;
 import com.lazerycode.jmeter.json.TestConfigurationWrapper;
 import com.lazerycode.jmeter.properties.ConfigurationFiles;
 import com.lazerycode.jmeter.properties.PropertiesFile;
@@ -55,6 +56,9 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 
     @Parameter(defaultValue = "${project.remoteProjectRepositories}", readonly = true)
     private List<RemoteRepository> repositoryList;
+
+    @Parameter
+    protected List<RepositoryConfiguration> additionalRepositories = new ArrayList<>();;
     /**
      * Name of the base config json file
      */
@@ -478,6 +482,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
     private Artifact getArtifactResult(Artifact desiredArtifact) throws MojoExecutionException {// NOSONAR
         ArtifactRequest artifactRequest = new ArtifactRequest();
         artifactRequest.setArtifact(desiredArtifact);
+        additionalRepositories.forEach((additionalRepository) -> repositoryList.add(additionalRepository.getRemoteRepository()));
         artifactRequest.setRepositories(repositoryList);
         try {
             return repositorySystem.resolveArtifact(repositorySystemSession, artifactRequest).getArtifact();

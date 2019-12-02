@@ -2,6 +2,10 @@
 
 ## Version 3.1.0-SNAPSHOT Release Notes (IN PROGRESS)
 
+### Bug Fixes ###
+
+* Issue [350](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues/350) Add configuration option to specify additional maven repositories
+
 ## Version 3.0.0 Release Notes (1th December 2019)
 
 ### Enhancements ###

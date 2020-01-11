@@ -8,8 +8,10 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 
 /**
  * Goal that runs JMeter in server mode.<br/>
@@ -40,6 +42,8 @@ public class RunJMeterServerMojo extends AbstractJMeterMojo {
     @Parameter(defaultValue = "localhost")
     private String exportedRmiHostname;
 
+    public static final String CLI_CONFIG_EXECUTION_ID = "default-cli";
+
     /**
      * Load the JMeter server
      *
@@ -53,7 +57,11 @@ public class RunJMeterServerMojo extends AbstractJMeterMojo {
         getLog().info(LINE_SEPARATOR);
         getLog().info(String.format(" Host: %s", exportedRmiHostname));
         getLog().info(String.format(" Port: %s", serverPort));
-        testConfig = new TestConfigurationWrapper(new File(testConfigFile), selectedConfiguration);
+        if (this.mojoExecution.getExecutionId().equals(CLI_CONFIG_EXECUTION_ID)) {
+            testConfig = new TestConfigurationWrapper(new File(testConfigFile), CLI_CONFIG_EXECUTION_ID);
+        } else {
+            testConfig = new TestConfigurationWrapper(new File(testConfigFile), selectedConfiguration);
+        }
         startJMeterServer(initializeJMeterArgumentsArray());
     }
 
@@ -72,7 +80,7 @@ public class RunJMeterServerMojo extends AbstractJMeterMojo {
                 .addArgument(String.format("-Dserver_port=%s", serverPort));
 
         JMeterProcessBuilder jmeterProcessBuilder = new JMeterProcessBuilder(jMeterProcessJVMSettings, testConfig.getCurrentTestConfiguration().getRuntimeJarName())
-                .setWorkingDirectory(JMeterConfigurationHolder.getInstance().getWorkingDirectory())
+                .setWorkingDirectory(new File(testConfig.getCurrentTestConfiguration().getJmeterDirectoryPath(), "bin"))
                 .addArguments(testArgs.buildArgumentsArray());
         try {
             final Process process = jmeterProcessBuilder.build().start();
@@ -81,32 +89,38 @@ public class RunJMeterServerMojo extends AbstractJMeterMojo {
                 getLog().info(" Starting JMeter server process in the background...");
                 //TODO log process using process.pid() when Java 9 is the minimum supported version
             } else {
-                waitForEndAndCheckExitCode(process);
+                Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                    getLog().info("Shutdown detected, destroying JMeter server process...");
+                    getLog().info(" ");
+                    process.destroy();
+                }));
+                try (InputStreamReader isr = new InputStreamReader(process.getInputStream());
+                     BufferedReader br = new BufferedReader(isr)) {
+                    String line;
+                    while ((line = br.readLine()) != null) {
+                        if (suppressJMeterOutput) {
+                            getLog().debug(line);
+                        } else {
+                            getLog().info(line);
+                        }
+                    }
+                    int jMeterExitCode = process.waitFor();
+                    if (jMeterExitCode != 0) {
+                        throw new MojoExecutionException("Starting JMeter server in background failed with exit code: " + jMeterExitCode);
+                    }
+                }
             }
+        } catch (InterruptedException ex) {
+            getLog().info(" ");
+            getLog().info("System Exit detected!  Stopping JMeter server process...");
+            getLog().info(" ");
+            Thread.currentThread().interrupt();
         } catch (IOException ioException) {
             getLog().error(String.format(
                     "Error starting JMeter with args %s, in working directory: %s",
                     testArgs.buildArgumentsArray(),
                     JMeterConfigurationHolder.getInstance().getWorkingDirectory()
             ), ioException);
-        }
-    }
-
-    /**
-     * @param process {@link Process}
-     * @throws MojoExecutionException
-     */
-    private void waitForEndAndCheckExitCode(final Process process) throws MojoExecutionException {
-        try {
-            int exitCode = process.waitFor();
-            if (exitCode != 0) {
-                throw new MojoExecutionException("Starting jmeter server in background failed with exit code:" + exitCode + ", check jmeter logs for more details");
-            }
-        } catch (InterruptedException ex) {
-            getLog().info(" ");
-            getLog().info("System Exit detected!  Stopping server process...");
-            getLog().info(" ");
-            Thread.currentThread().interrupt();
         }
     }
 }

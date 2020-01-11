@@ -212,7 +212,7 @@ public abstract class AbstractJMeterMojo extends AbstractMojo {
     @Override
     public final void execute() throws MojoExecutionException, MojoFailureException {
         if (skipTests) {
-            if (session.getGoals().contains("jmeter:gui")) {
+            if (session.getGoals().contains("jmeter:gui") || session.getGoals().contains("jmeter:remote-server")) {
                 if (!"default-cli".equals(mojoExecution.getExecutionId()) && !"compile".equals(mojoExecution.getLifecyclePhase())) {
                     getLog().info("Performance tests are skipped.");
 

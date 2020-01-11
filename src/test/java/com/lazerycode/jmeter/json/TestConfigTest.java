@@ -25,7 +25,7 @@ public class TestConfigTest {
         File testConfigJSON = new File(configFile.toURI());
         TestConfigurationWrapper testConfig = new TestConfigurationWrapper(testConfigJSON, "test-execution");
         assertThat(testConfig.getFullConfig())
-                .isEqualTo("{\"executionID\":\"test-execution\",\"jmeterDirectoryPath\":null,\"runtimeJarName\":null,\"resultsOutputIsCSVFormat\":false,\"resultFilesLocations\":[],\"generateReports\":false}");
+                .isEqualTo("{\"executionID\":\"test-execution\",\"jmeterDirectoryPath\":null,\"runtimeJarName\":null,\"resultsOutputIsCSVFormat\":false,\"resultFilesLocations\":[],\"generateReports\":false,\"jmeterWorkingDirectoryPath\":null}");
     }
 
     @Test(expected = MojoExecutionException.class)
@@ -144,5 +144,15 @@ public class TestConfigTest {
         String notTestConfig = "nope";
 
         assertThat(testConfig).isNotEqualTo(notTestConfig);
+    }
+
+    @Test
+    public void checkJmeterBinPathReturnedCorrectly() throws MojoExecutionException, URISyntaxException {
+        File configFile = new File(this.getClass().getResource(testConfigFile).toURI());
+        TestConfigurationWrapper testConfig = new TestConfigurationWrapper(configFile, "test-execution");
+        testConfig.getCurrentTestConfiguration().setJmeterDirectoryPath("/foo/bar/jmeter");
+
+        assertThat(testConfig.getCurrentTestConfiguration().getJmeterDirectoryPath()).isEqualTo("/foo/bar/jmeter");
+        assertThat(testConfig.getCurrentTestConfiguration().getJmeterWorkingDirectoryPath()).isEqualTo("/foo/bar/jmeter/bin");
     }
 }

@@ -54,7 +54,7 @@ public class RunJMeterGUIMojo extends AbstractJMeterMojo {
 
     private void startJMeterGUI(JMeterArgumentsArray testArgs) throws MojoExecutionException {
         JMeterProcessBuilder jmeterProcessBuilder = new JMeterProcessBuilder(jMeterProcessJVMSettings, testConfig.getCurrentTestConfiguration().getRuntimeJarName())
-                .setWorkingDirectory(new File(testConfig.getCurrentTestConfiguration().getJmeterDirectoryPath(), "bin"))
+                .setWorkingDirectory(new File(testConfig.getCurrentTestConfiguration().getJmeterWorkingDirectoryPath()))
                 .addArguments(testArgs.buildArgumentsArray());
         try {
             final Process process = jmeterProcessBuilder.build().start();
@@ -74,7 +74,7 @@ public class RunJMeterGUIMojo extends AbstractJMeterMojo {
             getLog().error(String.format(
                     "Error starting JMeter with args %s, in working directory: %s",
                     testArgs.buildArgumentsArray(),
-                    JMeterConfigurationHolder.getInstance().getWorkingDirectory()
+                    testConfig.getCurrentTestConfiguration().getJmeterDirectoryPath()
             ), ioException);
         }
     }

@@ -58,7 +58,8 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
     private List<RemoteRepository> repositoryList;
 
     @Parameter
-    protected List<RepositoryConfiguration> additionalRepositories = new ArrayList<>();;
+    protected List<RepositoryConfiguration> additionalRepositories = new ArrayList<>();
+    ;
     /**
      * Name of the base config json file
      */
@@ -318,8 +319,6 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
      */
     private void generateJMeterDirectoryTree() throws MojoExecutionException {
         binDirectory = jmeterDirectoryPath.resolve("bin");
-        //TODO do we need this now?
-        JMeterConfigurationHolder.getInstance().setWorkingDirectory(binDirectory.toFile());
         customPropertiesDirectory = jmeterDirectoryPath.resolve("custom_properties");
         libDirectory = jmeterDirectoryPath.resolve("lib");
         libExtDirectory = libDirectory.resolve("ext");
@@ -358,7 +357,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 
         for (ConfigurationFiles configurationFile : values()) {
             File suppliedPropertiesFile = new File(propertiesFilesDirectory, configurationFile.getFilename());
-            File propertiesFileToWrite = new File(JMeterConfigurationHolder.getInstance().getWorkingDirectory(), configurationFile.getFilename());
+            File propertiesFileToWrite = new File(testConfig.getCurrentTestConfiguration().getJmeterWorkingDirectoryPath(), configurationFile.getFilename());
             PropertiesFile somePropertiesFile = new PropertiesFile(jmeterConfigArtifact, configurationFile);
             somePropertiesFile.loadProvidedPropertiesIfAvailable(suppliedPropertiesFile, propertiesReplacedByCustomFiles);
             somePropertiesFile.addAndOverwriteProperties(propertiesMap.get(configurationFile).getAdditionalProperties());
@@ -374,7 +373,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
             customProperties.writePropertiesToFile(customPropertiesDirectory.resolve(customPropertiesFilename).toFile());
         }
 
-        setDefaultPluginProperties(JMeterConfigurationHolder.getInstance().getWorkingDirectory().getAbsolutePath());
+        setDefaultPluginProperties(testConfig.getCurrentTestConfiguration().getJmeterWorkingDirectoryPath());
     }
 
     protected void setJMeterResultFileFormat() {

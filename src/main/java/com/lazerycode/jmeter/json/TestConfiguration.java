@@ -2,6 +2,7 @@ package com.lazerycode.jmeter.json;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -24,6 +25,13 @@ public class TestConfiguration {
 
     public String getJmeterDirectoryPath() {
         return jmeterDirectoryPath;
+    }
+
+    public String getJmeterWorkingDirectoryPath() {
+        if (null == jmeterDirectoryPath) {
+            return null;
+        }
+        return Paths.get(jmeterDirectoryPath, "bin").toString();
     }
 
     public void setJmeterDirectoryPath(String jmeterDirectoryPath) {

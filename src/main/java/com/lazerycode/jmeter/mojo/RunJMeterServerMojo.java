@@ -119,7 +119,7 @@ public class RunJMeterServerMojo extends AbstractJMeterMojo {
             getLog().error(String.format(
                     "Error starting JMeter with args %s, in working directory: %s",
                     testArgs.buildArgumentsArray(),
-                    JMeterConfigurationHolder.getInstance().getWorkingDirectory()
+                    testConfig.getCurrentTestConfiguration().getJmeterDirectoryPath()
             ), ioException);
         }
     }

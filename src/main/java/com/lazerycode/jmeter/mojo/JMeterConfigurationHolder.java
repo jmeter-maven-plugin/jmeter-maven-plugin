@@ -15,7 +15,6 @@ import java.util.Map;
  */
 public class JMeterConfigurationHolder {
     private static final JMeterConfigurationHolder INSTANCE = new JMeterConfigurationHolder();
-    private File workingDirectory;
     private Map<ConfigurationFiles, PropertiesMapping> propertiesMap;
 
     /**
@@ -29,19 +28,6 @@ public class JMeterConfigurationHolder {
         return INSTANCE;
     }
 
-    /**
-     * @return the workingDirectory
-     */
-    File getWorkingDirectory() {
-        return workingDirectory;
-    }
-
-    /**
-     * @param workingDirectory the workingDirectory to set
-     */
-    void setWorkingDirectory(File workingDirectory) {
-        this.workingDirectory = workingDirectory;
-    }
 
     /**
      * @return the propertiesMap

@@ -1,10 +1,13 @@
 package com.lazerycode.jmeter.json;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.lazerycode.jmeter.properties.ConfigurationFiles;
+import com.lazerycode.jmeter.properties.PropertiesMapping;
 
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -13,7 +16,9 @@ public class TestConfiguration {
     private String jmeterDirectoryPath;
     private String runtimeJarName;
     private Boolean resultsOutputIsCSVFormat;
+    private Boolean generateReports;
     private String[] resultFilesLocations = new String[0];
+    private Map<ConfigurationFiles, PropertiesMapping> propertiesMap;
 
     public String getExecutionID() {
         return executionID;
@@ -70,7 +75,13 @@ public class TestConfiguration {
         this.generateReports = generateReports;
     }
 
-    private Boolean generateReports;
+    public Map<ConfigurationFiles, PropertiesMapping> getPropertiesMap() {
+        return propertiesMap;
+    }
+
+    public void setPropertiesMap(Map<ConfigurationFiles, PropertiesMapping> propertiesMap) {
+        this.propertiesMap = propertiesMap;
+    }
 
     @Override
     public boolean equals(Object o) {

@@ -1,0 +1,61 @@
+{
+  "propertiesMap": {
+    "JMETER_PROPERTIES": {
+      "additionalProperties": {
+        "jmeter.save.saveservice.output_format": "csv"
+      },
+      "propertiesFile": {
+        "properties": {
+          "not_in_menu": "org.apache.jmeter.protocol.mongodb.sampler.MongoScriptSampler,org.apache.jmeter.protocol.mongodb.config.MongoSourceElement,org.apache.jmeter.timers.BSFTimer,org.apache.jmeter.modifiers.BSFPreProcessor,org.apache.jmeter.extractor.BSFPostProcessor,org.apache.jmeter.assertions.BSFAssertion,org.apache.jmeter.visualizers.BSFListener,org.apache.jmeter.protocol.java.sampler.BSFSampler,org.apache.jmeter.protocol.http.control.gui.SoapSamplerGui"
+        }
+      }
+    },
+    "SAVE_SERVICE_PROPERTIES": {
+      "additionalProperties": {
+      },
+      "propertiesFile": {
+        "properties": {
+          "CSVDataSet": "org.apache.jmeter.config.CSVDataSet"
+        }
+      }
+    },
+    "UPGRADE_PROPERTIES": {
+      "additionalProperties": {},
+      "propertiesFile": {
+        "properties": {
+          "org.apache.jmeter.timers.gui.ConstantThroughputTimerGui": "org.apache.jmeter.testbeans.gui.TestBeanGUI"
+        }
+      }
+    },
+    "SYSTEM_PROPERTIES": {
+      "additionalProperties": {},
+      "propertiesFile": {
+        "properties": {
+          "sun.net.http.allowRestrictedHeaders": "true"
+        }
+      }
+    },
+    "USER_PROPERTIES": {
+      "additionalProperties": {
+      },
+      "propertiesFile": {
+        "properties": {}
+      }
+    },
+    "REPORT_GENERATOR_PROPERTIES": {
+      "additionalProperties": {},
+      "propertiesFile": {
+        "properties": {
+          "jmeter.reportgenerator.overall_granularity": "60000"
+        }
+      }
+    },
+    "GLOBAL_PROPERTIES": {
+      "additionalProperties": {},
+      "propertiesFile": {
+        "properties": {
+        }
+      }
+    }
+  }
+}

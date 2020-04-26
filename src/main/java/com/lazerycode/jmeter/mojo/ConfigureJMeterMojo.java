@@ -59,7 +59,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 
     @Parameter
     protected List<RepositoryConfiguration> additionalRepositories = new ArrayList<>();
-    ;
+
     /**
      * Name of the base config json file
      */
@@ -344,7 +344,6 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 
     private void configurePropertiesFiles() throws MojoExecutionException {
         Map<ConfigurationFiles, PropertiesMapping> propertiesMap = new EnumMap<>(ConfigurationFiles.class);
-        JMeterConfigurationHolder.getInstance().setPropertiesMap(propertiesMap);
         propertiesMap.put(JMETER_PROPERTIES, new PropertiesMapping(propertiesJMeter));
         propertiesMap.put(SAVE_SERVICE_PROPERTIES, new PropertiesMapping(propertiesSaveService));
         propertiesMap.put(UPGRADE_PROPERTIES, new PropertiesMapping(propertiesUpgrade));
@@ -373,6 +372,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
             customProperties.writePropertiesToFile(customPropertiesDirectory.resolve(customPropertiesFilename).toFile());
         }
 
+        testConfig.getCurrentTestConfiguration().setPropertiesMap(propertiesMap);
         setDefaultPluginProperties(testConfig.getCurrentTestConfiguration().getJmeterWorkingDirectoryPath());
     }
 
@@ -441,6 +441,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
         if (confFilesDirectory.exists()) {
             copyFilesInTestDirectory(confFilesDirectory, binDirectory.toFile());
         }
+        //TODO generate jks keystore here?
     }
 
     /**

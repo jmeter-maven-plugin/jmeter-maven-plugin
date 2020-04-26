@@ -25,7 +25,7 @@ public class TestConfigTest {
         File testConfigJSON = new File(configFile.toURI());
         TestConfigurationWrapper testConfig = new TestConfigurationWrapper(testConfigJSON, "test-execution");
         assertThat(testConfig.getFullConfig())
-                .isEqualTo("{\"executionID\":\"test-execution\",\"jmeterDirectoryPath\":null,\"runtimeJarName\":null,\"resultsOutputIsCSVFormat\":false,\"resultFilesLocations\":[],\"generateReports\":false,\"jmeterWorkingDirectoryPath\":null}");
+                .isEqualTo("{\"executionID\":\"test-execution\",\"jmeterDirectoryPath\":null,\"runtimeJarName\":null,\"resultsOutputIsCSVFormat\":false,\"generateReports\":false,\"resultFilesLocations\":[],\"propertiesMap\":null,\"jmeterWorkingDirectoryPath\":null}");
     }
 
     @Test(expected = MojoExecutionException.class)
@@ -91,7 +91,7 @@ public class TestConfigTest {
     }
 
     @Test
-    public void checkThatAWrittenFileCanBeReadInAgain() throws MojoExecutionException, URISyntaxException, IOException {
+    public void checkThatAWrittenFileCanBeReadInAgain() throws MojoExecutionException, URISyntaxException {
         String tempFileLocation = tempdir + File.separator + UUID.randomUUID() + File.separator + "test_config.json";
         File tempTestFile = new File(tempFileLocation);
         tempTestFile.getParentFile().mkdirs();

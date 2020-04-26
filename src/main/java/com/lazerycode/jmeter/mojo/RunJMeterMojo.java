@@ -36,9 +36,7 @@ public class RunJMeterMojo extends AbstractJMeterMojo {
         }
 
         testConfig = new TestConfigurationWrapper(new File(testConfigFile), selectedConfiguration);
-        //TODO move func below into config.json
-        JMeterConfigurationHolder configuration = JMeterConfigurationHolder.getInstance();
-        remoteConfig.setPropertiesMap(configuration.getPropertiesMap());
+        remoteConfig.setPropertiesMap(testConfig.getCurrentTestConfiguration().getPropertiesMap());
         jMeterProcessJVMSettings.setHeadlessDefaultIfRequired();
         copyFilesInTestDirectory(testFilesDirectory, testFilesBuildDirectory);
         TestManager jMeterTestManager = new TestManager()

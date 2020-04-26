@@ -5,10 +5,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.Filter;
 import com.jayway.jsonpath.JsonPath;
+import com.jayway.jsonpath.spi.json.JacksonJsonProvider;
 import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
+import com.lazerycode.jmeter.configuration.JMeterArgumentsArray;
 import net.minidev.json.JSONArray;
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileReader;
@@ -26,6 +30,7 @@ import static com.jayway.jsonpath.Filter.filter;
  * Allows user to specify the files they want to check.
  */
 public class TestConfigurationWrapper {
+    private static final Logger LOGGER = LoggerFactory.getLogger(JMeterArgumentsArray.class);
     private static final String DEFAULT_CONFIGURATION_NAME = "default_plugin_configuration";  //FIXME use a hash to make it more likely to be unique? 61695e67f0df122c254df14fa94b511ab02ad4f7f95a89fe08893fc655e2027d
     private ObjectMapper mapper = new ObjectMapper();
     private TestConfiguration testConfiguration;
@@ -35,7 +40,10 @@ public class TestConfigurationWrapper {
     }
 
     public TestConfigurationWrapper(File jsonFile, String executionIdName) throws MojoExecutionException {
-        Configuration jsonPathConfiguration = Configuration.defaultConfiguration().mappingProvider(new JacksonMappingProvider());
+        Configuration jsonPathConfiguration = Configuration.builder()
+                .mappingProvider(new JacksonMappingProvider())
+                .jsonProvider(new JacksonJsonProvider())
+                .build();
         try (FileReader jsonFileReader = new FileReader(jsonFile)) {
             Filter configFilter = filter(
                     where("executionID").is(Optional.ofNullable(executionIdName).orElse(DEFAULT_CONFIGURATION_NAME))
@@ -48,7 +56,7 @@ public class TestConfigurationWrapper {
                                     .toJSONString()
                     ).read("$[0]", TestConfiguration.class);
         } catch (Exception ex) {
-            System.out.println("Using: " + jsonFile +" with execution id:"+executionIdName);
+            LOGGER.debug("Using: " + jsonFile + " with execution id: " + executionIdName);
             throw new MojoExecutionException(String.format("%s\nHave you added the configure goal to your POM?\n" +
                     "    <execution>\n" +
                     "        <id>configuration</id>\n" +

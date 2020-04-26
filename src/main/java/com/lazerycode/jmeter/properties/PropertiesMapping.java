@@ -1,24 +1,28 @@
 package com.lazerycode.jmeter.properties;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.Map;
 
 public class PropertiesMapping {
-	private Map<String, String> additionalProperties;
-	private PropertiesFile propertiesFile;
+    protected Map<String, String> additionalProperties;
+    private PropertiesFile propertiesFile;
 
-	public PropertiesMapping(Map<String, String> additionalProperties) {
-		this.additionalProperties = additionalProperties;
-	}
+    @JsonCreator
+    public PropertiesMapping(@JsonProperty("additionalProperties") Map<String, String> additionalProperties) {
+        this.additionalProperties = additionalProperties;
+    }
 
-	public Map<String, String> getAdditionalProperties() {
-		return additionalProperties;
-	}
+    public Map<String, String> getAdditionalProperties() {
+        return additionalProperties;
+    }
 
-	public PropertiesFile getPropertiesFile() {
-		return propertiesFile;
-	}
+    public PropertiesFile getPropertiesFile() {
+        return propertiesFile;
+    }
 
-	public void setPropertiesFile(PropertiesFile propertiesFile) {
-		this.propertiesFile = propertiesFile;
-	}
+    public void setPropertiesFile(PropertiesFile propertiesFile) {
+        this.propertiesFile = propertiesFile;
+    }
 }

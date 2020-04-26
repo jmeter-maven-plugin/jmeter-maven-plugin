@@ -36,6 +36,7 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.regex.Pattern;
 
 import static com.lazerycode.jmeter.configuration.ArtifactHelpers.*;
 import static com.lazerycode.jmeter.properties.ConfigurationFiles.*;
@@ -475,6 +476,25 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
     }
 
     /**
+     * Ensure we have a valid version number to download an artifact.
+     * This will check to see if the version number supplied is a range or not.
+     * If it is a range it will replace the range with the highest version (inside the range) available
+     *
+     * @param desiredArtifact the artifact we want to download
+     * @return the artifact with the version number set to a static version number instead of a range
+     * @throws VersionRangeResolutionException Thrown if we cannot resolve any versions
+     */
+    private Artifact resolveArtifactVersionRanges(Artifact desiredArtifact) throws VersionRangeResolutionException {
+        Pattern isAVersionRange = Pattern.compile("\\[.+\\)");
+        if (isAVersionRange.matcher(desiredArtifact.getVersion()).matches()) {
+            VersionRangeRequest versionRangeRequest = new VersionRangeRequest(desiredArtifact, repositoryList, null);
+            VersionRangeResult versionRangeResult = repositorySystem.resolveVersionRange(repositorySystemSession, versionRangeRequest);
+            return desiredArtifact.setVersion(versionRangeResult.getHighestVersion().toString());
+        }
+        return desiredArtifact;
+    }
+
+    /**
      * Find a specific artifact in a remote repository
      *
      * @param desiredArtifact The artifact that we want to find
@@ -482,13 +502,12 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
      * @throws MojoExecutionException MojoExecutionException
      */
     private Artifact getArtifactResult(Artifact desiredArtifact) throws MojoExecutionException {// NOSONAR
-        ArtifactRequest artifactRequest = new ArtifactRequest();
-        artifactRequest.setArtifact(desiredArtifact);
-        additionalRepositories.forEach((additionalRepository) -> repositoryList.add(additionalRepository.getRemoteRepository()));
-        artifactRequest.setRepositories(repositoryList);
         try {
+            ArtifactRequest artifactRequest = new ArtifactRequest().setArtifact(resolveArtifactVersionRanges(desiredArtifact));
+            additionalRepositories.forEach((additionalRepository) -> repositoryList.add(additionalRepository.getRemoteRepository()));
+            artifactRequest.setRepositories(repositoryList);
             return repositorySystem.resolveArtifact(repositorySystemSession, artifactRequest).getArtifact();
-        } catch (ArtifactResolutionException e) {
+        } catch (ArtifactResolutionException | VersionRangeResolutionException e) {
             throw new MojoExecutionException(e.getMessage(), e);
         }
     }
@@ -502,11 +521,10 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
         try {
             ArtifactDescriptorResult result = repositorySystem.readArtifactDescriptor(repositorySystemSession, request);
             for (Dependency dep : result.getDependencies()) {
-                // Here we can not filter dependencies by scope.
-                // we need to use dependencies with any scope, because tests are needed to test,
-                // and provided, and especially compile-scoped dependencies
-                ArtifactResult artifactResult = repositorySystem.resolveArtifact(repositorySystemSession,
-                        new ArtifactRequest(dep.getArtifact(), repositoryList, null));
+                // Here we can not filter dependencies by scope, we need to use dependencies with any scope
+                // This is because JMeter tests use test, provided, and compile-scoped dependencies
+                ArtifactRequest artifactRequest = new ArtifactRequest(resolveArtifactVersionRanges(dep.getArtifact()), repositoryList, null);
+                ArtifactResult artifactResult = repositorySystem.resolveArtifact(repositorySystemSession, artifactRequest);
                 if (isArtifactALibrary(artifactResult.getArtifact())) {
                     copyArtifactIfRequired(artifactResult.getArtifact(), libDirectory);
                 } else {
@@ -514,7 +532,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
                 }
                 copyTransitiveRuntimeDependenciesToLibDirectory(dep, true);
             }
-        } catch (ArtifactDescriptorException | ArtifactResolutionException e) {
+        } catch (ArtifactDescriptorException | ArtifactResolutionException | VersionRangeResolutionException e) {
             throw new MojoExecutionException(e.getMessage(), e);
         }
     }
@@ -590,8 +608,9 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
                 if ((downloadOptionalDependencies || !dependencyNode.getDependency().isOptional()) &&
                         !containsExclusion(parsedExcludedArtifacts, dummyExclusion) &&
                         !((rootDependency.getExclusions() != null) && (containsExclusion(rootDependency.getExclusions(), dummyExclusion)))) {
-                    Artifact returnedArtifact = repositorySystem.resolveArtifact(repositorySystemSession,
-                            new ArtifactRequest(dependencyNode)).getArtifact();
+                    ArtifactRequest artifactRequest = new ArtifactRequest(dependencyNode);
+                    artifactRequest.setArtifact(resolveArtifactVersionRanges(artifactRequest.getArtifact()));
+                    Artifact returnedArtifact = repositorySystem.resolveArtifact(repositorySystemSession, artifactRequest).getArtifact();
                     if ((!returnedArtifact.getArtifactId().startsWith(JMETER_ARTIFACT_PREFIX)) && (isArtifactALibrary(returnedArtifact))) {
                         copyArtifactIfRequired(returnedArtifact, libDirectory);
                     }
@@ -607,7 +626,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
                     }
                 }
             }
-        } catch (DependencyCollectionException | ArtifactResolutionException e) {
+        } catch (DependencyCollectionException | ArtifactResolutionException | VersionRangeResolutionException e) {
             throw new MojoExecutionException(e.getMessage(), e);
         }
     }

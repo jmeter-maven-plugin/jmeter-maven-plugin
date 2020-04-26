@@ -9,6 +9,7 @@
 
 ### Bug Fixes ###
 
+* Issue [313](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues/313) Remove obsolete testplan-with-dependencies
 * Issue [350](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues/350) Add configuration option to specify additional maven repositories
 * Issue [355](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues/355) Set correct default execution ID when running jmeter:remote-server
 * Issue [356](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues/356) Fix errors causing silent failure of jmeter:remote-server

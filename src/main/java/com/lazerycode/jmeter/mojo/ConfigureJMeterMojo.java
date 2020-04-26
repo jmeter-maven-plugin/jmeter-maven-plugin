@@ -417,8 +417,6 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
             throw new MojoExecutionException("No JMeter dependencies specified!, check jmeterArtifacts and jmeterVersion elements");
         }
         for (String desiredArtifact : jmeterArtifacts) {
-            //TODO FIX #330 - work out if version is a list, or a single version.  If it's a list of versions get latest
-            // https://github.com/apache/maven-resolver/blob/master/maven-resolver-api/src/main/java/org/eclipse/aether/collection/VersionFilter.java
             Artifact returnedArtifact = getArtifactResult(new DefaultArtifact(desiredArtifact));
             switch (returnedArtifact.getArtifactId()) {
                 case JMETER_CONFIG_ARTIFACT_NAME:
@@ -442,7 +440,6 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
         if (confFilesDirectory.exists()) {
             copyFilesInTestDirectory(confFilesDirectory, binDirectory.toFile());
         }
-        //TODO generate jks keystore here?
     }
 
     /**

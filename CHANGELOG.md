@@ -2,6 +2,9 @@
 
 ## Version 3.1.0-SNAPSHOT Release Notes (IN PROGRESS)
 
+* Issue [330](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues/330) Dependencies with version ranges now supported
+* Issue [230](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues/230) All config shared between phases is now stored on disk using config.json
+
 ### Bug Fixes ###
 
 * Issue [350](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues/350) Add configuration option to specify additional maven repositories

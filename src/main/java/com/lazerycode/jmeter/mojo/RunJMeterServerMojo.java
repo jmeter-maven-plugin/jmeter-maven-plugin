@@ -27,20 +27,26 @@ public class RunJMeterServerMojo extends AbstractJMeterMojo {
      * Run the process in the background.
      * This process will continue to run once the maven build has completed unless you manually find it and kill it!
      */
-    @Parameter(defaultValue = "false")
+    @Parameter(defaultValue = "false", property = "background")
     private boolean runInBackground;
 
     /**
      * Port JMeter Server will listen on
      */
-    @Parameter(defaultValue = "1099")
+    @Parameter(defaultValue = "1099", property = "serverPort")
     private Integer serverPort;
 
     /**
      * Exported RMI host name
      */
-    @Parameter(defaultValue = "localhost")
+    @Parameter(defaultValue = "localhost", property = "rmiHostname")
     private String exportedRmiHostname;
+
+    /**
+     * Disable SSL
+     */
+    @Parameter(defaultValue = "false", property = "rmiSSLDisable")
+    private Boolean disableSSL;
 
     public static final String CLI_CONFIG_EXECUTION_ID = "default-cli";
 
@@ -77,6 +83,7 @@ public class RunJMeterServerMojo extends AbstractJMeterMojo {
     private void startJMeterServer(JMeterArgumentsArray testArgs) throws MojoExecutionException {
         jMeterProcessJVMSettings.setHeadlessDefaultIfRequired()
                 .addArgument(String.format("-Djava.rmi.server.hostname=%s", exportedRmiHostname))
+                .addArgument(String.format("-Dserver.rmi.ssl.disable=%s", disableSSL))
                 .addArgument(String.format("-Dserver_port=%s", serverPort));
 
         JMeterProcessBuilder jmeterProcessBuilder = new JMeterProcessBuilder(jMeterProcessJVMSettings, testConfig.getCurrentTestConfiguration().getRuntimeJarName())

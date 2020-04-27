@@ -4,6 +4,13 @@
 
 ### Enhancements ###
 
+* Issue [357](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues/357) Add commandline configuration for remote-server mojo
+
+    - To disable `server.rmi.ssl.disable` (to remove the need for a JKS keystore) use `mvn jmeter:remote-server -DrmiSSLDisable=true`
+    - To set the port to run the remote server on use `mvn jmeter:remote-server -DserverPort=10000`
+    - To specify the exported RMI hostname use `mvn jmeter:remote-server -DrmiHostname=foo`
+    - To run the server process in the background use `mvn jmeter:remote-server -Dbackground=true`
+    
 * Issue [187](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues/330) POM file Dependencies are now supported
 * Issue [330](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues/330) Dependencies with version ranges now supported
 * Issue [230](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues/230) All config shared between phases is now stored on disk using config.json

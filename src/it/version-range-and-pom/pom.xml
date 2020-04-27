@@ -37,6 +37,7 @@
                         <configuration>
                             <testPlanLibraries>
                                 <artifact>org.yaml:snakeyaml:[1.0,2.0)</artifact>
+                                <artifact>com.lazerycode.selenium:query:pom:1.2.0</artifact>
                             </testPlanLibraries>
                         </configuration>
                     </execution>

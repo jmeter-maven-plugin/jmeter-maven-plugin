@@ -4,6 +4,7 @@
 
 ### Enhancements ###
 
+* Issue [187](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues/330) POM file Dependencies are now supported
 * Issue [330](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues/330) Dependencies with version ranges now supported
 * Issue [230](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues/230) All config shared between phases is now stored on disk using config.json
 

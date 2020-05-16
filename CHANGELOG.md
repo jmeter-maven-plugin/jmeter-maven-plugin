@@ -4,6 +4,7 @@
 
 ### Enhancements ###
 
+* Issue [369](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues/369) Set default JMeter version to 5.3
 * Issue [357](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues/357) Add commandline configuration for remote-server mojo
 
     - To disable `server.rmi.ssl.disable` (to remove the need for a JKS keystore) use `mvn jmeter:remote-server -DrmiSSLDisable=true`

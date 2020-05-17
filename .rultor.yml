@@ -15,8 +15,8 @@ release:
   script: |-
     mkdir /home/r/gpg/
     cp ../.gnupg/pubring.kbx /home/r/gpg/pubring.kbx
-    chmod -R 600 /home/r/gpg/
-    chown -R r /home/r/gpg/
+    sudo chown -R r /home/r/gpg/
+    sudo chmod -R 600 /home/r/gpg/
     mvn -Prelease versions:set "-DnewVersion=${tag}"
     git commit -am "${tag}"
     mvn clean deploy -Prelease --settings /home/r/settings.xml

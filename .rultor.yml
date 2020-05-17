@@ -20,6 +20,7 @@ release:
     chmod 600 /home/r/.gnupg/secring.gpg
     mvn -Prelease versions:set "-DnewVersion=${tag}"
     git commit -am "${tag}"
+    export GPG_TTY=$(tty)
     mvn clean deploy -Prelease --settings /home/r/settings.xml
   commanders:
     - ardesco

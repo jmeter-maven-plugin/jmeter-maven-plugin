@@ -13,6 +13,7 @@ env:
 release:
   pre: false
   script: |-
+    mkdir /home/r/gpg/
     cp -a ../.gnupg/pubring.kbx /home/r/gpg/pubring.kbx
     mvn -Prelease versions:set "-DnewVersion=${tag}"
     git commit -am "${tag}"

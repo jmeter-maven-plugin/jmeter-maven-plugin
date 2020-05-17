@@ -13,6 +13,7 @@ env:
 release:
   pre: false
   script: |-
+    chmod 700 /home/r/.gnupg
     cp ../pubring.gpg /home/r/.gnupg/pubring.gpg
     cp ../secring.gpg /home/r/.gnupg/secring.gpg
     chmod 600 /home/r/.gnupg/pubring.gpg

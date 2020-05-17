@@ -48,3 +48,6 @@ footer
 header
 segment
 data1.xml
+/pubring.gpg
+/secring.gpg
+/settings.xml

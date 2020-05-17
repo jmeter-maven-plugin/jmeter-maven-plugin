@@ -13,12 +13,8 @@ env:
 release:
   pre: false
   script: |-
-    ls -la ../
-    ls -la ../.gnupg
-    cp ../pubring.gpg /home/r/.gnupg/pubring.gpg
-    cp ../secring.gpg /home/r/.gnupg/secring.gpg
-    chmod 600 /home/r/.gnupg/pubring.gpg
-    chmod 600 /home/r/.gnupg/secring.gpg
+    cp ../.gunpg/pubring.kbx /home/r/.gnupg/pubring.kbx
+    chmod 600 /home/r/.gnupg/pubring.kbx
     mvn -Prelease versions:set "-DnewVersion=${tag}"
     git commit -am "${tag}"
     mvn clean deploy -Prelease --settings /home/r/settings.xml

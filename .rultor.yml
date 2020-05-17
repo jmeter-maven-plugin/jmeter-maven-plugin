@@ -14,6 +14,7 @@ release:
   pre: false
   script: |-
     ls -la ../
+    ls -la ../.gnupg
     cp ../pubring.gpg /home/r/.gnupg/pubring.gpg
     cp ../secring.gpg /home/r/.gnupg/secring.gpg
     chmod 600 /home/r/.gnupg/pubring.gpg

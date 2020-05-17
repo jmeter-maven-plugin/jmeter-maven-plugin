@@ -522,7 +522,6 @@
                                     <goal>sign</goal>
                                 </goals>
                                 <configuration>
-                                    <homedir>${gpg.homedir}</homedir>
                                     <keyname>${gpg.keyname}</keyname>
                                     <passphrase>${gpg.passphrase}</passphrase>
                                 </configuration>

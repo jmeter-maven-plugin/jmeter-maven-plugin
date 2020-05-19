@@ -44,13 +44,13 @@
         <!--Plugin versions-->
         <maven-compiler-plugin.version>3.8.0</maven-compiler-plugin.version>
         <maven-enforcer-plugin.version>3.0.0-M3</maven-enforcer-plugin.version>
-        <maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
         <maven-invoker-plugin.version>3.2.0</maven-invoker-plugin.version>
         <maven-javadoc-plugin.version>3.0.1</maven-javadoc-plugin.version>
         <maven-source-plugin.version>3.0.1</maven-source-plugin.version>
         <maven-surefire-failsafe-plugin.version>2.22.2</maven-surefire-failsafe-plugin.version>
         <jacoco-maven-plugin.version>0.8.5</jacoco-maven-plugin.version>
         <nexus-staging-maven-plugin.version>1.6.8</nexus-staging-maven-plugin.version>
+        <pgp-maven-plugin.version>1.1</pgp-maven-plugin.version>
     </properties>
 
     <licenses>
@@ -511,21 +511,18 @@
                         </executions>
                     </plugin>
                     <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-gpg-plugin</artifactId>
-                        <version>${maven-gpg-plugin.version}</version>
+                        <groupId>org.kohsuke</groupId>
+                        <artifactId>pgp-maven-plugin</artifactId>
+                        <version>${pgp-maven-plugin.version}</version>
+                        <configuration>
+                            <secretkey>keyfile:${project.basedir}/deployment.key.asc</secretkey>
+                            <passphrase>literal:${gpg.passphrase}</passphrase>
+                        </configuration>
                         <executions>
                             <execution>
-                                <id>sign-artifacts</id>
-                                <phase>verify</phase>
                                 <goals>
                                     <goal>sign</goal>
                                 </goals>
-                                <configuration>
-                                    <homedir>${gpg.homedir}</homedir>
-                                    <keyname>${gpg.keyname}</keyname>
-                                    <passphrase>${gpg.passphrase}</passphrase>
-                                </configuration>
                             </execution>
                         </executions>
                     </plugin>

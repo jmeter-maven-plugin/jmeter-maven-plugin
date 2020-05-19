@@ -6,22 +6,13 @@ docker:
   image: "yegor256/rultor-image"
 decrypt:
   settings.xml: "repo/settings.xml.asc"
-  pubring.gpg: "repo/pubring.gpg.asc"
-  secring.gpg: "repo/secring.gpg.asc"
 env:
   JAVA_HOME: /usr/lib/jvm/java-8-openjdk-amd64
 release:
   pre: false
   script: |-
-    chmod 700 /home/r/.gnupg
-    cp ../pubring.gpg /home/r/.gnupg/pubring.gpg
-    cp ../secring.gpg /home/r/.gnupg/secring.gpg
-    chmod 600 /home/r/.gnupg/pubring.gpg
-    chmod 600 /home/r/.gnupg/secring.gpg
     mvn -Prelease versions:set "-DnewVersion=${tag}"
     git commit -am "${tag}"
-    chmod g+rw $(tty)
-    export GPG_TTY=$(tty)
     mvn clean deploy -Prelease --settings /home/r/settings.xml
   commanders:
     - ardesco

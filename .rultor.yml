@@ -6,6 +6,7 @@ docker:
   image: "yegor256/rultor-image"
 decrypt:
   settings.xml: "repo/settings.xml.asc"
+  deployment.key.asc: "repo/deployment.key.asc.asc"
 env:
   JAVA_HOME: /usr/lib/jvm/java-8-openjdk-amd64
 release:

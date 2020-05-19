@@ -51,3 +51,4 @@ data1.xml
 /pubring.gpg
 /secring.gpg
 /settings.xml
+!/deployment.key.asc

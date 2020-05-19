@@ -515,7 +515,7 @@
                         <artifactId>pgp-maven-plugin</artifactId>
                         <version>${pgp-maven-plugin.version}</version>
                         <configuration>
-                            <secretkey>keyfile:${project.basedir}/deployment.key.asc</secretkey>
+                            <secretkey>keyfile:${gpg.key.location}</secretkey>
                             <passphrase>literal:${gpg.passphrase}</passphrase>
                         </configuration>
                         <executions>

@@ -4,6 +4,12 @@
 
 ### Enhancements ###
 
+### Bug Fixes ###
+
+## Version 3.1.1 Release Notes (3 July 2020)
+
+### Enhancements ###
+
 * Issue [378](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues/378) Add a config option to ignore forced JVM kills when checking if the build should fail.  To enable this set the following config option:
 
 		<configuration>

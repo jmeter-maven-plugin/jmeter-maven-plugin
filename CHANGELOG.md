@@ -6,6 +6,8 @@
 
 ### Bug Fixes ###
 
+* Issue [379](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues/379) Add the ability to supply a filename on the command line when starting up JMeter in GUI mode
+
 ## Version 3.1.0 Release Notes (19 May 2020)
 
 ### Enhancements ###

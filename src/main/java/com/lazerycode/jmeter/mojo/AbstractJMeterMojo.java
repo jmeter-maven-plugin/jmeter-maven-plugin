@@ -132,7 +132,6 @@ public abstract class AbstractJMeterMojo extends AbstractMojo {
     @Parameter(defaultValue = "${settings}", readonly = true)
     protected Settings settings;
 
-
     /**
      * Value class that wraps all proxy configurations.
      */

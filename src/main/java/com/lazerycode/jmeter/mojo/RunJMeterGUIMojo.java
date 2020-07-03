@@ -30,7 +30,7 @@ public class RunJMeterGUIMojo extends AbstractJMeterMojo {
     /**
      * Supply a test file to open in the GUI once it is loaded.
      */
-    @Parameter
+    @Parameter(defaultValue = "${guiTestFile}")
     private File guiTestFile;
 
     /**

@@ -4,6 +4,12 @@
 
 ### Enhancements ###
 
+* Issue [378](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues/378) Add a config option to ignore forced JVM kills when checking if the build should fail.  To enable this set the following config option:
+
+		<configuration>
+    		<doNotFailBuildIfJVMIsKilled>true</doNotFailBuildIfJVMIsKilled>
+		</configuration>
+
 ### Bug Fixes ###
 
 * Issue [379](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues/379) Add the ability to supply a filename on the command line when starting up JMeter in GUI mode

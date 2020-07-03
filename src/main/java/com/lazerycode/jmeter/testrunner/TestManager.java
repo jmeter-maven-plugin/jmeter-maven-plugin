@@ -34,12 +34,15 @@ public class TestManager {
     private String[] testFilesIncluded = new String[]{"**/*.jmx"};
     private String[] testFilesExcluded = new String[0];
     private boolean suppressJMeterOutput;
+    private boolean ignoreJVMKilledExitCode;
     private RemoteConfiguration remoteServerConfiguration;
     private JMeterProcessJVMSettings jMeterProcessJVMSettings;
     private long postTestPauseInSeconds = 0L;
     private String runtimeJarName;
     private File reportDirectory;
     private boolean generateReports = false;
+
+    private static final int EXIT_CODE_FOR_JVM_KILLED = 143;
 
     public TestManager setBinDir(File file) {
         this.binDir = file;
@@ -105,6 +108,12 @@ public class TestManager {
         if (!values.isEmpty()) {
             this.testFilesIncluded = values.toArray(new String[0]);
         }
+
+        return this;
+    }
+
+    public TestManager setIgnoreJVMKilled(Boolean ignoreJVMKillExitCode) {
+        this.ignoreJVMKilledExitCode = ignoreJVMKillExitCode;
 
         return this;
     }
@@ -254,7 +263,12 @@ public class TestManager {
                 }
                 int jMeterExitCode = process.waitFor();
                 if (jMeterExitCode != 0) {
-                    throw new MojoExecutionException("Test failed with exit code:" + jMeterExitCode);
+                    if (ignoreJVMKilledExitCode && jMeterExitCode == EXIT_CODE_FOR_JVM_KILLED) {
+                        LOGGER.warn("JVM has been force killed!");
+                        LOGGER.warn("Build failure not triggered due to config settings, however you may want to investigate this");
+                    } else {
+                        throw new MojoExecutionException("Test failed with exit code:" + jMeterExitCode);
+                    }
                 }
                 LOGGER.info("Completed Test: {}", test.getAbsolutePath());
                 LOGGER.info(" ");

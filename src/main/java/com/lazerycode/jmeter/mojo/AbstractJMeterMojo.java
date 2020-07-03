@@ -87,6 +87,14 @@ public abstract class AbstractJMeterMojo extends AbstractMojo {
     protected boolean generateReports;
 
     /**
+     * Do not fail the build if the JMeter JVM is force killed.
+     * The JVM is normally killed forcibly because you ran out of memory, or the process running inside it stopped responding.
+     * Make sure you investigate the above before reaching for this option!
+     */
+    @Parameter(defaultValue = "false")
+    protected boolean doNotFailBuildIfJVMIsKilled;
+
+    /**
      * TODO Dynamic
      * Set the directory that JMeter results are saved to.
      */

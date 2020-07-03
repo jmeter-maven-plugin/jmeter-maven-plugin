@@ -51,7 +51,8 @@ public class RunJMeterMojo extends AbstractJMeterMojo {
                 .setRuntimeJarName(testConfig.getCurrentTestConfiguration().getRuntimeJarName())
                 .setReportDirectory(reportDirectory)
                 .setGenerateReports(generateReports)
-                .setPostTestPauseInSeconds(postTestPauseInSeconds);
+                .setPostTestPauseInSeconds(postTestPauseInSeconds)
+                .setIgnoreJVMKilled(doNotFailBuildIfJVMIsKilled);
         if (proxyConfig != null) {
             getLog().info(this.proxyConfig.toString());
         }

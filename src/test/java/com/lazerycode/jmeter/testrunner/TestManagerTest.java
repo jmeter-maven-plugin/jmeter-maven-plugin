@@ -7,6 +7,7 @@ import com.lazerycode.jmeter.configuration.JMeterArgumentsArray;
 import com.lazerycode.jmeter.configuration.JMeterProcessJVMSettings;
 import com.lazerycode.jmeter.configuration.RemoteConfiguration;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.assertj.core.api.ListAssert;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.LoggerFactory;
@@ -22,7 +23,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class TestManagerTest {
 
     private TestManager testManager;
-    private String tempDir = System.getProperty("java.io.tmpdir");
+    private final String tempDir = System.getProperty("java.io.tmpdir");
 
     @Before
     public void setup() {
@@ -197,7 +198,7 @@ public class TestManagerTest {
         testManager.setTestFilesDirectory(new File(this.getClass().getResource("/testFiles").toURI()));
         List<String> actual = testManager.generateTestList();
 
-        assertThat(actual).isEqualTo(expected);
+        assertThat(actual).containsExactlyInAnyOrderElementsOf(expected);
     }
 
     @Test

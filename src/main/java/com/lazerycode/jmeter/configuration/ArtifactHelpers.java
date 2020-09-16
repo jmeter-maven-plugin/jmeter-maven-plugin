@@ -161,7 +161,7 @@ public class ArtifactHelpers {
      * @param artifact           An artifact
      * @param comparisonArtifact another Artifact to compare with.
      * @return true if artifact is the same or a higher version.  False if the artifact is a lower version
-     * @throws MojoExecutionException Unable to get artifact versions
+     * @throws InvalidVersionSpecificationException Unable to get artifact versions
      */
     public static boolean isArtifactIsOlderThanArtifact(Artifact artifact, Artifact comparisonArtifact) throws InvalidVersionSpecificationException {
         GenericVersionScheme genericVersionScheme = new GenericVersionScheme();

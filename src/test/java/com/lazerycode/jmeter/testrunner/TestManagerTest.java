@@ -211,7 +211,7 @@ public class TestManagerTest {
                 .setTestFilesExcluded(Collections.singletonList("**/fake.jmx"));
         List<String> actual = testManager.generateTestList();
 
-        assertThat(actual).isEqualTo(expected);
+        assertThat(actual).containsExactlyInAnyOrderElementsOf(expected);
     }
 
     @Test

@@ -6,6 +6,16 @@
 
 ### Bug Fixes ###
 
+## Version 3.1.2 Release Notes (21 September 2020)
+
+### Enhancements ###
+
+* Remove some obsolete dependencies (Ant dependency that was removed also had a security flaw)
+
+### Bug Fixes ###
+
+* Issue [388](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues/388) Fix incorrect resolution of version ranges.  All supported version ranges should now be supported. 
+
 ## Version 3.1.1 Release Notes (3 July 2020)
 
 ### Enhancements ###

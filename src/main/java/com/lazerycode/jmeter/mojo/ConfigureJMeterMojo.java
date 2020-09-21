@@ -1,5 +1,6 @@
 package com.lazerycode.jmeter.mojo;
 
+import com.lazerycode.jmeter.configuration.ArtifactHelpers;
 import com.lazerycode.jmeter.configuration.RepositoryConfiguration;
 import com.lazerycode.jmeter.json.TestConfigurationWrapper;
 import com.lazerycode.jmeter.properties.ConfigurationFiles;
@@ -36,7 +37,6 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-import java.util.regex.Pattern;
 
 import static com.lazerycode.jmeter.configuration.ArtifactHelpers.*;
 import static com.lazerycode.jmeter.properties.ConfigurationFiles.*;
@@ -102,7 +102,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 
     /**
      * A list of artifacts that the plugin should ignore.
-     * This would be useful if you don't want specific dependencies brought down by JMeter (or any used defined artifacts) copied into the JMeter directory structure.
+     * This would be useful if you don't want specific dependencies brought down by JMeter (or any uzsed defined artifacts) copied into the JMeter directory structure.
      * <p/>
      * &lt;ignoredArtifacts&gt;
      * &nbsp;&nbsp;&lt;artifact&gt;org.bouncycastle:bcprov-jdk15on:1.49&lt;/artifact&gt;
@@ -473,25 +473,6 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
     }
 
     /**
-     * Ensure we have a valid version number to download an artifact.
-     * This will check to see if the version number supplied is a range or not.
-     * If it is a range it will replace the range with the highest version (inside the range) available
-     *
-     * @param desiredArtifact the artifact we want to download
-     * @return the artifact with the version number set to a static version number instead of a range
-     * @throws VersionRangeResolutionException Thrown if we cannot resolve any versions
-     */
-    private Artifact resolveArtifactVersionRanges(Artifact desiredArtifact) throws VersionRangeResolutionException {
-        Pattern isAVersionRange = Pattern.compile("\\[.+\\)");
-        if (isAVersionRange.matcher(desiredArtifact.getVersion()).matches()) {
-            VersionRangeRequest versionRangeRequest = new VersionRangeRequest(desiredArtifact, repositoryList, null);
-            VersionRangeResult versionRangeResult = repositorySystem.resolveVersionRange(repositorySystemSession, versionRangeRequest);
-            return desiredArtifact.setVersion(versionRangeResult.getHighestVersion().toString());
-        }
-        return desiredArtifact;
-    }
-
-    /**
      * Find a specific artifact in a remote repository
      *
      * @param desiredArtifact The artifact that we want to find
@@ -500,7 +481,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
      */
     private Artifact getArtifactResult(Artifact desiredArtifact) throws MojoExecutionException {// NOSONAR
         try {
-            ArtifactRequest artifactRequest = new ArtifactRequest().setArtifact(resolveArtifactVersionRanges(desiredArtifact));
+            ArtifactRequest artifactRequest = new ArtifactRequest().setArtifact(ArtifactHelpers.resolveArtifactVersion(repositorySystem, repositorySystemSession, repositoryList, desiredArtifact));
             additionalRepositories.forEach((additionalRepository) -> repositoryList.add(additionalRepository.getRemoteRepository()));
             artifactRequest.setRepositories(repositoryList);
             return repositorySystem.resolveArtifact(repositorySystemSession, artifactRequest).getArtifact();
@@ -520,7 +501,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
             for (Dependency dep : result.getDependencies()) {
                 // Here we can not filter dependencies by scope, we need to use dependencies with any scope
                 // This is because JMeter tests use test, provided, and compile-scoped dependencies
-                ArtifactRequest artifactRequest = new ArtifactRequest(resolveArtifactVersionRanges(dep.getArtifact()), repositoryList, null);
+                ArtifactRequest artifactRequest = new ArtifactRequest(ArtifactHelpers.resolveArtifactVersion(repositorySystem, repositorySystemSession, repositoryList, dep.getArtifact()), repositoryList, null);
                 ArtifactResult artifactResult = repositorySystem.resolveArtifact(repositorySystemSession, artifactRequest);
                 if (isArtifactALibrary(artifactResult.getArtifact())) {
                     copyArtifactIfRequired(artifactResult.getArtifact(), libDirectory);
@@ -606,7 +587,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
                         !containsExclusion(parsedExcludedArtifacts, dummyExclusion) &&
                         !((rootDependency.getExclusions() != null) && (containsExclusion(rootDependency.getExclusions(), dummyExclusion)))) {
                     ArtifactRequest artifactRequest = new ArtifactRequest(dependencyNode);
-                    artifactRequest.setArtifact(resolveArtifactVersionRanges(artifactRequest.getArtifact()));
+                    artifactRequest.setArtifact(ArtifactHelpers.resolveArtifactVersion(repositorySystem, repositorySystemSession, repositoryList, artifactRequest.getArtifact()));
                     Artifact returnedArtifact = repositorySystem.resolveArtifact(repositorySystemSession, artifactRequest).getArtifact();
                     if ((!returnedArtifact.getArtifactId().startsWith(JMETER_ARTIFACT_PREFIX)) && (isArtifactALibrary(returnedArtifact))) {
                         copyArtifactIfRequired(returnedArtifact, libDirectory);

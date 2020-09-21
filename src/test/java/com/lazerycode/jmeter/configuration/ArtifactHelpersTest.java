@@ -1,11 +1,19 @@
 package com.lazerycode.jmeter.configuration;
 
 import org.apache.maven.plugin.MojoExecutionException;
+import org.eclipse.aether.RepositorySystem;
+import org.eclipse.aether.RepositorySystemSession;
 import org.eclipse.aether.artifact.Artifact;
 import org.eclipse.aether.artifact.DefaultArtifact;
 import org.eclipse.aether.graph.Exclusion;
+import org.eclipse.aether.resolution.VersionRangeRequest;
+import org.eclipse.aether.resolution.VersionRangeResolutionException;
+import org.eclipse.aether.resolution.VersionRangeResult;
+import org.eclipse.aether.util.version.GenericVersionScheme;
 import org.eclipse.aether.version.InvalidVersionSpecificationException;
+import org.eclipse.aether.version.Version;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -13,6 +21,8 @@ import java.util.*;
 
 import static com.lazerycode.jmeter.configuration.ArtifactHelpers.*;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
 
 public class ArtifactHelpersTest {
 
@@ -333,6 +343,82 @@ public class ArtifactHelpersTest {
     @Test(expected = InstantiationError.class)
     public void cannotInstantiateClass() {
         new ArtifactHelpers();
+    }
+
+    //repositorySystem, repositorySystemSession, repositoryList
+
+    @Test
+    public void resolveArtifactVersionWithNoRange() throws VersionRangeResolutionException {
+        RepositorySystem system = mock(RepositorySystem.class);
+        RepositorySystemSession session = mock(RepositorySystemSession.class);
+        Artifact artifact = new DefaultArtifact("com.example.test", "testArtifact", "jar", "1.0.0");
+        Artifact resolvedArtifact = resolveArtifactVersion(system, session, null, artifact);
+
+        assertThat(resolvedArtifact.getVersion()).isEqualTo("1.0.0");
+    }
+
+    @Test
+    public void resolveArtifactVersionRangeWithSquareBrackets() throws InvalidVersionSpecificationException, VersionRangeResolutionException {
+        GenericVersionScheme versionScheme = new GenericVersionScheme();
+        Version[] availableVersions = new Version[]{versionScheme.parseVersion("1.0.0"), versionScheme.parseVersion("1.1.0"), versionScheme.parseVersion("1.1.1"), versionScheme.parseVersion("1.2.0")};
+        Artifact artifact = new DefaultArtifact("com.example.test", "testArtifact", "jar", "[1.0.0, 1.2.0]");
+
+        VersionRangeRequest versionRangeRequest = new VersionRangeRequest(artifact, null, null);
+        RepositorySystemSession session = mock(RepositorySystemSession.class);
+        RepositorySystem system = mock(RepositorySystem.class);
+        Mockito.when(system.resolveVersionRange(any(RepositorySystemSession.class), any(VersionRangeRequest.class))).thenReturn(new VersionRangeResult(versionRangeRequest).setVersions(Arrays.asList(availableVersions)));
+
+        Artifact resolvedArtifact = resolveArtifactVersion(system, session, null, artifact);
+
+        assertThat(resolvedArtifact.getVersion()).isEqualTo("1.2.0");
+    }
+
+    @Test
+    public void resolveArtifactVersionRangeWithParentheses() throws InvalidVersionSpecificationException, VersionRangeResolutionException {
+        GenericVersionScheme versionScheme = new GenericVersionScheme();
+        Version[] availableVersions = new Version[]{versionScheme.parseVersion("1.0.0"), versionScheme.parseVersion("1.1.0"), versionScheme.parseVersion("1.1.1"), versionScheme.parseVersion("1.2.0")};
+        Artifact artifact = new DefaultArtifact("com.example.test", "testArtifact", "jar", "(1.0.0, 1.2.0)");
+
+        VersionRangeRequest versionRangeRequest = new VersionRangeRequest(artifact, null, null);
+        RepositorySystemSession session = mock(RepositorySystemSession.class);
+        RepositorySystem system = mock(RepositorySystem.class);
+        Mockito.when(system.resolveVersionRange(any(RepositorySystemSession.class), any(VersionRangeRequest.class))).thenReturn(new VersionRangeResult(versionRangeRequest).setVersions(Arrays.asList(availableVersions)));
+
+        Artifact resolvedArtifact = resolveArtifactVersion(system, session, null, artifact);
+
+        assertThat(resolvedArtifact.getVersion()).isEqualTo("1.2.0");
+    }
+
+    @Test
+    public void resolveArtifactVersionMixedRangeStartingWithWithSquareBrackets() throws InvalidVersionSpecificationException, VersionRangeResolutionException {
+        GenericVersionScheme versionScheme = new GenericVersionScheme();
+        Version[] availableVersions = new Version[]{versionScheme.parseVersion("1.0.0"), versionScheme.parseVersion("1.1.0"), versionScheme.parseVersion("1.1.1"), versionScheme.parseVersion("1.2.0")};
+        Artifact artifact = new DefaultArtifact("com.example.test", "testArtifact", "jar", "[1.0.0, 1.2.0)");
+
+        VersionRangeRequest versionRangeRequest = new VersionRangeRequest(artifact, null, null);
+        RepositorySystemSession session = mock(RepositorySystemSession.class);
+        RepositorySystem system = mock(RepositorySystem.class);
+        Mockito.when(system.resolveVersionRange(any(RepositorySystemSession.class), any(VersionRangeRequest.class))).thenReturn(new VersionRangeResult(versionRangeRequest).setVersions(Arrays.asList(availableVersions)));
+
+        Artifact resolvedArtifact = resolveArtifactVersion(system, session, null, artifact);
+
+        assertThat(resolvedArtifact.getVersion()).isEqualTo("1.2.0");
+    }
+
+    @Test
+    public void resolveArtifactVersionMixedRangeStartingWithWithParentheses() throws InvalidVersionSpecificationException, VersionRangeResolutionException {
+        GenericVersionScheme versionScheme = new GenericVersionScheme();
+        Version[] availableVersions = new Version[]{versionScheme.parseVersion("1.0.0"), versionScheme.parseVersion("1.1.0"), versionScheme.parseVersion("1.1.1"), versionScheme.parseVersion("1.2.0")};
+        Artifact artifact = new DefaultArtifact("com.example.test", "testArtifact", "jar", "(1.0.0, 1.2.0]");
+
+        VersionRangeRequest versionRangeRequest = new VersionRangeRequest(artifact, null, null);
+        RepositorySystemSession session = mock(RepositorySystemSession.class);
+        RepositorySystem system = mock(RepositorySystem.class);
+        Mockito.when(system.resolveVersionRange(any(RepositorySystemSession.class), any(VersionRangeRequest.class))).thenReturn(new VersionRangeResult(versionRangeRequest).setVersions(Arrays.asList(availableVersions)));
+
+        Artifact resolvedArtifact = resolveArtifactVersion(system, session, null, artifact);
+
+        assertThat(resolvedArtifact.getVersion()).isEqualTo("1.2.0");
     }
 
 }

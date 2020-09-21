@@ -1,8 +1,14 @@
 package com.lazerycode.jmeter.configuration;
 
 import org.apache.maven.plugin.MojoExecutionException;
+import org.eclipse.aether.RepositorySystem;
+import org.eclipse.aether.RepositorySystemSession;
 import org.eclipse.aether.artifact.Artifact;
 import org.eclipse.aether.graph.Exclusion;
+import org.eclipse.aether.repository.RemoteRepository;
+import org.eclipse.aether.resolution.VersionRangeRequest;
+import org.eclipse.aether.resolution.VersionRangeResolutionException;
+import org.eclipse.aether.resolution.VersionRangeResult;
 import org.eclipse.aether.util.version.GenericVersionScheme;
 import org.eclipse.aether.version.InvalidVersionSpecificationException;
 import org.eclipse.aether.version.Version;
@@ -184,5 +190,24 @@ public class ArtifactHelpers {
                 first.getArtifactId().equals(second.getArtifactId()) &&
                 first.getExtension().equals(second.getExtension()) &&
                 first.getClassifier().equals(second.getClassifier());
+    }
+
+    /**
+     * Ensure we have a valid version number to download an artifact.
+     * This will check to see if the version number supplied is a range or not.
+     * If it is a range it will replace the range with the highest version (inside the range) available
+     *
+     * @param desiredArtifact the artifact we want to download
+     * @return the artifact with the version number set to a static version number instead of a range
+     * @throws VersionRangeResolutionException Thrown if we cannot resolve any versions
+     */
+    public static Artifact resolveArtifactVersion(RepositorySystem repositorySystem, RepositorySystemSession repositorySystemSession, List<RemoteRepository> repositoryList, Artifact desiredArtifact) throws VersionRangeResolutionException {
+        Pattern isAVersionRange = Pattern.compile("[\\[|\\(].+[\\]|\\)]");
+        if (isAVersionRange.matcher(desiredArtifact.getVersion()).matches()) {
+            VersionRangeRequest versionRangeRequest = new VersionRangeRequest(desiredArtifact, repositoryList, null);
+            VersionRangeResult versionRangeResult = repositorySystem.resolveVersionRange(repositorySystemSession, versionRangeRequest);
+            return desiredArtifact.setVersion(versionRangeResult.getHighestVersion().toString());
+        }
+        return desiredArtifact;
     }
 }

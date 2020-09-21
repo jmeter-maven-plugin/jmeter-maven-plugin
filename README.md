@@ -21,7 +21,7 @@ See the [CHANGELOG](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/b
 
 All the documentation you need to configure the plugin is available on the [Github Wiki](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/wiki).
 
-The latest version is **3.1.1**, it requires Maven >= **3.5.2** and defaults to **Apache JMeter 5.2.1**.
+The latest version is **3.1.2**, it requires Maven >= **3.5.2** and defaults to **Apache JMeter 5.2.1**.
 
 This plugin requires a JDK between **8** and **11**. If using Java 11, ensure you use recent version to avoid facing this [Bug](https://bugs.openjdk.java.net/browse/JDK-8210005), also read [This](https://stackoverflow.com/a/52510406/460802). 
 
@@ -57,7 +57,7 @@ Add the plugin to the build section of your pom's project :
 <plugin>
     <groupId>com.lazerycode.jmeter</groupId>
     <artifactId>jmeter-maven-plugin</artifactId>
-    <version>3.1.1</version>
+    <version>3.1.2</version>
     <executions>
         <!-- Generate JMeter configuration -->
         <execution>

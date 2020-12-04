@@ -4,6 +4,8 @@
 
 ### Enhancements ###
 
+* Issue [394](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues/394) Set default JMeter version to 5.4
+
 ### Bug Fixes ###
 
 ## Version 3.1.2 Release Notes (21 September 2020)

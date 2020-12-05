@@ -1,6 +1,12 @@
 # Changelog
 
-## Version 3.2.0-SNAPSHOT Release Notes (IN PROGRESS)
+## Version 3.2.1-SNAPSHOT Release Notes (IN PROGRESS)
+
+### Enhancements ###
+
+### Bug Fixes ###
+
+## Version 3.2.0 Release Notes (4 december 2020)
 
 ### Enhancements ###
 

@@ -57,7 +57,7 @@ Add the plugin to the build section of your pom's project :
 <plugin>
     <groupId>com.lazerycode.jmeter</groupId>
     <artifactId>jmeter-maven-plugin</artifactId>
-    <version>3.2.0</version>
+    <version>3.3.0</version>
     <executions>
         <!-- Generate JMeter configuration -->
         <execution>

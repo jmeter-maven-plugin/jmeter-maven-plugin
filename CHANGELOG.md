@@ -1,8 +1,12 @@
 # Changelog
 
-## Version 3.2.1-SNAPSHOT Release Notes (IN PROGRESS)
+## Version 3.3.1-SNAPSHOT Release Notes (IN PROGRESS)
+
+## Version 3.3.0 Release Notes (23 january 2021)
 
 ### Enhancements ###
+
+* Issue [397](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues/394) Set default JMeter version to 5.4.1
 
 ### Bug Fixes ###
 

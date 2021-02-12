@@ -200,7 +200,7 @@ public abstract class AbstractJMeterMojo extends AbstractMojo {
     protected String testConfigFile;
 
     /**
-     * The filename used to store the results config
+     * The config name used for jmeter run. Configuration id is taken from jmeter:configure execution id
      */
     @Parameter(defaultValue = DEFAULT_CONFIG_EXECUTION_ID)
     protected String selectedConfiguration;

@@ -33,6 +33,10 @@ public class RunJMeterGUIMojo extends AbstractJMeterMojo {
     @Parameter(defaultValue = "${guiTestFile}")
     private File guiTestFile;
 
+    public static final String CLI_CONFIG_EXECUTION_ID = "default-cli";
+
+    @Parameter(property = "jmeter.gui.config.id", defaultValue = "default-cli")
+    private String guiConfigurationId;
     /**
      * Load the JMeter GUI
      *
@@ -44,7 +48,18 @@ public class RunJMeterGUIMojo extends AbstractJMeterMojo {
         getLog().info(LINE_SEPARATOR);
         getLog().info(" S T A R T I N G    J M E T E R    G U I ");
         getLog().info(LINE_SEPARATOR);
-        testConfig = new TestConfigurationWrapper(new File(testConfigFile), this.mojoExecution.getExecutionId());
+        if (this.mojoExecution.getExecutionId().equals(CLI_CONFIG_EXECUTION_ID)) {//plugin called from cli
+            //it is compatible with current behaviour eg.: mvn jmeter:configure jmeter:gui (config name is default-cli by default)
+            //it makes possible: e.g. mvn compile jmeter:gui -Djmeter.gui.config.id=configuration1
+            testConfig = new TestConfigurationWrapper(new File(testConfigFile), guiConfigurationId);
+        } else {//when jmeter:configure and jmeter:gui called from pom
+            // check if user set property (configuration name) in cli
+            if (!"default-cli".equalsIgnoreCase(guiConfigurationId)) {//use config name from property
+                testConfig = new TestConfigurationWrapper(new File(testConfigFile), guiConfigurationId);
+            } else {//take config from <selectedConfiguration>someconfig</selectedConfiguration>
+                testConfig = new TestConfigurationWrapper(new File(testConfigFile), selectedConfiguration);
+            }
+        }
         startJMeterGUI(initialiseJMeterArgumentsArray());
     }
 

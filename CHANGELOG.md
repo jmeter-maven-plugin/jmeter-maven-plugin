@@ -10,7 +10,7 @@
 		  <onlyFailWhenMatchingFailureMessage>true</onlyFailWhenMatchingFailureMessage>
 		  <failureMessages>
 			<failureMessage>Custom failure message!</failureMessage>
-            <failureMessage>Some other failure message</failureMessage>
+			<failureMessage>Some other failure message</failureMessage>
 		  </failureMessages>
 		</configuration>
 

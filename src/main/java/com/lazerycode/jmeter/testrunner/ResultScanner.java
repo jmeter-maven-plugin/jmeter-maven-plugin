@@ -11,6 +11,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.regex.Pattern;
@@ -26,24 +27,26 @@ public class ResultScanner implements IResultScanner {
     private static final String CSV_REQUEST_SUCCESS = "true";
     private static final String XML_REQUEST_FAILURE_PATTERN = "s=\"false\"";
     private static final String XML_REQUEST_SUCCESS_PATTERN = "s=\"true\"";
+    private static final String ROW_NAME_SUCCESS = "success";
+    private static final String ROW_NAME_FAILURE_MESSAGE = "failureMessage";
     private static final CsvMapper CSV_MAPPER = new CsvMapper();
     private static final int DEFAULT_BUFFER_SIZE = 8 * 1024;
     private final boolean countFailures;
     private final boolean countSuccesses;
+    private final boolean onlyFailWhenMatchingFailureMessage;
+    private final List<String> failureMessages;
     private int failureCount = 0;
     private int successCount = 0;
     private boolean csv;
     private String format;
 
-    public ResultScanner(boolean countSuccesses, boolean countFailures, boolean isCsv) {
+    public ResultScanner(boolean countSuccesses, boolean countFailures, boolean isCsv, boolean onlyFailWhenMatchingFailureMessage, List<String> failureMessages) {
         this.countFailures = countFailures;
         this.countSuccesses = countSuccesses;
         this.csv = isCsv;
         this.format = this.csv ? "CSV" : "XML";
-    }
-
-    public ResultScanner(boolean countSuccesses, boolean countFailures) {
-        this(countSuccesses, countFailures, false);
+        this.onlyFailWhenMatchingFailureMessage = onlyFailWhenMatchingFailureMessage;
+        this.failureMessages = failureMessages;
     }
 
     private static char lookForDelimiter(String line) {
@@ -69,7 +72,13 @@ public class ResultScanner implements IResultScanner {
         LOGGER.info("Parsing results file '{}' as type: {}", file, format);
         if (countFailures) {
             if (csv) {
-                failureCount = failureCount + scanCsvForValue(file, CSV_REQUEST_FAILURE);
+                if (onlyFailWhenMatchingFailureMessage) {
+                    for (String failureMessage : failureMessages) {
+                        failureCount = failureCount + scanCsvForValue(file, failureMessage.toLowerCase(), ROW_NAME_FAILURE_MESSAGE);
+                    }
+                } else {
+                    failureCount = failureCount + scanCsvForValue(file, CSV_REQUEST_FAILURE, ROW_NAME_SUCCESS);
+                }
             } else {
                 failureCount = failureCount + scanXmlForPattern(file, XML_REQUEST_FAILURE_PATTERN);
             }
@@ -77,7 +86,7 @@ public class ResultScanner implements IResultScanner {
         }
         if (countSuccesses) {
             if (csv) {
-                successCount = successCount + scanCsvForValue(file, CSV_REQUEST_SUCCESS);
+                successCount = successCount + scanCsvForValue(file, CSV_REQUEST_SUCCESS, ROW_NAME_SUCCESS);
             } else {
                 successCount = successCount + scanXmlForPattern(file, XML_REQUEST_SUCCESS_PATTERN);
             }
@@ -95,7 +104,7 @@ public class ResultScanner implements IResultScanner {
      * @return The number of times the pattern appears in the success column
      * @throws MojoExecutionException When an error occurs while reading the file
      */
-    private int scanCsvForValue(File file, String searchedForValue) throws MojoExecutionException {
+    private int scanCsvForValue(File file, String searchedForValue, String rowName) throws MojoExecutionException {
         int numberOfMatches = 0;
         try {
             char separator = computeSeparator(file);
@@ -107,7 +116,7 @@ public class ResultScanner implements IResultScanner {
                         .readValues(reader);
                 while (it.hasNext()) {
                     Map<String, String> row = it.next();
-                    String successValue = row.get("success");
+                    String successValue = row.get(rowName);
                     if (searchedForValue.equals(successValue.toLowerCase())) {
                         numberOfMatches++;
                     }

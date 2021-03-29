@@ -10,6 +10,8 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Goal that computes successes/failures from CSV or XML results files.<br/>
@@ -49,6 +51,20 @@ public class CheckResultsMojo extends AbstractJMeterMojo {
     protected boolean scanResultsForSuccessfulRequests;
 
     /**
+     * Only search for specific failure messages when scanning results for failed requests (only applied to CSV files)
+     * Defaults to false
+     */
+    @Parameter(defaultValue = "false")
+    protected boolean onlyFailWhenMatchingFailureMessage;
+
+    /**
+     * list of case insensitive failure messages to search for.
+     * (Requires <onlyFailWhenMatchingFailureMessage>true</onlyFailWhenMatchingFailureMessage> to be set)
+     */
+    @Parameter
+    protected List<String> failureMessages = new ArrayList<>();
+
+    /**
      * Scan JMeter result files for successful, and failed requests/
      *
      * @throws MojoExecutionException Exception
@@ -76,7 +92,9 @@ public class CheckResultsMojo extends AbstractJMeterMojo {
             ResultScanner resultScanner = new ResultScanner(
                     scanResultsForSuccessfulRequests,
                     scanResultsForFailedRequests,
-                    testConfig.getCurrentTestConfiguration().getResultsOutputIsCSVFormat()
+                    testConfig.getCurrentTestConfiguration().getResultsOutputIsCSVFormat(),
+                    onlyFailWhenMatchingFailureMessage,
+                    failureMessages
             );
             for (String resultFileLocation : testConfig.getCurrentTestConfiguration().getResultFilesLocations()) {
                 resultScanner.parseResultFile(new File(resultFileLocation));

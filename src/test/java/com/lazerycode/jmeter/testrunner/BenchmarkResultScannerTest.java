@@ -6,6 +6,8 @@ import org.junit.Test;
 import java.io.File;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public class BenchmarkResultScannerTest {
 
@@ -39,13 +41,16 @@ public class BenchmarkResultScannerTest {
     private static final boolean DO_NOT_COUNT_FAILURES = false;
     private static final boolean COUNT_SUCCESSES = true;
     private static final boolean DO_NOT_COUNT_SUCCESSES = false;
+    private static final boolean DEFAULT_IS_CSV = false;
+    private static final boolean DEFAULT_ONLY_FAIL_WHEN_MATCHING_FAILURE_MESSAGES = false;
+    private static final List<String> DEFAULT_FAILURE_LIST = new ArrayList<>();
     private static final String TEST_XML_FILE_LOCATION = "/Programming/OpenSource/jmeter-maven-plugin/data1.xml";
 
     @Ignore
     @Test
     public void countSuccessAndFailure() throws Exception {
         File resultsFile = new File(TEST_XML_FILE_LOCATION);
-        ResultScanner fileScanner = new ResultScanner(COUNT_SUCCESSES, COUNT_FAILURES);
+        ResultScanner fileScanner = new ResultScanner(COUNT_SUCCESSES, COUNT_FAILURES, DEFAULT_IS_CSV, DEFAULT_ONLY_FAIL_WHEN_MATCHING_FAILURE_MESSAGES, DEFAULT_FAILURE_LIST);
 
         System.out.println("Benchmark new FailureScanner implementation");
         final LocalDateTime start = LocalDateTime.now();
@@ -63,7 +68,7 @@ public class BenchmarkResultScannerTest {
     @Test
     public void countSuccessOnly() throws Exception {
         File resultsFile = new File(TEST_XML_FILE_LOCATION);
-        ResultScanner fileScanner = new ResultScanner(DO_NOT_COUNT_SUCCESSES, COUNT_FAILURES);
+        ResultScanner fileScanner = new ResultScanner(DO_NOT_COUNT_SUCCESSES, COUNT_FAILURES, DEFAULT_IS_CSV, DEFAULT_ONLY_FAIL_WHEN_MATCHING_FAILURE_MESSAGES, DEFAULT_FAILURE_LIST);
 
         System.out.println("Benchmark new FailureScanner implementation - success only");
         final LocalDateTime start = LocalDateTime.now();
@@ -81,7 +86,7 @@ public class BenchmarkResultScannerTest {
     @Test
     public void countFailureOnly() throws Exception {
         File resultsFile = new File(TEST_XML_FILE_LOCATION);
-        ResultScanner fileScanner = new ResultScanner(COUNT_SUCCESSES, DO_NOT_COUNT_FAILURES);
+        ResultScanner fileScanner = new ResultScanner(COUNT_SUCCESSES, DO_NOT_COUNT_FAILURES, DEFAULT_IS_CSV, DEFAULT_ONLY_FAIL_WHEN_MATCHING_FAILURE_MESSAGES, DEFAULT_FAILURE_LIST);
 
         System.out.println("Benchmark new FailureScanner implementation - failure only");
         final LocalDateTime start = LocalDateTime.now();

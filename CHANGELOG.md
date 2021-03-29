@@ -1,6 +1,20 @@
 # Changelog
 
-## Version 3.3.1-SNAPSHOT Release Notes (IN PROGRESS)
+## Version 3.4.0-SNAPSHOT Release Notes (IN PROGRESS)
+
+### Enhancements ###
+
+* Issue [374](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues/374) Make result scanning case insensitive and add the ability to match on case insensitive failure messages in CSV files.  To enable case insensitive scanning for failure messages instead of success criteris use the following config:
+
+		<configuration>
+		  <onlyFailWhenMatchingFailureMessage>true</onlyFailWhenMatchingFailureMessage>
+		  <failureMessages>
+			<failureMessage>Custom failure message!</failureMessage>
+            <failureMessage>Some other failure message</failureMessage>
+		  </failureMessages>
+		</configuration>
+
+### Bug Fixes ###
 
 ## Version 3.3.0 Release Notes (23 january 2021)
 
@@ -8,15 +22,11 @@
 
 * Issue [397](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues/394) Set default JMeter version to 5.4.1
 
-### Bug Fixes ###
-
 ## Version 3.2.0 Release Notes (4 december 2020)
 
 ### Enhancements ###
 
 * Issue [394](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues/394) Set default JMeter version to 5.4
-
-### Bug Fixes ###
 
 ## Version 3.1.2 Release Notes (21 September 2020)
 

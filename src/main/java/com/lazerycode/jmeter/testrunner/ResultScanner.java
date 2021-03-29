@@ -108,7 +108,7 @@ public class ResultScanner implements IResultScanner {
                 while (it.hasNext()) {
                     Map<String, String> row = it.next();
                     String successValue = row.get("success");
-                    if (searchedForValue.equals(successValue)) {
+                    if (searchedForValue.equals(successValue.toLowerCase())) {
                         numberOfMatches++;
                     }
                 }
@@ -142,7 +142,7 @@ public class ResultScanner implements IResultScanner {
      */
     private int scanXmlForPattern(File file, String patternAsString) throws MojoExecutionException {
         int patternCount = 0;
-        Pattern pattern = Pattern.compile(patternAsString);
+        Pattern pattern = Pattern.compile(patternAsString, Pattern.CASE_INSENSITIVE);
         try (Scanner resultFileScanner = new Scanner(file)) {
             while (resultFileScanner.findWithinHorizon(pattern, 0) != null) {
                 patternCount++;

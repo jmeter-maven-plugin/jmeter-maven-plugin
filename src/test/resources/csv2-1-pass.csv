@@ -1,3 +1,3 @@
 timeStamp,elapsed,label,responseCode,responseMessage,threadName,dataType,success,failureMessage,bytes,sentBytes,grpThreads,allThreads,URL,Latency,IdleTime,Connect
-1548568307205,1330,test-request,200,"some message with false",my-test-plan 1-1,,true,,0,0,3,3,null,0,0,0
+1548568307205,1330,test-request,200,"some message with false",my-test-plan 1-1,,True,,0,0,3,3,null,0,0,0
 1548568307206,2550,test-request,200,"<Foo Bar=""false""></Foo>",my-test-plan 1-1,,true,,0,0,3,3,null,0,0,0

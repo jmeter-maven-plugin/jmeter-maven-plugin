@@ -85,8 +85,7 @@ public class ResultScannerTest {
     @Test
     public void csvFileWithFailuresCountSuccessAndFailures() throws Exception {
         File resultsFile = new File(csvFailingResultsFileURL.toURI());
-        ResultScanner fileScanner = new ResultScanner(
-                COUNT_SUCCESSES, COUNT_FAILURES, true);
+        ResultScanner fileScanner = new ResultScanner(COUNT_SUCCESSES, COUNT_FAILURES, true);
         fileScanner.parseResultFile(resultsFile);
 
         assertThat(fileScanner.getFailureCount()).isEqualTo(2);

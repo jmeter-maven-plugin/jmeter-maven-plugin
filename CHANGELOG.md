@@ -16,7 +16,7 @@
 
 ### Bug Fixes ###
 
-* Issue [382](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues/382) Add the ability to specify an execution ID on the command line
+* Issue [382](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues/382) Add the ability to specify a selected configuration on the command line
 
 ## Version 3.3.0 Release Notes (23 january 2021)
 

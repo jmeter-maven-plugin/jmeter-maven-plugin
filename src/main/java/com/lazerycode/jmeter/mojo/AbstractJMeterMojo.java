@@ -202,7 +202,7 @@ public abstract class AbstractJMeterMojo extends AbstractMojo {
     /**
      * The filename used to store the results config
      */
-    @Parameter(property = "executionID" ,defaultValue = DEFAULT_CONFIG_EXECUTION_ID)
+    @Parameter(property = "selectConfiguration" ,defaultValue = DEFAULT_CONFIG_EXECUTION_ID)
     protected String selectedConfiguration;
 
     //------------------------------------------------------------------------------------------------------------------

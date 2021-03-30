@@ -109,7 +109,7 @@ If you'd like to help support the maintainers you can donate using the sponsorsh
 
 [<kbd><img src="https://raw.githubusercontent.com/jmeter-maven-plugin/jmeter-maven-plugin/master/master-jmeter-from-load-test-to-devops-medium.png" /></kbd>](https://leanpub.com/master-jmeter-from-load-test-to-devops/)
 
-Want to help
+Want to help?
 -----
 
 Have a look at our list of outstanding issues:

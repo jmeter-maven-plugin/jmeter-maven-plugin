@@ -32,8 +32,8 @@ import static com.jayway.jsonpath.Filter.filter;
 public class TestConfigurationWrapper {
     private static final Logger LOGGER = LoggerFactory.getLogger(JMeterArgumentsArray.class);
     private static final String DEFAULT_CONFIGURATION_NAME = "default_plugin_configuration";  //FIXME use a hash to make it more likely to be unique? 61695e67f0df122c254df14fa94b511ab02ad4f7f95a89fe08893fc655e2027d
-    private ObjectMapper mapper = new ObjectMapper();
-    private TestConfiguration testConfiguration;
+    private final ObjectMapper mapper = new ObjectMapper();
+    private final TestConfiguration testConfiguration;
 
     public TestConfigurationWrapper() {
         testConfiguration = new TestConfiguration();
@@ -50,20 +50,22 @@ public class TestConfigurationWrapper {
             );
             testConfiguration = JsonPath
                     .using(jsonPathConfiguration)
-                    .parse(
-                            JsonPath.parse(IOUtils.toString(jsonFileReader))
-                                    .read("$..[?]", JSONArray.class, configFilter)
-                                    .toJSONString()
-                    ).read("$[0]", TestConfiguration.class);
+                    .parse(JsonPath.parse(IOUtils.toString(jsonFileReader))
+                            .read("$..[?]", JSONArray.class, configFilter)
+                            .toJSONString())
+                    .read("$[0]", TestConfiguration.class);
         } catch (Exception ex) {
-            LOGGER.debug("Using: " + jsonFile + " with execution id: " + executionIdName);
-            throw new MojoExecutionException(String.format("%s\nHave you added the configure goal to your POM?\n" +
+            LOGGER.debug(String.format("Using: %s with execution id: %s", jsonFile, executionIdName));
+            throw new MojoExecutionException(String.format("\n\n%s\n\nPossible Cause 1: Have you added the configure goal to your POM?\n\n" +
                     "    <execution>\n" +
                     "        <id>configuration</id>\n" +
                     "        <goals>\n" +
                     "            <goal>configure</goal>\n" +
                     "        </goals>\n" +
-                    "    </execution>", ex.getMessage()), ex);
+                    "    </execution>\n\n" +
+                    "Possible Cause 2: Have you run `mvn jmeter:configure` for your current Execution ID?\n\n" +
+                    "Current Execution ID: %s" +
+                    "\n", ex.getMessage(), executionIdName), ex);
         }
     }
 

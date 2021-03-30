@@ -293,6 +293,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
         getLog().info("C O N F I G U R I N G    J M E T E R");
         getLog().info(LINE_SEPARATOR);
         getLog().info(" ");
+        getLog().info("Creating test configuration for execution ID: " + this.mojoExecution.getExecutionId());
         testConfig = new TestConfigurationWrapper();
         testConfig.getCurrentTestConfiguration().setExecutionID(this.mojoExecution.getExecutionId());
         testConfig.getCurrentTestConfiguration().setGenerateReports(generateReports);

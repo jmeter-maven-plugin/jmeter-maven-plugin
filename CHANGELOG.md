@@ -1,6 +1,12 @@
 # Changelog
 
-## Version 3.4.0-SNAPSHOT Release Notes (IN PROGRESS)
+## Version 3.5.0-SNAPSHOT Release Notes (IN PROGRESS)
+
+### Enhancements ###
+
+### Bug Fixes ###
+
+## Version 3.4.0 Release Notes (31 March 2021)
 
 ### Enhancements ###
 
@@ -18,13 +24,13 @@
 
 * Issue [382](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues/382) Add the ability to specify a selected configuration on the command line
 
-## Version 3.3.0 Release Notes (23 january 2021)
+## Version 3.3.0 Release Notes (23 January 2021)
 
 ### Enhancements ###
 
 * Issue [397](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues/394) Set default JMeter version to 5.4.1
 
-## Version 3.2.0 Release Notes (4 december 2020)
+## Version 3.2.0 Release Notes (4 December 2020)
 
 ### Enhancements ###
 

@@ -34,17 +34,7 @@ Once you have added the plugin to your project you will be able to invoke the JM
 mvn jmeter:configure jmeter:gui
 ```
 
-If you want to preload a test, you can specify it on the command line:
-
-```
-mvn jmeter:configure jmeter:gui -DguiTestFile=src/test/jmeter/test.jmx
-```
-
-If you haven't added the plugin to your project you can still invoke it (provided you have a valid pom.xml in your project) by using the following:
-
-```
-mvn com.lazerycode.jmeter:jmeter-maven-plugin:configure com.lazerycode.jmeter:jmeter-maven-plugin:gui
-```
+See the associated [Wiki](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/wiki/Basic-Configuration#running-the-jmeter-gui) entry for more information.
 
 Basic Usage
 -----

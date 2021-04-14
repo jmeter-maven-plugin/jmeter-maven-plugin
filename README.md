@@ -1,4 +1,4 @@
-<kbd><img src="https://raw.githubusercontent.com/jmeter-maven-plugin/jmeter-maven-plugin/master/images/full_logo.png" alt="JMeter Maven Plugin"/></kbd>
+<img src="https://raw.githubusercontent.com/jmeter-maven-plugin/jmeter-maven-plugin/master/images/full_logo.png" alt="JMeter Maven Plugin" border="0"/>
 =================================
 
 

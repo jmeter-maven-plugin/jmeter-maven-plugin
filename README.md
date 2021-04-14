@@ -1,6 +1,4 @@
-<img src="https://raw.githubusercontent.com/jmeter-maven-plugin/jmeter-maven-plugin/master/images/full_logo.png" alt="JMeter Maven Plugin" border="0"/>
-=================================
-
+<img src="https://raw.githubusercontent.com/jmeter-maven-plugin/jmeter-maven-plugin/master/images/full_logo.png" alt="JMeter Maven Plugin"/>
 
 [![License](http://img.shields.io/:license-apache-brightgreen.svg)](http://www.apache.org/licenses/LICENSE-2.0.html)
 [![Build Status](https://travis-ci.org/jmeter-maven-plugin/jmeter-maven-plugin.svg?branch=master)](https://travis-ci.org/jmeter-maven-plugin/jmeter-maven-plugin)

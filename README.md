@@ -1,4 +1,4 @@
-JMeter Maven Plugin
+<kbd><img src="https://raw.githubusercontent.com/jmeter-maven-plugin/jmeter-maven-plugin/master/images/full_logo.png" alt="JMeter Maven Plugin"/></kbd>
 =================================
 
 
@@ -107,7 +107,7 @@ Support
 
 If you'd like to help support the maintainers you can donate using the sponsorship button at the top of the page, or you can purchase this book:
 
-[<kbd><img src="https://raw.githubusercontent.com/jmeter-maven-plugin/jmeter-maven-plugin/master/master-jmeter-from-load-test-to-devops-medium.png" /></kbd>](https://leanpub.com/master-jmeter-from-load-test-to-devops/)
+[<kbd><img src="https://raw.githubusercontent.com/jmeter-maven-plugin/jmeter-maven-plugin/master/images/master-jmeter-from-load-test-to-devops-medium.png"/></kbd>](https://leanpub.com/master-jmeter-from-load-test-to-devops/)
 
 Want to help?
 -----

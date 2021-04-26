@@ -30,7 +30,7 @@
 
         <!--Dependency versions-->
         <assertj-core.version>3.15.0</assertj-core.version>
-        <commons-io.version>2.6</commons-io.version>
+        <commons-io.version>2.7</commons-io.version>
         <jackson.version>2.11.0</jackson.version>
         <json-path.version>2.4.0</json-path.version>
         <junit.version>4.13.1</junit.version>

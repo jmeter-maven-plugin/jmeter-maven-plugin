@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 
 public class TestConfigTest {
 
@@ -24,7 +25,7 @@ public class TestConfigTest {
         URL configFile = this.getClass().getResource(testConfigFile);
         File testConfigJSON = new File(configFile.toURI());
         TestConfigurationWrapper testConfig = new TestConfigurationWrapper(testConfigJSON, "test-execution");
-        assertThat(testConfig.getFullConfig())
+        assertThatJson(testConfig.getFullConfig())
                 .isEqualTo("{\"executionID\":\"test-execution\",\"jmeterDirectoryPath\":null,\"runtimeJarName\":null,\"resultsOutputIsCSVFormat\":false,\"generateReports\":false,\"resultFilesLocations\":[],\"propertiesMap\":null,\"jmeterWorkingDirectoryPath\":null}");
     }
 

@@ -8,6 +8,7 @@ env:
     - secure: RZfD/0Ksr8JYLVxXjkTY2Br5zeX//vQZ+EuvK8jnajoG7Cl468n3o6BtvELt9B7/aAFPO6HFPzqWNjQWFIZ3ts3s51vjwnaW6zszF6apVyQlnqG6mqdJtokezoNXJGpz4AD/+mrskN71HRMVVwSI+xrLInpufUjgw7t27Azczw8=
 
 matrix:
+  fast_finish: true
   allow_failures:
     - name: Apache JMeter master and Oracle jdk8
     - name: Test with OpenJDK 13
@@ -42,3 +43,7 @@ matrix:
 after_success:
   - ./deploy_to_sonatype.sh
   - bash <(curl -s https://codecov.io/bash) -v
+
+cache:
+  directories:
+  - $HOME/.m2

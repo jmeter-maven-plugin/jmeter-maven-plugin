@@ -13,10 +13,6 @@ matrix:
     - name: Apache JMeter master and Oracle jdk8
     - name: Test with OpenJDK 13
   include:
-    #    - jdk: oraclejdk9
-    #      script: mvn clean verify
-    #    - jdk: openjdk10
-    #      script: mvn clean verify
     - name: Test with OpenJDK 11
       jdk: openjdk11
       script: mvn -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn clean verify
@@ -28,6 +24,9 @@ matrix:
       script: mvn -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn clean verify
     - name: Test with OpenJDK 13
       jdk: openjdk13
+      script: mvn -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn clean verify
+    - name: Test with OpenJDK 16
+      jdk: openjdk16
       script: mvn -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn clean verify
     - name: Apache JMeter master and Oracle jdk8
       jdk: oraclejdk8

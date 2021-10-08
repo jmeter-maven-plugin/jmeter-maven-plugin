@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 echo "branch is ${TRAVIS_BRANCH}"
-if [[ "${TRAVIS_BRANCH}" == 'master' ]] ; then
+if [[ "${TRAVIS_BRANCH}" == 'main' ]] ; then
     echo "Generating settings.xml"
     mkdir -p ./target
     MVNSETTINGS='
@@ -17,5 +17,5 @@ if [[ "${TRAVIS_BRANCH}" == 'master' ]] ; then
     echo "Attempting to deploy snapshot..."
     mvn deploy -s ./target/maven-settings.xml -DskipTests
 else
-    echo "Not on master, skipping snapshot deployment"
+    echo "Not on main, skipping snapshot deployment"
 fi

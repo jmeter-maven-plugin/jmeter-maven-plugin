@@ -1,7 +1,7 @@
 <img src="https://raw.githubusercontent.com/jmeter-maven-plugin/jmeter-maven-plugin/master/images/full_logo.png" alt="JMeter Maven Plugin"/>
 
 [![License](http://img.shields.io/:license-apache-brightgreen.svg)](http://www.apache.org/licenses/LICENSE-2.0.html)
-[![Build Status](https://travis-ci.com/jmeter-maven-plugin/jmeter-maven-plugin.svg?branch=main)](https://app.travis-ci.com/github/jmeter-maven-plugin/jmeter-maven-plugin)
+[![Build Status](https://app.travis-ci.com/jmeter-maven-plugin/jmeter-maven-plugin.svg?branch=main)](https://app.travis-ci.com/github/jmeter-maven-plugin/jmeter-maven-plugin)
 [![codecov](https://codecov.io/gh/jmeter-maven-plugin/jmeter-maven-plugin/branch/master/graph/badge.svg)](https://codecov.io/gh/jmeter-maven-plugin/jmeter-maven-plugin)
 
 [![GitHub release](https://img.shields.io/github/release/jmeter-maven-plugin/jmeter-maven-plugin.svg?colorB=brightgreen)](http://jmeter.lazerycode.com/)

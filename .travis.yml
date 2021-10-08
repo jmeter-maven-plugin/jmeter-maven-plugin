@@ -10,16 +10,17 @@ env:
 matrix:
   fast_finish: true
   allow_failures:
-    - name: Apache JMeter master and Oracle jdk8
-    - name: Test with OpenJDK 13
+    - name: Apache JMeter master and Oracle JDK8
+    - name: Test with OpenJDK 16
+    - name: Test with OpenJDK 17
   include:
     - name: Test with OpenJDK 11
       jdk: openjdk11
       script: mvn -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn clean verify
-    - name: Test with Oracle jdk11
+    - name: Test with Oracle JDK11
       jdk: oraclejdk11
       script: mvn -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn clean verify
-    - name: Test with Oracle jdk8
+    - name: Test with Oracle JDK8
       jdk: oraclejdk8
       script: mvn -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn clean verify
     - name: Test with OpenJDK 13
@@ -27,6 +28,9 @@ matrix:
       script: mvn -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn clean verify
     - name: Test with OpenJDK 16
       jdk: openjdk16
+      script: mvn -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn clean verify
+    - name: Test with OpenJDK 17
+      jdk: openjdk17
       script: mvn -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn clean verify
     - name: Apache JMeter master and Oracle jdk8
       jdk: oraclejdk8
@@ -45,4 +49,4 @@ after_success:
 
 cache:
   directories:
-  - $HOME/.m2
+    - $HOME/.m2

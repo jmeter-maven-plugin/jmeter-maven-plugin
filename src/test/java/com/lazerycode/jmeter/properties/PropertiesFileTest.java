@@ -19,7 +19,6 @@ import java.util.Properties;
 import static com.lazerycode.jmeter.properties.ConfigurationFiles.GLOBAL_PROPERTIES;
 import static com.lazerycode.jmeter.properties.ConfigurationFiles.JMETER_PROPERTIES;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.*;
 import static org.slf4j.Logger.ROOT_LOGGER_NAME;
 

@@ -1,9 +1,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.lazerycode.jmeter</groupId>
-	<artifactId>test-plugins</artifactId>
+    <artifactId>test-plugins</artifactId>
     <version>DEV-SNAPSHOT</version>
 
     <description>JMeter test to check that extensions work</description>
@@ -16,19 +16,17 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.codehaus.groovy.maven</groupId>
-                <artifactId>gmaven-plugin</artifactId>
-                <version>1.0</version>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>3.2.0</version>
                 <executions>
                     <execution>
-                        <phase>generate-resources</phase>
+                        <id>init-build-properties</id>
                         <goals>
-                            <goal>execute</goal>
+                            <goal>hostname</goal>
                         </goals>
                         <configuration>
-                            <source>
-                                project.properties["hostname"] = InetAddress.getLocalHost().getHostName()
-                            </source>
+                            <hostnameProperty>local.hostname</hostnameProperty>
                         </configuration>
                     </execution>
                 </executions>
@@ -65,15 +63,15 @@
                     <testFilesIncluded>
                         <jMeterTestFile>test.jmx</jMeterTestFile>
                     </testFilesIncluded>
-                    <exportedRmiHostname>${hostname}</exportedRmiHostname>
+                    <exportedRmiHostname>${local.hostname}</exportedRmiHostname>
                     <serverPort>3010</serverPort>
                     <remoteConfig>
-                        <serverList>${hostname}:3010</serverList>
+                        <serverList>${local.hostname}:3010</serverList>
                         <startAndStopServersForEachTest>true</startAndStopServersForEachTest>
                     </remoteConfig>
                     <jMeterProcessJVMSettings>
                         <arguments>
-                            <argument>-Djava.rmi.server.hostname=${hostname}</argument>
+                            <argument>-Djava.rmi.server.hostname=${local.hostname}</argument>
                         </arguments>
                     </jMeterProcessJVMSettings>
                 </configuration>

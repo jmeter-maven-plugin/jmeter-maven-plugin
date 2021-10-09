@@ -15,7 +15,7 @@
 
     <groupId>com.lazerycode.jmeter</groupId>
     <artifactId>jmeter-maven-plugin</artifactId>
-    <version>DEV-SNAPSHOT</version>
+    <version>${revision}</version>
     <packaging>maven-plugin</packaging>
 
     <name>JMeter Maven Plugin</name>
@@ -26,6 +26,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <required.maven.version>3.5.2</required.maven.version>
+        <revision>DEV-SNAPSHOT</revision>
         <supported.java.version>1.8</supported.java.version>
 
         <!--Dependency versions-->

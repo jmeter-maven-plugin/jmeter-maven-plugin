@@ -5,9 +5,9 @@ import java.util.List;
 
 /**
  * Used to specify JVM settings for the JMeter instance that will be run
- * <p/>
+ * <br>
  * Configuration in pom.xml:
- * <p/>
+ * <br>
  * <pre>
  * {@code
  * 	<configuration>

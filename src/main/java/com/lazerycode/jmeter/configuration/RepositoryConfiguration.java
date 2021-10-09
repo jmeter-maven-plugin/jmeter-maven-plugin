@@ -6,9 +6,9 @@ import static org.eclipse.aether.repository.RemoteRepository.Builder;
 
 /**
  * Allows you to specify additional remote repositories
- * <p/>
+ * <br>
  * Configuration in pom.xml:
- * <p/>
+ * <br>
  * <pre>
  * {@code
  * <repository>

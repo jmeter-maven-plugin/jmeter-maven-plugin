@@ -106,10 +106,12 @@ public class PropertiesFile {
         }
     }
 
+
     /**
      * Strip out any reserved properties and then write properties object to a file.
      *
      * @param outputFile The file that our properties object will be written to
+     * @throws MojoExecutionException
      */
     public void writePropertiesToFile(File outputFile) throws MojoExecutionException {// NOSONAR
         stripOutReservedProperties();

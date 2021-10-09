@@ -12,7 +12,7 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- * Goal that runs JMeter in GUI mode.<br/>
+ * Goal that runs JMeter in GUI mode.<br>
  * This goal runs within Lifecycle phase {@link LifecyclePhase#INTEGRATION_TEST}.
  *
  * @author Jarrod Ribble

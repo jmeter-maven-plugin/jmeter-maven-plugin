@@ -14,8 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Goal that computes successes/failures from CSV or XML results files.<br/>
- * This goal runs within Lifecycle phase {@link LifecyclePhase#VERIFY}.<br/>
+ * Goal that computes successes/failures from CSV or XML results files.<br>
+ * This goal runs within Lifecycle phase {@link LifecyclePhase#VERIFY}.<br>
  * Ensure you set 'scanResultsForSuccessfulRequests' and 'scanResultsForFailedRequests' to true.
  */
 @Mojo(name = "results", defaultPhase = LifecyclePhase.VERIFY)
@@ -66,7 +66,7 @@ public class CheckResultsMojo extends AbstractJMeterMojo {
 
     /**
      * list of case insensitive failure messages to search for.
-     * (Requires <onlyFailWhenMatchingFailureMessage>true</onlyFailWhenMatchingFailureMessage> to be set)
+     * (Requires &lt;onlyFailWhenMatchingFailureMessage&gt;true&lt;/onlyFailWhenMatchingFailureMessage&gt; to be set)
      */
     @Parameter
     protected List<String> failureMessages = new ArrayList<>();

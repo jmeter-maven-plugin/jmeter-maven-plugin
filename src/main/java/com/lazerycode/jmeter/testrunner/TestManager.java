@@ -118,10 +118,12 @@ public class TestManager {
         return this;
     }
 
+
     /**
      * Sets a pause after each test has been executed.
      *
      * @param postTestPauseInSeconds Number of seconds to pause after a test has completed
+     * @return String
      */
     public TestManager setPostTestPauseInSeconds(String postTestPauseInSeconds) {
         try {

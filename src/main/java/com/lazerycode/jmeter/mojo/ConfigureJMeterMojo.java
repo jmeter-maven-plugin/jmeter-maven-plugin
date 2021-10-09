@@ -42,8 +42,8 @@ import static com.lazerycode.jmeter.configuration.ArtifactHelpers.*;
 import static com.lazerycode.jmeter.properties.ConfigurationFiles.*;
 
 /**
- * Goal that configures Apache JMeter bundle.<br/>
- * This goal is also called by other goals.<br/>
+ * Goal that configures Apache JMeter bundle.<br>
+ * This goal is also called by other goals.<br>
  * This goal runs within Lifecycle phase {@link LifecyclePhase#COMPILE}.
  */
 @Mojo(name = "configure", defaultPhase = LifecyclePhase.COMPILE)
@@ -79,7 +79,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
      * A list of artifacts that we use to configure JMeter.
      * This list is hard coded by default, you can override this list and supply your own list of artifacts for JMeter.
      * This would be useful if you want to use a different version of JMeter that has a different list of required artifacts.
-     * <p/>
+     * <br>
      * &lt;jmeterArtifacts&gt;
      * &nbsp;&nbsp;&lt;artifact&gt;kg.apc:jmeter-plugins:1.3.1&lt;/artifact&gt;
      * &lt;jmeterArtifacts&gt;
@@ -91,7 +91,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
      * A list of artifacts to exclude.
      * You can supply your own list of artifacts
      * This is useful if you want to exclude broken or invalid dependencies
-     * <p/>
+     * <br>
      * &lt;excludedArtifacts&gt;
      * &lt;exclusion&gt;commons-pool2:commons-pool2&lt;/exclusion&gt;
      * &lt;exclusion&gt;commons-math3:commons-math3&lt;/exclusion&gt;
@@ -103,7 +103,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
     /**
      * A list of artifacts that the plugin should ignore.
      * This would be useful if you don't want specific dependencies brought down by JMeter (or any uzsed defined artifacts) copied into the JMeter directory structure.
-     * <p/>
+     * <br>
      * &lt;ignoredArtifacts&gt;
      * &nbsp;&nbsp;&lt;artifact&gt;org.bouncycastle:bcprov-jdk15on:1.49&lt;/artifact&gt;
      * &lt;ignoredArtifacts&gt;
@@ -113,7 +113,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 
     /**
      * Download all dependencies of files you want to add to lib/ext and copy them to lib/ext too
-     * <p/>
+     * <br>
      * &lt;downloadExtensionDependencies&gt;
      * &nbsp;&nbsp;&lt;true&gt;
      * &lt;downloadExtensionDependencies&gt;
@@ -123,7 +123,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 
     /**
      * A list of artifacts that should be copied into the lib/ext directory e.g.
-     * <p/>
+     * <br>
      * &lt;jmeterExtensions&gt;
      * &nbsp;&nbsp;&lt;artifact&gt;kg.apc:jmeter-plugins:1.3.1&lt;/artifact&gt;
      * &lt;jmeterExtensions&gt;
@@ -133,7 +133,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 
     /**
      * Download all transitive dependencies of the JMeter artifacts.
-     * <p/>
+     * <br>
      * &lt;downloadJMeterDependencies&gt;
      * &nbsp;&nbsp;&lt;false&gt;
      * &lt;downloadJMeterDependencies&gt;
@@ -143,7 +143,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 
     /**
      * Download all optional transitive dependencies of artifacts.
-     * <p/>
+     * <br>
      * &lt;downloadOptionalDependencies&gt;
      * &nbsp;&nbsp;&lt;true&gt;
      * &lt;downloadOptionalDependencies&gt;
@@ -153,7 +153,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 
     /**
      * Download all dependencies of files you want to add to lib/junit and copy them to lib/junit too
-     * <p/>
+     * <br>
      * &lt;downloadLibraryDependencies&gt;
      * &nbsp;&nbsp;&lt;true&gt;
      * &lt;downloadLibraryDependencies&gt;
@@ -163,7 +163,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
 
     /**
      * A list of artifacts that should be copied into the lib/junit directory e.g.
-     * <p/>
+     * <br>
      * &lt;junitLibraries&gt;
      * &nbsp;&nbsp;&lt;artifact&gt;com.foo.project.junit:junit-test:1.0.0&lt;/artifact&gt;
      * &lt;junitLibraries&gt;
@@ -176,7 +176,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
      * In a Non Maven JMeter configuration, these libraries would be copied into the lib/ directory
      * The maven plugin will copy those in lib/ folder of the built jmeter configuration
      * e.g.
-     * <p/>
+     * <br>
      * &lt;testPlanLibraries&gt;
      * &nbsp;&nbsp;&lt;artifact&gt;org.apache.activemq:activemq-client:5.15.2&lt;/artifact&gt;
      * &lt;junitLibraries&gt;

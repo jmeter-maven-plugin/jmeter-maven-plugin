@@ -241,10 +241,15 @@ public abstract class AbstractJMeterMojo extends AbstractMojo {
 
     protected abstract void doExecute() throws MojoExecutionException, MojoFailureException;
 
+
     /**
      * Generate the initial JMeter Arguments array that is used to create the command line that we pass to JMeter.
      *
-     * @throws MojoExecutionException
+     * @param disableGUI Prevent JMeter gGUI from starting up
+     * @param isCSVFormat Determines if results output is in CSV formate of legacy JTL format
+     * @param jmeterDirectoryPath Path to the JMeter directory
+     * @return
+     * @throws MojoExecutionException If unable to generate arguments array
      */
     protected JMeterArgumentsArray computeJMeterArgumentsArray(boolean disableGUI, boolean isCSVFormat, String jmeterDirectoryPath) throws MojoExecutionException {
         JMeterArgumentsArray testArgs = new JMeterArgumentsArray(disableGUI, jmeterDirectoryPath)

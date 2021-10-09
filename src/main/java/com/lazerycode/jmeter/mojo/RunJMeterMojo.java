@@ -9,7 +9,7 @@ import org.apache.maven.plugins.annotations.Mojo;
 import java.io.File;
 
 /**
- * Goal that runs jmeter based on configuration defined in your pom.<br/>
+ * Goal that runs jmeter based on configuration defined in your pom.<br>
  * This goal runs within Lifecycle phase {@link LifecyclePhase#INTEGRATION_TEST}.
  */
 @Mojo(name = "jmeter", defaultPhase = LifecyclePhase.INTEGRATION_TEST)

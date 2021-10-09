@@ -5,9 +5,9 @@ import static com.lazerycode.jmeter.utility.UtilityFunctions.isSet;
 
 /**
  * Is used for configuration of all proxy related configuration.
- * <p/>
+ * <br>
  * Configuration in pom.xml:
- * <p/>
+ * <br>
  * <pre>
  * {@code
  * <proxyConfig>

@@ -65,8 +65,8 @@ public class ArtifactHelpers {
     /**
      * Build up an exclusion set
      *
-     * @param excludedArtifacts List of artifact coords patterns in the format <groupId>:<artifactId>[:<extension>][:<classifier>]
-     * @return Set<Exclusion>
+     * @param excludedArtifacts List of artifact coords patterns in the format &lt;groupId&gt;:&lt;artifactId&gt;[:&lt;extension&gt;][:&lt;classifier&gt;]
+     * @return Set&lt;Exclusion&gt;
      * @throws MojoExecutionException if any patterns are invalid
      */
     public static Set<Exclusion> setupExcludedArtifacts(List<String> excludedArtifacts) throws MojoExecutionException {
@@ -140,7 +140,7 @@ public class ArtifactHelpers {
      * Create a default Array of JMeter artifact coordinates
      *
      * @param jmeterVersion JMeter version for artifacts
-     * @return List<String> of artifact coords
+     * @return List&lt;String&gt; of artifact coords
      */
     public static List<String> createDefaultJmeterArtifactsArray(String jmeterVersion) {
         List<String> artifacts = new ArrayList<>();
@@ -192,11 +192,15 @@ public class ArtifactHelpers {
                 first.getClassifier().equals(second.getClassifier());
     }
 
+
     /**
      * Ensure we have a valid version number to download an artifact.
      * This will check to see if the version number supplied is a range or not.
      * If it is a range it will replace the range with the highest version (inside the range) available
      *
+     * @param repositorySystem system repositories
+     * @param repositorySystemSession session repositories
+     * @param repositoryList list of repositories to try and download artifacts from
      * @param desiredArtifact the artifact we want to download
      * @return the artifact with the version number set to a static version number instead of a range
      * @throws VersionRangeResolutionException Thrown if we cannot resolve any versions

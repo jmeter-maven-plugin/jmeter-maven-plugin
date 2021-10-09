@@ -8,9 +8,9 @@ import java.util.Map;
 
 /**
  * This is used by the TestManager to configure remote serverList and stopServersAfterTests settings for each test run.
- * <p/>
+ * <br>
  * Configuration in pom.xml:
- * <p/>
+ * <br>
  * <pre>
  * {@code
  * <remoteConfig>

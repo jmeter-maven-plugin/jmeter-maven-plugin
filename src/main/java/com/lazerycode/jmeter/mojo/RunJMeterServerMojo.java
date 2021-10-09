@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 /**
- * Goal that runs JMeter in server mode.<br/>
+ * Goal that runs JMeter in server mode.<br>
  * This goal runs within Lifecycle phase {@link LifecyclePhase#INTEGRATION_TEST}.
  *
  * @author Philippe Mouawad

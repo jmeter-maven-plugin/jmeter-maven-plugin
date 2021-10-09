@@ -23,9 +23,18 @@ jobs:
       - name: Publish to Apache Maven Central
         run: |
           mvn -Prelease versions:set "-DnewVersion=${tag}" \
-          git commit -am "${tag}" \
           mvn clean deploy -Prelease
         env:
           MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
           MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
+      - name: Tag release
+        id: release-snapshot
+        uses: actions/create-release@latest
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${tag}
+          release_name: ${tag} Release
+          draft: false
+          prerelease: false

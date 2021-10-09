@@ -21,19 +21,18 @@ jobs:
           gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
           gpg-passphrase: MAVEN_GPG_PASSPHRASE
       - name: Publish to Apache Maven Central
-        run: echo mvn clean deploy -Prelease -Drevision=${{ github.event.inputs.tag }}
-#        run: mvn clean deploy -Prelease -Drevision="${{ inputs.tag }}"
+        run: mvn clean deploy -Prelease -Drevision=${{ github.event.inputs.tag }}
         env:
           MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
           MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
-#      - name: Tag release on Github
-#        id: release-snapshot
-#        uses: actions/create-release@latest
-#        env:
-#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#        with:
-#          tag_name: ${{ inputs.tag }}
-#          release_name: ${{ inputs.tag }} Release
-#          draft: false
-#          prerelease: false
+      - name: Tag release on Github
+        id: release-snapshot
+        uses: actions/create-release@latest
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.event.inputs.tag }}
+          release_name: ${{ github.event.inputs.tag }} Release
+          draft: false
+          prerelease: false

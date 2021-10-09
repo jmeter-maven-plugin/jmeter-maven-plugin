@@ -1,4 +1,4 @@
-name: Publish package to the Maven Central Repository
+name: Release new version to the Maven Central Repository
 on:
   workflow_dispatch:
     inputs:
@@ -21,18 +21,18 @@ jobs:
           gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
           gpg-passphrase: MAVEN_GPG_PASSPHRASE
       - name: Publish to Apache Maven Central
-        run: mvn clean deploy -Prelease -Drevision=${tag}
+        run: mvn clean deploy -Prelease -Drevision=${{ inputs.tag }}
         env:
           MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
           MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
-      - name: Tag release
+      - name: Tag release on Github
         id: release-snapshot
         uses: actions/create-release@latest
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${tag}
-          release_name: ${tag} Release
+          tag_name: ${{ inputs.tag }}
+          release_name: ${{ inputs.tag }} Release
           draft: false
           prerelease: false

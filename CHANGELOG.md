@@ -1,6 +1,12 @@
 # Changelog
 
-## Version 3.5.0-SNAPSHOT Release Notes (IN PROGRESS)
+## Version 3.6.0-SNAPSHOT Release Notes (IN PROGRESS)
+
+### Enhancements ###
+
+### Bug Fixes ###
+
+## Version 3.5.0 Release Notes (9 October 2021)
 
 ### Enhancements ###
 

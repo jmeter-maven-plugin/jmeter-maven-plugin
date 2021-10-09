@@ -1,5 +1,6 @@
 package com.lazerycode.jmeter.testrunner;
 
+import com.lazerycode.jmeter.results.ResultScanner;
 import org.junit.Ignore;
 import org.junit.Test;
 

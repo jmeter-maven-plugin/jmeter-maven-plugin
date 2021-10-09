@@ -1,5 +1,6 @@
 package com.lazerycode.jmeter.testrunner;
 
+import com.lazerycode.jmeter.results.ResultScanner;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.junit.Test;
 
@@ -35,6 +36,7 @@ public class ResultScannerTest {
 
         assertThat(fileScanner.getFailureCount()).isEqualTo(2);
         assertThat(fileScanner.getSuccessCount()).isEqualTo(2);
+        assertThat(fileScanner.getTotalCount()).isEqualTo(4);
     }
 
     @Test
@@ -45,6 +47,7 @@ public class ResultScannerTest {
 
         assertThat(fileScanner.getFailureCount()).isEqualTo(0);
         assertThat(fileScanner.getSuccessCount()).isEqualTo(2);
+        assertThat(fileScanner.getTotalCount()).isEqualTo(2);
     }
 
     @Test
@@ -55,6 +58,7 @@ public class ResultScannerTest {
 
         assertThat(fileScanner.getFailureCount()).isEqualTo(2);
         assertThat(fileScanner.getSuccessCount()).isEqualTo(0);
+        assertThat(fileScanner.getTotalCount()).isEqualTo(2);
     }
 
     @Test
@@ -65,6 +69,7 @@ public class ResultScannerTest {
 
         assertThat(fileScanner.getFailureCount()).isEqualTo(0);
         assertThat(fileScanner.getSuccessCount()).isEqualTo(4);
+        assertThat(fileScanner.getTotalCount()).isEqualTo(4);
     }
 
     @Test
@@ -75,6 +80,7 @@ public class ResultScannerTest {
 
         assertThat(fileScanner.getFailureCount()).isEqualTo(0);
         assertThat(fileScanner.getSuccessCount()).isEqualTo(4);
+        assertThat(fileScanner.getTotalCount()).isEqualTo(4);
     }
 
     @Test
@@ -85,6 +91,7 @@ public class ResultScannerTest {
 
         assertThat(fileScanner.getFailureCount()).isEqualTo(0);
         assertThat(fileScanner.getSuccessCount()).isEqualTo(0);
+        assertThat(fileScanner.getTotalCount()).isEqualTo(0);
     }
 
     @Test
@@ -95,6 +102,7 @@ public class ResultScannerTest {
 
         assertThat(fileScanner.getFailureCount()).isEqualTo(2);
         assertThat(fileScanner.getSuccessCount()).isEqualTo(0);
+        assertThat(fileScanner.getTotalCount()).isEqualTo(2);
     }
 
     @Test
@@ -105,6 +113,7 @@ public class ResultScannerTest {
 
         assertThat(fileScanner.getFailureCount()).isEqualTo(0);
         assertThat(fileScanner.getSuccessCount()).isEqualTo(2);
+        assertThat(fileScanner.getTotalCount()).isEqualTo(2);
     }
 
     @Test
@@ -115,6 +124,7 @@ public class ResultScannerTest {
 
         assertThat(fileScanner.getFailureCount()).isEqualTo(0);
         assertThat(fileScanner.getSuccessCount()).isEqualTo(2);
+        assertThat(fileScanner.getTotalCount()).isEqualTo(2);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -141,6 +151,7 @@ public class ResultScannerTest {
 
         assertThat(fileScanner.getFailureCount()).isEqualTo(1);
         assertThat(fileScanner.getSuccessCount()).isEqualTo(0);
+        assertThat(fileScanner.getTotalCount()).isEqualTo(1);
     }
 
     @Test
@@ -153,6 +164,7 @@ public class ResultScannerTest {
 
         assertThat(fileScanner.getFailureCount()).isEqualTo(0);
         assertThat(fileScanner.getSuccessCount()).isEqualTo(0);
+        assertThat(fileScanner.getTotalCount()).isEqualTo(0);
     }
 
     @Test
@@ -166,6 +178,7 @@ public class ResultScannerTest {
 
         assertThat(fileScanner.getFailureCount()).isEqualTo(1);
         assertThat(fileScanner.getSuccessCount()).isEqualTo(0);
+        assertThat(fileScanner.getTotalCount()).isEqualTo(1);
     }
 
     @Test(expected = MojoExecutionException.class)

@@ -4,13 +4,21 @@
 
 ### Enhancements ###
 
+* Issue [413](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues/413) Add option to fail build if the result file is empty using the following config:
+
+  	<configuration>
+  	  <failBuildIfResultFileIsEmpty>true</failBuildIfResultFileIsEmpty>
+  	</configuration>
+
 ### Bug Fixes ###
+
+* Issue [412](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues/412) Upgraded libraries and replaces gmaven-plugin to improve JDK 16/17 support.
 
 ## Version 3.4.0 Release Notes (31 March 2021)
 
 ### Enhancements ###
 
-* Issue [374](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues/374) Make result scanning case insensitive and add the ability to match on case insensitive failure messages in CSV files.  To enable case insensitive scanning for failure messages instead of success criteris use the following config:
+* Issue [374](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues/374) Make result scanning case insensitive and add the ability to match on case insensitive failure messages in CSV files.  To enable case insensitive scanning for failure messages instead of success criteria use the following config:
 
 		<configuration>
 		  <onlyFailWhenMatchingFailureMessage>true</onlyFailWhenMatchingFailureMessage>

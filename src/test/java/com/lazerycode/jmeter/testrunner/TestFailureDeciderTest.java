@@ -1,5 +1,6 @@
 package com.lazerycode.jmeter.testrunner;
 
+import com.lazerycode.jmeter.results.IResultScanner;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -22,6 +23,11 @@ public class TestFailureDeciderTest {
         @Override
         public int getFailureCount() {
             return failureCount;
+        }
+
+        @Override
+        public int getTotalCount() {
+            return getSuccessCount() + getFailureCount();
         }
 
     }
@@ -69,7 +75,7 @@ public class TestFailureDeciderTest {
         decider.runChecks();
 
         assertThat(decider.failBuild()).isFalse();
-        assertThat(decider.getErrorPercentage()).isEqualTo(0.990099f);
+        assertThat(decider.getErrorPercentage()).isEqualTo(0.99);
         assertThat(decider.getErrorPercentageThreshold()).isEqualTo(2);
         assertThat(decider.isIgnoreResultFailures()).isFalse();
     }
@@ -81,7 +87,7 @@ public class TestFailureDeciderTest {
         decider.runChecks();
 
         assertThat(decider.failBuild()).isFalse();
-        assertThat(decider.getErrorPercentage()).isEqualTo(1.9607844f);
+        assertThat(decider.getErrorPercentage()).isEqualTo(1.96);
         assertThat(decider.getErrorPercentageThreshold()).isEqualTo(2);
         assertThat(decider.isIgnoreResultFailures()).isFalse();
     }
@@ -93,7 +99,7 @@ public class TestFailureDeciderTest {
         decider.runChecks();
 
         assertThat(decider.failBuild()).isTrue();
-        assertThat(decider.getErrorPercentage()).isEqualTo(2.9126215f);
+        assertThat(decider.getErrorPercentage()).isEqualTo(2.91);
         assertThat(decider.getErrorPercentageThreshold()).isEqualTo(2);
         assertThat(decider.isIgnoreResultFailures()).isFalse();
     }
@@ -105,7 +111,7 @@ public class TestFailureDeciderTest {
         decider.runChecks();
 
         assertThat(decider.failBuild()).isTrue();
-        assertThat(decider.getErrorPercentage()).isEqualTo(0.990099f);
+        assertThat(decider.getErrorPercentage()).isEqualTo(0.99);
         assertThat(decider.getErrorPercentageThreshold()).isEqualTo(0);
         assertThat(decider.isIgnoreResultFailures()).isFalse();
     }
@@ -113,24 +119,36 @@ public class TestFailureDeciderTest {
     @Test
     public void testErrorRateOverThresholdRounding() {
         IResultScanner resultScanner = new MockResultScanner(10000, 3);
-        TestFailureDecider decider = new TestFailureDecider(false, 0.02f, resultScanner);
+        TestFailureDecider decider = new TestFailureDecider(false, 0.02, resultScanner);
         decider.runChecks();
 
         assertThat(decider.failBuild()).isTrue();
-        assertThat(decider.getErrorPercentage()).isEqualTo(0.029991003f);
-        assertThat(decider.getErrorPercentageThreshold()).isEqualTo(0.02f);
+        assertThat(decider.getErrorPercentage()).isEqualTo(0.03);
+        assertThat(decider.getErrorPercentageThreshold()).isEqualTo(0.02);
         assertThat(decider.isIgnoreResultFailures()).isFalse();
     }
 
     @Test
     public void testErrorRateOverThresholdRounding2() {
         IResultScanner resultScanner = new MockResultScanner(10000, 2);
-        TestFailureDecider decider = new TestFailureDecider(false, 0.02f, resultScanner);
+        TestFailureDecider decider = new TestFailureDecider(false, 0.02, resultScanner);
         decider.runChecks();
 
         assertThat(decider.failBuild()).isFalse();
-        assertThat(decider.getErrorPercentage()).isEqualTo(0.019996f);
-        assertThat(decider.getErrorPercentageThreshold()).isEqualTo(0.02f);
+        assertThat(decider.getErrorPercentage()).isEqualTo(0.02);
+        assertThat(decider.getErrorPercentageThreshold()).isEqualTo(0.02);
+        assertThat(decider.isIgnoreResultFailures()).isFalse();
+    }
+
+    @Test
+    public void NoResultsFound() {
+        IResultScanner resultScanner = new MockResultScanner(0, 0);
+        TestFailureDecider decider = new TestFailureDecider(false, 2, resultScanner);
+        decider.runChecks();
+
+        assertThat(decider.failBuild()).isFalse();
+        assertThat(decider.getErrorPercentage()).isEqualTo(0);
+        assertThat(decider.getErrorPercentageThreshold()).isEqualTo(2);
         assertThat(decider.isIgnoreResultFailures()).isFalse();
     }
 }

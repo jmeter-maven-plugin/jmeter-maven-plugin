@@ -1,7 +1,7 @@
 package com.lazerycode.jmeter.mojo;
 
 import com.lazerycode.jmeter.json.TestConfigurationWrapper;
-import com.lazerycode.jmeter.testrunner.ResultScanner;
+import com.lazerycode.jmeter.results.ResultScanner;
 import com.lazerycode.jmeter.testrunner.TestFailureDecider;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -56,6 +56,13 @@ public class CheckResultsMojo extends AbstractJMeterMojo {
      */
     @Parameter(defaultValue = "false")
     protected boolean onlyFailWhenMatchingFailureMessage;
+
+    /**
+     * If the plugin cannot detect any requests in the results file force a build failure
+     * Defaults to false
+     */
+    @Parameter(defaultValue = "false")
+    protected boolean failBuildIfResultFileIsEmpty;
 
     /**
      * list of case insensitive failure messages to search for.
@@ -118,6 +125,9 @@ public class CheckResultsMojo extends AbstractJMeterMojo {
                         decider.getErrorPercentage(),
                         decider.getErrorPercentageThreshold()
                 ));
+            }
+            if (resultScanner.getTotalCount() == 0 && failBuildIfResultFileIsEmpty) {
+                throw new MojoFailureException("Failing build because no requests were found in the results file!");
             }
         } else {
             getLog().info(" ");

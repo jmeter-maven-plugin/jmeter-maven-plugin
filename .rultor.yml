@@ -1,5 +1,5 @@
 architect:
-  - ardesco
+  - Ardesco
   - afranken
   - pmouawad
 docker:
@@ -16,5 +16,5 @@ release:
     git commit -am "${tag}"
     mvn clean deploy -Prelease --settings /home/r/settings.xml
   commanders:
-    - ardesco
+    - Ardesco
     - pmouawad

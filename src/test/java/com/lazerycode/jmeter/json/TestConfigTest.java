@@ -5,7 +5,6 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.junit.Test;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -154,6 +153,6 @@ public class TestConfigTest {
         testConfig.getCurrentTestConfiguration().setJmeterDirectoryPath("/foo/bar/jmeter");
 
         assertThat(testConfig.getCurrentTestConfiguration().getJmeterDirectoryPath()).isEqualTo("/foo/bar/jmeter");
-        assertThat(testConfig.getCurrentTestConfiguration().getJmeterWorkingDirectoryPath()).isEqualTo("/foo/bar/jmeter/bin");
+        assertThat(testConfig.getCurrentTestConfiguration().getJmeterWorkingDirectoryPath().getAbsolutePath()).isEqualTo("/foo/bar/jmeter/bin");
     }
 }

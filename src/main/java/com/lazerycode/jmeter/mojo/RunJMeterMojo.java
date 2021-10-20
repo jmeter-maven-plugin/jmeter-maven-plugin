@@ -46,7 +46,7 @@ public class RunJMeterMojo extends AbstractJMeterMojo {
                 .setTestFilesExcluded(testFilesExcluded)
                 .setRemoteServerConfiguration(remoteConfig)
                 .setSuppressJMeterOutput(suppressJMeterOutput)
-                .setBinDir(new File(testConfig.getCurrentTestConfiguration().getJmeterWorkingDirectoryPath()))
+                .setBinDir(testConfig.getCurrentTestConfiguration().getJmeterWorkingDirectoryPath())
                 .setJMeterProcessJVMSettings(jMeterProcessJVMSettings)
                 .setRuntimeJarName(testConfig.getCurrentTestConfiguration().getRuntimeJarName())
                 .setReportDirectory(reportDirectory)

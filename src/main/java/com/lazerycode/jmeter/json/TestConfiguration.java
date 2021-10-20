@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lazerycode.jmeter.properties.ConfigurationFiles;
 import com.lazerycode.jmeter.properties.PropertiesMapping;
 
+import java.io.File;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
@@ -32,11 +33,11 @@ public class TestConfiguration {
         return jmeterDirectoryPath;
     }
 
-    public String getJmeterWorkingDirectoryPath() {
+    public File getJmeterWorkingDirectoryPath() {
         if (null == jmeterDirectoryPath) {
             return null;
         }
-        return Paths.get(jmeterDirectoryPath, "bin").toString();
+        return Paths.get(jmeterDirectoryPath, "bin").toFile();
     }
 
     public void setJmeterDirectoryPath(String jmeterDirectoryPath) {

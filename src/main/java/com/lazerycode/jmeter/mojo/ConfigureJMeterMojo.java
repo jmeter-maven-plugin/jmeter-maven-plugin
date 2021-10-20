@@ -369,13 +369,13 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
         for (File customPropertiesFile : customPropertiesFiles) {
             PropertiesFile customProperties = new PropertiesFile(customPropertiesFile);
             String customPropertiesFilename = FilenameUtils.getBaseName(customPropertiesFile.getName())
-                    + "-" + UUID.randomUUID().toString()
+                    + "-" + UUID.randomUUID()
                     + "." + FilenameUtils.getExtension(customPropertiesFile.getName());
             customProperties.writePropertiesToFile(customPropertiesDirectory.resolve(customPropertiesFilename).toFile());
         }
 
         testConfig.getCurrentTestConfiguration().setPropertiesMap(propertiesMap);
-        setDefaultPluginProperties(testConfig.getCurrentTestConfiguration().getJmeterWorkingDirectoryPath());
+        setDefaultPluginProperties(testConfig.getCurrentTestConfiguration().getJmeterWorkingDirectoryPath().getAbsolutePath());
     }
 
     protected void setJMeterResultFileFormat() {
@@ -644,7 +644,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
             }
             Path desiredArtifact = Paths.get(destinationDirectory.toString(), artifactToCopy.getFile().getName());
             if (!desiredArtifact.toFile().exists()) {
-                getLog().debug(String.format("Copying: %s to %s", desiredArtifact.toString(), destinationDirectory.toString()));
+                getLog().debug(String.format("Copying: %s to %s", desiredArtifact, destinationDirectory.toString()));
                 Files.copy(Paths.get(artifactToCopy.getFile().getAbsolutePath()), desiredArtifact);
             }
         } catch (IOException | InvalidVersionSpecificationException e) {

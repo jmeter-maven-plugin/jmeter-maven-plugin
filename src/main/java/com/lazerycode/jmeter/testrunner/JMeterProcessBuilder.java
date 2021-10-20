@@ -14,13 +14,13 @@ import java.util.List;
 public class JMeterProcessBuilder {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JMeterProcessBuilder.class);
-    private int initialHeapSizeInMegaBytes;
-    private int maximumHeapSizeInMegaBytes;
+    private final int initialHeapSizeInMegaBytes;
+    private final int maximumHeapSizeInMegaBytes;
     private final String runtimeJarName;
-    private String workingDirectory;
-    private String javaRuntime;
-    private List<String> userSuppliedArguments;
+    private final String javaRuntime;
+    private final List<String> userSuppliedArguments;
     private List<String> mainClassArguments = new ArrayList<>();
+    private String workingDirectory;
 
     public JMeterProcessBuilder(JMeterProcessJVMSettings settings, String runtimeJarName) {
         this.runtimeJarName = runtimeJarName;
@@ -53,14 +53,13 @@ public class JMeterProcessBuilder {
         if (null == workingDirectory) {
             throw new MojoExecutionException("Working directory is not set!");
         }
-        ProcessBuilder processBuilder = new ProcessBuilder(constructArgumentsList());
-        processBuilder.redirectErrorStream(true);
-        processBuilder.directory(new File(workingDirectory));
 
-        return processBuilder;
+        return new ProcessBuilder(constructArgumentsList())
+                .directory(new File(workingDirectory))
+                .redirectErrorStream(true);
     }
 
-    String[] constructArgumentsList() {
+    List<String> constructArgumentsList() {
         List<String> argumentsList = new ArrayList<>();
         argumentsList.add(javaRuntime);
         argumentsList.add(MessageFormat.format("-Xms{0}M", String.valueOf(initialHeapSizeInMegaBytes)));
@@ -73,6 +72,6 @@ public class JMeterProcessBuilder {
         LOGGER.info("Arguments for forked JMeter JVM: {}", argumentsList);
         LOGGER.info(" ");
 
-        return argumentsList.toArray(new String[0]);
+        return argumentsList;
     }
 }

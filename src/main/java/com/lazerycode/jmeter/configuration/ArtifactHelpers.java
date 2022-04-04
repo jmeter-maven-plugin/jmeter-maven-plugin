@@ -43,7 +43,7 @@ public class ArtifactHelpers {
             "ApacheJMeter_tcp",
             "jorphan"
     );
-    static final List<String> BLACKLISTED_ARTIFACTS = Arrays.asList(
+    static final List<String> BLOCKED_ARTIFACTS = Arrays.asList(
             // Exclude broken artifacts identified in https://bz.apache.org/bugzilla/show_bug.cgi?id=57555
             "d-haven-managed-pool:d-haven-managed-pool",
             "event:event",
@@ -74,7 +74,7 @@ public class ArtifactHelpers {
         for (String artifact : Optional.ofNullable(excludedArtifacts).orElse(Collections.emptyList())) {
             exclusionSet.add(convertExclusionPatternIntoExclusion(artifact));
         }
-        for (String artifact : BLACKLISTED_ARTIFACTS) {
+        for (String artifact : BLOCKED_ARTIFACTS) {
             exclusionSet.add(convertExclusionPatternIntoExclusion(artifact));
         }
 

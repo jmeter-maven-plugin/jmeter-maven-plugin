@@ -190,9 +190,9 @@ public class ArtifactHelpersTest {
     }
 
     @Test
-    public void checkNullInputReturnsSetOfBlackListedArtifacts() throws MojoExecutionException {
+    public void checkNullInputReturnsSetOfBlockedArtifacts() throws MojoExecutionException {
         Set<Exclusion> expected = new HashSet<>();
-        for (String artifact : BLACKLISTED_ARTIFACTS) {
+        for (String artifact : BLOCKED_ARTIFACTS) {
             expected.add(convertExclusionPatternIntoExclusion(artifact));
         }
 
@@ -200,9 +200,9 @@ public class ArtifactHelpersTest {
     }
 
     @Test
-    public void checkEmptyInputReturnsSetOfBlackListedArtifacts() throws MojoExecutionException {
+    public void checkEmptyInputReturnsSetOfBlockedArtifacts() throws MojoExecutionException {
         Set<Exclusion> expected = new HashSet<>();
-        for (String artifact : BLACKLISTED_ARTIFACTS) {
+        for (String artifact : BLOCKED_ARTIFACTS) {
             expected.add(convertExclusionPatternIntoExclusion(artifact));
         }
 
@@ -210,10 +210,10 @@ public class ArtifactHelpersTest {
     }
 
     @Test
-    public void checkListOfValidEntriesReturnsSetOfBlackListedArtifacts() throws MojoExecutionException {
+    public void checkListOfValidEntriesReturnsSetOfBlockedArtifacts() throws MojoExecutionException {
         List<String> input = Arrays.asList("com.lazerycode.test:testArtifact", "com.lazerycode.another:testArtifact");
         Set<Exclusion> expected = new HashSet<>();
-        for (String artifact : BLACKLISTED_ARTIFACTS) {
+        for (String artifact : BLOCKED_ARTIFACTS) {
             expected.add(convertExclusionPatternIntoExclusion(artifact));
         }
         for (String artifact : input) {

@@ -1,10 +1,17 @@
 # Changelog
 
-## Version 3.6.0-SNAPSHOT Release Notes (IN PROGRESS)
+## Version 3.7.0-SNAPSHOT Release Notes (IN PROGRESS)
 
 ### Enhancements ###
 
 ### Bug Fixes ###
+
+## Version 3.6.0 Release Notes (14 June 2022)
+
+### Enhancements ###
+
+* Issue [413](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues/413) Now supports JMeter 5.5 which supports JDK 17
+* Issue [417](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues/413) Now using JMeter 5.5 which does not have the log4J vulnerability
 
 ## Version 3.5.0 Release Notes (9 October 2021)
 

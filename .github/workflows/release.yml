@@ -13,7 +13,7 @@ jobs:
       - name: Set up Maven Central Repository
         uses: actions/setup-java@v2
         with:
-          java-version: '8'
+          java-version: '11'
           distribution: 'temurin'
           server-id: sonatype-nexus-staging
           server-username: MAVEN_USERNAME

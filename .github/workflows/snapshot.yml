@@ -14,7 +14,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Check out code
+        uses: actions/checkout@v3
+
       - name: Set up Sonatype Snapshots Repository
         uses: actions/setup-java@v3
         with:
@@ -24,6 +26,7 @@ jobs:
           server-password: MAVEN_PASSWORD
           gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
           gpg-passphrase: MAVEN_GPG_PASSPHRASE
+
       - name: Publish to Sonatype Snapshots Repository
         run: mvn clean deploy -DskipTests
         env:

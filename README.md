@@ -19,9 +19,9 @@ See the [CHANGELOG](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/b
 
 All the documentation you need to configure the plugin is available on the [Github Wiki](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/wiki).
 
-The latest version is **3.6.0**, it requires Maven >= **3.5.2** and defaults to **Apache JMeter 5.4.1**.
+The latest version is **3.6.0**, it requires Maven >= **3.5.2** and defaults to **Apache JMeter 5.5**.
 
-This plugin requires a JDK between **8** and **11**. If using Java 11, ensure you use recent version to avoid facing this [Bug](https://bugs.openjdk.java.net/browse/JDK-8210005), also read [This](https://stackoverflow.com/a/52510406/460802). 
+This plugin requires a JDK between **8** and **17**. If using Java 11, ensure you use a recent version to avoid facing this [Bug](https://bugs.openjdk.java.net/browse/JDK-8210005), also read [This](https://stackoverflow.com/a/52510406/460802). 
 
 Running the GUI
 -----

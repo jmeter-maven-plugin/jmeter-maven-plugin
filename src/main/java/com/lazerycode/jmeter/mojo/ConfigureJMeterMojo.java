@@ -671,7 +671,11 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
                 if (!jarFileEntry.isDirectory() && jarFileEntry.getName().startsWith("bin") && !jarFileEntry.getName().endsWith(".properties")) {
                     //FIXME add a test to check directory creation with multiple child directories
                     Files.createDirectories(jmeterDirectoryPath.resolve(new File(jarFileEntry.getName()).getParentFile().getPath()));
-                    Files.copy(configSettings.getInputStream(jarFileEntry), jmeterDirectoryPath.resolve(jarFileEntry.getName()));
+                    final Path zipEntryPath = jmeterDirectoryPath.resolve(jarFileEntry.getName());
+                    if (!zipEntryPath.normalize().startsWith(jmeterDirectoryPath.normalize())) {
+                        throw new RuntimeException("Bad zip entry");
+                    }
+                    Files.copy(configSettings.getInputStream(jarFileEntry),zipEntryPath);
                 }
             }
         } catch (IOException e) {

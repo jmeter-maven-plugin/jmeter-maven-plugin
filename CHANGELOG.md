@@ -6,6 +6,12 @@
 
 ### Bug Fixes ###
 
+## Version 3.6.1 Release Notes (IN PROGRESS)
+
+### Bug Fixes ###
+
+* Potential Zip Slip vulnerability fixed, thank you Jonathan Leitschuh!
+
 ## Version 3.6.0 Release Notes (14 June 2022)
 
 ### Enhancements ###

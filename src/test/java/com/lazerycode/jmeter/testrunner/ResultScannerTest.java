@@ -40,6 +40,18 @@ public class ResultScannerTest {
     }
 
     @Test
+    public void jtlMultipleFileWithFailuresCountSuccessAndFailures() throws Exception {
+        File resultsFile = new File(jtlFailingResultsFileURL.toURI());
+        ResultScanner fileScanner = new ResultScanner(COUNT_SUCCESSES, COUNT_FAILURES, DEFAULT_IS_CSV, DEFAULT_ONLY_FAIL_WHEN_MATCHING_FAILURE_MESSAGES, DEFAULT_FAILURE_LIST);
+        fileScanner.parseResultFile(resultsFile);
+        fileScanner.parseResultFile(resultsFile);
+
+        assertThat(fileScanner.getFailureCount()).isEqualTo(4);
+        assertThat(fileScanner.getSuccessCount()).isEqualTo(4);
+        assertThat(fileScanner.getTotalCount()).isEqualTo(8);
+    }
+
+    @Test
     public void jtlFileWithFailuresCountSuccessesOnly() throws Exception {
         File resultsFile = new File(jtlFailingResultsFileURL.toURI());
         ResultScanner fileScanner = new ResultScanner(COUNT_SUCCESSES, DO_NOT_COUNT_FAILURES, DEFAULT_IS_CSV, DEFAULT_ONLY_FAIL_WHEN_MATCHING_FAILURE_MESSAGES, DEFAULT_FAILURE_LIST);
@@ -103,6 +115,18 @@ public class ResultScannerTest {
         assertThat(fileScanner.getFailureCount()).isEqualTo(2);
         assertThat(fileScanner.getSuccessCount()).isEqualTo(0);
         assertThat(fileScanner.getTotalCount()).isEqualTo(2);
+    }
+
+    @Test
+    public void csvMultipleFilesWithFailuresCountSuccessAndFailures() throws Exception {
+        File resultsFile = new File(csvFailingResultsFileURL.toURI());
+        ResultScanner fileScanner = new ResultScanner(COUNT_SUCCESSES, COUNT_FAILURES, true, DEFAULT_ONLY_FAIL_WHEN_MATCHING_FAILURE_MESSAGES, DEFAULT_FAILURE_LIST);
+        fileScanner.parseResultFile(resultsFile);
+        fileScanner.parseResultFile(resultsFile);
+
+        assertThat(fileScanner.getFailureCount()).isEqualTo(4);
+        assertThat(fileScanner.getSuccessCount()).isEqualTo(0);
+        assertThat(fileScanner.getTotalCount()).isEqualTo(4);
     }
 
     @Test

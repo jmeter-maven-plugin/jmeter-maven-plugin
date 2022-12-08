@@ -3,6 +3,7 @@ package com.lazerycode.jmeter.mojo;
 import com.lazerycode.jmeter.configuration.JMeterArgumentsArray;
 import com.lazerycode.jmeter.json.TestConfigurationWrapper;
 import com.lazerycode.jmeter.testrunner.JMeterProcessBuilder;
+import com.lazerycode.jmeter.utility.StreamRedirector;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -63,6 +64,8 @@ public class RunJMeterGUIMojo extends AbstractJMeterMojo {
                 getLog().info(" Starting JMeter GUI process in the background...");
                 //TODO log process using process.pid() when Java 9 is the minimum supported version
             } else {
+                new Thread(new StreamRedirector(process.getInputStream(), getLog()::info)).start();
+                new Thread(new StreamRedirector(process.getErrorStream(), getLog()::error)).start();
                 process.waitFor();
             }
         } catch (InterruptedException ex) {

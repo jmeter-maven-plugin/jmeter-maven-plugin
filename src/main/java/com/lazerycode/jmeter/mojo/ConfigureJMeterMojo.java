@@ -452,7 +452,8 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
      * @throws MojoExecutionException MojoExecutionException
      */
     private void copyExplicitLibraries(List<String> desiredArtifacts, File destination, boolean downloadDependencies, String description) throws MojoExecutionException {
-        getLog().info(String.format("Copying %s to %s \nDownloading dependencies: %s", description, destination, downloadDependencies));
+        getLog().info(String.format("Copying %s to %s", description, destination));
+        getLog().info(String.format("Downloading dependencies: %s", downloadDependencies));
         for (String desiredArtifact : desiredArtifacts) {
             copyExplicitLibrary(desiredArtifact, destination, downloadDependencies);
         }
@@ -675,7 +676,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
                     if (!zipEntryPath.normalize().startsWith(jmeterDirectoryPath.normalize())) {
                         throw new RuntimeException("Bad zip entry");
                     }
-                    Files.copy(configSettings.getInputStream(jarFileEntry),zipEntryPath);
+                    Files.copy(configSettings.getInputStream(jarFileEntry), zipEntryPath);
                 }
             }
         } catch (IOException e) {

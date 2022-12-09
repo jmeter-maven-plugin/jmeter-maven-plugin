@@ -3,15 +3,14 @@ package com.lazerycode.jmeter.mojo;
 import com.lazerycode.jmeter.configuration.JMeterArgumentsArray;
 import com.lazerycode.jmeter.json.TestConfigurationWrapper;
 import com.lazerycode.jmeter.testrunner.JMeterProcessBuilder;
+import com.lazerycode.jmeter.utility.StreamRedirector;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 
 /**
  * Goal that runs JMeter in server mode.<br>
@@ -101,20 +100,11 @@ public class RunJMeterServerMojo extends AbstractJMeterMojo {
                     getLog().info(" ");
                     process.destroy();
                 }));
-                try (InputStreamReader isr = new InputStreamReader(process.getInputStream());
-                     BufferedReader br = new BufferedReader(isr)) {
-                    String line;
-                    while ((line = br.readLine()) != null) {
-                        if (suppressJMeterOutput) {
-                            getLog().debug(line);
-                        } else {
-                            getLog().info(line);
-                        }
-                    }
-                    int jMeterExitCode = process.waitFor();
-                    if (jMeterExitCode != 0) {
-                        throw new MojoExecutionException("Starting JMeter server in background failed with exit code: " + jMeterExitCode);
-                    }
+                new Thread(new StreamRedirector(process.getInputStream(), (suppressJMeterOutput ? getLog()::debug : getLog()::info))).start();
+                new Thread(new StreamRedirector(process.getErrorStream(), getLog()::error)).start();
+                int jMeterExitCode = process.waitFor();
+                if (jMeterExitCode != 0) {
+                    throw new MojoExecutionException("Starting JMeter server in background failed with exit code: " + jMeterExitCode);
                 }
             }
         } catch (InterruptedException ex) {

@@ -3,16 +3,15 @@ package com.lazerycode.jmeter.testrunner;
 import com.lazerycode.jmeter.configuration.JMeterArgumentsArray;
 import com.lazerycode.jmeter.configuration.JMeterProcessJVMSettings;
 import com.lazerycode.jmeter.configuration.RemoteConfiguration;
+import com.lazerycode.jmeter.utility.StreamRedirector;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.shared.utils.io.DirectoryScanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -253,28 +252,19 @@ public class TestManager {
                 LOGGER.info(" ");
                 process.destroy();
             }));
-            try (InputStreamReader isr = new InputStreamReader(process.getInputStream());
-                 BufferedReader br = new BufferedReader(isr)) {
-                String line;
-                while ((line = br.readLine()) != null) {
-                    if (suppressJMeterOutput) {
-                        LOGGER.debug(line);
-                    } else {
-                        LOGGER.info(line);
-                    }
+            new Thread(new StreamRedirector(process.getInputStream(), (suppressJMeterOutput ? LOGGER::debug : LOGGER::info))).start();
+            new Thread(new StreamRedirector(process.getErrorStream(), LOGGER::error)).start();
+            int jMeterExitCode = process.waitFor();
+            if (jMeterExitCode != 0) {
+                if (ignoreJVMKilledExitCode && jMeterExitCode == EXIT_CODE_FOR_JVM_KILLED) {
+                    LOGGER.warn("JVM has been force killed!");
+                    LOGGER.warn("Build failure not triggered due to config settings, however you may want to investigate this");
+                } else {
+                    throw new MojoExecutionException("Test failed with exit code:" + jMeterExitCode);
                 }
-                int jMeterExitCode = process.waitFor();
-                if (jMeterExitCode != 0) {
-                    if (ignoreJVMKilledExitCode && jMeterExitCode == EXIT_CODE_FOR_JVM_KILLED) {
-                        LOGGER.warn("JVM has been force killed!");
-                        LOGGER.warn("Build failure not triggered due to config settings, however you may want to investigate this");
-                    } else {
-                        throw new MojoExecutionException("Test failed with exit code:" + jMeterExitCode);
-                    }
-                }
-                LOGGER.info("Completed Test: {}", test.getAbsolutePath());
-                LOGGER.info(" ");
             }
+            LOGGER.info("Completed Test: {}", test.getAbsolutePath());
+            LOGGER.info(" ");
         } catch (InterruptedException ex) {
             LOGGER.info(" ");
             LOGGER.info("System Exit Detected!  Stopping Test...");

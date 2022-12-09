@@ -6,7 +6,9 @@
 
 ### Bug Fixes ###
 
-## Version 3.6.1 Release Notes (IN PROGRESS)
+Issue [436](https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues/436) Stream all output into the parent JVM when running the GUI to improve visibility of what is going on under the hood.
+
+## Version 3.6.1 Release Notes (9 August 2022)
 
 ### Bug Fixes ###
 

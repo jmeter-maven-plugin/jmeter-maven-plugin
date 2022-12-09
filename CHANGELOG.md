@@ -1,6 +1,12 @@
 # Changelog
 
-## Version 3.7.0-SNAPSHOT Release Notes (IN PROGRESS)
+## Version 3.8.0-SNAPSHOT Release Notes (IN PROGRESS)
+
+### Enhancements ###
+
+### Bug Fixes ###
+
+## Version 3.7.0 Release Notes (9 December 2022)
 
 ### Enhancements ###
 

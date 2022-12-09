@@ -51,18 +51,18 @@ public class ResultScanner implements IResultScanner {
         LOGGER.info("Parsing results file '{}' as type: {}", file, this.csv ? "CSV" : "XML");
         if (csv) {
             CSVScanResult csvScanResult = CSVFileScanner.scanCsvForValues(file, failureMessages);
-            successCount = csvScanResult.getSuccessCount();
-            failureCount = csvScanResult.getFailureCount();
+            successCount += csvScanResult.getSuccessCount();
+            failureCount += csvScanResult.getFailureCount();
             for (Map.Entry<String, Integer> entry : csvScanResult.getSpecificFailureMessages().entrySet()) {
                 customFailureCount = customFailureCount + entry.getValue();
                 LOGGER.info("Number of potential custom failures using '{}' in '{}': {}", entry.getKey(), file.getName(), customFailureCount);
             }
         } else {
             if (countSuccesses) {
-                successCount = scanXmlFileForPattern(file, Pattern.compile(XML_REQUEST_SUCCESS_PATTERN, Pattern.CASE_INSENSITIVE));
+                successCount += scanXmlFileForPattern(file, Pattern.compile(XML_REQUEST_SUCCESS_PATTERN, Pattern.CASE_INSENSITIVE));
             }
             if (countFailures) {
-                failureCount = scanXmlFileForPattern(file, Pattern.compile(XML_REQUEST_FAILURE_PATTERN, Pattern.CASE_INSENSITIVE));
+                failureCount += scanXmlFileForPattern(file, Pattern.compile(XML_REQUEST_FAILURE_PATTERN, Pattern.CASE_INSENSITIVE));
             }
         }
     }

@@ -572,10 +572,14 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
             getLog().debug("Root dependency exclusions: " + rootDependency.getExclusions());
             getLog().debug(LINE_SEPARATOR);
         }
+       this.copyTransitiveRuntimeDependenciesToLibDirectoryExtract(rootDependency, getDependenciesOfDependency, collectRequest, dependencyRequestCollect, dependencyRequestTrace);
+
+    }
+
+    private void copyTransitiveRuntimeDependenciesToLibDirectoryExtract(Dependency rootDependency, boolean getDependenciesOfDependency, CollectRequest collectRequest, CollectRequest dependencyRequestCollect, RequestTrace dependencyRequestTrace) throws MojoExecutionException {
         try {
             // here we can not resolve, since exclusions can be caught, which are therefore excluded, which are absent in the repositories.
-            List<DependencyNode> artifactDependencyNodes =
-                    repositorySystem.collectDependencies(repositorySystemSession, collectRequest).getRoot().getChildren();
+            List<DependencyNode> artifactDependencyNodes = repositorySystem.collectDependencies(repositorySystemSession, collectRequest).getRoot().getChildren();
             for (DependencyNode dependencyNode : artifactDependencyNodes) {
                 if (getLog().isDebugEnabled()) {
                     getLog().debug("Dependency name: " + dependencyNode.toString());

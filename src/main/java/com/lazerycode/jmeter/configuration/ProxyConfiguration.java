@@ -1,5 +1,8 @@
 package com.lazerycode.jmeter.configuration;
 
+import java.util.TreeSet;
+
+import static com.lazerycode.jmeter.configuration.JMeterCommandLineArguments.*;
 import static com.lazerycode.jmeter.utility.UtilityFunctions.isNotSet;
 import static com.lazerycode.jmeter.utility.UtilityFunctions.isSet;
 
@@ -130,5 +133,24 @@ public class ProxyConfiguration {
 			if (isSet(hostExclusions)) proxyDetails += "Host Exclusions: " + hostExclusions + "\n";
 		}
 		return proxyDetails + "\n";
+	}
+
+	public TreeSet<JMeterCommandLineArguments> setCommandLineArguments(TreeSet<JMeterCommandLineArguments> argumentList){
+
+		if (isSet(this.getHost())) {
+			argumentList.add(PROXY_HOST);
+			argumentList.add(PROXY_PORT);
+		}
+		if (isSet(this.getUsername())) {
+			argumentList.add(PROXY_USERNAME);
+		}
+		if (isSet(this.getPassword())) {
+			argumentList.add(PROXY_PASSWORD);
+		}
+		if (isSet(this.getHostExclusions())) {
+			argumentList.add(NONPROXY_HOSTS);
+		}
+
+		return argumentList;
 	}
 }

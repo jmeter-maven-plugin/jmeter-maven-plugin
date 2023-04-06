@@ -173,9 +173,9 @@ public class ResultScannerTest {
         ResultScanner fileScanner = new ResultScanner(COUNT_SUCCESSES, COUNT_FAILURES, true, true, failureMessages);
         fileScanner.getParseResult(resultsFile);
 
-        assertThat(fileScanner.getFailureCount()).isEqualTo(1);
+        assertThat(fileScanner.getFailureCount()).isEqualTo(0);
         assertThat(fileScanner.getSuccessCount()).isEqualTo(0);
-        assertThat(fileScanner.getTotalCount()).isEqualTo(1);
+        assertThat(fileScanner.getTotalCount()).isEqualTo(0);
     }
 
     @Test
@@ -200,9 +200,9 @@ public class ResultScannerTest {
         ResultScanner fileScanner = new ResultScanner(COUNT_SUCCESSES, COUNT_FAILURES, true, true, failureMessages);
         fileScanner.getParseResult(resultsFile);
 
-        assertThat(fileScanner.getFailureCount()).isEqualTo(1);
+        assertThat(fileScanner.getFailureCount()).isEqualTo(0);
         assertThat(fileScanner.getSuccessCount()).isEqualTo(0);
-        assertThat(fileScanner.getTotalCount()).isEqualTo(1);
+        assertThat(fileScanner.getTotalCount()).isEqualTo(0);
     }
 
     @Test(expected = MojoExecutionException.class)

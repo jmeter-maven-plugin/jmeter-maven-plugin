@@ -239,8 +239,8 @@ public abstract class AbstractJMeterMojo extends AbstractMojo {
         doExecute();
     }
 
-    protected abstract void doExecute() throws MojoExecutionException, MojoFailureException;
 
+    protected abstract void doExecute() throws MojoExecutionException, MojoFailureException;
 
     /**
      * Generate the initial JMeter Arguments array that is used to create the command line that we pass to JMeter.

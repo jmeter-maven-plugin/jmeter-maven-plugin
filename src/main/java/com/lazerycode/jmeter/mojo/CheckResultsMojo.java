@@ -104,7 +104,7 @@ public class CheckResultsMojo extends AbstractJMeterMojo {
                     failureMessages
             );
             for (String resultFileLocation : testConfig.getCurrentTestConfiguration().getResultFilesLocations()) {
-                resultScanner.parseResultFile(new File(resultFileLocation));
+                resultScanner.getParseResult(new File(resultFileLocation));
             }
             getLog().info(" ");
             getLog().info(LINE_SEPARATOR);

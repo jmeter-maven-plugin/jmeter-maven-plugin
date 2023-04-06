@@ -56,7 +56,7 @@ public class BenchmarkResultScannerTest {
         System.out.println("Benchmark new FailureScanner implementation");
         final LocalDateTime start = LocalDateTime.now();
         System.out.println("Start time is " + start);
-        fileScanner.parseResultFile(resultsFile);
+        fileScanner.getParseResult(resultsFile);
         final LocalDateTime finish = LocalDateTime.now();
         System.out.println("Finish time is " + finish);
         Duration duration = Duration.between(start, finish);
@@ -74,7 +74,7 @@ public class BenchmarkResultScannerTest {
         System.out.println("Benchmark new FailureScanner implementation - success only");
         final LocalDateTime start = LocalDateTime.now();
         System.out.println("Start time is " + start);
-        fileScanner.parseResultFile(resultsFile);
+        fileScanner.getParseResult(resultsFile);
         final LocalDateTime finish = LocalDateTime.now();
         System.out.println("Finish time is " + finish);
         Duration duration = Duration.between(start, finish);
@@ -92,7 +92,7 @@ public class BenchmarkResultScannerTest {
         System.out.println("Benchmark new FailureScanner implementation - failure only");
         final LocalDateTime start = LocalDateTime.now();
         System.out.println("Start time is " + start);
-        fileScanner.parseResultFile(resultsFile);
+        fileScanner.getParseResult(resultsFile);
         final LocalDateTime finish = LocalDateTime.now();
         System.out.println("Finish time is " + finish);
         Duration duration = Duration.between(start, finish);

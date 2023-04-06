@@ -48,7 +48,7 @@ import static com.lazerycode.jmeter.properties.ConfigurationFiles.*;
  * This goal runs within Lifecycle phase {@link LifecyclePhase#COMPILE}.
  */
 @Mojo(name = "configure", defaultPhase = LifecyclePhase.COMPILE)
-public class ConfigureJMeterMojo extends AbstractJMeterMojo {
+public class ConfigureJMeterMojo extends AbstractJMeterMojo{
     private static final String DEPENDENCIES_DEFAULT_SEARCH_SCOPE = JavaScopes.RUNTIME;
     @Component
     private RepositorySystem repositorySystem;

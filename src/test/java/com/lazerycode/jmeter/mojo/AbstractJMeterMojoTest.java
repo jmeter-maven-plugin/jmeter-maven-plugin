@@ -44,7 +44,7 @@ public class AbstractJMeterMojoTest {
     private AbstractJMeterMojo createtMojoInstanceWithTestLogging() {
         return new AbstractJMeterMojo() {
             @Override
-            protected void doExecute() throws MojoExecutionException, MojoFailureException {
+            public void doExecute() throws MojoExecutionException, MojoFailureException {
             }
 
             @Override

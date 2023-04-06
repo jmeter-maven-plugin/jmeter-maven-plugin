@@ -23,8 +23,8 @@ public class ResultScanner implements IResultScanner {
     private final boolean countFailures;
     private final boolean countSuccesses;
     private final boolean onlyFailWhenMatchingFailureMessage;
-//    private final boolean csv;
-//    private final List<String> failureMessages;
+    private final boolean csv;
+    private final List<String> failureMessages;
     private int successCount = 0;
     private int failureCount = 0;
     private int customFailureCount = 0;
@@ -32,12 +32,12 @@ public class ResultScanner implements IResultScanner {
     private ParseResult parseResult;
 
     public ResultScanner(boolean countSuccesses, boolean countFailures, boolean isCsv, boolean onlyFailWhenMatchingFailureMessage, List<String> failureMessages) {
-        //this.csv = isCsv;
+        this.csv = isCsv;
         this.countFailures = countFailures;
         this.countSuccesses = countSuccesses;
         this.onlyFailWhenMatchingFailureMessage = onlyFailWhenMatchingFailureMessage;
-        //this.failureMessages = failureMessages;
-        parseResult = new ParseResult(isCsv,failureMessages,countFailures,countSuccesses);
+        this.failureMessages = failureMessages;
+        parseResult = new ParseResult();
     }
 
 
@@ -45,9 +45,11 @@ public class ResultScanner implements IResultScanner {
      * @return failureCount
      */
     public void getParseResult(File file) throws MojoExecutionException {
-        List<Integer> vars =  parseResult.parseResultFile(file);
+        List<Integer> vars =  parseResult.parseResultFile(file, successCount, failureCount, countSuccesses, countFailures, failureMessages, customFailureCount, csv);
         this.successCount = vars.get(0);
         this.failureCount = vars.get(1);
+        System.out.println("SuccessCount2========================="+successCount);
+        System.out.println("FailureCount2========================="+failureCount);
     }
 
     /**

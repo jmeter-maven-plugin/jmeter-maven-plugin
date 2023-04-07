@@ -593,9 +593,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo{
                         dependencyNode.getArtifact().getArtifactId(),
                         dependencyNode.getArtifact().getClassifier(),
                         dependencyNode.getArtifact().getExtension());
-                if ((downloadOptionalDependencies || !dependencyNode.getDependency().isOptional()) &&
-                        !containsExclusion(parsedExcludedArtifacts, dummyExclusion) &&
-                        !((rootDependency.getExclusions() != null) && (containsExclusion(rootDependency.getExclusions(), dummyExclusion)))) {
+                if (isDependencyExist(dependencyNode,dummyExclusion,rootDependency)) {
                     ArtifactRequest artifactRequest = new ArtifactRequest(dependencyNode);
                     artifactRequest.setArtifact(ArtifactHelpers.resolveArtifactVersion(repositorySystem, repositorySystemSession, repositoryList, artifactRequest.getArtifact()));
                     Artifact returnedArtifact = repositorySystem.resolveArtifact(repositorySystemSession, artifactRequest).getArtifact();
@@ -617,6 +615,12 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo{
         } catch (DependencyCollectionException | ArtifactResolutionException | VersionRangeResolutionException e) {
             throw new MojoExecutionException(e.getMessage(), e);
         }
+    }
+
+    public boolean isDependencyExist(DependencyNode dependencyNode, Exclusion dummyExclusion, Dependency rootDependency){
+        return (downloadOptionalDependencies || !dependencyNode.getDependency().isOptional()) &&
+                !containsExclusion(parsedExcludedArtifacts, dummyExclusion) &&
+                !((rootDependency.getExclusions() != null) && (containsExclusion(rootDependency.getExclusions(), dummyExclusion)));
     }
 
     /**

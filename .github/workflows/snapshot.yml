@@ -26,7 +26,21 @@ jobs:
       - name: Set up Sonatype Snapshots Repository
         uses: s4u/maven-settings-action@v2.8.0
         with:
-          servers: '[{"id": "sonatype-nexus-snapshots", "username": "${{ secrets.OSSRH_USERNAME }}", "password": "${{ secrets.OSSRH_TOKEN }}", "privateKey": "${{ secrets.MAVEN_GPG_PRIVATE_KEY }}", "passphrase": "${{ secrets.MAVEN_GPG_PASSPHRASE }}"}]'
+          githubServer: false
+          sonatypeSnapshots: true
+          servers: |
+            [{
+              "id": "sonatype-nexus-snapshots", 
+              "username": "${env.MAVEN_USERNAME}", 
+              "password": "${env.MAVEN_PASSWORD}", 
+              "privateKey": "${env.MAVEN_PRIVATE_KEY}", 
+              "passphrase": "${env.MAVEN_PASSPHRASE}"
+            }]
 
       - name: Publish to Sonatype Snapshots Repository
         run: mvn clean deploy -DskipTests
+        env:
+          MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+          MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
+          MAVEN_PRIVATE_KEY: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
+          MAVEN_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}

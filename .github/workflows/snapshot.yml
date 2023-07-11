@@ -31,10 +31,10 @@ jobs:
           servers: |
             [{
               "id": "sonatype-nexus-snapshots", 
-              "username": ${{ secrets.OSSRH_USERNAME }}, 
-              "password": ${{ secrets.OSSRH_TOKEN }}, 
-              "privateKey": ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}, 
-              "passphrase": ${{ secrets.MAVEN_GPG_PASSPHRASE }}
+              "username": "${{ secrets.OSSRH_USERNAME }}", 
+              "password": "${{ secrets.OSSRH_TOKEN }}", 
+              "privateKey": "${{ secrets.MAVEN_GPG_PRIVATE_KEY }}", 
+              "passphrase": "${{ secrets.MAVEN_GPG_PASSPHRASE }}"
             }]
 
       - name: Publish to Sonatype Snapshots Repository

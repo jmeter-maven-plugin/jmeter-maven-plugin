@@ -22,7 +22,6 @@ jobs:
       - name: Set up Sonatype Staging Repository
         uses: s4u/maven-settings-action@v2.8.0
         with:
-          githubServer: false
           servers: |
             [{
               "id": "sonatype-nexus-staging", 

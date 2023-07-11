@@ -26,8 +26,6 @@ jobs:
       - name: Set up Sonatype Snapshots Repository
         uses: s4u/maven-settings-action@v2.8.0
         with:
-          githubServer: false
-          sonatypeSnapshots: true
           servers: |
             [{
               "id": "sonatype-nexus-snapshots", 

@@ -30,6 +30,10 @@ jobs:
               "password": "${env.MAVEN_PASSWORD}", 
               "privateKey": "${env.MAVEN_PRIVATE_KEY}", 
               "passphrase": "${env.MAVEN_PASSPHRASE}"
+            },
+            {
+              "id": "gpg.passphrase",
+              "passphrase": "${env.MAVEN_PASSPHRASE}"
             }]
 
       - name: Publish to Apache Maven Central

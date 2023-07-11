@@ -11,10 +11,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Set up Maven Central Repository
-        uses: actions/setup-java@v2
+        uses: s4u/setup-maven-action@v1.8.0
         with:
-          distribution: 'temurin'
           java-version: '11'
+          maven-version: '3.9.2'
           server-id: sonatype-nexus-staging
           server-username: MAVEN_USERNAME
           server-password: MAVEN_PASSWORD

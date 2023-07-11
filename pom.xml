@@ -38,7 +38,7 @@
         <junit.version>4.13.2</junit.version>
         <logback.version>1.2.12</logback.version>
         <maven-resolver.version>1.9.13</maven-resolver.version>
-        <mockito-core.version>4.11.0</mockito-core.version> <!-- 5.x require java 11 -->
+        <mockito-core.version>4.11.0</mockito-core.version> <!-- 5.x requires java 11 -->
         <slf4j-api.version>1.7.36</slf4j-api.version>
         <json-unit-assertj.version>2.36.0</json-unit-assertj.version> <!-- 3.00 requires JDK 17-->
 

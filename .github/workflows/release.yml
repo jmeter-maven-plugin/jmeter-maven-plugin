@@ -8,24 +8,33 @@ on:
 jobs:
   publish:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v2
-      - name: Set up Maven Central Repository
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Setup Java/Maven Action
         uses: s4u/setup-maven-action@v1.8.0
         with:
-          java-version: '11'
+          java-version: 11
           maven-version: '3.9.2'
-          server-id: sonatype-nexus-staging
-          server-username: MAVEN_USERNAME
-          server-password: MAVEN_PASSWORD
-          gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
-          gpg-passphrase: MAVEN_GPG_PASSPHRASE
+
+      - name: Set up Sonatype Staging Repository
+        uses: s4u/maven-settings-action@v2.8.0
+        with:
+          githubServer: false
+          servers: |
+            [{
+              "id": "sonatype-nexus-staging", 
+              "username": ${{ secrets.OSSRH_USERNAME }}, 
+              "password": ${{ secrets.OSSRH_TOKEN }}, 
+              "privateKey": ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}, 
+              "passphrase": ${{ secrets.MAVEN_GPG_PASSPHRASE }}
+            }]
+
       - name: Publish to Apache Maven Central
         run: mvn clean deploy -Prelease -Drevision=${{ github.event.inputs.tag }}
-        env:
-          MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
-          MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
-          MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
+
       - name: Tag release on Github
         id: release-snapshot
         uses: actions/create-release@latest

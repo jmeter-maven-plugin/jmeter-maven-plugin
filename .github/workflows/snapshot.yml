@@ -17,20 +17,25 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v3
 
-      - name: Set up Sonatype Snapshots Repository
+      - name: Setup Java/Maven Action
         uses: s4u/setup-maven-action@v1.8.0
         with:
-          java-version: '11'
+          java-version: 11
           maven-version: '3.9.2'
-          server-id: sonatype-nexus-snapshots
-          server-username: MAVEN_USERNAME
-          server-password: MAVEN_PASSWORD
-          gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
-          gpg-passphrase: MAVEN_GPG_PASSPHRASE
+
+      - name: Set up Sonatype Snapshots Repository
+        uses: s4u/maven-settings-action@v2.8.0
+        with:
+          githubServer: false
+          sonatypeSnapshots: true
+          servers: |
+            [{
+              "id": "sonatype-nexus-snapshots", 
+              "username": ${{ secrets.OSSRH_USERNAME }}, 
+              "password": ${{ secrets.OSSRH_TOKEN }}, 
+              "privateKey": ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}, 
+              "passphrase": ${{ secrets.MAVEN_GPG_PASSPHRASE }}
+            }]
 
       - name: Publish to Sonatype Snapshots Repository
         run: mvn clean deploy -DskipTests
-        env:
-          MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
-          MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
-          MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}

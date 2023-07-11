@@ -22,14 +22,7 @@ jobs:
       - name: Set up Sonatype Staging Repository
         uses: s4u/maven-settings-action@v2.8.0
         with:
-          servers: |
-            [{
-              "id": "sonatype-nexus-staging", 
-              "username": "${{ secrets.OSSRH_USERNAME }}", 
-              "password": "${{ secrets.OSSRH_TOKEN }}", 
-              "privateKey": "${{ secrets.MAVEN_GPG_PRIVATE_KEY }}", 
-              "passphrase": "${{ secrets.MAVEN_GPG_PASSPHRASE }}"
-            }]
+          servers: '[{"id": "sonatype-nexus-staging", "username": "${{ secrets.OSSRH_USERNAME }}", "password": "${{ secrets.OSSRH_TOKEN }}", "privateKey": "${{ secrets.MAVEN_GPG_PRIVATE_KEY }}", "passphrase": "${{ secrets.MAVEN_GPG_PASSPHRASE }}"}]'
 
       - name: Publish to Apache Maven Central
         run: mvn clean deploy -Prelease -Drevision=${{ github.event.inputs.tag }}

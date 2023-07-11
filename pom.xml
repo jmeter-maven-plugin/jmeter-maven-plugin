@@ -492,6 +492,9 @@
         </profile>
         <profile>
             <id>release</id>
+            <properties>
+                <gpg.keyname>gpg.passphrase</gpg.keyname>
+            </properties>
             <repositories>
                 <repository>
                     <id>sonatype-nexus-snapshots</id>

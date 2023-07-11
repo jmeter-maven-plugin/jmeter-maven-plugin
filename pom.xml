@@ -38,7 +38,7 @@
         <junit.version>4.13.2</junit.version>
         <logback.version>1.2.12</logback.version>
         <maven-resolver.version>1.9.13</maven-resolver.version>
-        <mockito-core.version>5.4.0</mockito-core.version>
+        <mockito-core.version>4.11.0</mockito-core.version> <!-- 5.x require java 11 -->
         <slf4j-api.version>1.7.36</slf4j-api.version>
         <json-unit-assertj.version>2.36.0</json-unit-assertj.version> <!-- 3.00 requires JDK 17-->
 
@@ -194,7 +194,7 @@
             <name>Jonathan Leitschuh</name>
         </contributor>
         <contributor>
-            <name>Serhiiilnytskyi </name>
+            <name>Serhiiilnytskyi</name>
         </contributor>
     </contributors>
 
@@ -396,7 +396,9 @@
                             <postBuildHookScript>verify</postBuildHookScript>
                             <streamLogs>true</streamLogs>
                             <showErrors>true</showErrors>
-                            <mavenOpts>${argLine} -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn</mavenOpts>
+                            <mavenOpts>${argLine}
+                                -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
+                            </mavenOpts>
                             <properties>
                                 <jmeter.version>${jmeter.version}</jmeter.version>
                             </properties>

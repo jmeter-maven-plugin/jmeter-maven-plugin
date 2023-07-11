@@ -46,12 +46,12 @@
         <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
         <maven-enforcer-plugin.version>3.3.0</maven-enforcer-plugin.version>
         <maven-gpg-plugin.version>3.0.1</maven-gpg-plugin.version>
-        <maven-invoker-plugin.version>3.2.2</maven-invoker-plugin.version>
+        <maven-invoker-plugin.version>3.6.0</maven-invoker-plugin.version>
         <maven-javadoc-plugin.version>3.3.1</maven-javadoc-plugin.version>
         <maven-shared-utils.version>3.4.2</maven-shared-utils.version>
         <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
-        <maven-surefire-failsafe-plugin.version>2.22.2</maven-surefire-failsafe-plugin.version>
-        <jacoco-maven-plugin.version>0.8.7</jacoco-maven-plugin.version>
+        <maven-surefire-failsafe-plugin.version>3.1.2</maven-surefire-failsafe-plugin.version>
+        <jacoco-maven-plugin.version>0.8.10</jacoco-maven-plugin.version>
         <nexus-staging-maven-plugin.version>1.6.8</nexus-staging-maven-plugin.version>
         <pgp-maven-plugin.version>1.1</pgp-maven-plugin.version>
     </properties>

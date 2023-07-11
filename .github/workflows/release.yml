@@ -33,6 +33,7 @@ jobs:
             },
             {
               "id": "gpg.passphrase",
+              "username": "null",
               "passphrase": "${env.MAVEN_PASSPHRASE}"
             }]
 

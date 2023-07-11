@@ -20,11 +20,11 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v3
 
-      - name: Set up JDK
-        uses: actions/setup-java@v3
+      - name: Setup Maven Action
+        uses: s4u/setup-maven-action@v1.2.1
         with:
-          distribution: 'temurin'
           java-version: ${{ matrix.java-version }}
+          maven-version: '3.9.2'
 
       - name: Build with Maven
         run: mvn clean verify

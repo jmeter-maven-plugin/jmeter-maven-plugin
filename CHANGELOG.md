@@ -1,6 +1,12 @@
 # Changelog
 
-## Version 3.8.0-SNAPSHOT Release Notes (IN PROGRESS)
+## Version 3.9.0-SNAPSHOT Release Notes (IN PROGRESS)
+
+### Enhancements ###
+
+### Bug Fixes ###
+
+## Version 3.8.0 Release Notes (11 July 2023)
 
 ### Enhancements ###
 

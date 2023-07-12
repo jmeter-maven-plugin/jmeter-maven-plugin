@@ -13,37 +13,29 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v3
 
-      - name: Setup Java/Maven Action
+      - name: Set up Java/Maven Central Repository
+        uses: actions/setup-java@v2
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+          server-id: sonatype-nexus-staging
+          server-username: MAVEN_USERNAME
+          server-password: MAVEN_PASSWORD
+          gpg-private-key: MAVEN_GPG_PRIVATE_KEY
+          gpg-passphrase: MAVEN_GPG_PASSPHRASE
+
+      - name: Setup Maven
         uses: s4u/setup-maven-action@v1.8.0
         with:
-          java-version: 11
           maven-version: '3.9.2'
-
-      - name: Set up Sonatype Staging Repository
-        uses: s4u/maven-settings-action@v2.8.0
-        with:
-          githubServer: false
-          servers: |
-            [{
-              "id": "sonatype-nexus-staging", 
-              "username": "${env.MAVEN_USERNAME}", 
-              "password": "${env.MAVEN_PASSWORD}", 
-              "privateKey": "${env.MAVEN_PRIVATE_KEY}", 
-              "passphrase": "${env.MAVEN_PASSPHRASE}"
-            },
-            {
-              "id": "gpg.passphrase",
-              "passphrase": "${env.MAVEN_PASSPHRASE}",
-              "configuration": {}
-            }]
 
       - name: Publish to Apache Maven Central
         run: mvn clean deploy -Prelease -Drevision=${{ github.event.inputs.tag }}
         env:
           MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
-          MAVEN_PRIVATE_KEY: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
-          MAVEN_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
+          MAVEN_GPG_PRIVATE_KEY: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
+          MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
 
       - name: Tag release on Github
         id: release-snapshot

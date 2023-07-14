@@ -1,0 +1,3 @@
+before_install:
+  - sdk update
+  - sdk install maven

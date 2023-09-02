@@ -14,6 +14,7 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.RepositorySystemSession;
+import org.eclipse.aether.RequestTrace;
 import org.eclipse.aether.artifact.AbstractArtifact;
 import org.eclipse.aether.artifact.Artifact;
 import org.eclipse.aether.artifact.DefaultArtifact;
@@ -47,7 +48,7 @@ import static com.lazerycode.jmeter.properties.ConfigurationFiles.*;
  * This goal runs within Lifecycle phase {@link LifecyclePhase#COMPILE}.
  */
 @Mojo(name = "configure", defaultPhase = LifecyclePhase.COMPILE)
-public class ConfigureJMeterMojo extends AbstractJMeterMojo {
+public class ConfigureJMeterMojo extends AbstractJMeterMojo{
     private static final String DEPENDENCIES_DEFAULT_SEARCH_SCOPE = JavaScopes.RUNTIME;
     @Component
     private RepositorySystem repositorySystem;
@@ -539,6 +540,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
         CollectRequest collectRequest = new CollectRequest();
         collectRequest.setRoot(rootDependency);
         collectRequest.setRepositories(repositoryList);
+
         // In #classpathFilter, we are not actually passing the scope, but the classpath identifier (just using the same enum as for the scope).
         // That is, for example, for a test classpath, dependencies are required with any scope (that is, the TEST filter is the softest)
 
@@ -559,25 +561,31 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
                             return notExcluded;
                         });
         DependencyRequest dependencyRequest = new DependencyRequest(collectRequest, dependencyFilter);
+        CollectRequest dependencyRequestCollect = dependencyRequest.getCollectRequest();
+        RequestTrace dependencyRequestTrace = dependencyRequestCollect.getTrace();
 
         if (getLog().isDebugEnabled()) {
             getLog().debug("Root dependency name: " + rootDependency.toString());
-            if ((dependencyRequest.getCollectRequest() != null) && (dependencyRequest.getCollectRequest().getTrace() != null)) {
-                getLog().debug("Root dependency request trace: " + dependencyRequest.getCollectRequest().getTrace().toString());
+            if ((dependencyRequestCollect != null) && (dependencyRequestTrace != null)) {
+                getLog().debug("Root dependency request trace: " + dependencyRequestTrace.toString());
             }
             getLog().debug("Root dependency exclusions: " + rootDependency.getExclusions());
             getLog().debug(LINE_SEPARATOR);
         }
+       this.copyTransitiveRuntimeDependenciesToLibDirectoryExtract(rootDependency, getDependenciesOfDependency, collectRequest, dependencyRequestCollect, dependencyRequestTrace);
+
+    }
+
+    private void copyTransitiveRuntimeDependenciesToLibDirectoryExtract(Dependency rootDependency, boolean getDependenciesOfDependency, CollectRequest collectRequest, CollectRequest dependencyRequestCollect, RequestTrace dependencyRequestTrace) throws MojoExecutionException {
         try {
             // here we can not resolve, since exclusions can be caught, which are therefore excluded, which are absent in the repositories.
-            List<DependencyNode> artifactDependencyNodes =
-                    repositorySystem.collectDependencies(repositorySystemSession, collectRequest).getRoot().getChildren();
+            List<DependencyNode> artifactDependencyNodes = repositorySystem.collectDependencies(repositorySystemSession, collectRequest).getRoot().getChildren();
             for (DependencyNode dependencyNode : artifactDependencyNodes) {
                 if (getLog().isDebugEnabled()) {
                     getLog().debug("Dependency name: " + dependencyNode.toString());
-                    if ((dependencyRequest.getCollectRequest() != null) && (dependencyRequest.getCollectRequest().getTrace() != null)) {
+                    if ((dependencyRequestCollect != null) && (dependencyRequestTrace != null)) {
                         getLog().debug("Dependency request trace: " +
-                                dependencyRequest.getCollectRequest().getTrace().toString());
+                                dependencyRequestTrace.toString());
                     }
                 }
                 Exclusion dummyExclusion = new Exclusion(
@@ -585,9 +593,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
                         dependencyNode.getArtifact().getArtifactId(),
                         dependencyNode.getArtifact().getClassifier(),
                         dependencyNode.getArtifact().getExtension());
-                if ((downloadOptionalDependencies || !dependencyNode.getDependency().isOptional()) &&
-                        !containsExclusion(parsedExcludedArtifacts, dummyExclusion) &&
-                        !((rootDependency.getExclusions() != null) && (containsExclusion(rootDependency.getExclusions(), dummyExclusion)))) {
+                if (isDependencyExist(dependencyNode,dummyExclusion,rootDependency)) {
                     ArtifactRequest artifactRequest = new ArtifactRequest(dependencyNode);
                     artifactRequest.setArtifact(ArtifactHelpers.resolveArtifactVersion(repositorySystem, repositorySystemSession, repositoryList, artifactRequest.getArtifact()));
                     Artifact returnedArtifact = repositorySystem.resolveArtifact(repositorySystemSession, artifactRequest).getArtifact();
@@ -609,6 +615,12 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
         } catch (DependencyCollectionException | ArtifactResolutionException | VersionRangeResolutionException e) {
             throw new MojoExecutionException(e.getMessage(), e);
         }
+    }
+
+    public boolean isDependencyExist(DependencyNode dependencyNode, Exclusion dummyExclusion, Dependency rootDependency){
+        return (downloadOptionalDependencies || !dependencyNode.getDependency().isOptional()) &&
+                !containsExclusion(parsedExcludedArtifacts, dummyExclusion) &&
+                !((rootDependency.getExclusions() != null) && (containsExclusion(rootDependency.getExclusions(), dummyExclusion)));
     }
 
     /**

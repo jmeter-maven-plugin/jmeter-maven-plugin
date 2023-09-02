@@ -17,9 +17,9 @@ import static com.lazerycode.jmeter.results.XMLFileScanner.scanXmlFileForPattern
  * @author Jon Roberts
  */
 public class ResultScanner implements IResultScanner {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ResultScanner.class);
-    private static final String XML_REQUEST_FAILURE_PATTERN = "s=\"false\"";
-    private static final String XML_REQUEST_SUCCESS_PATTERN = "s=\"true\"";
+//    private static final Logger LOGGER = LoggerFactory.getLogger(ResultScanner.class);
+//    private static final String XML_REQUEST_FAILURE_PATTERN = "s=\"false\"";
+//    private static final String XML_REQUEST_SUCCESS_PATTERN = "s=\"true\"";
     private final boolean countFailures;
     private final boolean countSuccesses;
     private final boolean onlyFailWhenMatchingFailureMessage;
@@ -29,42 +29,27 @@ public class ResultScanner implements IResultScanner {
     private int failureCount = 0;
     private int customFailureCount = 0;
 
+    private ParseResult parseResult;
+
     public ResultScanner(boolean countSuccesses, boolean countFailures, boolean isCsv, boolean onlyFailWhenMatchingFailureMessage, List<String> failureMessages) {
         this.csv = isCsv;
         this.countFailures = countFailures;
         this.countSuccesses = countSuccesses;
         this.onlyFailWhenMatchingFailureMessage = onlyFailWhenMatchingFailureMessage;
         this.failureMessages = failureMessages;
+        parseResult = new ParseResult();
     }
 
+
     /**
-     * Work out how to parse the file (if at all)
-     *
-     * @param file File to parse
-     * @throws MojoExecutionException MojoExecutionException
+     * @return failureCount
      */
-    public void parseResultFile(File file) throws MojoExecutionException {
-        if (!file.exists()) {
-            throw new MojoExecutionException("Unable to find " + file.getAbsolutePath());
-        }
-        LOGGER.info(" ");
-        LOGGER.info("Parsing results file '{}' as type: {}", file, this.csv ? "CSV" : "XML");
-        if (csv) {
-            CSVScanResult csvScanResult = CSVFileScanner.scanCsvForValues(file, failureMessages);
-            successCount += csvScanResult.getSuccessCount();
-            failureCount += csvScanResult.getFailureCount();
-            for (Map.Entry<String, Integer> entry : csvScanResult.getSpecificFailureMessages().entrySet()) {
-                customFailureCount = customFailureCount + entry.getValue();
-                LOGGER.info("Number of potential custom failures using '{}' in '{}': {}", entry.getKey(), file.getName(), customFailureCount);
-            }
-        } else {
-            if (countSuccesses) {
-                successCount += scanXmlFileForPattern(file, Pattern.compile(XML_REQUEST_SUCCESS_PATTERN, Pattern.CASE_INSENSITIVE));
-            }
-            if (countFailures) {
-                failureCount += scanXmlFileForPattern(file, Pattern.compile(XML_REQUEST_FAILURE_PATTERN, Pattern.CASE_INSENSITIVE));
-            }
-        }
+    public void getParseResult(File file) throws MojoExecutionException {
+        List<Integer> vars =  parseResult.parseResultFile(file, successCount, failureCount, countSuccesses, countFailures, failureMessages, customFailureCount, csv);
+        this.successCount = vars.get(0);
+        this.failureCount = vars.get(1);
+        System.out.println("SuccessCount2========================="+successCount);
+        System.out.println("FailureCount2========================="+failureCount);
     }
 
     /**

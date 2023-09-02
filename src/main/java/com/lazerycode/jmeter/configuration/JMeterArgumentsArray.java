@@ -27,7 +27,7 @@ public class JMeterArgumentsArray {
     private final String jMeterHome;
     private boolean disableTests;
 
-    private final TreeSet<JMeterCommandLineArguments> argumentList = new TreeSet<>();
+    private TreeSet<JMeterCommandLineArguments> argumentList = new TreeSet<>();
     private DateTimeFormatter dateFormat = DateTimeFormatter.BASIC_ISO_DATE;
     private ProxyConfiguration proxyConfiguration;
     private boolean timestampResults = false;
@@ -89,20 +89,7 @@ public class JMeterArgumentsArray {
         if (configuration == null) return this;
 
         this.proxyConfiguration = configuration;
-        if (isSet(proxyConfiguration.getHost())) {
-            argumentList.add(PROXY_HOST);
-            argumentList.add(PROXY_PORT);
-        }
-        if (isSet(proxyConfiguration.getUsername())) {
-            argumentList.add(PROXY_USERNAME);
-        }
-        if (isSet(proxyConfiguration.getPassword())) {
-            argumentList.add(PROXY_PASSWORD);
-        }
-        if (isSet(proxyConfiguration.getHostExclusions())) {
-            argumentList.add(NONPROXY_HOSTS);
-        }
-
+        this.argumentList = configuration.setCommandLineArguments(argumentList);
         return this;
     }
 

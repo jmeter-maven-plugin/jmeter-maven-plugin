@@ -90,11 +90,13 @@ public class ArtifactHelpers {
      */
     static Exclusion convertExclusionPatternIntoExclusion(String exceptionPattern) throws MojoExecutionException {
         Matcher matcher = COORDINATE_PATTERN.matcher(exceptionPattern);
+        int[] matcherGroupNo = {1,2,4,6};
+
         if (!matcher.matches()) {
             throw new MojoExecutionException(String.format("Bad artifact coordinates %s, expected format is <groupId>:<artifactId>[:<extension>][:<classifier>]", exceptionPattern));
         }
 
-        return new Exclusion(matcher.group(1), matcher.group(2), matcher.group(4), matcher.group(6));
+        return new Exclusion(matcher.group(matcherGroupNo[0]), matcher.group(matcherGroupNo[1]), matcher.group(matcherGroupNo[2]), matcher.group(matcherGroupNo[3]));
     }
 
     /**
@@ -170,11 +172,12 @@ public class ArtifactHelpers {
      * @throws InvalidVersionSpecificationException Unable to get artifact versions
      */
     public static boolean isArtifactIsOlderThanArtifact(Artifact artifact, Artifact comparisonArtifact) throws InvalidVersionSpecificationException {
+        int version0 = 0;
         GenericVersionScheme genericVersionScheme = new GenericVersionScheme();
         Version firstArtifactVersion = genericVersionScheme.parseVersion(artifact.getVersion());
         Version secondArtifactVersion = genericVersionScheme.parseVersion(comparisonArtifact.getVersion());
 
-        return firstArtifactVersion.compareTo(secondArtifactVersion) < 0;
+        return firstArtifactVersion.compareTo(secondArtifactVersion) < version0;
 
     }
 

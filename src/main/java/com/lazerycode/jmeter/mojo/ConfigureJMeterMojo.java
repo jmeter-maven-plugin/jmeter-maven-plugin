@@ -72,7 +72,7 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
      * if you change this version number the list of artifacts required to run JMeter may change.
      * If this happens you will need to override the &lt;jmeterArtifacts&gt; element.
      */
-    @Parameter(property = "jmeter.version", defaultValue = "5.6.2")
+    @Parameter(property = "jmeter.version", defaultValue = "5.6.3")
     private String jmeterVersion;
 
     /**
@@ -402,15 +402,18 @@ public class ConfigureJMeterMojo extends AbstractJMeterMojo {
      * This sets the default list of artifacts that we use to set up a local instance of JMeter.
      * We only use this default list if &lt;jmeterArtifacts&gt; has not been overridden in the POM.
      */
-    private void configureJMeterArtifacts() {
+    private void configureJMeterArtifacts() throws MojoExecutionException {
         if (jmeterArtifacts.isEmpty()) {
-            jmeterArtifacts = createDefaultJmeterArtifactsArray(jmeterVersion);
+            try {
+                jmeterArtifacts = createDefaultJmeterArtifactsArray(repositorySystem, repositorySystemSession, repositoryList, jmeterVersion);
+            } catch (ArtifactDescriptorException e) {
+                throw new MojoExecutionException(e);
+            }
         }
         getLog().debug("JMeter Artifact List:");
         jmeterArtifacts.forEach(artifact ->
                 getLog().debug(artifact)
         );
-
     }
 
     private void populateJMeterDirectoryTree() throws MojoExecutionException {

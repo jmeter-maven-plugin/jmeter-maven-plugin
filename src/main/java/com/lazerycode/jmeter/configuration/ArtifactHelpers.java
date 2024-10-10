@@ -4,11 +4,11 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.RepositorySystemSession;
 import org.eclipse.aether.artifact.Artifact;
+import org.eclipse.aether.artifact.DefaultArtifact;
+import org.eclipse.aether.graph.Dependency;
 import org.eclipse.aether.graph.Exclusion;
 import org.eclipse.aether.repository.RemoteRepository;
-import org.eclipse.aether.resolution.VersionRangeRequest;
-import org.eclipse.aether.resolution.VersionRangeResolutionException;
-import org.eclipse.aether.resolution.VersionRangeResult;
+import org.eclipse.aether.resolution.*;
 import org.eclipse.aether.util.version.GenericVersionScheme;
 import org.eclipse.aether.version.InvalidVersionSpecificationException;
 import org.eclipse.aether.version.Version;
@@ -23,26 +23,7 @@ public class ArtifactHelpers {
     private static final Pattern COORDINATE_PATTERN = Pattern.compile("([^: ]+):([^: ]+)(:([^: ]+))?(:([^: ]+))?");
     private static final String ARTIFACT_STAR = "*";
     static final String JMETER_GROUP_ID = "org.apache.jmeter";
-    static final List<String> JMETER_ARTIFACT_NAMES = Arrays.asList(
-            "ApacheJMeter",
-            "ApacheJMeter_bolt",
-            "ApacheJMeter_components",
-            "ApacheJMeter_config",
-            "ApacheJMeter_core",
-            "ApacheJMeter_ftp",
-            "ApacheJMeter_functions",
-            "ApacheJMeter_http",
-            "ApacheJMeter_java",
-            "ApacheJMeter_jdbc",
-            "ApacheJMeter_jms",
-            "ApacheJMeter_junit",
-            "ApacheJMeter_ldap",
-            "ApacheJMeter_mail",
-            "ApacheJMeter_mongodb",
-            "ApacheJMeter_native",
-            "ApacheJMeter_tcp",
-            "jorphan"
-    );
+    static final String JMETER_BOM = "ApacheJMeter_bom";
     static final List<String> BLOCKED_ARTIFACTS = Arrays.asList(
             // Exclude broken artifacts identified in https://bz.apache.org/bugzilla/show_bug.cgi?id=57555
             "d-haven-managed-pool:d-haven-managed-pool",
@@ -142,11 +123,20 @@ public class ArtifactHelpers {
      * @param jmeterVersion JMeter version for artifacts
      * @return List&lt;String&gt; of artifact coords
      */
-    public static List<String> createDefaultJmeterArtifactsArray(String jmeterVersion) {
+    public static List<String> createDefaultJmeterArtifactsArray(RepositorySystem repositorySystem, RepositorySystemSession session, List<RemoteRepository> repositoryList, String jmeterVersion) throws ArtifactDescriptorException {
+        Artifact artifact = new DefaultArtifact(String.format("%s:%s:%s", JMETER_GROUP_ID, JMETER_BOM, jmeterVersion));
+        ArtifactDescriptorRequest request = new ArtifactDescriptorRequest(artifact, repositoryList, null);
+        ArtifactDescriptorResult result = repositorySystem.readArtifactDescriptor(session, request);
+
         List<String> artifacts = new ArrayList<>();
-        JMETER_ARTIFACT_NAMES.forEach(artifactName ->
-                artifacts.add(String.format("%s:%s:%s", JMETER_GROUP_ID, artifactName, jmeterVersion))
-        );
+        for (Dependency dependency : result.getManagedDependencies()) {
+            if (!dependency.getArtifact().getArtifactId().equals("ApacheJMeter_bom-testing")) {
+                artifacts.add(dependency.getArtifact().toString());
+            }
+        }
+        // We sort this to push the base Jmeter jar to the start of the list to ensure it is copied into the bin dir
+        //TODO may want to add more logic around this in the future, if the artifact names change this could break
+        Collections.sort(artifacts);
 
         return artifacts;
     }
@@ -198,10 +188,10 @@ public class ArtifactHelpers {
      * This will check to see if the version number supplied is a range or not.
      * If it is a range it will replace the range with the highest version (inside the range) available
      *
-     * @param repositorySystem system repositories
+     * @param repositorySystem        system repositories
      * @param repositorySystemSession session repositories
-     * @param repositoryList list of repositories to try and download artifacts from
-     * @param desiredArtifact the artifact we want to download
+     * @param repositoryList          list of repositories to try and download artifacts from
+     * @param desiredArtifact         the artifact we want to download
      * @return the artifact with the version number set to a static version number instead of a range
      * @throws VersionRangeResolutionException Thrown if we cannot resolve any versions
      */

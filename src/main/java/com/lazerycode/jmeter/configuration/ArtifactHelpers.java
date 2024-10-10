@@ -192,21 +192,20 @@ public class ArtifactHelpers {
                 first.getClassifier().equals(second.getClassifier());
     }
 
-
     /**
      * Ensure we have a valid version number to download an artifact.
      * This will check to see if the version number supplied is a range or not.
      * If it is a range it will replace the range with the highest version (inside the range) available
      *
-     * @param repositorySystem system repositories
+     * @param repositorySystem        system repositories
      * @param repositorySystemSession session repositories
-     * @param repositoryList list of repositories to try and download artifacts from
-     * @param desiredArtifact the artifact we want to download
+     * @param repositoryList          list of repositories to try and download artifacts from
+     * @param desiredArtifact         the artifact we want to download
      * @return the artifact with the version number set to a static version number instead of a range
      * @throws VersionRangeResolutionException Thrown if we cannot resolve any versions
      */
     public static Artifact resolveArtifactVersion(RepositorySystem repositorySystem, RepositorySystemSession repositorySystemSession, List<RemoteRepository> repositoryList, Artifact desiredArtifact) throws VersionRangeResolutionException {
-        Pattern isAVersionRange = Pattern.compile("[\\[|\\(].+[\\]|\\)]");
+        Pattern isAVersionRange = Pattern.compile("[\\[|(].+[]|)]");
         if (isAVersionRange.matcher(desiredArtifact.getVersion()).matches()) {
             VersionRangeRequest versionRangeRequest = new VersionRangeRequest(desiredArtifact, repositoryList, null);
             VersionRangeResult versionRangeResult = repositorySystem.resolveVersionRange(repositorySystemSession, versionRangeRequest);

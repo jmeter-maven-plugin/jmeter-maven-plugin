@@ -28,13 +28,13 @@ public class JMeterArgumentsArray {
     private boolean disableTests;
 
     private final TreeSet<JMeterCommandLineArguments> argumentList = new TreeSet<>();
+    private final List<String> customPropertiesFiles = new ArrayList<>();
     private DateTimeFormatter dateFormat = DateTimeFormatter.BASIC_ISO_DATE;
     private ProxyConfiguration proxyConfiguration;
     private boolean timestampResults = false;
     private boolean appendTimestamp = false;
     private String resultFileExtension = ".jtl";
     private String remoteStartServerList;
-    private List<String> customPropertiesFiles = new ArrayList<>();
     private String testFile;
     private String resultsLogFileName;
     private String jmeterLogFileName;

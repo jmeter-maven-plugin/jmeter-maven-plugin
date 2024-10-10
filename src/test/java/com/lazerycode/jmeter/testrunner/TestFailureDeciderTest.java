@@ -1,16 +1,19 @@
 package com.lazerycode.jmeter.testrunner;
 
-import com.lazerycode.jmeter.results.IResultScanner;
+import com.lazerycode.jmeter.results.ResultScanner;
+import org.apache.maven.plugin.MojoExecutionException;
 import org.junit.Test;
+
+import java.io.File;
+import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class TestFailureDeciderTest {
-    private class MockResultScanner implements IResultScanner {
-        private int successCount;
-        private int failureCount;
+    private static class MockResultScanner extends ResultScanner {
 
         public MockResultScanner(int successCount, int failureCount) {
+            super(true, true, true, Collections.emptyList());
             this.successCount = successCount;
             this.failureCount = failureCount;
         }
@@ -18,6 +21,11 @@ public class TestFailureDeciderTest {
         @Override
         public int getSuccessCount() {
             return successCount;
+        }
+
+        @Override
+        public void parseResultFile(File file) {
+            //NOOP
         }
 
         @Override
@@ -38,7 +46,7 @@ public class TestFailureDeciderTest {
 
     @Test(expected = IllegalStateException.class)
     public void testRunChecksNotCalled() {
-        IResultScanner resultScanner = new MockResultScanner(10, 10);
+        ResultScanner resultScanner = new MockResultScanner(10, 10);
         TestFailureDecider decider = new TestFailureDecider(true, 2, resultScanner);
 
         assertThat(decider.failBuild()).isFalse();
@@ -46,7 +54,7 @@ public class TestFailureDeciderTest {
 
     @Test
     public void testIgnoreFailure() {
-        IResultScanner resultScanner = new MockResultScanner(10, 10);
+        ResultScanner resultScanner = new MockResultScanner(10, 10);
         TestFailureDecider decider = new TestFailureDecider(true, 2, resultScanner);
         decider.runChecks();
 
@@ -58,7 +66,7 @@ public class TestFailureDeciderTest {
 
     @Test
     public void testTakeIntoAccountFailure() {
-        IResultScanner resultScanner = new MockResultScanner(10, 10);
+        ResultScanner resultScanner = new MockResultScanner(10, 10);
         TestFailureDecider decider = new TestFailureDecider(false, 2, resultScanner);
         decider.runChecks();
 
@@ -70,7 +78,7 @@ public class TestFailureDeciderTest {
 
     @Test
     public void testErrorRateUnderThreshold() {
-        IResultScanner resultScanner = new MockResultScanner(100, 1);
+        ResultScanner resultScanner = new MockResultScanner(100, 1);
         TestFailureDecider decider = new TestFailureDecider(false, 2, resultScanner);
         decider.runChecks();
 
@@ -82,7 +90,7 @@ public class TestFailureDeciderTest {
 
     @Test
     public void testErrorRateEqualThreshold() {
-        IResultScanner resultScanner = new MockResultScanner(100, 2);
+        ResultScanner resultScanner = new MockResultScanner(100, 2);
         TestFailureDecider decider = new TestFailureDecider(false, 2, resultScanner);
         decider.runChecks();
 
@@ -94,7 +102,7 @@ public class TestFailureDeciderTest {
 
     @Test
     public void testErrorRateOverThreshold() {
-        IResultScanner resultScanner = new MockResultScanner(100, 3);
+        ResultScanner resultScanner = new MockResultScanner(100, 3);
         TestFailureDecider decider = new TestFailureDecider(false, 2, resultScanner);
         decider.runChecks();
 
@@ -106,7 +114,7 @@ public class TestFailureDeciderTest {
 
     @Test
     public void testErrorRateWithDefaultThreshold() {
-        IResultScanner resultScanner = new MockResultScanner(100, 1);
+        ResultScanner resultScanner = new MockResultScanner(100, 1);
         TestFailureDecider decider = new TestFailureDecider(false, 0, resultScanner);
         decider.runChecks();
 
@@ -118,7 +126,7 @@ public class TestFailureDeciderTest {
 
     @Test
     public void testErrorRateOverThresholdRounding() {
-        IResultScanner resultScanner = new MockResultScanner(10000, 3);
+        ResultScanner resultScanner = new MockResultScanner(10000, 3);
         TestFailureDecider decider = new TestFailureDecider(false, 0.02, resultScanner);
         decider.runChecks();
 
@@ -130,7 +138,7 @@ public class TestFailureDeciderTest {
 
     @Test
     public void testErrorRateOverThresholdRounding2() {
-        IResultScanner resultScanner = new MockResultScanner(10000, 2);
+        ResultScanner resultScanner = new MockResultScanner(10000, 2);
         TestFailureDecider decider = new TestFailureDecider(false, 0.02, resultScanner);
         decider.runChecks();
 
@@ -142,7 +150,7 @@ public class TestFailureDeciderTest {
 
     @Test
     public void NoResultsFound() {
-        IResultScanner resultScanner = new MockResultScanner(0, 0);
+        ResultScanner resultScanner = new MockResultScanner(0, 0);
         TestFailureDecider decider = new TestFailureDecider(false, 2, resultScanner);
         decider.runChecks();
 

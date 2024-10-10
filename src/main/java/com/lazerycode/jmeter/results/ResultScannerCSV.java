@@ -14,11 +14,39 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class CSVFileScanner {
+public class ResultScannerCSV extends ResultScanner {
+
     private static final String ROW_NAME_SUCCESS = "success";
     private static final String ROW_NAME_FAILURE_MESSAGE = "failureMessage";
     private static final CsvMapper CSV_MAPPER = new CsvMapper();
     private static final int DEFAULT_BUFFER_SIZE = 8 * 1024;
+
+    public ResultScannerCSV(boolean countSuccesses, boolean countFailures, boolean onlyFailWhenMatchingFailureMessage, List<String> failureMessages) {
+        super(countSuccesses, countFailures, onlyFailWhenMatchingFailureMessage, failureMessages);
+    }
+
+    /**
+     * Work out how to parse a CSV file
+     *
+     * @param file File to parse
+     * @throws MojoExecutionException MojoExecutionException
+     */
+    @Override
+    public void parseResultFile(File file) throws MojoExecutionException {
+        if (!file.exists()) {
+            throw new MojoExecutionException("Unable to find " + file.getAbsolutePath());
+        }
+        LOGGER.info(" ");
+        LOGGER.info("Parsing results file '{}' as type: CSV", file);
+        CSVScanResult csvScanResult = scanCsvForValues(file, failureMessages);
+        successCount += csvScanResult.getSuccessCount();
+        failureCount += csvScanResult.getFailureCount();
+        for (Map.Entry<String, Integer> entry : csvScanResult.getSpecificFailureMessages().entrySet()) {
+            customFailureCount = customFailureCount + entry.getValue();
+            LOGGER.info("Number of potential custom failures using '{}' in '{}': {}", entry.getKey(), file.getName(), customFailureCount);
+        }
+
+    }
 
     /**
      * Scans a csv file to calculate success/failure counts.

@@ -1,19 +1,19 @@
 package com.lazerycode.jmeter.testrunner;
 
-import com.lazerycode.jmeter.results.IResultScanner;
+import com.lazerycode.jmeter.results.ResultScanner;
 
 /**
  * Since 3.8.1
  */
 public class TestFailureDecider {
 
-    private final IResultScanner resultScanner;
+    private final ResultScanner resultScanner;
     private final boolean ignoreResultFailures;
     private final double errorPercentageThreshold;
     private double errorPercentage;
     private boolean checkRan;
 
-    public TestFailureDecider(boolean ignoreResultFailures, double errorPercentageThreshold, IResultScanner resultScanner) {
+    public TestFailureDecider(boolean ignoreResultFailures, double errorPercentageThreshold, ResultScanner resultScanner) {
         this.ignoreResultFailures = ignoreResultFailures;
         this.errorPercentageThreshold = errorPercentageThreshold;
         this.resultScanner = resultScanner;

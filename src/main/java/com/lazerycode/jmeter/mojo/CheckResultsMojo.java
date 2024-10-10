@@ -1,7 +1,9 @@
 package com.lazerycode.jmeter.mojo;
 
 import com.lazerycode.jmeter.json.TestConfigurationWrapper;
+import com.lazerycode.jmeter.results.ResultScannerCSV;
 import com.lazerycode.jmeter.results.ResultScanner;
+import com.lazerycode.jmeter.results.ResultScannerXML;
 import com.lazerycode.jmeter.testrunner.TestFailureDecider;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -96,13 +98,7 @@ public class CheckResultsMojo extends AbstractJMeterMojo {
             TestConfigurationWrapper testConfig = new TestConfigurationWrapper(new File(testConfigFile), selectedConfiguration);
             String resultFormat = testConfig.getCurrentTestConfiguration().getResultsOutputIsCSVFormat() ? "CSV" : "JTL";
             getLog().info(String.format("Will scan results using format: %s", resultFormat));
-            ResultScanner resultScanner = new ResultScanner(
-                    scanResultsForSuccessfulRequests,
-                    scanResultsForFailedRequests,
-                    testConfig.getCurrentTestConfiguration().getResultsOutputIsCSVFormat(),
-                    onlyFailWhenMatchingFailureMessage,
-                    failureMessages
-            );
+            ResultScanner resultScanner = getResultScanner(testConfig.getCurrentTestConfiguration().getResultsOutputIsCSVFormat());
             for (String resultFileLocation : testConfig.getCurrentTestConfiguration().getResultFilesLocations()) {
                 resultScanner.parseResultFile(new File(resultFileLocation));
             }
@@ -133,6 +129,24 @@ public class CheckResultsMojo extends AbstractJMeterMojo {
             getLog().info(" ");
             getLog().info("Results of Performance Test(s) have not been scanned.");
             getLog().info(" ");
+        }
+    }
+
+    private ResultScanner getResultScanner(Boolean isCSV) {
+        if (isCSV) {
+            return new ResultScannerCSV(
+                    scanResultsForSuccessfulRequests,
+                    scanResultsForFailedRequests,
+                    onlyFailWhenMatchingFailureMessage,
+                    failureMessages
+            );
+        } else {
+            return new ResultScannerXML(
+                    scanResultsForSuccessfulRequests,
+                    scanResultsForFailedRequests,
+                    onlyFailWhenMatchingFailureMessage,
+                    failureMessages
+            );
         }
     }
 }

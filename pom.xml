@@ -30,17 +30,17 @@
         <supported.java.version>1.8</supported.java.version>
 
         <!--Dependency versions-->
-        <assertj-core.version>3.24.2</assertj-core.version>
-        <commons-io.version>2.13.0</commons-io.version>
-        <jackson.version>2.15.1</jackson.version>
-        <json-path.version>2.8.0</json-path.version>
-        <json-smart.version>2.5.0</json-smart.version>
+        <assertj-core.version>3.26.3</assertj-core.version>
+        <commons-io.version>2.17.0</commons-io.version>
+        <jackson.version>2.18.0</jackson.version>
+        <json-path.version>2.9.0</json-path.version>
+        <json-smart.version>2.5.1</json-smart.version>
         <junit.version>4.13.2</junit.version>
-        <logback.version>1.2.12</logback.version>
-        <maven-resolver.version>1.9.13</maven-resolver.version>
+        <logback.version>1.2.13</logback.version>
+        <maven-resolver.version>1.9.22</maven-resolver.version>
         <mockito-core.version>4.11.0</mockito-core.version> <!-- 5.x requires java 11 -->
         <slf4j-api.version>1.7.36</slf4j-api.version>
-        <json-unit-assertj.version>2.36.0</json-unit-assertj.version> <!-- 3.00 requires JDK 17-->
+        <json-unit-assertj.version>2.40.1</json-unit-assertj.version> <!-- 3.00 requires JDK 17-->
 
         <!--Plugin versions-->
         <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
